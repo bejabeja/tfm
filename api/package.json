@@ -1,0 +1,35 @@
+{
+  "name": "tobetraveller-api",
+  "version": "1.0.0",
+  "description": "Social network for travellers",
+  "main": "index.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "node --watch index.js",
+    "start": "node index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bejabeja"
+  },
+  "keywords": [
+    "react",
+    "node"
+  ],
+  "author": "Miriam Abella",
+  "license": "ISC",
+  "devDependencies": {
+    "standard": "^17.1.2"
+  },
+  "eslintConfig": {
+    "extends": "standard"
+  },
+  "dependencies": {
+    "cors": "2.8.5",
+    "dotenv": "16.4.7",
+    "express": "5.1.0",
+    "pg": "^8.14.1",
+    "uuid": "^11.1.0"
+  }
+}
