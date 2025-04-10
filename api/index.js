@@ -17,6 +17,9 @@ const userRepo = new UserRepository();
 
 app.use('/itinerary', createItineraryRouter(itineraryRepo));
 app.use('/users', createUserRouter(userRepo));
+app.use('/api', (req, res) => {
+    res.status(200).json({ message: 'API is running' });
+});
 
 app.use((req, res) => {
     res.status(404).json({ error: 'Route not found' });
