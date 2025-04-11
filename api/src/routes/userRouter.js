@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController.js";
+import { authenticate } from "../middlewares/authenticate.js";
 import { UserService } from "../services/userService.js";
 
 export const createUserRouter = (userRepository) => {
@@ -9,7 +10,7 @@ export const createUserRouter = (userRepository) => {
 
     router.post("/create", userController.create.bind(userController));
     router.post("/login", userController.login.bind(userController));
-    router.get("/", userController.getAllUsers.bind(userController));
-    
+    router.get("/", authenticate, userController.getAllUsers.bind(userController));
+
     return router;
 };
