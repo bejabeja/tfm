@@ -1,15 +1,7 @@
 import { createNewUser, login } from "../services/user";
 
 export const userReducer = (state = [], action) => {
-    if (action.type === "@user/created") {
-        console.log('STATE', state)
-        console.log('ACTION', action)
-        return [...state, action.payload];
-    }
-
-    if (action.type === "@user/login") {
-        console.log('STATE', state)
-        console.log('ACTION', action)
+     if (action.type === "@user/login") {
         return [...state, action.payload];
     }
 
@@ -18,10 +10,9 @@ export const userReducer = (state = [], action) => {
 
 export const createUser = (user) => {
     return async (dispatch) => {
-        const newUser = await createNewUser(user);
+        await createNewUser(user);
         dispatch({
             type: "@user/created",
-            payload: newUser
         });
     }
 };
