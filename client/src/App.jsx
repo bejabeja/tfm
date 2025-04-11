@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, Route, Routes } from "react-router-dom";
 import "./App.css";
-import Signup from "./pages/Signup";
+import Home from "./pages/Home";
 
 const App = () => {
   return (
@@ -10,7 +10,7 @@ const App = () => {
         <Link to="/">Signup</Link>
       </nav>
       <Routes>
-        <Route path="/" element={<Signup />} />
+        <Route path="/" element={<Home />} />
       </Routes>
     </div>
   );
