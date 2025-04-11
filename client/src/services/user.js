@@ -24,3 +24,14 @@ export const login = async (user) => {
     );
     return response.json();
 }
+
+export const logout = async () => {
+    const response = await fetch(`${baseUrl}/users/logout`, {
+        method: 'POST',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return response.json();
+}

@@ -8,6 +8,7 @@ const Home = () => {
     <div>
       <Signup />
       <Login />
+      <button onClick={() => logout()}>Logout</button>
     </div>
   );
 };
