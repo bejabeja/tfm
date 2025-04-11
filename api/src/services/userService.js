@@ -27,7 +27,32 @@ export class UserService {
         return await this.userRepository.save(userToSave);
     }
 
+    async login({ username, password }) {
+        const user = await this.userRepository.findByName(username);
+        if (!user) {
+            throw new Error("User not found");
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            throw new Error("Invalid password");
+        }
+
+        return {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            location: user.location
+        };
+    }
+
     async getAllUsers() {
-        return await this.userRepository.getAllUsers();
+        const users = await this.userRepository.getAllUsers();
+        return users.map(user => ({
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            location: user.location
+        }));
     }
 }

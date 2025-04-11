@@ -1,10 +1,9 @@
 import cors from 'cors';
 import 'dotenv/config';
 
-
 const ACCEPTED_ORIGINS = [process.env.ORIGIN_ONE];
-export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) => cors(
-    {
+export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) =>
+    cors({
         origin: (origin, callback) => {
             if (acceptedOrigins.includes(origin)) {
                 return callback(null, true);
@@ -14,5 +13,5 @@ export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) => c
             }
             return callback(new Error('CORS policy error'));
         },
-    }
-);
+        credentials: true,
+    });
