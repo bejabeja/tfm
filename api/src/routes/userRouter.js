@@ -11,6 +11,7 @@ export const createUserRouter = (userRepository) => {
     router.post("/create", userController.create.bind(userController));
     router.post("/login", userController.login.bind(userController));
     router.get("/", authenticate, userController.getAllUsers.bind(userController));
+    router.post("/logout", userController.logout.bind(userController));
 
     return router;
 };

@@ -70,4 +70,13 @@ export class UserController {
             res.status(500).json({ error: "Internal server error" });
         }
     }
+
+    async logout(req, res) {
+        try {
+            res.clearCookie('access_token').status(200).json({ message: "Logged out successfully" });
+        } catch (error) {
+            console.error("Error logging out:", error);
+            res.status(500).json({ error: "Internal server error" });
+        }
+    }
 }
