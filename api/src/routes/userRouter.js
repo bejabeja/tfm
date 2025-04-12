@@ -12,6 +12,7 @@ export const createUserRouter = (userRepository) => {
     router.post("/login", userController.login.bind(userController));
     router.get("/", authenticate, userController.getAllUsers.bind(userController));
     router.post("/logout", userController.logout.bind(userController));
+    router.get("/me", authenticate, userController.getUser.bind(userController));
 
     return router;
 };

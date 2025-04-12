@@ -55,4 +55,17 @@ export class UserService {
             location: user.location
         }));
     }
+
+    async getUserById(id) {
+        const user = await this.userRepository.getUserById(id);
+        if (!user) {
+            throw new Error("User not found");
+        }
+        return {
+            id: user.id,
+            username: user.username,
+            email: user.email,
+            location: user.location
+        };
+    }
 }
