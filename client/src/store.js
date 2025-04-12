@@ -3,7 +3,7 @@ import { thunk } from "redux-thunk";
 import { userReducer } from "./reducers/userReducer";
 
 const reducer = combineReducers({
-    user: userReducer
+    auth: userReducer
 });
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;

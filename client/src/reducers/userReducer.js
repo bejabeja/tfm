@@ -1,22 +1,24 @@
-import { createNewUser, login, logout } from "../services/user";
+import { createNewUser, getUser, login, logout } from "../services/user";
 
-const initialState = {
-    currentUser: null,
-    isAuthenticated: false
-}
-
-export const userReducer = (state = initialState, action) => {
+export const userReducer = (state = [], action) => {
+    if (action.type === "@user/init") {
+        return {
+            ...state,
+            user: action.payload,
+            isAuthenticated: !!action.payload
+        };
+    }
     if (action.type === "@user/login") {
         return {
             ...state,
-            currentUser: action.payload,
+            user: action.payload,
             isAuthenticated: true
         };
     }
     if (action.type === "@user/logout") {
         return {
             ...state,
-            currentUser: null,
+            user: null,
             isAuthenticated: false
         }
     };
@@ -49,5 +51,15 @@ export const logoutUser = () => {
         dispatch({
             type: "@user/logout",
         });
+    }
+}
+
+export const initUser = () => {
+    return async (dispatch) => {
+        const user = await getUser()
+        dispatch({
+            type: "@user/init",
+            payload: user
+        })
     }
 }

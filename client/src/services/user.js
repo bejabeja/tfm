@@ -35,3 +35,14 @@ export const logout = async () => {
     });
     return response.json();
 }
+
+export const getUser = async () => {
+    const response = await fetch(`${baseUrl}/users/me`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+    return response.json();
+}
