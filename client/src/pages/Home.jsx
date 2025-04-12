@@ -1,6 +1,6 @@
 import React from "react";
-import { logout } from "../services/user";
 import Login from "./Login";
+import Logout from "./Logout";
 import Signup from "./Signup";
 
 const Home = () => {
@@ -8,7 +8,7 @@ const Home = () => {
     <div>
       <Signup />
       <Login />
-      <button onClick={() => logout()}>Logout</button>
+      <Logout />
     </div>
   );
 };

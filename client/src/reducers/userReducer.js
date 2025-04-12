@@ -1,9 +1,25 @@
-import { createNewUser, login } from "../services/user";
+import { createNewUser, login, logout } from "../services/user";
 
-export const userReducer = (state = [], action) => {
-     if (action.type === "@user/login") {
-        return [...state, action.payload];
+const initialState = {
+    currentUser: null,
+    isAuthenticated: false
+}
+
+export const userReducer = (state = initialState, action) => {
+    if (action.type === "@user/login") {
+        return {
+            ...state,
+            currentUser: action.payload,
+            isAuthenticated: true
+        };
     }
+    if (action.type === "@user/logout") {
+        return {
+            ...state,
+            currentUser: null,
+            isAuthenticated: false
+        }
+    };
 
     return state;
 };
@@ -26,3 +42,12 @@ export const loginUser = (user) => {
         });
     }
 };
+
+export const logoutUser = () => {
+    return async (dispatch) => {
+        await logout();
+        dispatch({
+            type: "@user/logout",
+        });
+    }
+}
