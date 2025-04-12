@@ -4,6 +4,10 @@ import { Route, Routes } from "react-router-dom";
 import "./App.css";
 import Navbar from "./components/navbar/Navbar";
 import Home from "./pages/Home";
+import Login from "./pages/Login";
+import Logout from "./pages/Logout";
+import PrivateLayout from "./pages/PrivateLayout";
+import Signup from "./pages/Signup";
 import { initUser } from "./reducers/userReducer";
 
 const App = () => {
@@ -17,7 +21,20 @@ const App = () => {
     <div className="App">
       <Navbar></Navbar>
       <Routes>
+        {/* public routes */}
         <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Signup />} />
+        <Route path="/logout" element={<Logout />} />
+        <Route path="/explore" element={<div>Explore</div>} />
+        <Route path="/community" element={<div>Community</div>} />
+
+        {/* private routes */}
+        <Route element={<PrivateLayout />}>
+          <Route path="/my-itineraries" element={<div>Itineraries</div>} />
+          <Route path="/friends" element={<div>Friends</div>} />
+          <Route path="/profile" element={<div>Profile</div>} />
+        </Route>
       </Routes>
     </div>
   );

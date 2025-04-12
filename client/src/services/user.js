@@ -44,5 +44,8 @@ export const getUser = async () => {
             'Content-Type': 'application/json'
         }
     });
+    if (!response.ok) {
+        return null;
+    }
     return response.json();
 }

@@ -2,6 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 import InputForm from "../components/form/InputForm";
 import SubmitButton from "../components/form/SubmitButton";
 import { loginUser } from "../reducers/userReducer";
@@ -46,6 +47,9 @@ const Login = () => {
         ))}
 
         <SubmitButton label="Log In" />
+        <div>
+          <Link to="/register">Don't have an account? Register</Link>
+        </div>
       </form>
     </section>
   );
