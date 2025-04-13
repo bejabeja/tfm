@@ -1,8 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 import InputForm from "../components/form/InputForm";
 import SubmitButton from "../components/form/SubmitButton";
 import { loginUser } from "../reducers/userReducer";
@@ -15,6 +15,8 @@ const fields = [
 
 const Login = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { error, isAuthenticated } = useSelector((state) => state.auth);
 
   const {
     control,
@@ -29,7 +31,11 @@ const Login = () => {
   });
 
   const checkUser = (data) => {
-    dispatch(loginUser(data));
+    dispatch(
+      loginUser(data, () => {
+        navigate("/");
+      })
+    );
   };
 
   return (
@@ -45,7 +51,7 @@ const Login = () => {
             error={errors[field.name]}
           />
         ))}
-
+        {error && <div className="error-message">{error}</div>}
         <SubmitButton label="Log In" />
         <div>
           <Link to="/register">Don't have an account? Register</Link>

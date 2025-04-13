@@ -48,6 +48,10 @@ export class UserService {
 
     async getAllUsers() {
         const users = await this.userRepository.getAllUsers();
+        if (!users) {
+            throw new Error("No users found");
+        }
+
         return users.map(user => ({
             id: user.id,
             username: user.username,

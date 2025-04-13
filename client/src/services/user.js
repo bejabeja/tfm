@@ -9,6 +9,10 @@ export const createNewUser = async (user) => {
         body: JSON.stringify(user)
     }
     );
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData?.error);
+    }
     return response.json();
 }
 
@@ -20,10 +24,15 @@ export const login = async (user) => {
             'Content-Type': 'application/json'
         },
         body: JSON.stringify(user)
+    });
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData?.error);
     }
-    );
+
     return response.json();
-}
+};
 
 export const logout = async () => {
     const response = await fetch(`${baseUrl}/users/logout`, {

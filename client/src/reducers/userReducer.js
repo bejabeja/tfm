@@ -6,15 +6,23 @@ export const userReducer = (state = [], action) => {
             ...state,
             user: action.payload,
             isAuthenticated: !!action.payload,
-            loading: false
+            loading: false,
+            error: action.error || null
         };
     }
     if (action.type === "@user/login") {
         return {
             ...state,
             user: action.payload,
-            isAuthenticated: true,
-            loading: false
+            isAuthenticated: !!action.payload,
+            loading: false,
+            error: action.error || null
+        };
+    }
+    if (action.type === "@user/created") {
+        return {
+            ...state,
+            error: action.error || null,
         };
     }
     if (action.type === "@user/logout") {
@@ -29,22 +37,41 @@ export const userReducer = (state = [], action) => {
     return state;
 };
 
-export const createUser = (user) => {
+export const createUser = (user, onSuccess) => {
     return async (dispatch) => {
-        await createNewUser(user);
-        dispatch({
-            type: "@user/created",
-        });
+        try {
+            await createNewUser(user);
+            dispatch({
+                type: "@user/created",
+                success: true
+            });
+            if (onSuccess) onSuccess();
+        } catch (error) {
+            dispatch({
+                type: "@user/created",
+                error: error.message,
+            });
+        }
     }
 };
 
-export const loginUser = (user) => {
+export const loginUser = (user, onSuccess) => {
     return async (dispatch) => {
-        const newUser = await login(user);
-        dispatch({
-            type: "@user/login",
-            payload: newUser
-        });
+        try {
+            const newUser = await login(user);
+            dispatch({
+                type: "@user/login",
+                payload: newUser,
+            });
+            if (onSuccess) onSuccess();
+
+        } catch (error) {
+            dispatch({
+                type: "@user/login",
+                payload: null,
+                error: error.message,
+            });
+        }
     }
 };
 

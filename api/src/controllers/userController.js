@@ -29,13 +29,14 @@ export class UserController {
         if (!result.success) {
             return res.status(400).json(result.error.format());
         }
-
         try {
             await this.userService.create(result.data);
             res.status(201).json({ message: "User created successfully" });
         } catch (error) {
-            console.error("Error creating user:", error);
-            res.status(500).json({ error: "Internal server error" });
+            if (error.code === '23505') { // unique violation error code for PostgreSQL
+                return res.status(400).json({ error: "User already exists" });
+            }
+            res.status(500).json({ error: error.message || "Internal server error" });
         }
     }
 
@@ -67,7 +68,7 @@ export class UserController {
             res.status(200).json(users);
         } catch (error) {
             console.error("Error fetching users:", error);
-            res.status(500).json({ error: "Internal server error" });
+            res.status(500).json({ error: error.message || "Internal server error" });
         }
     }
 
@@ -86,7 +87,7 @@ export class UserController {
             res.status(200).json(user);
         } catch (error) {
             console.error("Error fetching user:", error);
-            res.status(500).json({ error: "Internal server error" });
+            res.status(500).json({ error: error.message || "Internal server error" });
         }
     }
 }
