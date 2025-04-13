@@ -1,4 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { FaBars } from "react-icons/fa";
+import {
+  GoBook,
+  GoHome,
+  GoPeople,
+  GoPerson,
+  GoSignIn,
+  GoSignOut,
+} from "react-icons/go";
+import { IoSearch } from "react-icons/io5";
+import { RiUserCommunityLine } from "react-icons/ri";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
 import "./Navbar.css";
@@ -23,7 +34,7 @@ const Navbar = () => {
           Trobeatraveller
         </Link>
         <div className="hamburger-menu" onClick={toggleNavbar}>
-          ☰
+          <FaBars className="nav-icon" />
         </div>
       </div>
 
@@ -34,22 +45,50 @@ const Navbar = () => {
           </Link>
 
           <h3>Discover</h3>
-          <Link to="/">Home</Link>
-          <Link to="/explore">Explore</Link>
-          <Link to="/community">Community</Link>
+          <Link to="/" className="nav-item">
+            <GoHome className="nav-icon" />
+            <span>Home</span>
+          </Link>
+          <Link to="/explore" className="nav-item">
+            <IoSearch className="nav-icon" />
+            <span>Explore</span>
+          </Link>
+          <Link to="/community" className="nav-item">
+            <RiUserCommunityLine className="nav-icon" />
+            <span>Community</span>
+          </Link>
         </div>
         <div className="nav-section">
           <h3>Private</h3>
           {isAuthenticated ? (
             <>
-              <Link to="/my-itineraries">Itineraries</Link>
-              <Link to="/friends">Friends</Link>
-              <Link to="/profile">Profile</Link>
+              <Link to="/my-itineraries" className="nav-item">
+                <GoBook className="nav-icon" />
+                <span>Itineraries</span>
+              </Link>
+              <Link to="/friends" className="nav-item">
+                <GoPeople className="nav-icon" />
+                <span>Friends</span>
+              </Link>
+              <Link to="/profile" className="nav-item">
+                <GoPerson className="nav-icon" />
+                <span>Profile</span>
+              </Link>
+              <Link to="/logout" className="nav-item">
+                <GoSignOut className="nav-icon" />
+                <span>Logout</span>
+              </Link>
             </>
           ) : (
             <>
-              <Link to="/login">Login</Link>
-              <Link to="/register">Register</Link>
+              <Link to="/login" className="nav-item">
+                <GoSignIn className="nav-icon" />
+                <span>Login</span>
+              </Link>
+              <Link to="/register" className="nav-item">
+                <GoSignOut className="nav-icon" />
+                <span>Register</span>
+              </Link>
             </>
           )}
         </div>
