@@ -5,21 +5,24 @@ export const userReducer = (state = [], action) => {
         return {
             ...state,
             user: action.payload,
-            isAuthenticated: !!action.payload
+            isAuthenticated: !!action.payload,
+            loading: false
         };
     }
     if (action.type === "@user/login") {
         return {
             ...state,
             user: action.payload,
-            isAuthenticated: true
+            isAuthenticated: true,
+            loading: false
         };
     }
     if (action.type === "@user/logout") {
         return {
             ...state,
             user: null,
-            isAuthenticated: false
+            isAuthenticated: false,
+            loading: false
         }
     };
 
