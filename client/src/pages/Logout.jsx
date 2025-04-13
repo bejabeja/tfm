@@ -1,19 +1,18 @@
-import React from "react";
+import { useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { logoutUser } from "../reducers/userReducer";
+import { useNavigate } from "react-router-dom";
 
-const Login = () => {
+const Logout = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
-  const logout = () => {
+  useEffect(() => {
     dispatch(logoutUser());
-  };
+    navigate("/");
+  }, [dispatch, navigate]);
 
-  return (
-    <section>
-      <button onClick={logout}>Logout</button>
-    </section>
-  );
+  return null;
 };
 
-export default Login;
+export default Logout;
