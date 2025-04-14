@@ -19,17 +19,16 @@ const Topbar = () => {
     setDropdownOpen(!dropdownOpen);
   };
 
+  const avatarRandom = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    user?.username || "User Name"
+  )}&background=random&size=128`;
+  
   return (
     <section className="topbar">
       <div className="dropdown">
         <button className="dropbtn" onClick={toggleDropdown}>
           <img
-            src={
-              user?.photoURL ||
-              `https://ui-avatars.com/api/?name=${encodeURIComponent(
-                user?.username || "User Name"
-              )}&background=random&size=128`
-            }
+            src={user?.photoURL || avatarRandom}
             alt="user photo avatar"
             className="avatar"
           />
