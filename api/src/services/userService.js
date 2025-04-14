@@ -1,7 +1,7 @@
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from 'uuid';
-import { ConflictError } from "../errors/ConflictError.js";
 import { AuthError } from "../errors/AuthError.js";
+import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 
 
@@ -35,8 +35,9 @@ export class UserService {
         if (!user) {
             throw new NotFoundError("User not found");
         }
-
+        console.log("user in service ", user);
         const isPasswordValid = await bcrypt.compare(password, user.password);
+        console.log("isPasswordValid bcryptcompare", isPasswordValid);
         if (!isPasswordValid) {
             throw new AuthError("Invalid password");
         }

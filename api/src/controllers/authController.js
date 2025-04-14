@@ -51,7 +51,10 @@ export class AuthController {
 
         try {
             const { username, password } = result.data;
+            console.log("Login username:", username);
+            console.log("login Password :", password);
             const user = await this.userService.login({ username, password });
+            console.log("Login user:", user);
             const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
             res.cookie('access_token', token, {
                 httpOnly: true,
