@@ -1,13 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FaBars } from "react-icons/fa";
-import {
-  GoBook,
-  GoHome,
-  GoPeople,
-  GoPerson,
-  GoSignIn,
-  GoSignOut,
-} from "react-icons/go";
+import { GoBook, GoHome, GoPeople, GoSignIn, GoSignOut } from "react-icons/go";
 import { IoSearch } from "react-icons/io5";
 import { RiUserCommunityLine } from "react-icons/ri";
 import { useSelector } from "react-redux";
@@ -84,20 +77,6 @@ const Navbar = () => {
               >
                 <GoPeople className="nav-icon" />
                 <span>Friends</span>
-              </Link>
-              <Link
-                to="/profile"
-                className={`nav-item ${isActive("/profile") ? "active" : ""}`}
-              >
-                <GoPerson className="nav-icon" />
-                <span>Profile</span>
-              </Link>
-              <Link
-                to="/logout"
-                className={`nav-item ${isActive("/logout") ? "active" : ""}`}
-              >
-                <GoSignOut className="nav-icon" />
-                <span>Logout</span>
               </Link>
             </>
           ) : (
