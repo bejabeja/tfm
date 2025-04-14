@@ -2,7 +2,7 @@ import { z } from "zod";
 
 export const signupSchema = z
   .object({
-    username: z.string().min(1, "Name is required"),
+    username: z.string().min(1, "Name is required").regex(/^\S+$/, "Username cannot contain spaces"),
     email: z
       .string()
       .email("Invalid email address")

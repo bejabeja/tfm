@@ -2,7 +2,6 @@ import { createNewUser, login, logout } from "../services/auth";
 import { getUser } from "../services/user";
 
 export const authReducer = (state = [], action) => {
-    console.log("state", state);
     if (action.type === "@auth/init") {
         return {
             ...state,
@@ -99,7 +98,7 @@ export const initUser = () => {
             const user = await getUser();
             dispatch({
                 type: "@auth/init",
-                payload: user,me
+                payload: user, me
             });
         } catch (error) {
             dispatch({

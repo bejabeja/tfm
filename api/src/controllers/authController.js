@@ -5,7 +5,7 @@ import { ConflictError } from '../errors/ConflictError.js';
 import { ValidationError } from '../errors/ValidationError.js';
 
 const signupSchema = z.object({
-    username: z.string().min(1, "Name is required"),
+    username: z.string().min(1, "Name is required").regex(/^\S+$/, "Username cannot contain spaces"),
     email: z.string().email("Invalid email address"),
     password: z.string().min(6, "Password must be at least 6 characters long"),
     confirmPassword: z.string().min(6, "Confirm password must be at least 6 characters long"),
@@ -32,7 +32,7 @@ export class AuthController {
         if (!result.success) {
             return next(new ValidationError("Signup validation failed"));
         }
-        try {f
+        try {
             await this.userService.create(result.data);
             res.status(201).json({ message: "User created successfully" });
         } catch (error) {
