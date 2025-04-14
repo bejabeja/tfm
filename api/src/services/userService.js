@@ -35,9 +35,8 @@ export class UserService {
         if (!user) {
             throw new NotFoundError("User not found");
         }
-        console.log("user in service ", user);
+        
         const isPasswordValid = await bcrypt.compare(password, user.password);
-        console.log("isPasswordValid bcryptcompare", isPasswordValid);
         if (!isPasswordValid) {
             throw new AuthError("Invalid password");
         }
