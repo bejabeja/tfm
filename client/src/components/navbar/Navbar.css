@@ -84,6 +84,15 @@
     font-size: 30px;
 }
 
+.nav-item.active {
+    color: var(--primary-color);
+    font-weight: bold;
+}
+
+.nav-item.active .nav-icon {
+    color: var(--primary-color);
+}
+
 @media (min-width: 480px) {
     .navbar {
         width: 240px;
