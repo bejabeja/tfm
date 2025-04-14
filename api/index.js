@@ -4,7 +4,7 @@ import { authenticate } from './src/middlewares/authenticate.js';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
 import { ItineraryRepository } from './src/repositories/itineraryRepository.js';
-import { UserRepository } from './src/repositories/userRepository.js';
+import { createAuthRouter } from './src/routes/authRouter.js';
 import { createItineraryRouter } from './src/routes/itineraryRouter.js';
 import { createUserRouter } from './src/routes/userRouter.js';
 
@@ -17,10 +17,10 @@ app.disable('x-powered-by');
 app.use(cookieParser())
 
 const itineraryRepo = new ItineraryRepository();
-const userRepo = new UserRepository();
 
 app.use('/itinerary', createItineraryRouter(itineraryRepo));
-app.use('/users', createUserRouter(userRepo));
+app.use('/users', createUserRouter());
+app.use('/auth', createAuthRouter());
 
 app.use('/protected', authenticate, (req, res) => {
     const { user } = req.session;

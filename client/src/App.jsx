@@ -8,7 +8,7 @@ import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import PrivateLayout from "./pages/PrivateLayout";
 import Signup from "./pages/Signup";
-import { clearError, initUser } from "./reducers/userReducer";
+import { clearError, initUser } from "./reducers/authReducer";
 import { useLocation } from "react-router-dom";
 
 const App = () => {
