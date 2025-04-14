@@ -34,6 +34,13 @@ export const userReducer = (state = [], action) => {
         }
     };
 
+    if (action.type === "@user/clearError") {
+        return {
+            ...state,
+            error: null,
+        }
+    }
+
     return state;
 };
 
@@ -86,10 +93,26 @@ export const logoutUser = () => {
 
 export const initUser = () => {
     return async (dispatch) => {
-        const user = await getUser()
+        try {
+            const user = await getUser();
+            dispatch({
+                type: "@user/init",
+                payload: user,
+            });
+        } catch (error) {
+            dispatch({
+                type: "@user/init",
+                payload: null,
+                error: null,
+            });
+        }
+    }
+}
+
+export const clearError = () => {
+    return async (dispatch) => {
         dispatch({
-            type: "@user/init",
-            payload: user
-        })
+            type: "@user/clearError",
+        });
     }
 }

@@ -8,14 +8,20 @@ import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import PrivateLayout from "./pages/PrivateLayout";
 import Signup from "./pages/Signup";
-import { initUser } from "./reducers/userReducer";
+import { clearError, initUser } from "./reducers/userReducer";
+import { useLocation } from "react-router-dom";
 
 const App = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
 
   useEffect(() => {
     dispatch(initUser());
   }, []);
+
+  useEffect(() => {
+    dispatch(clearError());
+  }, [dispatch, location]);
 
   return (
     <div className="App">

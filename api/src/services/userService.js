@@ -1,5 +1,8 @@
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from 'uuid';
+import { ConflictError } from "../errors/ConflictError.js";
+import { AuthError } from "../errors/AuthError.js";
+import { NotFoundError } from "../errors/NotFoundError.js";
 
 
 export class UserService {
@@ -11,7 +14,7 @@ export class UserService {
         const { password, username, email, location } = userData;
         const existingUser = await this.userRepository.findByName(username);
         if (existingUser) {
-            throw new Error("User already exists");
+            throw new ConflictError("User already exists");
         }
 
         const hashedPassword = await bcrypt.hash(password, 10);
@@ -30,12 +33,12 @@ export class UserService {
     async login({ username, password }) {
         const user = await this.userRepository.findByName(username);
         if (!user) {
-            throw new Error("User not found");
+            throw new NotFoundError("User not found");
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
-            throw new Error("Invalid password");
+            throw new AuthError("Invalid password");
         }
 
         return {
@@ -49,7 +52,7 @@ export class UserService {
     async getAllUsers() {
         const users = await this.userRepository.getAllUsers();
         if (!users) {
-            throw new Error("No users found");
+            throw new NotFoundError("No users found");
         }
 
         return users.map(user => ({
@@ -63,7 +66,7 @@ export class UserService {
     async getUserById(id) {
         const user = await this.userRepository.getUserById(id);
         if (!user) {
-            throw new Error("User not found");
+            throw new NotFoundError("User not found");
         }
         return {
             id: user.id,

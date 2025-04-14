@@ -1,3 +1,5 @@
+import { parseError } from "../utils/parseError";
+
 const baseUrl = import.meta.env.VITE_API_URL;
 
 export const createNewUser = async (user) => {
@@ -10,8 +12,7 @@ export const createNewUser = async (user) => {
     }
     );
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData?.error);
+        await parseError(response, 'Create user failed');
     }
     return response.json();
 }
@@ -27,8 +28,7 @@ export const login = async (user) => {
     });
 
     if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData?.error);
+        await parseError(response, 'Login failed');
     }
 
     return response.json();
@@ -42,6 +42,10 @@ export const logout = async () => {
             'Content-Type': 'application/json'
         }
     });
+
+    if (!response.ok) {
+        await parseError(response, 'Logout failed');
+    }
     return response.json();
 }
 
@@ -54,7 +58,7 @@ export const getUser = async () => {
         }
     });
     if (!response.ok) {
-        return null;
+        await parseError(response, 'Failed to get user');
     }
     return response.json();
 }

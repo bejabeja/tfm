@@ -2,6 +2,7 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import { authenticate } from './src/middlewares/authenticate.js';
 import { corsMiddleware } from './src/middlewares/cors.js';
+import { errorHandler } from './src/middlewares/errorHandler.js';
 import { ItineraryRepository } from './src/repositories/itineraryRepository.js';
 import { UserRepository } from './src/repositories/userRepository.js';
 import { createItineraryRouter } from './src/routes/itineraryRouter.js';
@@ -33,6 +34,8 @@ app.use('/api', (req, res) => {
 app.use((req, res) => {
     res.status(404).json({ error: 'Route not found' });
 });
+
+app.use(errorHandler)
 
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);

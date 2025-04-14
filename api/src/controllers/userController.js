@@ -1,5 +1,8 @@
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import { AuthError } from '../errors/AuthError.js';
+import { ConflictError } from '../errors/ConflictError.js';
+import { ValidationError } from '../errors/ValidationError.js';
 
 const signupSchema = z.object({
     username: z.string().min(1, "Name is required"),
@@ -24,26 +27,26 @@ export class UserController {
         this.userService = userService;
     }
 
-    async create(req, res) {
+    async create(req, res, next) {
         const result = signupSchema.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json(result.error.format());
+            return next(new ValidationError("Signup validation failed"));
         }
         try {
             await this.userService.create(result.data);
             res.status(201).json({ message: "User created successfully" });
         } catch (error) {
             if (error.code === '23505') { // unique violation error code for PostgreSQL
-                return res.status(400).json({ error: "User already exists" });
+                return next(new ConflictError("User already exists"));
             }
-            res.status(500).json({ error: error.message || "Internal server error" });
+            next(error);
         }
     }
 
-    async login(req, res) {
+    async login(req, res, next) {
         const result = loginSchema.safeParse(req.body);
         if (!result.success) {
-            return res.status(400).json(result.error.format());
+            return next(new ValidationError("Login validation failed"));
         }
 
         try {
@@ -57,37 +60,33 @@ export class UserController {
                 maxAge: 3600000,
             }).status(200).json(user);
         } catch (error) {
-            console.error("Error logging in:", error);
-            res.status(401).json({ error: "Invalid credentials" });
+            next(new AuthError("Invalid credentials"));
         }
     }
 
-    async getAllUsers(req, res) {
+    async getAllUsers(req, res, next) {
         try {
             const users = await this.userService.getAllUsers();
             res.status(200).json(users);
         } catch (error) {
-            console.error("Error fetching users:", error);
-            res.status(500).json({ error: error.message || "Internal server error" });
+            next(error)
         }
     }
 
-    async logout(req, res) {
+    async logout(req, res, next) {
         try {
             res.clearCookie('access_token').status(200).json({ message: "Logged out successfully" });
         } catch (error) {
-            console.error("Error logging out:", error);
-            res.status(500).json({ error: "Internal server error" });
+            next(error);
         }
     }
 
-    async getUser(req, res) {
+    async getUser(req, res, next) {
         try {
             const user = await this.userService.getUserById(req.user.id);
             res.status(200).json(user);
         } catch (error) {
-            console.error("Error fetching user:", error);
-            res.status(500).json({ error: error.message || "Internal server error" });
+            next(error);
         }
     }
 }

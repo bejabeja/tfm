@@ -1,16 +1,17 @@
 import jwt from 'jsonwebtoken';
+import { AuthError } from '../errors/AuthError.js';
 
 export const authenticate = (req, res, next) => {
     const token = req.cookies.access_token;
     if (!token) {
-        return res.status(403).json({ error: 'Unauthorized' });
+        return AuthError('Unauthorized');
     }
 
     try {
         const data = jwt.verify(token, process.env.JWT_SECRET);
         req.user = data;
     } catch (error) {
-        return res.status(403).json({ error: 'Unauthorized' });
+        return AuthError('Unauthorized');
     }
 
     next();
