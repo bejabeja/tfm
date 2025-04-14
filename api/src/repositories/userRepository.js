@@ -11,14 +11,11 @@ export class UserRepository {
     }
 
     async findByName(username) {
-        console.log("findbyname", username);
-
         const result = await db.query(
             "SELECT * FROM users WHERE username = $1",
             [username]
         );
         const user = result.rows[0]
-        console.log("findbyname", user);
 
         return user;
     }
