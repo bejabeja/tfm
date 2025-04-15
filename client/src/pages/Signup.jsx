@@ -70,7 +70,7 @@ const Signup = () => {
         {error && <div className="error-message">{error}</div>}
         <SubmitButton label="Sign Up" />
         <div className="form--navigate-link">
-          <Link to="/login">Don't have an account? Register</Link>
+          <Link to="/login">Already have an account? Login!</Link>
         </div>
       </form>
     </section>

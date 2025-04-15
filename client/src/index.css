@@ -7,6 +7,8 @@
   --text-color: #333;
   --white-color: #fff;
 
+  --container-whitout-navbar: calc(100vh - 80px);
+
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
