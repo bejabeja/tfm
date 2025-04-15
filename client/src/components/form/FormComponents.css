@@ -44,3 +44,24 @@
 .input-form__error:empty {
     visibility: hidden;
 }
+
+.title-form-h1 {
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    color: var(--primary-color);
+    text-align: center;
+}
+
+.form--navigate-link {
+    margin-top: 1rem;
+    text-align: center;
+}
+
+.form--navigate-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+}
+
+.form--navigate-link a:hover {
+    text-decoration: underline;
+}

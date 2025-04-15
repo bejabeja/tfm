@@ -1,0 +1,1 @@
+export const bgImage = "/images/form-bg.webp";

@@ -3,6 +3,7 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { bgImage } from "../utils/constants";
 import InputForm from "../components/form/InputForm";
 import SubmitButton from "../components/form/SubmitButton";
 import { loginUser } from "../reducers/authReducer";
@@ -39,18 +40,17 @@ const Login = () => {
     );
   };
 
-  const BG_IMG_LOGIN = "https://images.unsplash.com/photo-1531694402898-042bd3957f41?q=80&w=2076&auto=format&fit=crop";
   return (
     <section className="login">
       <img
-        src={BG_IMG_LOGIN}
+        src={bgImage}
         alt="background"
         className="login__bg"
         loading="lazy"
       />
 
       <form onSubmit={handleSubmit(checkUser)} className="login__form">
-        <h1 className="title-h1">Log in</h1>
+        <h1 className="title-form-h1">Log in</h1>
         {fields.map((field) => (
           <InputForm
             key={field.name}
@@ -64,7 +64,7 @@ const Login = () => {
         <div className="error-message">{error ? error : "\u00A0"}</div>
 
         <SubmitButton label="Log In" />
-        <div className="login__register-link">
+        <div className="form--navigate-link">
           <Link to="/register">Don't have an account? Register</Link>
         </div>
       </form>

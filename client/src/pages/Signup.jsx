@@ -2,11 +2,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import InputForm from "../components/form/InputForm";
 import SubmitButton from "../components/form/SubmitButton";
 import { createUser } from "../reducers/authReducer";
 import { signupSchema } from "../schemas/signupFormValidation";
+import "./Signup.css";
+import { bgImage } from "../utils/constants";
 
 const fields = [
   { name: "username", label: "Username", type: "text" },
@@ -45,8 +47,16 @@ const Signup = () => {
   };
 
   return (
-    <section>
-      <form onSubmit={handleSubmit(addUser)}>
+    <section className="signup">
+      <img
+        src={bgImage}
+        alt="Foto de Annie Spratt en Unsplash"
+        className="signup__bg"
+        loading="lazy"
+      />
+      <form onSubmit={handleSubmit(addUser)} className="signup__form">
+        <h1 className="title-form-h1">Sign Up</h1>
+
         {fields.map((field) => (
           <InputForm
             key={field.name}
@@ -59,6 +69,9 @@ const Signup = () => {
         ))}
         {error && <div className="error-message">{error}</div>}
         <SubmitButton label="Sign Up" />
+        <div className="form--navigate-link">
+          <Link to="/login">Don't have an account? Register</Link>
+        </div>
       </form>
     </section>
   );
