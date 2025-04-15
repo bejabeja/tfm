@@ -8,7 +8,6 @@ import SubmitButton from "../components/form/SubmitButton";
 import { createUser } from "../reducers/authReducer";
 import { signupSchema } from "../schemas/signupFormValidation";
 import "./Signup.css";
-import { bgImage } from "../utils/constants";
 
 const fields = [
   { name: "username", label: "Username", type: "text" },
@@ -48,12 +47,19 @@ const Signup = () => {
 
   return (
     <section className="signup">
-      <img
-        src={bgImage}
-        alt="Foto de Annie Spratt en Unsplash"
-        className="signup__bg"
-        loading="lazy"
-      />
+      <picture>
+        <source
+          srcSet="/images/form-bg-mobile.webp"
+          media="(max-width: 768px)"
+          type="image/webp"
+        />
+        <img
+          src="/images/form-bg.webp"
+          alt="Foto de Annie Spratt en Unsplash"
+          className="signup__bg"
+          loading="lazy"
+        />
+      </picture>
       <form onSubmit={handleSubmit(addUser)} className="signup__form">
         <h1 className="title-form-h1">Sign Up</h1>
 

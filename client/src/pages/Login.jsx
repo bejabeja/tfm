@@ -42,12 +42,19 @@ const Login = () => {
 
   return (
     <section className="login">
-      <img
-        src={bgImage}
-        alt="background"
-        className="login__bg"
-        loading="lazy"
-      />
+     <picture>
+        <source
+          srcSet="/images/form-bg-mobile.webp"
+          media="(max-width: 768px)"
+          type="image/webp"
+        />
+        <img
+          src="/images/form-bg.webp"
+          alt="Foto de Annie Spratt en Unsplash"
+          className="login__bg"
+          loading="lazy"
+        />
+      </picture>
 
       <form onSubmit={handleSubmit(checkUser)} className="login__form">
         <h1 className="title-form-h1">Log in</h1>
