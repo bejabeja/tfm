@@ -1,5 +1,7 @@
+import * as Sentry from "@sentry/node";
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import './instrument.js';
 import { authenticate } from './src/middlewares/authenticate.js';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
@@ -30,6 +32,8 @@ app.use('/protected', authenticate, (req, res) => {
 app.use('/api', (req, res) => {
     res.status(200).json({ message: 'API is running' });
 });
+
+Sentry.setupExpressErrorHandler(app);
 
 app.use((req, res) => {
     res.status(404).json({ error: 'Route not found' });
