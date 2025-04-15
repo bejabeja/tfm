@@ -7,7 +7,7 @@ import InputForm from "../components/form/InputForm";
 import SubmitButton from "../components/form/SubmitButton";
 import { loginUser } from "../reducers/authReducer";
 import { loginSchema } from "../schemas/loginFormValidation";
-import './Login.css'
+import "./Login.css";
 
 const fields = [
   { name: "username", label: "Username", type: "text" },
@@ -39,9 +39,18 @@ const Login = () => {
     );
   };
 
+  const BG_IMG_LOGIN = "https://images.unsplash.com/photo-1531694402898-042bd3957f41?q=80&w=2076&auto=format&fit=crop";
   return (
-    <section>
-      <form onSubmit={handleSubmit(checkUser)}>
+    <section className="login">
+      <img
+        src={BG_IMG_LOGIN}
+        alt="background"
+        className="login__bg"
+        loading="lazy"
+      />
+
+      <form onSubmit={handleSubmit(checkUser)} className="login__form">
+        <h1 className="title-h1">Log in</h1>
         {fields.map((field) => (
           <InputForm
             key={field.name}
@@ -52,9 +61,10 @@ const Login = () => {
             error={errors[field.name]}
           />
         ))}
-        {error && <div className="error-message">{error}</div>}
+        <div className="error-message">{error ? error : "\u00A0"}</div>
+
         <SubmitButton label="Log In" />
-        <div>
+        <div className="login__register-link">
           <Link to="/register">Don't have an account? Register</Link>
         </div>
       </form>

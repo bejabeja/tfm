@@ -1,9 +1,12 @@
 import { Controller } from "react-hook-form";
+import "./FormComponents.css";
 
 const InputForm = ({ label, name, control, error, type }) => {
   return (
-    <div className="form-group">
-      <label htmlFor={name}>{label}</label>
+    <div className="input-form">
+      <label htmlFor={name} className="input-form__label">
+        {label}
+      </label>
       <Controller
         name={name}
         control={control}
@@ -12,11 +15,15 @@ const InputForm = ({ label, name, control, error, type }) => {
             id={name}
             type={type}
             {...field}
-            className={`form-control ${error ? "is-invalid" : ""}`}
+            className={`input-form__input ${
+              error ? "input-form__input--invalid" : ""
+            }`}
           />
         )}
-      ></Controller>
-      {error && <div className="error">{error.message}</div>}
+      />
+      <div className="input-form__error">
+        {error ? error.message : "\u00A0" /* non-breaking space */}
+      </div>
     </div>
   );
 };
