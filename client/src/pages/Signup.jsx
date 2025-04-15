@@ -57,7 +57,8 @@ const Signup = () => {
           src="/images/form-bg.webp"
           alt="Foto de Annie Spratt en Unsplash"
           className="signup__bg"
-          loading="lazy"
+          loading="eager"
+          fetchPriority="high"
         />
       </picture>
       <form onSubmit={handleSubmit(addUser)} className="signup__form">
