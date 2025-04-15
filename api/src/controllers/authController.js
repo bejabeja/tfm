@@ -3,6 +3,7 @@ import { z } from 'zod';
 import { AuthError } from '../errors/AuthError.js';
 import { ConflictError } from '../errors/ConflictError.js';
 import { ValidationError } from '../errors/ValidationError.js';
+import config from '../config/config.js';
 
 const signupSchema = z.object({
     username: z.string().min(1, "Name is required").regex(/^\S+$/, "Username cannot contain spaces"),
@@ -53,10 +54,10 @@ export class AuthController {
             const { username, password } = result.data;
             const user = await this.userService.login({ username, password });
 
-            const token = jwt.sign({ id: user.id, username: user.username }, process.env.JWT_SECRET, { expiresIn: '1h' });
+            const token = jwt.sign({ id: user.id, username: user.username }, config.jwtSecret, { expiresIn: '1h' });
             res.cookie('access_token', token, {
                 httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
+                secure: config.nodeEnv === 'production',
                 sameSite: 'strict',
                 maxAge: 3600000,
             }).status(200).json(user);

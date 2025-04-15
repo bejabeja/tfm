@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import { AuthError } from '../errors/AuthError.js';
+import config from '../config/config.js';
 
 export const authenticate = (req, res, next) => {
     const token = req.cookies.access_token;
@@ -8,7 +9,7 @@ export const authenticate = (req, res, next) => {
     }
 
     try {
-        const data = jwt.verify(token, process.env.JWT_SECRET);
+        const data = jwt.verify(token, config.jwtSecret);
         req.user = data;
     } catch (error) {
         console.error("Error verifying token:", error);

@@ -1,7 +1,8 @@
 import * as Sentry from "@sentry/node";
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import './instrument.js';
+import config from "./src/config/config.js";
+import './src/config/instrument.js';
 import { authenticate } from './src/middlewares/authenticate.js';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
@@ -11,7 +12,6 @@ import { createItineraryRouter } from './src/routes/itineraryRouter.js';
 import { createUserRouter } from './src/routes/userRouter.js';
 
 const app = express();
-const PORT = process.env.PORT || 3000;
 
 app.use(corsMiddleware());
 app.use(express.json());
@@ -41,6 +41,6 @@ app.use((req, res) => {
 
 app.use(errorHandler)
 
-app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
+app.listen(config.port, () => {
+    console.log(`Server running at http://localhost:${config.port}`);
 });

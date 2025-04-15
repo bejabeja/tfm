@@ -1,18 +1,19 @@
 import 'dotenv/config'
 import pkg from 'pg'
+import config from '../config/config.js'
 
 const { Client } = pkg
 
 const DEFAULT_DB = {
-    host: process.env.DB_HOST,
-    user: process.env.DB_USER,
-    password: process.env.DB_PASSWORD,
-    database: process.env.DB_NAME,
-    port: process.env.DB_PORT,
+    host: config.dbHost,
+    user: config.dbUser,
+    password: config.dbPassword,
+    database: config.dbName,
+    port: config.dbPort,
 }
 
-const client = process.env.DATABASE_URL
-    ? new Client({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
+const client = config.databaseUrl
+    ? new Client({ connectionString: config.databaseUrl, ssl: { rejectUnauthorized: false } })
     : new Client(DEFAULT_DB)
 
 export async function connectToDatabase() {

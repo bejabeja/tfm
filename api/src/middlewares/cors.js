@@ -1,7 +1,7 @@
 import cors from 'cors';
-import 'dotenv/config';
+import config from '../config/config.js';
 
-const ACCEPTED_ORIGINS = [process.env.ORIGIN_ONE];
+const ACCEPTED_ORIGINS = [config.originOne];
 export const corsMiddleware = ({ acceptedOrigins = ACCEPTED_ORIGINS } = {}) =>
     cors({
         origin: (origin, callback) => {
