@@ -46,13 +46,7 @@ const Signup = () => {
   };
 
   return (
-    <section className="signup">
-      <picture>
-        <source
-          srcSet="/images/form-bg-mobile.webp"
-          media="(max-width: 768px)"
-          type="image/webp"
-        />
+    <section className="signup">      
         <img
           src="/images/form-bg.webp"
           alt="Foto de Annie Spratt en Unsplash"
@@ -60,7 +54,6 @@ const Signup = () => {
           loading="eager"
           fetchPriority="high"
         />
-      </picture>
       <form onSubmit={handleSubmit(addUser)} className="signup__form">
         <h1 className="title-form-h1">Sign Up</h1>
 

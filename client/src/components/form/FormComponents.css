@@ -46,7 +46,7 @@
 }
 
 .title-form-h1 {
-    font-size: 2.5rem;
+    font-size: 1.5rem;
     margin-bottom: 2rem;
     color: var(--primary-color);
     text-align: center;
@@ -64,4 +64,13 @@
 
 .form--navigate-link a:hover {
     text-decoration: underline;
+}
+
+@media (min-width: 480px) {
+    .title-form-h1 {
+        font-size: 2.5rem;
+        margin-bottom: 2rem;
+        color: var(--primary-color);
+        text-align: center;
+    }
 }

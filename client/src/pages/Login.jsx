@@ -3,7 +3,6 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { bgImage } from "../utils/constants";
 import InputForm from "../components/form/InputForm";
 import SubmitButton from "../components/form/SubmitButton";
 import { loginUser } from "../reducers/authReducer";
@@ -42,19 +41,12 @@ const Login = () => {
 
   return (
     <section className="login">
-     <picture>
-        <source
-          srcSet="/images/form-bg-mobile.webp"
-          media="(max-width: 768px)"
-          type="image/webp"
-        />
-        <img
-          src="/images/form-bg.webp"
-          alt="Foto de Annie Spratt en Unsplash"
-          className="login__bg"
-          loading="lazy"
-        />
-      </picture>
+      <img
+        src="/images/form-bg.webp"
+        alt="Foto de Annie Spratt en Unsplash"
+        className="login__bg"
+        loading="lazy"
+      />
 
       <form onSubmit={handleSubmit(checkUser)} className="login__form">
         <h1 className="title-form-h1">Log in</h1>
