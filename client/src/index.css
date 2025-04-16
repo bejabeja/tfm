@@ -6,6 +6,7 @@
   --primary-color: #0077B6;
   --text-color: #333;
   --white-color: #fff;
+  --secondary-color: #E0E0E0;
 
   --container-whitout-navbar: calc(100vh - 80px);
 
@@ -39,26 +40,59 @@ h1 {
   line-height: 1.1;
 }
 
-.btn-primary {
+.btn {
+  display: flex;
   justify-content: center;
+  align-items: center;
   padding: 0.75em 1.5em;
   font-size: 1rem;
   font-weight: 600;
-  color: var(--white-color);
-  background-color: var(--primary-color);
-  border: none;
   border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: var(--white-color);
+  border: none;
 }
 
 .btn-primary:hover {
   background-color: #005f91;
 }
 
+.btn-secondary {
+  background-color: #F4A261;
+  color: var(--white-color);
+  border: none;
+  max-width: 240px;
+}
+
+.btn-secondary:hover {
+  background-color: #ea580c;
+}
+
+.btn--tertiary {
+  background-color: var(--white-color);
+  color: var(--text-color);
+  border: 1px solid var(--secondary-color);
+  box-shadow: none;
+}
+
+.btn--tertiary:hover {
+  background-color: var(--secondary-color);
+}
+
 .error-message {
   color: red;
   font-size: 1rem;
   margin: 10px 0;
+}
+
+.section__container {
+  max-width: 1200px;
 }

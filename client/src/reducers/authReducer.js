@@ -98,7 +98,7 @@ export const initUser = () => {
             const user = await getUser();
             dispatch({
                 type: "@auth/init",
-                payload: user, me
+                payload: user,
             });
         } catch (error) {
             dispatch({

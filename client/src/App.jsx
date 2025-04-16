@@ -10,6 +10,7 @@ import Logout from "./pages/Logout";
 import PrivateLayout from "./pages/PrivateLayout";
 import Signup from "./pages/Signup";
 import { clearError, initUser } from "./reducers/authReducer";
+import { initUsers } from "./reducers/usersReducer";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -18,6 +19,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initUser());
+    dispatch(initUsers());
   }, []);
 
   useEffect(() => {

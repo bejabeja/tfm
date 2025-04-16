@@ -1,0 +1,10 @@
+.home {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    align-items: center;
+}
+
+.home__users {
+    padding: 2rem;
+}
