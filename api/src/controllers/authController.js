@@ -1,9 +1,9 @@
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
+import config from '../config/config.js';
 import { AuthError } from '../errors/AuthError.js';
 import { ConflictError } from '../errors/ConflictError.js';
 import { ValidationError } from '../errors/ValidationError.js';
-import config from '../config/config.js';
 
 const signupSchema = z.object({
     username: z.string().min(1, "Name is required").regex(/^\S+$/, "Username cannot contain spaces"),
@@ -54,13 +54,23 @@ export class AuthController {
             const { username, password } = result.data;
             const user = await this.userService.login({ username, password });
 
-            const token = jwt.sign({ id: user.id, username: user.username }, config.jwtSecret, { expiresIn: '1h' });
-            res.cookie('access_token', token, {
+            const accessToken = this.generateAccessToken(user);
+            const refreshToken = this.generateRefreshToken(user);
+
+            res.cookie('access_token', accessToken, {
                 httpOnly: true,
                 secure: config.nodeEnv === 'production',
                 sameSite: 'strict',
-                maxAge: 3600000,
-            }).status(200).json(user);
+                maxAge: 60 * 60 * 1000, //1 hour
+            })
+                .cookie('refresh_token', refreshToken, {
+                    httpOnly: true,
+                    secure: config.nodeEnv === 'production',
+                    sameSite: 'strict',
+                    maxAge: 7 * 24 * 60 * 60 * 1000, //7days
+                })
+                .status(200).json(user);
+
         } catch (error) {
             console.error("Login error:", error);
             next(new AuthError("Invalid credentials"));
@@ -73,5 +83,43 @@ export class AuthController {
         } catch (error) {
             next(error);
         }
+    }
+
+    async refresh(req, res, next) {
+        const refreshToken = req.cookies.refresh_token;
+
+        if (!refreshToken) {
+            return next(new AuthError("No refresh token provided"));
+        }
+
+        try {
+            const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret);
+            console.log("Decoded refresh token:", decoded);
+            const user = await this.userService.findById(decoded.id);
+            if (!user) {
+                return next(new AuthError("User not found"));
+            }
+
+            const newAccessToken = this.generateAccessToken(user);
+            res.cookie('access_token', newAccessToken, {
+                httpOnly: true,
+                secure: config.nodeEnv === 'production',
+                sameSite: 'strict',
+                maxAge: 60 * 60 * 1000, //1 hour
+            })
+                .status(200).json({ accessToken: newAccessToken });
+
+        } catch (error) {
+            console.error("Refresh token error:", error);
+            next(new AuthError("Invalid refresh token"));
+        }
+    }
+
+    generateAccessToken(user) {
+        return jwt.sign({ id: user.id, username: user.username }, config.jwtSecret, { expiresIn: '1h' });
+    }
+
+    generateRefreshToken(user) {
+        return jwt.sign({ id: user.id, username: user.username }, config.jwtRefreshSecret, { expiresIn: '7d' });
     }
 }

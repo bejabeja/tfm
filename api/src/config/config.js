@@ -8,6 +8,7 @@ const config = {
     nodeEnv: process.env.NODE_ENV,
     databaseUrl: process.env.DATABASE_URL,
     jwtSecret: process.env.JWT_SECRET,
+    jwtRefreshSecret: process.env.JWT_REFRESH_SECRET,
     originOne: process.env.ORIGIN_ONE,
 
     dbHost: process.env.DB_HOST,
