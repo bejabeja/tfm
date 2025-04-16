@@ -20,4 +20,13 @@ export class UserController {
             next(error);
         }
     }
+
+    async getFeaturedUsers(req, res, next) {
+        try {
+            const users = await this.userService.getFeaturedUsers();
+            res.status(200).json(users);
+        } catch (error) {
+            next(error);
+        }
+    }
 }

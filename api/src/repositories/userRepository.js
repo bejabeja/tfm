@@ -32,4 +32,12 @@ export class UserRepository {
         );
         return result.rows[0];
     }
+
+    async getFeaturedUsers() {
+        const result = await db.query(
+            "SELECT * FROM users WHERE role = 'featured' ORDER BY RANDOM() LIMIT 3"
+        );
+
+        return result.rows;
+    }
 }

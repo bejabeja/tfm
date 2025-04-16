@@ -4,7 +4,7 @@ import { authenticate } from "../middlewares/authenticate.js";
 import { UserRepository } from "../repositories/userRepository.js";
 import { UserService } from "../services/userService.js";
 
-export const createUserRouter = () => {
+export const createUsersRouter = () => {
     const router = Router();
     const userRepository = new UserRepository();
     const userService = new UserService(userRepository);
@@ -12,6 +12,7 @@ export const createUserRouter = () => {
 
     router.get("/", authenticate, userController.getAllUsers.bind(userController));
     router.get("/me", authenticate, userController.getUser.bind(userController));
+    router.get("/featured", userController.getFeaturedUsers.bind(userController));
 
     return router;
 };

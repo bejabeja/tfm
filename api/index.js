@@ -3,13 +3,12 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import config from "./src/config/config.js";
 import './src/config/instrument.js';
-import { authenticate } from './src/middlewares/authenticate.js';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
 import { ItineraryRepository } from './src/repositories/itineraryRepository.js';
 import { createAuthRouter } from './src/routes/authRouter.js';
 import { createItineraryRouter } from './src/routes/itineraryRouter.js';
-import { createUserRouter } from './src/routes/userRouter.js';
+import { createUsersRouter } from './src/routes/usersRouter.js';
 
 const app = express();
 
@@ -21,13 +20,8 @@ app.use(cookieParser())
 const itineraryRepo = new ItineraryRepository();
 
 app.use('/itinerary', createItineraryRouter(itineraryRepo));
-app.use('/users', createUserRouter());
+app.use('/users', createUsersRouter());
 app.use('/auth', createAuthRouter());
-
-// app.use('/protected', authenticate, (req, res) => {
-//     const { user } = req;
-//     res.status(200).json({ message: `Hello ${user.username}` });
-// });
 
 app.use('/api', (req, res) => {
     res.status(200).json({ message: 'API is running' });

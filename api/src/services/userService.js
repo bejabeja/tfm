@@ -4,11 +4,11 @@ import { AuthError } from "../errors/AuthError.js";
 import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 
-
 export class UserService {
     constructor(userRepository) {
         this.userRepository = userRepository;
     }
+
 
     async create(userData) {
         const { password, username, email, location } = userData;
@@ -35,7 +35,7 @@ export class UserService {
         if (!user) {
             throw new NotFoundError("User not found");
         }
-        
+
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
             throw new AuthError("Invalid password");
@@ -44,8 +44,6 @@ export class UserService {
         return {
             id: user.id,
             username: user.username,
-            email: user.email,
-            location: user.location
         };
     }
 
@@ -68,11 +66,34 @@ export class UserService {
         if (!user) {
             throw new NotFoundError("User not found");
         }
+
         return {
             id: user.id,
             username: user.username,
             email: user.email,
-            location: user.location
+            location: user.location,
+            avatarUrl: user.avatar_url || this.generateAvatar(user.username),
         };
+    }
+
+    async getFeaturedUsers() {
+        const users = await this.userRepository.getFeaturedUsers();
+        if (!users) {
+            throw new NotFoundError("No featured users found");
+        }
+
+        return users.map(user => ({
+            id: user.id,
+            username: user.username,
+            location: user.location,
+            tripsShared: user.trips_shared || 10000,
+            avatarUrl: user.avatar_url || this.generateAvatar(user.username),
+        }));
+    }
+
+    generateAvatar(username) {
+        return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+            username || "User Name"
+        )}&background=random&size=128`;
     }
 }
