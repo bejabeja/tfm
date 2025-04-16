@@ -24,10 +24,10 @@ app.use('/itinerary', createItineraryRouter(itineraryRepo));
 app.use('/users', createUserRouter());
 app.use('/auth', createAuthRouter());
 
-app.use('/protected', authenticate, (req, res) => {
-    const { user } = req.session;
-    res.status(200).json({ message: `Hello ${user.username}` });
-});
+// app.use('/protected', authenticate, (req, res) => {
+//     const { user } = req;
+//     res.status(200).json({ message: `Hello ${user.username}` });
+// });
 
 app.use('/api', (req, res) => {
     res.status(200).json({ message: 'API is running' });

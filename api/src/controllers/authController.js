@@ -1,6 +1,4 @@
-import jwt from 'jsonwebtoken';
 import { z } from 'zod';
-import config from '../config/config.js';
 import { AuthError } from '../errors/AuthError.js';
 import { ConflictError } from '../errors/ConflictError.js';
 import { ValidationError } from '../errors/ValidationError.js';
@@ -24,8 +22,9 @@ const loginSchema = z.object({
 });
 
 export class AuthController {
-    constructor(userService) {
+    constructor(userService, authService) {
         this.userService = userService;
+        this.authService = authService;
     }
 
     async create(req, res, next) {
@@ -35,7 +34,7 @@ export class AuthController {
         }
         try {
             await this.userService.create(result.data);
-            res.status(201).json({ message: "User created successfully" });
+            return res.status(201).json({ message: "User created successfully" });
         } catch (error) {
             if (error.code === '23505') { // unique violation error code for PostgreSQL
                 return next(new ConflictError("User already exists"));
@@ -54,22 +53,11 @@ export class AuthController {
             const { username, password } = result.data;
             const user = await this.userService.login({ username, password });
 
-            const accessToken = this.generateAccessToken(user);
-            const refreshToken = this.generateRefreshToken(user);
+            const accessToken = this.authService.generateAccessToken(user);
+            const refreshToken = this.authService.generateRefreshToken(user);
+            this.authService.setAuthCookies(res, accessToken, refreshToken)
 
-            res.cookie('access_token', accessToken, {
-                httpOnly: true,
-                secure: config.nodeEnv === 'production',
-                sameSite: 'strict',
-                maxAge: 60 * 60 * 1000, //1 hour
-            })
-                .cookie('refresh_token', refreshToken, {
-                    httpOnly: true,
-                    secure: config.nodeEnv === 'production',
-                    sameSite: 'strict',
-                    maxAge: 7 * 24 * 60 * 60 * 1000, //7days
-                })
-                .status(200).json(user);
+            return res.status(200).json(user);
 
         } catch (error) {
             console.error("Login error:", error);
@@ -79,47 +67,10 @@ export class AuthController {
 
     async logout(req, res, next) {
         try {
-            res.clearCookie('access_token').status(200).json({ message: "Logged out successfully" });
+            this.authService.clearAuthCookies(res)
+            return res.status(200).json({ message: "Logged out successfully" });
         } catch (error) {
             next(error);
         }
-    }
-
-    async refresh(req, res, next) {
-        const refreshToken = req.cookies.refresh_token;
-
-        if (!refreshToken) {
-            return next(new AuthError("No refresh token provided"));
-        }
-
-        try {
-            const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret);
-            console.log("Decoded refresh token:", decoded);
-            const user = await this.userService.findById(decoded.id);
-            if (!user) {
-                return next(new AuthError("User not found"));
-            }
-
-            const newAccessToken = this.generateAccessToken(user);
-            res.cookie('access_token', newAccessToken, {
-                httpOnly: true,
-                secure: config.nodeEnv === 'production',
-                sameSite: 'strict',
-                maxAge: 60 * 60 * 1000, //1 hour
-            })
-                .status(200).json({ accessToken: newAccessToken });
-
-        } catch (error) {
-            console.error("Refresh token error:", error);
-            next(new AuthError("Invalid refresh token"));
-        }
-    }
-
-    generateAccessToken(user) {
-        return jwt.sign({ id: user.id, username: user.username }, config.jwtSecret, { expiresIn: '1h' });
-    }
-
-    generateRefreshToken(user) {
-        return jwt.sign({ id: user.id, username: user.username }, config.jwtRefreshSecret, { expiresIn: '7d' });
     }
 }

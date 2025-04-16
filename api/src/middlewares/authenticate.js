@@ -1,21 +1,30 @@
-import jwt from 'jsonwebtoken';
-import config from '../config/config.js';
 import { AuthError } from '../errors/AuthError.js';
-
-export const authenticate = (req, res, next) => {
+import { AuthService } from '../services/authService.js';
+const authService = new AuthService();
+export const authenticate = async (req, res, next) => {
     const token = req.cookies.access_token;
+    const refreshToken = req.cookies.refresh_token;
+
+    if (!token && refreshToken) {
+        try {
+            await authService.refreshAccessToken(refreshToken, res, req);
+            return next();
+        } catch (error) {
+            return next(error);
+        }
+    }
     if (!token) {
-        return next(new AuthError('Unauthorized'));
+        return next(new AuthError('Unauthorized: No tokens provided'));
     }
 
     try {
-        const data = jwt.verify(token, config.jwtSecret);
-        req.user = data;
-        next();
+        const decoded = authService.verifyAccessToken(token);
+        req.user = decoded;
+        return next();
     } catch (error) {
-        console.error("Error verifying token:", error);
-        return next(new AuthError('Unauthorized'));
+        if (error.name === 'TokenExpiredError' && refreshToken) {
+            return authService.refreshAccessToken(refreshToken, res, next);
+        }
+        return next(new AuthError('Unauthorized: Invalid or expired access token'));
     }
-
-    next();
 }
