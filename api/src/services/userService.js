@@ -9,7 +9,6 @@ export class UserService {
         this.userRepository = userRepository;
     }
 
-
     async create(userData) {
         const { password, username, email, location } = userData;
         const existingUser = await this.userRepository.findByName(username);
@@ -59,6 +58,19 @@ export class UserService {
             email: user.email,
             location: user.location
         }));
+    }
+
+    async getUserForAuth(id) {
+        const user = await this.userRepository.getUserById(id);
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+
+        return {
+            id: user.id,
+            username: user.username,
+            avatarUrl: user.avatar_url || this.generateAvatar(user.username),
+        };
     }
 
     async getUserById(id) {

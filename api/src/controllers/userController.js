@@ -12,9 +12,10 @@ export class UserController {
         }
     }
 
-    async getUser(req, res, next) {
+    async getUserMe(req, res, next) {
+        const { id } = req.user;
         try {
-            const user = await this.userService.getUserById(req.user.id);
+            const user = await this.userService.getUserForAuth(id);
             res.status(200).json(user);
         } catch (error) {
             next(error);
@@ -25,6 +26,16 @@ export class UserController {
         try {
             const users = await this.userService.getFeaturedUsers();
             res.status(200).json(users);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getUserById(req, res, next) {
+        const { id } = req.params;
+        try {
+            const user = await this.userService.getUserById(id);
+            res.status(200).json(user);
         } catch (error) {
             next(error);
         }
