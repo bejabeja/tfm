@@ -1,6 +1,7 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
-const UserCard = ({ username, location, tripsShared, avatarUrl }) => {
+const UserCard = ({ id, username, location, tripsShared, avatarUrl }) => {
   return (
     <div className="user-card">
       <div className="user-card__header">
@@ -14,7 +15,9 @@ const UserCard = ({ username, location, tripsShared, avatarUrl }) => {
       <p className="user-card__trips">{tripsShared} trips shared</p>
       <div className="user-card__buttons">
         <button className="btn btn-primary">Follow</button>
-        <button className="btn btn--tertiary">Profile</button>
+        <Link to={`/friend-profile/${id}`} className="btn btn--tertiary">
+          Profile
+        </Link>
       </div>
     </div>
   );

@@ -1,17 +1,11 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React from "react";
+import { useSelector } from "react-redux";
 import Hero from "../components/hero/Hero";
 import UsersSection from "../components/users/UsersSection.jsx";
-import { initUsers } from "../reducers/usersReducer.js";
 import "./Home.css";
 
 const Home = () => {
-  const dispatch = useDispatch();
   const { featured, loading } = useSelector((state) => state.users);
-
-  useEffect(() => {
-    dispatch(initUsers);
-  }, [dispatch]);
 
   return (
     <section className="home">

@@ -9,9 +9,9 @@ import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import PrivateLayout from "./pages/PrivateLayout";
 import Signup from "./pages/Signup";
+import FriendProfile from "./pages/friends/FriendProfile";
 import { clearError, initUser } from "./reducers/authReducer";
 import { initUsers } from "./reducers/usersReducer";
-
 const App = () => {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -46,6 +46,12 @@ const App = () => {
             <Route path="/logout" element={<Logout />} />
             <Route path="/explore" element={<div>Explore</div>} />
             <Route path="/community" element={<div>Community</div>} />
+
+            {/* routes to decide if private or not */}
+            <Route
+              path="/friend-profile/:id"
+              element={<FriendProfile>Friend Profile</FriendProfile>}
+            />
 
             {/* private routes */}
             <Route element={<PrivateLayout />}>
