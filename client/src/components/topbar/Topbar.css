@@ -7,9 +7,10 @@
         display: flex;
         justify-content: flex-end;
         height: 60px;
-        padding: 0 1rem;
         background-color: var(--background-color);
         z-index: 100;
+        max-width: 1200px;
+        margin: 0 auto;
     }
 
     .dropdown {
@@ -71,7 +72,7 @@
     }
 
     .dropdown-content a:hover {
-        background-color: #f2f2f2;
+        background-color: var(--secondary-color);
         color: var(--primary-color);
     }
 }

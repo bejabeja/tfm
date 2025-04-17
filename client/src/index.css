@@ -5,9 +5,12 @@
 
   --primary-color: #0077B6;
   --text-color: #333;
+  --text-secondary-color: #666;
   --white-color: #fff;
   --secondary-color: #E0E0E0;
 
+  --primary-color-hover: #005f91;
+  --error-color: #FF0000;
   --container-whitout-navbar: calc(100vh - 80px);
 
   font-synthesis: none;
@@ -62,7 +65,7 @@ h1 {
 }
 
 .btn-primary:hover {
-  background-color: #005f91;
+  background-color: var(--primary-color-hover);
 }
 
 .btn-secondary {
@@ -88,11 +91,13 @@ h1 {
 }
 
 .error-message {
-  color: red;
+  color: var(--error-color);
   font-size: 1rem;
   margin: 10px 0;
 }
 
 .section__container {
   max-width: 1200px;
+  padding: 2rem;
+  margin: 0 auto;
 }

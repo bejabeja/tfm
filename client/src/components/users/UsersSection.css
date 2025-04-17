@@ -50,7 +50,7 @@
 
 .user-card__location {
   font-size: 0.9rem;
-  color: #6b7280;
+  color: var(--text-secondary-color);
   margin-bottom: 0.5rem;
 }
 
