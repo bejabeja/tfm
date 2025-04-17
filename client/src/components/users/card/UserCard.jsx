@@ -14,9 +14,7 @@ const UserCard = ({ username, location, tripsShared, avatarUrl }) => {
       <p className="user-card__trips">{tripsShared} trips shared</p>
       <div className="user-card__buttons">
         <button className="btn btn-primary">Follow</button>
-        <button className="btn btn--tertiary">
-          View profile
-        </button>
+        <button className="btn btn--tertiary">Profile</button>
       </div>
     </div>
   );

@@ -1,28 +1,37 @@
 import { getfeaturedUsers } from "../services/users.js";
-export const usersReducer = (state = [], action) => {
-    if (action.type === "@users/init") {
-        return {
-            ...state,
-            featured: action.payload,
-        };
-    }
 
-    return state;
+const initialState = {
+    featured: [],
+    loading: false,
+};
+
+export const usersReducer = (state = initialState, action) => {
+    switch (action.type) {
+        case "@users/init/start":
+            return { ...state, loading: true };
+        case "@users/init/success":
+            return { ...state, featured: action.payload, loading: false };
+        case "@users/init/fail":
+            return { ...state, featured: [], loading: false };
+        default:
+            return state;
+    }
 };
 
 
 export const initUsers = () => {
     return async (dispatch) => {
+        dispatch({ type: "@users/init/start" });
         try {
             const featuredUsers = await getfeaturedUsers();
             dispatch({
-                type: "@users/init",
+                type: "@users/init/success",
                 payload: featuredUsers,
+
             });
         } catch (error) {
             dispatch({
-                type: "@users/init",
-                payload: null,
+                type: "@users/init/fail",
             });
         }
     }

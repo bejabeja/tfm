@@ -46,14 +46,14 @@ const Signup = () => {
   };
 
   return (
-    <section className="signup">      
-        <img
-          src="/images/form-bg.webp"
-          alt="Foto de Annie Spratt en Unsplash"
-          className="signup__bg"
-          loading="eager"
-          fetchPriority="high"
-        />
+    <section className="signup">
+      <img
+        src="/images/form-bg-signup.webp"
+        alt="Foto de Annie Spratt en Unsplash"
+        className="signup__bg"
+        loading="eager"
+        fetchPriority="high"
+      />
       <form onSubmit={handleSubmit(addUser)} className="signup__form">
         <h1 className="title-form-h1">Sign Up</h1>
 

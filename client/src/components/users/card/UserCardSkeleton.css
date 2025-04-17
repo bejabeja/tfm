@@ -1,0 +1,73 @@
+.skeleton {
+  background: var(--secondary-color);
+  border-radius: 4px;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.user-card--skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  justify-content: space-between;
+}
+
+.skeleton-header {
+  width: 100%;
+  height: 64px;
+}
+
+.skeleton--avatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+}
+
+.skeleton-info {
+  width: 100px;
+}
+
+.skeleton--text {
+  height: 12px;
+  margin: 4px 0;
+}
+
+.skeleton--username {
+  width: 100px;
+}
+
+.skeleton--location {
+  width: 80px;
+}
+
+.skeleton--trips {
+  width: 120px;
+  height: 16px;
+}
+
+.skeleton--button {
+  width: 100%;
+  height: 44px;
+  border-radius: 8px;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+
+@media (min-width: 768px) {
+  .skeleton--avatar {
+    width: 64px;
+    height: 64px;
+  }
+}

@@ -17,7 +17,7 @@ const fields = [
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error, isAuthenticated } = useSelector((state) => state.auth);
+  const { error } = useSelector((state) => state.auth);
 
   const {
     control,
@@ -42,7 +42,7 @@ const Login = () => {
   return (
     <section className="login">
       <img
-        src="/images/form-bg.webp"
+        src="/images/form-bg-login.webp"
         alt="Foto de Annie Spratt en Unsplash"
         className="login__bg"
         loading="lazy"

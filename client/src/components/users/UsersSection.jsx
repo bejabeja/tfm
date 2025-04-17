@@ -1,14 +1,18 @@
 import React from "react";
 import "./UsersSection.css";
 import UserCard from "./card/UserCard";
+import UserCardSkeleton from "./card/UserCardSkeleton";
 
-const UsersSection = ({ users }) => {
+const UsersSection = ({ users, isLoading }) => {
+  const skeletonCount = 3;
   return (
     <div className="user-section">
       <div className="user-section__grid">
-        {users?.map((user, index) => (
-          <UserCard key={index} {...user} />
-        ))}
+        {isLoading
+          ? Array.from({ length: skeletonCount }).map((_, i) => (
+              <UserCardSkeleton key={i} />
+            ))
+          : users.map((user, index) => <UserCard key={index} {...user} />)}
       </div>
     </div>
   );
