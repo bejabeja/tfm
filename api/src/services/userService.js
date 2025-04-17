@@ -83,8 +83,17 @@ export class UserService {
             id: user.id,
             username: user.username,
             email: user.email,
+            name: user.name || "User Name",
             location: user.location,
+            tripsShared: user.trips_shared || 10000,
+            followers: user.followers || 1000,
+            following: user.following || 770,
             avatarUrl: user.avatar_url || this.generateAvatar(user.username),
+            itineraries: user.itineraries || [],
+            createdAt: this.formatDate(user.created_at),
+            bio: user.bio || "No bio available",
+            about: user.about || "No about information available No about information available No about information available No about information available No about information available No about information available No about information available No about information available No about information available No about information available",
+            
         };
     }
 
@@ -107,5 +116,10 @@ export class UserService {
         return `https://ui-avatars.com/api/?name=${encodeURIComponent(
             username || "User Name"
         )}&background=random&size=128`;
+    }
+
+    formatDate(date) {
+        const options = { year: "numeric", month: "long"};
+        return new Date(date).toLocaleDateString("en-US", options);
     }
 }
