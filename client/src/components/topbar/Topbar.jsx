@@ -32,7 +32,11 @@ const Topbar = () => {
         </button>
         {dropdownOpen && (
           <div className="dropdown-content">
-            <Link to="/profile" className="nav-item">
+            <Link
+              to={`/profile/${user.id}`}
+              className="nav-item"
+              onClick={toggleDropdown}
+            >
               <GoPerson className="nav-icon" />
               <span>Profile</span>
             </Link>
