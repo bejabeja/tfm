@@ -1,8 +1,31 @@
+import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 import { AuthError } from '../errors/AuthError.js';
+import { NotFoundError } from '../errors/NotFoundError.js';
 
 export class AuthService {
+    constructor(userRepository) {
+        this.userRepository = userRepository;
+    }
+
+    async login({ username, password }) {
+        const user = await this.userRepository.findByName(username);
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+
+        const isPasswordValid = await bcrypt.compare(password, user.password);
+        if (!isPasswordValid) {
+            throw new AuthError("Invalid password");
+        }
+
+        return {
+            id: user.id,
+            username: user.username,
+        };
+    }
+
     generateAccessToken(user) {
         return jwt.sign({ id: user.id, username: user.username }, config.jwtSecret, { expiresIn: '1h' });
     }

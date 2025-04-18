@@ -51,8 +51,7 @@ export class AuthController {
 
         try {
             const { username, password } = result.data;
-            const user = await this.userService.login({ username, password });
-
+            const user = await this.authService.login({ username, password });
             const accessToken = this.authService.generateAccessToken(user);
             const refreshToken = this.authService.generateRefreshToken(user);
             this.authService.setAuthCookies(res, accessToken, refreshToken)

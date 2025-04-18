@@ -1,8 +1,9 @@
 import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from 'uuid';
-import { AuthError } from "../errors/AuthError.js";
 import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
+import { generateAvatar } from "../utils/avatar.js";
+import { formatDate } from "../utils/date.js";
 
 export class UserService {
     constructor(userRepository) {
@@ -29,23 +30,6 @@ export class UserService {
         return await this.userRepository.save(userToSave);
     }
 
-    async login({ username, password }) {
-        const user = await this.userRepository.findByName(username);
-        if (!user) {
-            throw new NotFoundError("User not found");
-        }
-
-        const isPasswordValid = await bcrypt.compare(password, user.password);
-        if (!isPasswordValid) {
-            throw new AuthError("Invalid password");
-        }
-
-        return {
-            id: user.id,
-            username: user.username,
-        };
-    }
-
     async getAllUsers() {
         const users = await this.userRepository.getAllUsers();
         if (!users) {
@@ -69,7 +53,7 @@ export class UserService {
         return {
             id: user.id,
             username: user.username,
-            avatarUrl: user.avatar_url || this.generateAvatar(user.username),
+            avatarUrl: user.avatar_url || generateAvatar(user.username),
         };
     }
 
@@ -88,16 +72,17 @@ export class UserService {
             tripsShared: user.trips_shared || 10000,
             followers: user.followers || 1000,
             following: user.following || 770,
-            avatarUrl: user.avatar_url || this.generateAvatar(user.username),
+            avatarUrl: user.avatar_url || generateAvatar(user.username),
             itineraries: user.itineraries || [],
-            createdAt: this.formatDate(user.created_at),
+            createdAt: formatDate(user.created_at),
             bio: user.bio || "No bio available",
             about: user.about || "No about information available No about information available No about information available No about information available No about information available No about information available No about information available No about information available No about information available No about information available",
-            
+
         };
     }
 
     async getFeaturedUsers() {
+
         const users = await this.userRepository.getFeaturedUsers();
         if (!users) {
             throw new NotFoundError("No featured users found");
@@ -108,18 +93,8 @@ export class UserService {
             username: user.username,
             location: user.location,
             tripsShared: user.trips_shared || 10000,
-            avatarUrl: user.avatar_url || this.generateAvatar(user.username),
+            avatarUrl: user.avatar_url || generateAvatar(user.username),
         }));
     }
 
-    generateAvatar(username) {
-        return `https://ui-avatars.com/api/?name=${encodeURIComponent(
-            username || "User Name"
-        )}&background=random&size=128`;
-    }
-
-    formatDate(date) {
-        const options = { year: "numeric", month: "long"};
-        return new Date(date).toLocaleDateString("en-US", options);
-    }
 }
