@@ -9,7 +9,7 @@ import Login from "./pages/Login";
 import Logout from "./pages/Logout";
 import PrivateLayout from "./pages/PrivateLayout";
 import Signup from "./pages/Signup";
-import FriendProfile from "./pages/friends/FriendProfile";
+import Profile from "./pages/profile/Profile";
 import { clearError, initUser } from "./reducers/authReducer";
 import { initUsers } from "./reducers/usersReducer";
 const App = () => {
@@ -48,13 +48,16 @@ const App = () => {
             <Route path="/community" element={<div>Community</div>} />
 
             {/* routes to decide if private or not */}
-            <Route path="/friend-profile/:id" element={<FriendProfile />} />
+            <Route path="/friend-profile/:id" element={<Profile />} />
 
             {/* private routes */}
             <Route element={<PrivateLayout />}>
               <Route path="/my-itineraries" element={<div>Itineraries</div>} />
               <Route path="/friends" element={<div>Friends</div>} />
-              <Route path="/profile/:id" element={<FriendProfile />} />
+              <Route
+                path="/profile/:id"
+                element={<Profile isMyProfile={true} />}
+              />
             </Route>
           </Routes>
         </div>

@@ -1,7 +1,14 @@
 import { createNewUser, login, logout } from "../services/auth";
 import { getUser } from "../services/user";
 
-export const authReducer = (state = [], action) => {
+const initialState = {
+    user: null,
+    isAuthenticated: false,
+    loading: true,
+    error: null,
+};
+
+export const authReducer = (state = initialState, action) => {
     if (action.type === "@auth/init") {
         return {
             ...state,
