@@ -48,16 +48,13 @@ const App = () => {
             <Route path="/community" element={<div>Community</div>} />
 
             {/* routes to decide if private or not */}
-            <Route
-              path="/friend-profile/:id"
-              element={<FriendProfile>Friend Profile</FriendProfile>}
-            />
+            <Route path="/friend-profile/:id" element={<FriendProfile />} />
 
             {/* private routes */}
             <Route element={<PrivateLayout />}>
               <Route path="/my-itineraries" element={<div>Itineraries</div>} />
               <Route path="/friends" element={<div>Friends</div>} />
-              <Route path="/profile" element={<div>Profile</div>} />
+              <Route path="/profile/:id" element={<FriendProfile />} />
             </Route>
           </Routes>
         </div>
