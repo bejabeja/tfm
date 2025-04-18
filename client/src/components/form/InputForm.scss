@@ -1,0 +1,45 @@
+.input {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+
+  &__label {
+    font-weight: 500;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+    font-size: 1rem;
+  }
+
+  &__field {
+    padding: 0.75em 1em;
+    border: 1px solid #f1f1f1;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-family: inherit;
+    background-color: var(--white-color);
+    color: var(--text-color);
+    transition: all 0.25s;
+
+    &:focus {
+      border-color: var(--primary-color);
+      outline: none;
+      box-shadow: 0 0 0 3px rgba(0, 119, 182, 0.2);
+    }
+
+    &--invalid {
+      border-color: red;
+    }
+  }
+
+  &__error {
+    min-height: 1.2rem;
+    font-size: 0.85rem;
+    margin-top: 0.4rem;
+    color: red;
+    transition: opacity 0.3s ease;
+
+    &:empty {
+      visibility: hidden;
+    }
+  }
+}

@@ -1,10 +1,10 @@
 import { Controller } from "react-hook-form";
-import "./FormComponents.css";
+import "./InputForm.scss";
 
-const InputForm = ({ label, name, control, error, type }) => {
+const InputForm = ({ label, name, control, error, type = "text" }) => {
   return (
-    <div className="input-form">
-      <label htmlFor={name} className="input-form__label">
+    <div className="input">
+      <label htmlFor={name} className="input__label">
         {label}
       </label>
       <Controller
@@ -15,15 +15,11 @@ const InputForm = ({ label, name, control, error, type }) => {
             id={name}
             type={type}
             {...field}
-            className={`input-form__input ${
-              error ? "input-form__input--invalid" : ""
-            }`}
+            className={`input__field ${error ? "input__field--invalid" : ""}`}
           />
         )}
       />
-      <div className="input-form__error">
-        {error ? error.message : "\u00A0" /* non-breaking space */}
-      </div>
+      <div className="input__error">{error ? error.message : "\u00A0"}</div>
     </div>
   );
 };

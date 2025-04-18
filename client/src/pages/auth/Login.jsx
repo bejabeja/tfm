@@ -3,11 +3,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import InputForm from "../components/form/InputForm";
-import SubmitButton from "../components/form/SubmitButton";
-import { loginUser } from "../reducers/authReducer";
-import { loginSchema } from "../schemas/loginFormValidation";
-import "./Login.css";
+import InputForm from "../../components/form/InputForm";
+import SubmitButton from "../../components/form/SubmitButton";
+import { loginUser } from "../../reducers/authReducer";
+import { loginSchema } from "../../schemas/loginFormValidation";
+import "./Auth.scss";
 
 const fields = [
   { name: "username", label: "Username", type: "text" },
@@ -38,18 +38,20 @@ const Login = () => {
       })
     );
   };
+  console.log(errors);
 
   return (
-    <section className="login">
+    <section className="auth">
       <img
         src="/images/form-bg-login.webp"
         alt="Foto de Annie Spratt en Unsplash"
-        className="login__bg"
+        className="auth__bg"
         loading="lazy"
       />
 
-      <form onSubmit={handleSubmit(checkUser)} className="login__form">
-        <h1 className="title-form-h1">Log in</h1>
+      <form onSubmit={handleSubmit(checkUser)} className="auth__form">
+        <h1 className="auth__form-title">Log in</h1>
+
         {fields.map((field) => (
           <InputForm
             key={field.name}
@@ -60,11 +62,15 @@ const Login = () => {
             error={errors[field.name]}
           />
         ))}
-        <div className="error-message">{error ? error : "\u00A0"}</div>
+
+        <div className="auth__form-error">
+          {error && Object.keys(errors).length === 0 ? error : "\u00A0"}
+        </div>
 
         <SubmitButton label="Log In" />
-        <div className="form--navigate-link">
-          <Link to="/register">Don't have an account? Register</Link>
+
+        <div className="auth__form-link">
+          <Link to="/register">Don't have an account? Register!</Link>
         </div>
       </form>
     </section>

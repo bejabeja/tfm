@@ -1,8 +1,8 @@
 import React from "react";
 import { useSelector } from "react-redux";
-import Hero from "../components/hero/Hero";
-import UsersSection from "../components/users/UsersSection.jsx";
-import "./Home.css";
+import Hero from "../../components/hero/Hero.jsx";
+import UsersSection from "../../components/users/UsersSection.jsx";
+import "./Home.scss";
 
 const Home = () => {
   const { featured, loading } = useSelector((state) => state.users);

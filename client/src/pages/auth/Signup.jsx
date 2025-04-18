@@ -3,11 +3,11 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import InputForm from "../components/form/InputForm";
-import SubmitButton from "../components/form/SubmitButton";
-import { createUser } from "../reducers/authReducer";
-import { signupSchema } from "../schemas/signupFormValidation";
-import "./Signup.css";
+import InputForm from "../../components/form/InputForm";
+import SubmitButton from "../../components/form/SubmitButton";
+import { createUser } from "../../reducers/authReducer";
+import { signupSchema } from "../../schemas/signupFormValidation";
+import "./Auth.scss";
 
 const fields = [
   { name: "username", label: "Username", type: "text" },
@@ -46,16 +46,17 @@ const Signup = () => {
   };
 
   return (
-    <section className="signup">
+    <section className="auth">
       <img
         src="/images/form-bg-signup.webp"
         alt="Foto de Annie Spratt en Unsplash"
-        className="signup__bg"
-        loading="eager"
+        className="auth__bg"
+        loading="lazy"
         fetchPriority="high"
       />
-      <form onSubmit={handleSubmit(addUser)} className="signup__form">
-        <h1 className="title-form-h1">Sign Up</h1>
+
+      <form onSubmit={handleSubmit(addUser)} className="auth__form">
+        <h1 className="auth__form-title">Sign up</h1>
 
         {fields.map((field) => (
           <InputForm
@@ -67,10 +68,15 @@ const Signup = () => {
             error={errors[field.name]}
           />
         ))}
-        {error && <div className="error-message">{error}</div>}
+
+        <div className="auth__form-error">
+          {error && Object.keys(errors).length === 0 ? error : "\u00A0"}
+        </div>
+
         <SubmitButton label="Sign Up" />
-        <div className="form--navigate-link">
-          <Link to="/login">Already have an account? Login!</Link>
+
+        <div className="auth__form-link">
+          <Link to="/login">Already have an account? Log in!</Link>
         </div>
       </form>
     </section>
