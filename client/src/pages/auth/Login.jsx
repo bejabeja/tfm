@@ -46,7 +46,8 @@ const Login = () => {
         src="/images/form-bg-login.webp"
         alt="Foto de Annie Spratt en Unsplash"
         className="auth__bg"
-        loading="lazy"
+        loading="eager"
+        fetchPriority="high"
       />
 
       <form onSubmit={handleSubmit(checkUser)} className="auth__form">

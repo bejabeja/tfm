@@ -51,7 +51,7 @@ const Signup = () => {
         src="/images/form-bg-signup.webp"
         alt="Foto de Annie Spratt en Unsplash"
         className="auth__bg"
-        loading="lazy"
+        loading="eager"
         fetchPriority="high"
       />
 
