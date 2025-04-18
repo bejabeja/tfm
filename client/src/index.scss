@@ -3,14 +3,14 @@
   line-height: 1.5;
   font-weight: 400;
 
-  --primary-color: #0077B6;
+  --primary-color: #0077b6;
   --text-color: #333;
   --text-secondary-color: #666;
   --white-color: #fff;
-  --secondary-color: #E0E0E0;
+  --secondary-color: #e0e0e0;
 
   --primary-color-hover: #005f91;
-  --error-color: #FF0000;
+  --error-color: #ff0000;
   --container-whitout-navbar: calc(100vh - 80px);
 
   font-synthesis: none;
@@ -38,11 +38,6 @@ body {
   color: var(--text-color);
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
 .btn {
   display: flex;
   justify-content: center;
@@ -56,38 +51,38 @@ h1 {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   text-decoration: none;
-}
 
-.btn-primary {
-  background-color: var(--primary-color);
-  color: var(--white-color);
-  border: none;
-}
+  &-primary {
+    background-color: var(--primary-color);
+    color: var(--white-color);
+    border: none;
 
-.btn-primary:hover {
-  background-color: var(--primary-color-hover);
-}
+    &:hover {
+      background-color: var(--primary-color-hover);
+    }
+  }
 
-.btn-secondary {
-  background-color: #F4A261;
-  color: var(--white-color);
-  border: none;
-  max-width: 240px;
-}
+  &-secondary {
+    background-color: #f4a261;
+    color: var(--white-color);
+    border: none;
+    max-width: 240px;
 
-.btn-secondary:hover {
-  background-color: #ea580c;
-}
+    &:hover {
+      background-color: #ea580c;
+    }
+  }
 
-.btn--tertiary {
-  background-color: var(--white-color);
-  color: var(--text-color);
-  border: 1px solid var(--secondary-color);
-  box-shadow: none;
-}
+  &--tertiary {
+    background-color: var(--white-color);
+    color: var(--text-color);
+    border: 1px solid var(--secondary-color);
+    box-shadow: none;
 
-.btn--tertiary:hover {
-  background-color: var(--secondary-color);
+    &:hover {
+      background-color: var(--secondary-color);
+    }
+  }
 }
 
 .error-message {
