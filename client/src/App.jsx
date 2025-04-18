@@ -9,9 +9,11 @@ import Login from "./pages/auth/Login";
 import Logout from "./pages/auth/Logout";
 import Signup from "./pages/auth/Signup";
 import Home from "./pages/home/Home";
+import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
 import { clearError, initUser } from "./reducers/authReducer";
 import { initUsers } from "./reducers/usersReducer";
+
 const App = () => {
   const dispatch = useDispatch();
   const location = useLocation();
@@ -58,6 +60,7 @@ const App = () => {
                 path="/profile/:id"
                 element={<Profile isMyProfile={true} />}
               />
+              <Route path="/edit-profile/:id/me" element={<EditProfile />} />
             </Route>
           </Routes>
         </div>

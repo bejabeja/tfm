@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 import { getUserById } from "../../services/user";
 import "./Profile.scss";
 
@@ -76,7 +76,12 @@ const HeaderSection = ({ userData, isMyProfile }) => {
       </div>
       <div className="profile__header-actions">
         {isMyProfile ? (
-          <button className="btn btn-primary">Edit Profile</button>
+          <Link
+            to={`/edit-profile/${userData?.id}/me`}
+            className="btn btn-primary"
+          >
+            Edit Profile
+          </Link>
         ) : (
           <button className="btn btn-primary">
             {userData?.isFollowing ? "Unfollow" : "Follow"}

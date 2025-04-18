@@ -42,4 +42,9 @@
       visibility: hidden;
     }
   }
+
+  textarea.input__field {
+    resize: vertical;
+    min-height: 100px;
+  }
 }
