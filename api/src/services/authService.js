@@ -23,6 +23,7 @@ export class AuthService {
         return {
             id: user.id,
             username: user.username,
+            avatarUrl: user.avatar_url,
         };
     }
 
