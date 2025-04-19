@@ -2,10 +2,10 @@ import db from '../db/clientPostgres.js';
 
 export class UserRepository {
     async save(user) {
-        const { uuid, username, email, password, location } = user;
+        const { uuid, username, email, password, location, avatarUrl } = user;
         const result = await db.query(
-            "INSERT INTO users (id, username, email, password, location) VALUES ($1, $2, $3, $4, $5) RETURNING *",
-            [uuid, username, email, password, location]
+            "INSERT INTO users (id, username, email, password, location, avatar_url) VALUES ($1, $2, $3, $4, $5, $6) RETURNING *",
+            [uuid, username, email, password, location, avatarUrl]
         );
         return result.rows[0];
     }
@@ -30,6 +30,7 @@ export class UserRepository {
             "SELECT * FROM users WHERE id = $1",
             [id]
         );
+
         return result.rows[0];
     }
 
@@ -39,5 +40,15 @@ export class UserRepository {
         );
 
         return result.rows;
+    }
+
+    async updateUser(id, userData) {
+        const { username, name, avatarUrl, location, bio, about, updatedAt } = userData;
+
+        const result = await db.query(
+            "UPDATE users SET username = $1, name = $2, avatar_url = $3, location = $4, bio = $5, about = $6, updated_at =$7 WHERE id = $8 RETURNING *",
+            [username, name, avatarUrl, location, bio, about, updatedAt, id]
+        );
+        return result.rows[0];
     }
 }

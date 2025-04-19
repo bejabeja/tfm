@@ -24,7 +24,8 @@ export class UserService {
             username,
             email,
             password: hashedPassword,
-            location
+            location,
+            avatarUrl: generateAvatar(username),
         };
 
         return await this.userRepository.save(userToSave);
@@ -53,7 +54,7 @@ export class UserService {
         return {
             id: user.id,
             username: user.username,
-            avatarUrl: user.avatar_url || generateAvatar(user.username),
+            avatarUrl: user.avatar_url,
         };
     }
 
@@ -62,7 +63,6 @@ export class UserService {
         if (!user) {
             throw new NotFoundError("User not found");
         }
-
         return {
             id: user.id,
             username: user.username,
@@ -72,17 +72,33 @@ export class UserService {
             tripsShared: user.trips_shared || 10000,
             followers: user.followers || 1000,
             following: user.following || 770,
-            avatarUrl: user.avatar_url || generateAvatar(user.username),
+            avatarUrl: user.avatar_url,
             itineraries: user.itineraries || [],
             createdAt: formatDate(user.created_at),
             bio: user.bio || "No bio available",
             about: user.about || "No about information available No about information available No about information available No about information available No about information available No about information available No about information available No about information available No about information available No about information available",
-
         };
     }
 
-    async getFeaturedUsers() {
+    async updateUser(id, userData) {
+        const user = await this.userRepository.getUserById(id);
+        if (!user) {
+            throw new NotFoundError("User not found");
+        }
+        const updatedUser = {
+            username: userData.username,
+            name: userData.name,
+            avatarUrl: userData.avatar_url || user.avatar_url,
+            location: userData.location,
+            bio: userData.bio,
+            about: userData.about,
+            updatedAt: new Date(),
+        };
 
+        return await this.userRepository.updateUser(id, updatedUser);
+    }
+
+    async getFeaturedUsers() {
         const users = await this.userRepository.getFeaturedUsers();
         if (!users) {
             throw new NotFoundError("No featured users found");
@@ -93,8 +109,7 @@ export class UserService {
             username: user.username,
             location: user.location,
             tripsShared: user.trips_shared || 10000,
-            avatarUrl: user.avatar_url || generateAvatar(user.username),
+            avatarUrl: user.avatar_url,
         }));
     }
-
 }

@@ -22,6 +22,17 @@ export class UserController {
         }
     }
 
+    async updateUserMe(req, res, next) {
+        const { id } = req.user;
+        const userData = req.body;
+        try {
+            const updatedUser = await this.userService.updateUser(id, userData);
+            res.status(200).json(updatedUser);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async getFeaturedUsers(req, res, next) {
         try {
             const users = await this.userService.getFeaturedUsers();
