@@ -1,4 +1,4 @@
-import { getUser } from "../services/user";
+import { getUserForAuth } from "../services/user";
 
 export const userReducer = (state = [], action) => {
     if (action.type === "@user/init") {
@@ -18,7 +18,7 @@ export const userReducer = (state = [], action) => {
 export const initUser = () => {
     return async (dispatch) => {
         try {
-            const user = await getUser();
+            const user = await getUserForAuth();
             dispatch({
                 type: "@user/init",
                 payload: user,

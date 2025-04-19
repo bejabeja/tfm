@@ -1,5 +1,5 @@
 import { createNewUser, login, logout } from "../services/auth";
-import { getUser } from "../services/user";
+import { getUserForAuth } from "../services/user";
 
 const initialState = {
     user: null,
@@ -102,7 +102,7 @@ export const logoutUser = () => {
 export const initUser = () => {
     return async (dispatch) => {
         try {
-            const user = await getUser();
+            const user = await getUserForAuth();
             dispatch({
                 type: "@auth/init",
                 payload: user,

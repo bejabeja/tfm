@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
 import { editProfileSchema } from "../../schemas/editProfileFormValidation";
-import { getUserById } from "../../services/user";
+import { getUserById, updateUser } from "../../services/user";
 import "./EditProfile.scss";
 
 const EditProfile = () => {
@@ -56,13 +56,12 @@ const EditProfile = () => {
   }
 
   const saveUser = async (data) => {
-    console.log("saving user data", data);
-    // try {
-    //   await updateUserProfile(data);
-    //   navigate(`/profile/${id}`);
-    // } catch (err) {
-    //   console.error("Error updating profile", err);
-    // }
+    try {
+      await updateUser(data);
+      navigate(`/profile/${id}`);
+    } catch (err) {
+      console.error("Error updating profile", err);
+    }
   };
 
   return (
