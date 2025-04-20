@@ -1,0 +1,29 @@
+export class Place {
+    constructor({ id, title, description, address, latitude, longitude, category, createdAt, updatedAt, orderIndex }) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.category = category;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.orderIndex = orderIndex;
+    }
+
+    static fromDb(row) {
+        return new Place({
+            id: row.place_id,
+            title: row.place_title,
+            description: row.place_description,
+            address: row.address,
+            latitude: row.latitude,
+            longitude: row.longitude,
+            category: row.category,
+            createdAt: row.place_created_at,
+            updatedAt: row.place_updated_at,
+            orderIndex: row.order_index,
+        });
+    }
+}

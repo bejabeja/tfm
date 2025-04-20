@@ -1,4 +1,6 @@
 import client from '../db/clientPostgres.js';
+import { Itinerary } from '../models/itinerary.js';
+import { Place } from '../models/place.js';
 
 export class ItineraryRepository {
     async getItinerariesByUserId(userId) {
@@ -39,33 +41,12 @@ export class ItineraryRepository {
             const itineraryId = row.itinerary_id;
 
             if (!itinerariesMap.has(itineraryId)) {
-                itinerariesMap.set(itineraryId, {
-                    id: itineraryId,
-                    userId: row.user_id,
-                    title: row.itinerary_title,
-                    description: row.itinerary_description,
-                    location: row.location,
-                    startDate: row.start_date,
-                    endDate: row.end_date,
-                    createdAt: row.itinerary_created_at,
-                    updatedAt: row.itinerary_updated_at,
-                    places: [],
-                });
+                itinerariesMap.set(itineraryId, Itinerary.fromDb(row));
             }
 
             if (row.place_id) {
-                itinerariesMap.get(itineraryId).places.push({
-                    id: row.place_id,
-                    title: row.place_title,
-                    description: row.place_description,
-                    address: row.address,
-                    latitude: row.latitude,
-                    longitude: row.longitude,
-                    category: row.category,
-                    orderIndex: row.order_index,
-                    createdAt: row.place_created_at,
-                    updatedAt: row.place_updated_at,
-                });
+                const place = Place.fromDb(row);
+                itinerariesMap.get(itineraryId).addPlace(place);
             }
         }
 
