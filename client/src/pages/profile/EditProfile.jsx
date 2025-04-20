@@ -68,7 +68,7 @@ const EditProfile = () => {
     <section className="edit-profile section__container">
       <form onSubmit={handleSubmit(saveUser)} className="edit-profile__form">
         <HeaderSection userData={userData} control={control} errors={errors} />
-        <AboutSection control={control} />
+        <AboutSection control={control} errors={errors} />
         <div className="edit-profile__header-actions">
           <button type="submit" className="btn btn-primary">
             Save Profile
@@ -116,7 +116,7 @@ const HeaderSection = ({ userData, control, errors }) => {
   );
 };
 
-const AboutSection = ({ control }) => {
+const AboutSection = ({ control, errors }) => {
   return (
     <div className="profile__about">
       <h2 className="profile__about-title">About</h2>
@@ -139,6 +139,7 @@ const AboutSection = ({ control }) => {
                 control={control}
                 type="text"
                 placeholder="Edit your location"
+                error={errors.location}
               ></InputForm>
             </span>
           </div>
