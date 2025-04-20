@@ -5,7 +5,6 @@ import config from "./src/config/config.js";
 import './src/config/instrument.js';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
-import { ItineraryRepository } from './src/repositories/itineraryRepository.js';
 import { createAuthRouter } from './src/routes/authRouter.js';
 import { createItineraryRouter } from './src/routes/itineraryRouter.js';
 import { createUsersRouter } from './src/routes/usersRouter.js';
@@ -17,9 +16,7 @@ app.use(express.json());
 app.disable('x-powered-by');
 app.use(cookieParser())
 
-const itineraryRepo = new ItineraryRepository();
-
-app.use('/itinerary', createItineraryRouter(itineraryRepo));
+app.use('/itineraries', createItineraryRouter());
 app.use('/users', createUsersRouter());
 app.use('/auth', createAuthRouter());
 

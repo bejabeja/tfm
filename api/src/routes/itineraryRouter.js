@@ -1,11 +1,16 @@
 import { Router } from "express";
-import { ItineraryController } from "../controllers/itineraryController.js";
+import { ItinerariesController } from "../controllers/itinerariesController.js";
+import { ItineraryRepository } from "../repositories/itinerariesRepository.js";
+import { ItinerariesService } from "../services/itinerariesService.js";
 
-export const createItineraryRouter = (itineraryModel) => {
+export const createItineraryRouter = () => {
     const itinerariesRouter = Router();
-    const itineraryController = new ItineraryController(itineraryModel)
 
-    itinerariesRouter.get("/", itineraryController.getAll.bind(itineraryController));
+    const itinerariesRepository = new ItineraryRepository();
+    const itinerariesService = new ItinerariesService(itinerariesRepository);
+    const itinerariesController = new ItinerariesController(itinerariesService)
+
+    itinerariesRouter.get("/:userId", itinerariesController.getItinerariesByUserId.bind(itinerariesController));
 
     return itinerariesRouter;
 }
