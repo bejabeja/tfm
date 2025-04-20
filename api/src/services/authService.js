@@ -20,11 +20,7 @@ export class AuthService {
             throw new AuthError("Invalid password");
         }
 
-        return {
-            id: user.id,
-            username: user.username,
-            avatarUrl: user.avatar_url,
-        };
+        return user.toSimpleDTO();
     }
 
     generateAccessToken(user) {

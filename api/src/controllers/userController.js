@@ -1,3 +1,5 @@
+import { updateUserSchema } from "../utils/schemasValidation.js";
+
 export class UserController {
     constructor(userService) {
         this.userService = userService;
@@ -24,9 +26,10 @@ export class UserController {
 
     async updateUserMe(req, res, next) {
         const { id } = req.user;
-        const userData = req.body;
+
         try {
-            const updatedUser = await this.userService.updateUser(id, userData);
+            const validatedData = updateUserSchema.parse(req.body);
+            const updatedUser = await this.userService.updateUser(id, validatedData);
             res.status(200).json(updatedUser);
         } catch (error) {
             next(error);
