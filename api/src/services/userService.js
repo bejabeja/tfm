@@ -13,8 +13,9 @@ export class UserService {
         const { password, username, email, location } = userData;
         const existingUser = await this.userRepository.findByName(username);
         if (existingUser) {
-            throw new ConflictError("User already exists");
+            throw new ConflictError("Username is not available. Please choose another one.");
         }
+
         const existingByEmail = await this.userRepository.findByEmail(email);
         if (existingByEmail) {
             throw new ConflictError("Email already in use");
@@ -61,6 +62,11 @@ export class UserService {
     }
 
     async updateUser(id, userData) {
+        const usernameExist = await this.userRepository.findByName(userData.username);
+        if (usernameExist && usernameExist.id !== id) {
+            throw new ConflictError("Username is not available. Please choose another one.");
+        }
+
         const user = await this.userRepository.getUserById(id);
         if (!user) {
             throw new NotFoundError("User not found");

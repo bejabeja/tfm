@@ -3,10 +3,10 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import {InputForm} from "../../components/form/InputForm";
+import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { loginUser } from "../../reducers/authReducer";
-import { loginSchema } from "../../schemas/loginFormValidation";
+import { loginSchema } from "../../utils/schemasValidation";
 import "./Auth.scss";
 
 const fields = [

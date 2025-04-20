@@ -4,8 +4,8 @@ import { useForm } from "react-hook-form";
 import { IoLocationOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
-import { editProfileSchema } from "../../schemas/editProfileFormValidation";
 import { getUserById, updateUser } from "../../services/user";
+import { updateUserSchema } from "../../utils/schemasValidation";
 import "./EditProfile.scss";
 
 const EditProfile = () => {
@@ -22,7 +22,7 @@ const EditProfile = () => {
     setValue,
     formState: { errors },
   } = useForm({
-    resolver: zodResolver(editProfileSchema),
+    resolver: zodResolver(updateUserSchema),
   });
 
   useEffect(() => {
