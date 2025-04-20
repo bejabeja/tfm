@@ -75,7 +75,7 @@ export class UserService {
         user.updateProfile(
             userData.name,
             userData.location,
-            userData.avatarUrl || user.avatar_url,
+            userData.avatarUrl || user.avatarUrl,
             userData.bio,
             userData.about,
             userData.username

@@ -2,25 +2,43 @@ import { generateAvatar } from "../utils/avatar.js";
 import { formatDate } from "../utils/date.js";
 
 export class User {
-    constructor(user) {
-        this.id = user.id;
-        this.username = user.username;
-        this.email = user.email;
-        this.password = user.password;
-        this.location = user.location;
-        this.avatarUrl = user.avatar_url || generateAvatar(user.username);
-        this.createdAt = user.created_at;
-        this.updatedAt = user.updated_at;
-
-        this.name = user.name || "No nam";
-        this.tripsShared = user.trips_shared || 0;
-        this.followers = user.followers || 0;
-        this.following = user.following || 0;
-        this.itineraries = user.itineraries || [];
-        this.bio = user.bio || "No bio available";
-        this.about = user.about || "No about information available";
+    constructor({ id, username, email, password, location, avatarUrl, createdAt, updatedAt, name, tripsShared, followers, following, itineraries, bio, about }) {
+        this.id = id;
+        this.username = username;
+        this.email = email;
+        this.password = password;
+        this.location = location;
+        this.avatarUrl = avatarUrl || generateAvatar(username);
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.name = name || "No name";
+        this.tripsShared = tripsShared || 0;
+        this.followers = followers || 0;
+        this.following = following || 0;
+        this.itineraries = itineraries || [];
+        this.bio = bio || "No bio available";
+        this.about = about || "No about information available";
     }
 
+    static fromDb(row) {
+        return new User({
+            id: row.id,
+            username: row.username,
+            email: row.email,
+            password: row.password,
+            location: row.location,
+            avatarUrl: row.avatar_url,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at,
+            name: row.name,
+            tripsShared: row.trips_shared,
+            followers: row.followers,
+            following: row.following,
+            itineraries: row.itineraries,
+            bio: row.bio,
+            about: row.about
+        });
+    }
 
     updateProfile(name, location, avatarUrl, bio, about, username) {
         this.name = name;
