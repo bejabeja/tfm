@@ -2,7 +2,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoLocationOutline } from "react-icons/io5";
-import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
 import { editProfileSchema } from "../../schemas/editProfileFormValidation";
@@ -15,7 +14,6 @@ const EditProfile = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const {
@@ -51,16 +49,14 @@ const EditProfile = () => {
     return <div>Loading...</div>;
   }
 
-  if (error) {
-    return <div>Error fetching data</div>;
-  }
-
   const saveUser = async (data) => {
     try {
       await updateUser(data);
       navigate(`/profile/${id}`);
     } catch (err) {
       console.error("Error updating profile", err);
+
+      setError(err.message);
     }
   };
 
@@ -69,6 +65,7 @@ const EditProfile = () => {
       <form onSubmit={handleSubmit(saveUser)} className="edit-profile__form">
         <HeaderSection userData={userData} control={control} errors={errors} />
         <AboutSection control={control} errors={errors} />
+        {error && <div className="error-message">{error}</div>}
         <div className="edit-profile__header-actions">
           <button type="submit" className="btn btn-primary">
             Save Profile
@@ -133,7 +130,7 @@ const AboutSection = ({ control, errors }) => {
         <div className="profile__about-content-stats">
           <div className="profile__about-content-stats-location edit-profile__location">
             <IoLocationOutline className="nav-icon" />
-            <span>
+            <div>
               <InputForm
                 name="location"
                 control={control}
@@ -141,7 +138,7 @@ const AboutSection = ({ control, errors }) => {
                 placeholder="Edit your location"
                 error={errors.location}
               ></InputForm>
-            </span>
+            </div>
           </div>
         </div>
       </div>
