@@ -5,7 +5,7 @@ import { IoSearch } from "react-icons/io5";
 import { RiUserCommunityLine } from "react-icons/ri";
 import { useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
-import "./Navbar.css";
+import "./Navbar.scss";
 
 const Navbar = () => {
   const { isAuthenticated } = useSelector((state) => state.auth);

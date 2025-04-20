@@ -1,5 +1,5 @@
 import React from "react";
-import "./UsersSection.css";
+import "./UsersSection.scss";
 import UserCard from "./card/UserCard";
 import UserCardSkeleton from "./card/UserCardSkeleton";
 

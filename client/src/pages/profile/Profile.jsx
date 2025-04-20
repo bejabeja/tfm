@@ -33,7 +33,6 @@ const Profile = ({ isMyProfile }) => {
   if (error) {
     return <div>Error fetching data</div>;
   }
-  console.log(userData);
 
   return (
     <section className="profile section__container">

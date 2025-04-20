@@ -3,7 +3,7 @@ import { GoPerson, GoSignOut } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { logoutUser } from "../../reducers/authReducer.js";
-import "./Topbar.css";
+import "./Topbar.scss";
 
 const Topbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
