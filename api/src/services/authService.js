@@ -47,7 +47,7 @@ export class AuthService {
             res.cookie('access_token', newAccessToken, {
                 httpOnly: true,
                 secure: config.nodeEnv === 'production',
-                sameSite: 'strict',
+                sameSite: 'None',
                 maxAge: 60 * 60 * 1000, // 1 hour
             });
 
@@ -61,14 +61,14 @@ export class AuthService {
         res.cookie('access_token', accessToken, {
             httpOnly: true,
             secure: config.nodeEnv === 'production',
-            sameSite: 'strict',
+            sameSite: 'None',
             maxAge: 60 * 60 * 1000, // 1 hour
         });
 
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
             secure: config.nodeEnv === 'production',
-            sameSite: 'strict',
+            sameSite: 'None',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
     }
