@@ -4,7 +4,8 @@ const authService = new AuthService();
 export const authenticate = async (req, res, next) => {
     const token = req.cookies.access_token;
     const refreshToken = req.cookies.refresh_token;
-
+    console.log('Token:', token);
+    console.log('Refresh Token:', refreshToken);
     if (!token && refreshToken) {
         try {
             await authService.refreshAccessToken(refreshToken, res, req);
@@ -13,6 +14,10 @@ export const authenticate = async (req, res, next) => {
             return next(error);
         }
     }
+
+    console.log('Token 2:', token);
+
+
     if (!token) {
         return next(new AuthError('Unauthorized: No tokens provided'));
     }
