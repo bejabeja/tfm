@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
+import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import { getUserById } from "../../services/user";
 import "./Profile.scss";
 
@@ -32,6 +33,7 @@ const Profile = ({ isMyProfile }) => {
   if (error) {
     return <div>Error fetching data</div>;
   }
+  console.log(userData);
 
   return (
     <section className="profile section__container">
@@ -39,7 +41,7 @@ const Profile = ({ isMyProfile }) => {
 
       <AboutSection userData={userData} />
 
-      <ItinerariesSection itineraries={userData?.itineraries} />
+      <ItinerariesSection itineraries={userData.itineraries} user={userData} />
     </section>
   );
 };
@@ -110,16 +112,6 @@ const AboutSection = ({ userData }) => {
           </p>
         </div>
       </div>
-    </div>
-  );
-};
-
-const ItinerariesSection = ({ itineraries }) => {
-  return (
-    <div className="profile__itineraries">
-      <h2 className="profile__itineraries-title">Shared Itineraries</h2>
-
-      <p>No itineraries shared yet.</p>
     </div>
   );
 };
