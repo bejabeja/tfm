@@ -5,8 +5,9 @@ import { NotFoundError } from "../errors/NotFoundError.js";
 import { generateAvatar } from "../utils/avatar.js";
 
 export class UserService {
-    constructor(userRepository) {
+    constructor(userRepository, itinerariesRepository) {
         this.userRepository = userRepository;
+        this.itinerariesRepository = itinerariesRepository;
     }
 
     async create(userData) {
@@ -58,6 +59,13 @@ export class UserService {
         if (!user) {
             throw new NotFoundError("User not found");
         }
+
+        const itineraries = await this.itinerariesRepository.getItinerariesByUserId(id);
+        if (!itineraries) {
+            throw new NotFoundError("No itineraries found");
+        }
+        user.itineraries = itineraries.map(itinerary => itinerary.toSimpleDTO());
+
         return user.toDTO();
     }
 
