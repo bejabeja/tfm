@@ -10,7 +10,7 @@ export class Itinerary {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.places = [];
-        this.photoUrl = photoUrl;
+        this.photoUrl = photoUrl || this.getPlaceholderImage();
     }
 
     static fromDb(row) {
@@ -44,6 +44,8 @@ export class Itinerary {
             createdAt: this.createdAt,
             updatedAt: this.updatedAt,
             places: this.places.map(place => place.toDTO()),
+            tripTotalDays: this.getTotalDays(),
+            photoUrl: this.photoUrl
         };
     }
 
@@ -54,7 +56,7 @@ export class Itinerary {
             description: this.description,
             location: this.location,
             tripTotalDays: this.getTotalDays(),
-            photoUrl: this.photoUrl || this.getPlaceholderImage(),
+            photoUrl: this.photoUrl,
         };
     }
 

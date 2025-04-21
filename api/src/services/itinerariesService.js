@@ -4,14 +4,11 @@ export class ItinerariesService {
     constructor(itinerariesRepository) {
         this.itinerariesRepository = itinerariesRepository;
     }
-
-    async getItinerariesByUserId(userId) {
-        const itineraries = await this.itinerariesRepository.getItinerariesByUserId(userId);
-        if (!itineraries || itineraries.length === 0) {
-            throw new NotFoundError("No itineraries found for this user");
+    async getItineraryById(id) {
+        const itinerary = await this.itinerariesRepository.getItineraryById(id);
+        if (!itinerary) {
+            throw new NotFoundError("Itinerary not found");
         }
-
-        const itinerariesDTO = itineraries.map(itinerary => itinerary.toSimpleDTO());
-        return itinerariesDTO;
+        return itinerary.toDTO();
     }
 }

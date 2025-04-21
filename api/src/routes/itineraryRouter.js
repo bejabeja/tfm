@@ -10,7 +10,7 @@ export const createItineraryRouter = () => {
     const itinerariesService = new ItinerariesService(itinerariesRepository);
     const itinerariesController = new ItinerariesController(itinerariesService)
 
-    itinerariesRouter.get("/:userId", itinerariesController.getItinerariesByUserId.bind(itinerariesController));
+    itinerariesRouter.get("/:id", itinerariesController.getItineraryById.bind(itinerariesController));
 
     return itinerariesRouter;
 }

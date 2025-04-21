@@ -3,8 +3,8 @@ import { Itinerary } from '../models/itinerary.js';
 import { Place } from '../models/place.js';
 
 export class ItineraryRepository {
-    async getItinerariesByUserId(userId) {
-        const query = `
+    #buildItineraryQuery(whereClause) {
+        return `
         SELECT
           i.id AS itinerary_id,
           i.user_id,
@@ -28,13 +28,12 @@ export class ItineraryRepository {
         FROM itineraries i
         LEFT JOIN itinerary_places ip ON ip.itinerary_id = i.id
         LEFT JOIN places p ON p.id = ip.place_id
-        WHERE i.user_id = $1
+        ${whereClause}
         ORDER BY i.start_date, ip.order_index;
       `;
+    }
 
-        const result = await client.query(query, [userId]);
-        const rows = result.rows;
-
+    #mapItineraryRows(rows) {
         const itinerariesMap = new Map();
 
         for (const row of rows) {
@@ -51,5 +50,25 @@ export class ItineraryRepository {
         }
 
         return Array.from(itinerariesMap.values());
+    }
+
+    async getItinerariesByUserId(userId) {
+
+        const query = this.#buildItineraryQuery('WHERE i.user_id = $1');
+        const result = await client.query(query, [userId]);
+
+        return this.#mapItineraryRows(result.rows);
+    }
+
+    async getItineraryById(id) {
+        const query = this.#buildItineraryQuery('WHERE i.id = $1');
+        const result = await client.query(query, [id]);
+        const rows = result.rows;
+
+        if (rows.length === 0) {
+            return null;
+        }
+
+        return this.#mapItineraryRows(result.rows)[0];
     }
 }

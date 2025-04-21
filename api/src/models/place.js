@@ -26,4 +26,19 @@ export class Place {
             orderIndex: row.order_index,
         });
     }
+
+    toDTO() {
+        return {
+            id: this.id,
+            title: this.title,
+            description: this.description,
+            address: this.address,
+            latitude: this.latitude,
+            longitude: this.longitude,
+            category: this.category,
+            createdAt: this.createdAt,
+            updatedAt: this.updatedAt,
+            orderIndex: this.orderIndex
+        };
+    }
 }
