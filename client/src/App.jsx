@@ -62,6 +62,10 @@ const App = () => {
                 element={<Profile isMyProfile={true} />}
               />
               <Route path="/edit-profile/:id/me" element={<EditProfile />} />
+              <Route
+                path="/create-itinerary"
+                element={<div>Create Itinerary</div>}
+              />
             </Route>
           </Routes>
         </div>

@@ -1,0 +1,20 @@
+.my-itineraries {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2rem;
+
+  &__section-ctas {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+  }
+}
+
+@media (min-width: 480px) {
+  .my-itineraries {
+    &__section-ctas {
+      justify-content: flex-end;
+    }
+  }
+}

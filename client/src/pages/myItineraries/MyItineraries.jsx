@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import { getUserById } from "../../services/user";
+import "./MyItineraries.scss";
 
 const MyItineraries = () => {
   const { id } = useSelector((state) => state.auth.user);
@@ -36,6 +38,11 @@ const MyItineraries = () => {
 
   return (
     <section className="my-itineraries section__container">
+      <div className="my-itineraries__section-ctas">
+        <Link to="/create-itinerary" className="btn btn-secondary">
+          Create new trip
+        </Link>
+      </div>
       {userData && userData.itineraries ? (
         <ItinerariesSection
           itineraries={userData.itineraries}
