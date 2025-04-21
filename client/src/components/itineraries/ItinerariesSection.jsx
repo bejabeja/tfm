@@ -4,7 +4,6 @@ import ItineraryCard from "./card/ItineraryCard.jsx";
 
 const ItinerariesSection = ({ itineraries, user, isMyProfile = false }) => {
   const skeletonCount = 3;
-  console.log("uuuuuusser", user);
   return (
     <div className="itineraries-section">
       {!isMyProfile && (

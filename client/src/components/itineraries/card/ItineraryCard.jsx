@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import { IoIosHeart, IoIosHeartEmpty } from "react-icons/io";
+import { Link } from "react-router-dom";
 
 const ItineraryCard = ({ itinerary, user }) => {
   const { id, title, photoUrl, location, tripTotalDays } = itinerary;
   const { username } = user;
+  console.log("itinerary", id);
 
   const [isFavorited, setIsFavorited] = useState(false);
 
@@ -12,7 +13,7 @@ const ItineraryCard = ({ itinerary, user }) => {
   };
 
   return (
-    <div className="itinerary-card">
+    <Link className="itinerary-card" to={`/itinerary/${id}`}>
       <div className="itinerary-card__header">
         <div className="itinerary-card__image-wrapper">
           <img
@@ -20,14 +21,14 @@ const ItineraryCard = ({ itinerary, user }) => {
             alt={username}
             className="itinerary-card__image"
           />
-          <button
+          {/* <button
             className={`itinerary-card__favorite-btn ${
               isFavorited ? "favorited" : ""
             }`}
             onClick={toggleFavorite}
           >
             {isFavorited ? <IoIosHeart /> : <IoIosHeartEmpty />}
-          </button>
+          </button> */}
         </div>
         <div className="itinerary-card__header--info">
           {/* <h3 className="itinerary-card__name">@{username}</h3> */}
@@ -42,7 +43,7 @@ const ItineraryCard = ({ itinerary, user }) => {
           Profile
         </Link>
       </div> */}
-    </div>
+    </Link>
   );
 };
 

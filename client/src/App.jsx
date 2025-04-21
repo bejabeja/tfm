@@ -10,6 +10,7 @@ import Logout from "./pages/auth/Logout";
 import Signup from "./pages/auth/Signup";
 import CreateItinerary from "./pages/createItinerary/CreateItinerary";
 import Home from "./pages/home/Home";
+import Itinerary from "./pages/itinerary/Itinerary";
 import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
@@ -53,6 +54,7 @@ const App = () => {
 
             {/* routes to decide if private or not */}
             <Route path="/friend-profile/:id" element={<Profile />} />
+            <Route path="/itinerary/:id" element={<Itinerary />} />
 
             {/* private routes */}
             <Route element={<PrivateLayout />}>
