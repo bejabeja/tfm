@@ -65,6 +65,18 @@
       align-items: center;
       text-align: center;
       padding: 1.5rem 0;
+
+      & > div {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+      }
+    }
+
+    &-places {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
     }
   }
 
@@ -78,6 +90,29 @@
   .icon {
     font-size: 1.5rem;
     color: var(--primary-color);
+    align-items: center;
+    display: flex;
+  }
+
+  .place {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    border: 1px dotted var(--text-secondary-color);
+    padding: 1.5rem;
+    border-radius: 8px;
+
+    &__info {
+      display: flex;
+      flex-direction: row;
+      gap: 1rem;
+      align-items: center;
+      width: 100%;
+
+      &-left {
+        width: fit-content;
+      }
+    }
   }
 }
 
@@ -85,8 +120,11 @@
   .itinerary__container {
     flex-direction: row;
 
+    &-primary {
+      width: 60%;
+    }
     &-secondary {
-      width: 35%;
+      width: 40%;
     }
   }
 }

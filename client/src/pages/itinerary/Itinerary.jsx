@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
+import { FaCity } from "react-icons/fa";
+import { GoPeople } from "react-icons/go";
 import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
 import { useParams } from "react-router-dom";
+import { categoryIcons } from "../../assets/icons.js";
 import { getItineraryById } from "../../services/itineraries";
 import "./Itinerary.scss";
 
@@ -33,7 +36,7 @@ const Itinerary = () => {
     return <div>Error fetching data</div>;
   }
 
-  console.log(itinerary);
+  console.log(itinerary.places[0]);
   return (
     <section className="itinerary">
       <div className="itinerary__hero">
@@ -60,17 +63,25 @@ const Itinerary = () => {
               <p className="itinerary__description">{itinerary.budget} USD</p>
             </div>
             <div className="itinerary__container-stats-days">
-              <MdOutlineAttachMoney className="icon" />
+              <MdOutlineCalendarMonth className="icon" />
               <strong className="itinerary__title">Travel days</strong>
-              <p className="itinerary__description">{itinerary.tripTotalDays}</p>
+              <p className="itinerary__description">
+                {itinerary.tripTotalDays}
+              </p>
             </div>
             <div className="itinerary__container-stats-people">
-              <MdOutlineAttachMoney className="icon" />
+              <GoPeople className="icon" />
               <strong className="itinerary__title">People</strong>
               <p className="itinerary__description">
                 {itinerary.numberOfPeople}
               </p>
             </div>
+          </div>
+          <div className="itinerary__container-primary-places">
+            <h1 className="itinerary__title">Places</h1>
+            {itinerary.places.map((place, index) => (
+              <Place key={place.id} place={place} index={index} />
+            ))}
           </div>
         </div>
         <div className="itinerary__container-secondary">
@@ -78,6 +89,33 @@ const Itinerary = () => {
         </div>
       </div>
     </section>
+  );
+};
+
+const Place = ({ place, index }) => {
+  const Icon = categoryIcons[place.category] || FaCity;
+  return (
+    <div className="place">
+      <h3 className="place__title">
+        Place {index + 1} : {place.title}
+      </h3>
+      <div className="place__info">
+        <div className="place__info-left">
+          <Icon className="icon" />
+        </div>
+        <div className="place__info-right">
+          <p className="place__description">{place.description}</p>
+        </div>
+      </div>
+      {place.address && (
+        <p className="place__address">
+          <span className="place__address-title">
+            <strong>Address: </strong>
+          </span>
+          {place.address}
+        </p>
+      )}
+    </div>
   );
 };
 
