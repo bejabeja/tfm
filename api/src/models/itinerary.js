@@ -1,5 +1,5 @@
 export class Itinerary {
-    constructor({ id, userId, title, description, location, startDate, endDate, createdAt, updatedAt, photoUrl }) {
+    constructor({ id, userId, title, description, location, startDate, endDate, createdAt, updatedAt, photoUrl, budget, numberOfPeople }) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -11,6 +11,8 @@ export class Itinerary {
         this.updatedAt = updatedAt;
         this.places = [];
         this.photoUrl = photoUrl || this.getPlaceholderImage();
+        this.budget = budget;
+        this.numberOfPeople = numberOfPeople;
     }
 
     static fromDb(row) {
@@ -25,6 +27,8 @@ export class Itinerary {
             createdAt: row.itinerary_created_at,
             updatedAt: row.itinerary_updated_at,
             photoUrl: row.photo_url,
+            budget: row.budget,
+            numberOfPeople: row.number_of_people,
         });
     }
 
@@ -39,13 +43,11 @@ export class Itinerary {
             title: this.title,
             description: this.description,
             location: this.location,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
             places: this.places.map(place => place.toDTO()),
             tripTotalDays: this.getTotalDays(),
-            photoUrl: this.photoUrl
+            photoUrl: this.photoUrl,
+            budget: this.budget,
+            numberOfPeople: this.numberOfPeople,
         };
     }
 
