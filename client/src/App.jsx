@@ -9,6 +9,7 @@ import Login from "./pages/auth/Login";
 import Logout from "./pages/auth/Logout";
 import Signup from "./pages/auth/Signup";
 import Home from "./pages/home/Home";
+import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
 import { clearError, initUser } from "./reducers/authReducer";
@@ -54,7 +55,7 @@ const App = () => {
 
             {/* private routes */}
             <Route element={<PrivateLayout />}>
-              <Route path="/my-itineraries" element={<div>Itineraries</div>} />
+              <Route path="/my-itineraries" element={<MyItineraries />} />
               <Route path="/friends" element={<div>Friends</div>} />
               <Route
                 path="/profile/:id"

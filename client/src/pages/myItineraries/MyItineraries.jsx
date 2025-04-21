@@ -1,0 +1,52 @@
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
+import { getUserById } from "../../services/user";
+
+const MyItineraries = () => {
+  const { id } = useSelector((state) => state.auth.user);
+  const [userData, setUserData] = useState(null);
+  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const response = await getUserById(id);
+        setUserData(response);
+      } catch (err) {
+        setError(err.message || "An error occurred");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (id) {
+      fetchUserData();
+    }
+  }, [id]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error: {error}</div>;
+  }
+
+  return (
+    <section className="my-itineraries section__container">
+      {userData && userData.itineraries ? (
+        <ItinerariesSection
+          itineraries={userData.itineraries}
+          user={userData}
+          isMyProfile={true}
+        />
+      ) : (
+        <div>No itineraries found</div>
+      )}
+    </section>
+  );
+};
+
+export default MyItineraries;

@@ -69,7 +69,7 @@ const Navbar = () => {
                 }`}
               >
                 <GoBook className="nav-icon" />
-                <span>Itineraries</span>
+                <span>My Itineraries</span>
               </Link>
               <Link
                 to="/friends"
