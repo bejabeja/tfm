@@ -8,6 +8,7 @@ import PrivateLayout from "./pages/PrivateLayout";
 import Login from "./pages/auth/Login";
 import Logout from "./pages/auth/Logout";
 import Signup from "./pages/auth/Signup";
+import CreateItinerary from "./pages/createItinerary/CreateItinerary";
 import Home from "./pages/home/Home";
 import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
@@ -62,10 +63,7 @@ const App = () => {
                 element={<Profile isMyProfile={true} />}
               />
               <Route path="/edit-profile/:id/me" element={<EditProfile />} />
-              <Route
-                path="/create-itinerary"
-                element={<div>Create Itinerary</div>}
-              />
+              <Route path="/create-itinerary" element={<CreateItinerary />} />
             </Route>
           </Routes>
         </div>
