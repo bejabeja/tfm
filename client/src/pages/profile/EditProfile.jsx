@@ -5,7 +5,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
-import Loading from "../../components/loading/Loading";
+import Loading from "../../components/Loading";
 import { initUser } from "../../reducers/authReducer";
 import { getUserById, updateUser } from "../../services/user";
 import { updateUserSchema } from "../../utils/schemasValidation";
