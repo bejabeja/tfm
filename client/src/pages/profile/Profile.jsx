@@ -40,7 +40,7 @@ const Profile = ({ isMyProfile }) => {
 
       <AboutSection userData={userData} />
 
-      <ItinerariesSection itineraries={userData.itineraries} user={userData} />
+      <ItinerariesSection user={userData} />
     </section>
   );
 };

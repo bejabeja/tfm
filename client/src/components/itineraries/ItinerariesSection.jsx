@@ -2,8 +2,9 @@ import React from "react";
 import "./ItinerariesSection.scss";
 import ItineraryCard from "./card/ItineraryCard.jsx";
 
-const ItinerariesSection = ({ itineraries, user, isMyProfile = false }) => {
+const ItinerariesSection = ({ user, isMyProfile = false }) => {
   const skeletonCount = 3;
+  const itineraries = user.itineraries;
   return (
     <div className="itineraries-section">
       {!isMyProfile && (

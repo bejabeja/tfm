@@ -45,7 +45,6 @@ const MyItineraries = () => {
       </div>
       {userData && userData.itineraries ? (
         <ItinerariesSection
-          itineraries={userData.itineraries}
           user={userData}
           isMyProfile={true}
         />

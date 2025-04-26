@@ -17,6 +17,8 @@ export class ItineraryRepository {
           i.updated_at AS itinerary_updated_at,
           i.budget,
           i.number_of_people,
+          i.likes_count,
+          i.comments_count,
           p.id AS place_id,
           p.title AS place_title,
           p.description AS place_description,
