@@ -5,7 +5,6 @@ import { Link, useParams } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import { getUserById } from "../../services/user";
 import "./Profile.scss";
-import LoadingSpinner from "../../components/LoadingSpinner";
 
 const Profile = ({ isMyProfile }) => {
   const { id } = useParams();
