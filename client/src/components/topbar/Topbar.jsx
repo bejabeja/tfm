@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { GoPerson, GoSignOut } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { initUser, logoutUser } from "../../reducers/authReducer.js";
+import { logoutUser } from "../../reducers/authReducer.js";
 import "./Topbar.scss";
 
 const Topbar = () => {
@@ -22,10 +22,6 @@ const Topbar = () => {
     return () => {
       document.removeEventListener("click", handleClickOutside);
     };
-  }, []);
-
-  useEffect(() => {
-    dispatch(initUser());
   }, []);
 
   const handleLogout = () => {

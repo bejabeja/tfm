@@ -2,14 +2,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoLocationOutline } from "react-icons/io5";
+import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
 import Loading from "../../components/loading/Loading";
+import { initUser } from "../../reducers/authReducer";
 import { getUserById, updateUser } from "../../services/user";
 import { updateUserSchema } from "../../utils/schemasValidation";
 import "./EditProfile.scss";
 
 const EditProfile = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
@@ -53,6 +56,7 @@ const EditProfile = () => {
   const saveUser = async (data) => {
     try {
       await updateUser(data);
+      dispatch(initUser());
       navigate(`/profile/${id}`);
     } catch (err) {
       console.error("Error updating profile", err);
