@@ -39,7 +39,19 @@ To set up and run the project locally, follow these steps:
    npm run dev
    ```
 
-4. Access the application:
+4. Database Migrations
+   ```bash
+   cd api
+   npm run migrate
+   ```
+
+5. Database Insert initial data (optional)
+   ```bash
+   cd api
+   npm run insertData
+   ```
+
+6. Access the application:
 
 Once both processes are running, you can access the application in your browser at [http://localhost:5173](http://localhost:5173)
 
