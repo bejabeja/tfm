@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import Loading from "../../components/LoadingSpinner";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
-import Loading from "../../components/Loading";
 import { getUserById } from "../../services/user";
 import "./MyItineraries.scss";
 

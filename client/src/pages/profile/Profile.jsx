@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
+import Loading from "../../components/LoadingSpinner";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
-import Loading from "../../components/Loading";
 import { getUserById } from "../../services/user";
 import "./Profile.scss";
 

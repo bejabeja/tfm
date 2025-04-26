@@ -4,7 +4,7 @@ import { GoPeople } from "react-icons/go";
 import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { categoryIcons } from "../../assets/icons.js";
-import Loading from "../../components/Loading.jsx";
+import Loading from "../../components/LoadingSpinner.jsx";
 import { getItineraryById } from "../../services/itineraries";
 import "./Itinerary.scss";
 
