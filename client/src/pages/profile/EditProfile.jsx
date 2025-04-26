@@ -50,7 +50,7 @@ const EditProfile = () => {
   }, [id, setValue]);
 
   if (loading) {
-    return <Loading />;
+    return <LoadingSpinner />;
   }
 
   const saveUser = async (data) => {

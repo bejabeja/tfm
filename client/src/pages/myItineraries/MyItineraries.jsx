@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import Loading from "../../components/LoadingSpinner";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import { getUserById } from "../../services/user";
 import "./MyItineraries.scss";
@@ -30,7 +30,7 @@ const MyItineraries = () => {
   }, [id]);
 
   if (loading) {
-    return <Loading />;
+    return <LoadingSpinner />;
   }
 
   if (error) {

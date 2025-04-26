@@ -2,10 +2,10 @@ import React, { useEffect, useState } from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
-import Loading from "../../components/LoadingSpinner";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import { getUserById } from "../../services/user";
 import "./Profile.scss";
+import LoadingSpinner from "../../components/LoadingSpinner";
 
 const Profile = ({ isMyProfile }) => {
   const { id } = useParams();
@@ -28,7 +28,7 @@ const Profile = ({ isMyProfile }) => {
   }, [id]);
 
   if (loading) {
-    return <Loading />;
+    return <LoadingSpinner />;
   }
 
   if (error) {
