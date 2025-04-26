@@ -27,7 +27,11 @@ const Profile = ({ isMyProfile }) => {
   }, [id]);
 
   if (loading) {
-    return;
+    return (
+      <div className="loading-container ">
+        <div className="loading-spinner"></div>
+      </div>
+    );
   }
 
   if (error) {

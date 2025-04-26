@@ -49,7 +49,11 @@ const EditProfile = () => {
   }, [id, setValue]);
 
   if (loading) {
-    return;
+    return (
+      <div className="loading-container ">
+        <div className="loading-spinner"></div>
+      </div>
+    );
   }
 
   const saveUser = async (data) => {
