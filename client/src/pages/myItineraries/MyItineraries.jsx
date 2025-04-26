@@ -29,7 +29,7 @@ const MyItineraries = () => {
   }, [id]);
 
   if (loading) {
-    return <div className="loading-spinner">Loading...</div>;
+    return;
   }
 
   if (error) {
