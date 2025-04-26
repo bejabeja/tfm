@@ -4,7 +4,7 @@ import { useForm } from "react-hook-form";
 import { IoLocationOutline } from "react-icons/io5";
 import { useDispatch } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
-import Loading from "../../components/LoadingSpinner";
+import LoadingSpinner from "../../components/LoadingSpinner";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
 import { initUser } from "../../reducers/authReducer";
 import { getUserById, updateUser } from "../../services/user";
