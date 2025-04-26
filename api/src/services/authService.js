@@ -4,6 +4,7 @@ import config from '../config/config.js';
 import { AuthError } from '../errors/AuthError.js';
 import { NotFoundError } from '../errors/NotFoundError.js';
 
+const isProduction = config.nodeEnv === 'production';
 export class AuthService {
     constructor(userRepository) {
         this.userRepository = userRepository;
@@ -58,17 +59,20 @@ export class AuthService {
     }
 
     setAuthCookies(res, accessToken, refreshToken) {
+        console.log("Setting auth cookies");
+        console.log("Access token:", accessToken);
+        console.log("Refresh token:", refreshToken);
         res.cookie('access_token', accessToken, {
             httpOnly: true,
-            secure: config.nodeEnv === 'production',
-            sameSite: 'None',
+            secure: isProduction,
+            sameSite: isProduction ? 'None' : 'Lax',
             maxAge: 60 * 60 * 1000, // 1 hour
         });
 
         res.cookie('refresh_token', refreshToken, {
             httpOnly: true,
-            secure: config.nodeEnv === 'production',
-            sameSite: 'None',
+            secure: isProduction,
+            sameSite: isProduction ? 'None' : 'Lax',
             maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
         });
     }

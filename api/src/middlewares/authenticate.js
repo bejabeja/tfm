@@ -4,6 +4,8 @@ const authService = new AuthService();
 export const authenticate = async (req, res, next) => {
     const token = req.cookies.access_token;
     const refreshToken = req.cookies.refresh_token;
+    console.log("Token auth:", token);
+    console.log("Refresh Token auth:", refreshToken);
     if (!token && refreshToken) {
         try {
             await authService.refreshAccessToken(refreshToken, res, req);
