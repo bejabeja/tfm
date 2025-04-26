@@ -59,9 +59,6 @@ export class AuthService {
     }
 
     setAuthCookies(res, accessToken, refreshToken) {
-        console.log("Setting auth cookies");
-        console.log("Access token:", accessToken);
-        console.log("Refresh token:", refreshToken);
         res.cookie('access_token', accessToken, {
             httpOnly: true,
             secure: isProduction,

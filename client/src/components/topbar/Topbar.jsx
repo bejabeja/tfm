@@ -26,7 +26,7 @@ const Topbar = () => {
 
   useEffect(() => {
     dispatch(initUser());
-  }, [user]);
+  }, []);
 
   const handleLogout = () => {
     dispatch(logoutUser());

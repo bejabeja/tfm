@@ -3,6 +3,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
+import Loading from "../../components/loading/Loading";
 import { getUserById } from "../../services/user";
 import "./Profile.scss";
 
@@ -27,7 +28,7 @@ const Profile = ({ isMyProfile }) => {
   }, [id]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {

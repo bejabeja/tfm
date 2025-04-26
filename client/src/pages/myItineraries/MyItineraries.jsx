@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
+import Loading from "../../components/loading/Loading";
 import { getUserById } from "../../services/user";
 import "./MyItineraries.scss";
 
@@ -29,7 +30,7 @@ const MyItineraries = () => {
   }, [id]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   if (error) {
@@ -44,10 +45,7 @@ const MyItineraries = () => {
         </Link>
       </div>
       {userData && userData.itineraries ? (
-        <ItinerariesSection
-          user={userData}
-          isMyProfile={true}
-        />
+        <ItinerariesSection user={userData} isMyProfile={true} />
       ) : (
         <div>No itineraries found</div>
       )}

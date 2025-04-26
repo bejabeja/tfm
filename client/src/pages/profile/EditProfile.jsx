@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { IoLocationOutline } from "react-icons/io5";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
+import Loading from "../../components/loading/Loading";
 import { getUserById, updateUser } from "../../services/user";
 import { updateUserSchema } from "../../utils/schemasValidation";
 import "./EditProfile.scss";
@@ -46,7 +47,7 @@ const EditProfile = () => {
   }, [id, setValue]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loading />;
   }
 
   const saveUser = async (data) => {
