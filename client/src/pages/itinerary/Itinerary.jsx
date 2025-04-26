@@ -4,7 +4,6 @@ import { GoPeople } from "react-icons/go";
 import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
 import { useParams } from "react-router-dom";
 import { categoryIcons } from "../../assets/icons.js";
-import LoadingSpinner from "../../components/LoadingSpinner.jsx";
 import { getItineraryById } from "../../services/itineraries";
 import "./Itinerary.scss";
 
@@ -30,7 +29,7 @@ const Itinerary = () => {
   }, [id]);
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <div className="loading-spinner">Loading...</div>;
   }
 
   if (error) {

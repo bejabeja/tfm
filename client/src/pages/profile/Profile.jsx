@@ -28,7 +28,7 @@ const Profile = ({ isMyProfile }) => {
   }, [id]);
 
   if (loading) {
-    return <LoadingSpinner />;
+    return <div className="loading-spinner">Loading...</div>;
   }
 
   if (error) {
