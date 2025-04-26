@@ -8,6 +8,8 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "node --watch index.js",
     "start": "node index.js && npm run sentry:sourcemaps",
+    "migrate": "node src/migrations/migrate.js",
+    "insertData": "node src/migrations/insertDBData.js",
     "sentry:sourcemaps": "sentry-cli sourcemaps inject --org tobeatravellercompany --project tobeatraveller . && sentry-cli sourcemaps upload --org tobeatravellercompany --project tobeatraveller ."
   },
   "repository": {
@@ -35,7 +37,7 @@
     "dotenv": "16.4.7",
     "express": "5.1.0",
     "jsonwebtoken": "^9.0.2",
-    "pg": "^8.14.1",
+    "pg": "^8.15.6",
     "uuid": "^11.1.0",
     "zod": "^3.24.2"
   }

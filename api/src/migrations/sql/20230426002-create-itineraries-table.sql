@@ -1,0 +1,15 @@
+CREATE TABLE IF NOT EXISTS itineraries (
+    id UUID PRIMARY KEY,
+    user_id UUID REFERENCES users(id),
+    title VARCHAR(255) NOT NULL,
+    description TEXT,
+    location VARCHAR(100),
+    start_date TIMESTAMP WITH TIME ZONE,
+    end_date TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
+    budget DECIMAL(10, 2) DEFAULT 0.00,
+    number_of_people INT DEFAULT 1,
+    likes_count INT DEFAULT 0,
+    comments_count INT DEFAULT 0
+);
