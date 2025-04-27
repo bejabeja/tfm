@@ -41,9 +41,9 @@ const CreateItinerary = () => {
       endDate: today,
       placeName: "",
       placeDescription: "",
-      budget: 0,
+      budget: "0",
       currency: "",
-      numberOfTravellers: 1,
+      numberOfTravellers: "1",
     },
   });
 

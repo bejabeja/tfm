@@ -2,19 +2,25 @@ import React, { useEffect, useState } from "react";
 import { FaCity } from "react-icons/fa";
 import { GoPeople } from "react-icons/go";
 import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
-import { useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { Link, useParams } from "react-router-dom";
 import { categoryIcons } from "../../assets/icons.js";
-import { getItineraryById } from "../../services/itineraries";
+import { getItineraryById, deleteItinerary } from "../../services/itineraries.js";
 import "./Itinerary.scss";
+
+const isMyItinerary = (user, itinerary) =>
+  user && itinerary && user.id === itinerary.userId;
 
 const Itinerary = () => {
   const { id } = useParams();
+  const { user } = useSelector((state) => state.auth);
   const [itinerary, setItinerary] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchItinerary = async () => {
+      setLoading(true);
       try {
         const response = await getItineraryById(id);
         setItinerary(response);
@@ -31,7 +37,9 @@ const Itinerary = () => {
   if (loading) {
     return (
       <div className="loading-container ">
-        <div className="loading-spinner"></div>
+        <div className="loading-spinner">
+          <p className="loading-spinner-text">Loading...</p>
+        </div>
       </div>
     );
   }
@@ -40,7 +48,10 @@ const Itinerary = () => {
     return <div>Error fetching data</div>;
   }
 
-  console.log(itinerary.places[0]);
+  const handleRemove = async () => {
+    await deleteItinerary(itinerary.id);
+  };
+
   return (
     <section className="itinerary">
       <div className="itinerary__hero">
@@ -87,6 +98,15 @@ const Itinerary = () => {
               <Place key={place.id} place={place} index={index} />
             ))}
           </div>
+          {isMyItinerary && (
+            <Link
+              to={`/profile/${user.id}`}
+              className="btn btn--danger"
+              onClick={handleRemove}
+            >
+              Delete
+            </Link>
+          )}
         </div>
         <div className="itinerary__container-secondary">
           <h1 className="itinerary__title">Trip Area</h1>

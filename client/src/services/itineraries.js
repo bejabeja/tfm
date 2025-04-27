@@ -28,3 +28,16 @@ export const createItinerary = async (itinerary) => {
     }
     return response.json();
 }
+
+export const deleteItinerary = async (id) => {
+    const response = await fetch(`${baseUrl}/itineraries/${id}`, {
+        method: "DELETE",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    if (!response.ok) {
+        await parseError("Failed to delete itinerary");
+    }
+    return null;
+}

@@ -83,6 +83,17 @@ body {
       background-color: var(--secondary-color);
     }
   }
+
+  &--danger {
+    background-color: var(--error-color);
+    color: var(--white-color);
+    border: none;
+    max-width: 240px;
+
+    &:hover {
+      background-color: #c62828;
+    }
+  }
 }
 
 .error-message {
