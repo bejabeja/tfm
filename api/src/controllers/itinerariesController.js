@@ -12,4 +12,14 @@ export class ItinerariesController {
             next(error);
         }
     }
+
+    async createItinerary(req, res, next) {
+        try {
+            const itineraryData = req.body;
+            const newItinerary = await this.itinerariesService.createItinerary(itineraryData);
+            res.status(201).json(newItinerary);
+        } catch (error) {
+            next(error);
+        }
+    }
 }

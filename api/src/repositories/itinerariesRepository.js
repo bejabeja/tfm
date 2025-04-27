@@ -1,3 +1,4 @@
+import { v4 as uuidv4 } from 'uuid';
 import client from '../db/clientPostgres.js';
 import { Itinerary } from '../models/itinerary.js';
 import { Place } from '../models/place.js';
@@ -74,5 +75,84 @@ export class ItineraryRepository {
         }
 
         return this.#mapItineraryRows(result.rows)[0];
+    }
+
+    async createItinerary(itineraryData) {
+        const {
+            userId,
+            title,
+            description,
+            location,
+            startDate,
+            endDate,
+            budget,
+            numberOfPeople,
+            places = []
+        } = itineraryData;
+
+        const itineraryId = uuidv4();
+
+        try {
+            await client.query('BEGIN'); 
+
+            const itineraryQuery = `
+                INSERT INTO itineraries (id, user_id, title, description, location, start_date, end_date, budget, number_of_people)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                RETURNING *;
+            `;
+
+            const result = await client.query(itineraryQuery, [
+                itineraryId,
+                userId,
+                title,
+                description,
+                location,
+                startDate,
+                endDate,
+                budget,
+                numberOfPeople,
+            ]);
+
+            const itinerary = Itinerary.fromDb(result.rows[0]);
+
+            for (const placeData of places) {
+                const placeId = uuidv4();
+
+                const placeQuery = `
+                    INSERT INTO places (id, title, description, address, latitude, longitude, category)
+                    VALUES ($1, $2, $3, $4, $5, $6, $7)
+                    RETURNING *;
+                `;
+
+                const placeResult = await client.query(placeQuery, [
+                    placeId,
+                    placeData.title,
+                    placeData.description,
+                    placeData.address,
+                    placeData.latitude,
+                    placeData.longitude,
+                    placeData.category,
+                ]);
+
+                await client.query(
+                    `
+                    INSERT INTO itinerary_places (id, itinerary_id, place_id, order_index)
+                    VALUES ($1, $2, $3, $4);
+                    `,
+                    [uuidv4(), itineraryId, placeId, placeData.orderIndex]
+                );
+
+                const newPlace = Place.fromDb(placeResult.rows[0]);
+                itinerary.addPlace(newPlace);
+            }
+
+            await client.query('COMMIT'); 
+            return itinerary;
+
+        } catch (error) {
+            await client.query('ROLLBACK'); 
+            console.error('Error creating itinerary:', error);
+            throw error;
+        }
     }
 }

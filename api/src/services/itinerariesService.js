@@ -11,4 +11,9 @@ export class ItinerariesService {
         }
         return itinerary.toDTO();
     }
+
+    async createItinerary(itineraryData) {
+        const itinerary = await this.itinerariesRepository.createItinerary(itineraryData);
+        return itinerary.toDTO();
+    }
 }
