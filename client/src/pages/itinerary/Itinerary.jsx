@@ -5,11 +5,11 @@ import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { categoryIcons } from "../../assets/icons.js";
-import { getItineraryById, deleteItinerary } from "../../services/itineraries.js";
+import {
+  deleteItinerary,
+  getItineraryById,
+} from "../../services/itineraries.js";
 import "./Itinerary.scss";
-
-const isMyItinerary = (user, itinerary) =>
-  user && itinerary && user.id === itinerary.userId;
 
 const Itinerary = () => {
   const { id } = useParams();
@@ -50,6 +50,12 @@ const Itinerary = () => {
 
   const handleRemove = async () => {
     await deleteItinerary(itinerary.id);
+  };
+
+  const isMyItinerary = () => {
+    if (!user || !itinerary) return false;
+
+    return user.id === itinerary.userId;
   };
 
   return (
@@ -98,7 +104,7 @@ const Itinerary = () => {
               <Place key={place.id} place={place} index={index} />
             ))}
           </div>
-          {isMyItinerary && (
+          {isMyItinerary() && (
             <Link
               to={`/profile/${user.id}`}
               className="btn btn--danger"

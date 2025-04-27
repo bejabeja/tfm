@@ -13,7 +13,6 @@ const ItineraryCard = ({ itinerary, user }) => {
     likesCount,
   } = itinerary;
   const { username } = user;
-  console.log("userrrrr", user);
 
   const [isFavorited, setIsFavorited] = useState(false);
 
