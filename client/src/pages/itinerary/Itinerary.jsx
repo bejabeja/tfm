@@ -37,9 +37,7 @@ const Itinerary = () => {
   if (loading) {
     return (
       <div className="loading-container ">
-        <div className="loading-spinner">
-          <p className="loading-spinner-text">Loading...</p>
-        </div>
+        <div className="loading-spinner"></div>
       </div>
     );
   }
