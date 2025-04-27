@@ -1,8 +1,11 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
+import { createItinerary } from "../../services/itineraries";
 import { createItinerarySchema } from "../../utils/schemasValidation";
 import "./CreateItinerary.scss";
 
@@ -20,6 +23,9 @@ const fields = [
 ];
 
 const CreateItinerary = () => {
+  const { user } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+
   const today = new Date().toISOString().split("T")[0];
   const {
     control,
@@ -41,8 +47,30 @@ const CreateItinerary = () => {
     },
   });
 
-  const addItinerary = (data) => {
-    console.log(data);
+  const addItinerary = async (data) => {
+    const body = {
+      userId: user.id,
+      title: data.title,
+      description: data.description,
+      location: data.destination,
+      startDate: data.startDate,
+      endDate: data.endDate,
+      budget: Number(data.budget),
+      numberOfPeople: Number(data.numberOfTravellers),
+      places: [
+        {
+          title: data.placeName,
+          description: data.placeDescription,
+          address: "Default Address",
+          latitude: 0,
+          longitude: 0,
+          category: "General",
+          orderIndex: 0,
+        },
+      ],
+    };
+    await createItinerary(body);
+    navigate(`/profile/${user.id}`);
   };
 
   return (

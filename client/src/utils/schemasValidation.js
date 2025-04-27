@@ -101,18 +101,19 @@ export const createItinerarySchema = z
             .or(z.literal("")),
 
         budget: z
-            .number({ invalid_type_error: "Budget must be a number" })
-            .min(0, "Budget must be a positive number"),
+            .string()
+            .refine(val => !isNaN(Number(val)), "Must be a number")
+            .transform(val => parseFloat(val)),
 
         currency: z
             .string()
             .min(1, "Currency is required")
-            .max(10, "Currency code too long"),
+            .max(3, "Currency code too long"),
 
         numberOfTravellers: z
-            .number({ invalid_type_error: "Number of travellers must be a number" })
-            .min(1, "There must be at least one traveller")
-            .max(100, "Too many travellers"),
+            .string()
+            .refine(val => !isNaN(Number(val)), "Must be a number")
+            .transform(val => parseInt(val, 10)),
     })
     .refine((data) => data.endDate >= data.startDate, {
         message: "End date must be after or equal to start date",

@@ -14,3 +14,17 @@ export const getItineraryById = async (id) => {
     }
     return response.json();
 }
+
+export const createItinerary = async (itinerary) => {
+    const response = await fetch(`${baseUrl}/itineraries`, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(itinerary),
+    });
+    if (!response.ok) {
+        await parseError("Failed to create itinerary");
+    }
+    return response.json();
+}
