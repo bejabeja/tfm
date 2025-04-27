@@ -16,4 +16,12 @@ export class ItinerariesService {
         const itinerary = await this.itinerariesRepository.createItinerary(itineraryData);
         return itinerary.toDTO();
     }
+
+    async deleteItinerary(id) {
+        const itinerary = await this.itinerariesRepository.getItineraryById(id);
+        if (!itinerary) {
+            throw new NotFoundError("Itinerary not found");
+        }
+        await this.itinerariesRepository.deleteItinerary(id);
+    }
 }

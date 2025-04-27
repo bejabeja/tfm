@@ -12,6 +12,7 @@ export const createItineraryRouter = () => {
 
     itinerariesRouter.get("/:id", itinerariesController.getItineraryById.bind(itinerariesController));
     itinerariesRouter.post("/", itinerariesController.createItinerary.bind(itinerariesController));
+    itinerariesRouter.delete("/:id", itinerariesController.deleteItinerary.bind(itinerariesController));
 
     return itinerariesRouter;
 }

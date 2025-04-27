@@ -22,4 +22,14 @@ export class ItinerariesController {
             next(error);
         }
     }
+
+    async deleteItinerary(req, res, next) {
+        try {
+            const { id } = req.params;
+            await this.itinerariesService.deleteItinerary(id);
+            res.status(204).send();
+        } catch (error) {
+            next(error);
+        }
+    }
 }

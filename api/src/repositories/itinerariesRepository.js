@@ -93,7 +93,7 @@ export class ItineraryRepository {
         const itineraryId = uuidv4();
 
         try {
-            await client.query('BEGIN'); 
+            await client.query('BEGIN');
 
             const itineraryQuery = `
                 INSERT INTO itineraries (id, user_id, title, description, location, start_date, end_date, budget, number_of_people)
@@ -146,13 +146,21 @@ export class ItineraryRepository {
                 itinerary.addPlace(newPlace);
             }
 
-            await client.query('COMMIT'); 
+            await client.query('COMMIT');
             return itinerary;
 
         } catch (error) {
-            await client.query('ROLLBACK'); 
+            await client.query('ROLLBACK');
             console.error('Error creating itinerary:', error);
             throw error;
         }
+    }
+
+    async deleteItinerary(itineraryId) {
+        const deleteItineraryQuery = `
+                DELETE FROM itineraries
+                WHERE id = $1;
+            `;
+        await client.query(deleteItineraryQuery, [itineraryId]);
     }
 }
