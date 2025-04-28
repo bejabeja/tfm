@@ -2,7 +2,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { createItinerary } from "../../services/itineraries";
@@ -149,6 +149,13 @@ const CreateItinerary = () => {
           </div>
         </div>
         <div className="form__cta">
+          <Link
+            to={`/my-itineraries`}
+            type="button"
+            className="btn btn--tertiary"
+          >
+            Cancel
+          </Link>
           <SubmitButton label="Create itinerary" />
         </div>
       </form>

@@ -28,7 +28,8 @@
   }
 
   &__cta {
-    button {
+    button,
+    a {
       max-width: 240px;
     }
   }
@@ -48,12 +49,10 @@
     max-width: 50%;
   }
 
-  // .form {
-  //   &__cta {
-  //     display: flex;
-  //     justify-content: flex-end;
-  //   }
-  // }
+  .form__container .form__cta {
+    display: flex;
+    flex-direction: row;
+  }
 
   .form__cta-delete {
     display: flex;

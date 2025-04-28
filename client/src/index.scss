@@ -52,6 +52,7 @@ body {
   text-align: center;
   text-decoration: none;
   max-height: fit-content;
+  line-height: normal;
 
   &-primary {
     background-color: var(--primary-color);
@@ -86,7 +87,7 @@ body {
   }
 
   &--danger {
-    background-color: var(--error-color);
+    background-color: #ff5757;
     color: var(--white-color);
     border: none;
     max-width: 240px;
