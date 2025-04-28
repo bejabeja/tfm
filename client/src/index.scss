@@ -51,6 +51,7 @@ body {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
   text-align: center;
   text-decoration: none;
+  max-height: fit-content;
 
   &-primary {
     background-color: var(--primary-color);

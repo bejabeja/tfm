@@ -86,19 +86,25 @@ export const createItinerarySchema = z
             .string()
             .transform((str) => new Date(str))
             .refine((date) => date >= getToday(), {
-                message: "End date must be today or in the future",
+                message: "End date must be after or equal to start date",
             }),
 
-        placeName: z
-            .string()
-            .min(2, "Place name is required")
-            .max(100, "Place name must be less than 100 characters"),
+        places: z
+            .array(
+                z.object({
+                    title: z
+                        .string()
+                        .min(2, "Place name is required")
+                        .max(100, "Place name must be less than 100 characters"),
 
-        placeDescription: z
-            .string()
-            .max(1000, "Description must be less than 1000 characters")
-            .optional()
-            .or(z.literal("")),
+                    description: z
+                        .string()
+                        .max(1000, "Description must be less than 1000 characters")
+                        .optional()
+                        .or(z.literal("")),
+                })
+            )
+            .min(1, "At least one place is required"),
 
         budget: z
             .string()
