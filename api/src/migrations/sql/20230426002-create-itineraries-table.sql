@@ -11,5 +11,6 @@ CREATE TABLE IF NOT EXISTS itineraries (
     budget DECIMAL(10, 2) DEFAULT 0.00,
     number_of_people INT DEFAULT 1,
     likes_count INT DEFAULT 0,
-    comments_count INT DEFAULT 0
+    comments_count INT DEFAULT 0,
+    category VARCHAR(50)
 );

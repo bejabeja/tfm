@@ -6,7 +6,7 @@ export class Place {
         this.address = address;
         this.latitude = latitude;
         this.longitude = longitude;
-        this.category = category?.toLowerCase();
+        this.category = category?.toLowerCase() || "other";
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.orderIndex = orderIndex;

@@ -1,11 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
-import { useFieldArray, useForm } from "react-hook-form";
+import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { getCategoryIcon } from "../../assets/icons";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { createItinerary } from "../../services/itineraries";
+import { itineraryCategories, placeCategories } from "../../utils/constants";
 import { createItinerarySchema } from "../../utils/schemasValidation";
 import "./CreateItinerary.scss";
 
@@ -26,10 +28,11 @@ const CreateItinerary = () => {
       description: "",
       startDate: today,
       endDate: today,
-      places: [{ title: "", description: "" }],
+      places: [{ title: "", description: "", category: "other" }],
       budget: "0",
       currency: "",
       numberOfTravellers: "1",
+      category: "other",
     },
   });
 
@@ -51,10 +54,12 @@ const CreateItinerary = () => {
       places: data.places.map((place, index) => ({
         title: place.title,
         description: place.description,
-        category: "General",
+        category: place.category || "other",
         orderIndex: index,
       })),
+      category: data.category,
     };
+
     await createItinerary(body);
     navigate(`/profile/${user.id}`);
   };
@@ -119,6 +124,7 @@ const BasicInfoForm = ({ control, errors }) => (
       control={control}
       error={errors.description}
     ></TextAreaForm>
+    <TripCategoryForm control={control} />
   </div>
 );
 
@@ -198,6 +204,8 @@ const PlaceField = ({ control, index, errors, remove }) => (
       control={control}
       error={errors?.places?.[index]?.description}
     />
+    <PlaceCategoryForm control={control} index={index} />
+
     <div className="form__cta-delete">
       <button
         type="button"
@@ -246,3 +254,72 @@ const TravellersForm = ({ control, errors }) => (
     </div>
   </div>
 );
+
+const PlaceCategoryForm = ({ control, index }) => {
+  return (
+    <div className="form__place-type">
+      <h2 className="form__subtitle">Place Category</h2>
+      <div className="form__icon-group">
+        <Controller
+          name={`places.${index}.category`}
+          control={control}
+          render={({ field }) => (
+            <>
+              {placeCategories.map((type) => {
+                const Icon = getCategoryIcon(type.value);
+                return (
+                  <button
+                    type="button"
+                    key={type.value}
+                    className={`form__icon-group-button only-icon ${
+                      field.value === type.value ? "selected" : ""
+                    }`}
+                    onClick={() => field.onChange(type.value)}
+                  >
+                    <Icon />
+                  </button>
+                );
+              })}
+            </>
+          )}
+        />
+      </div>
+    </div>
+  );
+};
+
+const TripCategoryForm = ({ control }) => {
+  return (
+    <div className="form__trip-type">
+      <h2 className="form__subtitle">Trip Category</h2>
+      <div className="form__icon-group">
+        <Controller
+          name="category"
+          control={control}
+          render={({ field }) => (
+            <>
+              {itineraryCategories.map((type) => {
+                const Icon = getCategoryIcon(type.value);
+
+                return (
+                  <button
+                    type="button"
+                    key={type.value}
+                    className={`form__icon-group-button ${
+                      field.value === type.value ? "selected" : ""
+                    }`}
+                    onClick={() => field.onChange(type.value)}
+                  >
+                    <Icon />
+
+                    <span>{type.label}</span>
+                  </button>
+                );
+              })}
+            </>
+          )}
+        />
+      </div>
+    </div>
+  );
+};

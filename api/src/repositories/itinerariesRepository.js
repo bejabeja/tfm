@@ -20,6 +20,7 @@ export class ItineraryRepository {
           i.number_of_people,
           i.likes_count,
           i.comments_count,
+          i.category,
           p.id AS place_id,
           p.title AS place_title,
           p.description AS place_description,
@@ -87,7 +88,8 @@ export class ItineraryRepository {
             endDate,
             budget,
             numberOfPeople,
-            places = []
+            places = [],
+            category,
         } = itineraryData;
 
         const itineraryId = uuidv4();
@@ -96,8 +98,8 @@ export class ItineraryRepository {
             await client.query('BEGIN');
 
             const itineraryQuery = `
-                INSERT INTO itineraries (id, user_id, title, description, location, start_date, end_date, budget, number_of_people)
-                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
+                INSERT INTO itineraries (id, user_id, title, description, location, start_date, end_date, budget, number_of_people, category)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
                 RETURNING *;
             `;
 
@@ -111,6 +113,7 @@ export class ItineraryRepository {
                 endDate,
                 budget,
                 numberOfPeople,
+                category,
             ]);
 
             const itinerary = Itinerary.fromDb(result.rows[0]);

@@ -101,7 +101,11 @@ export const createItinerarySchema = z
                         .string()
                         .max(1000, "Description must be less than 1000 characters")
                         .optional()
-                        .or(z.literal("")),
+                        .or(z.literal("other")),
+
+                    category: z
+                        .string()
+                        .optional()
                 })
             )
             .min(1, "At least one place is required"),
@@ -120,6 +124,9 @@ export const createItinerarySchema = z
             .string()
             .refine(val => !isNaN(Number(val)), "Must be a number")
             .transform(val => parseInt(val, 10)),
+
+        category: z
+            .string()
     })
     .refine((data) => data.endDate >= data.startDate, {
         message: "End date must be after or equal to start date",

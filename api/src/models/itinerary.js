@@ -1,5 +1,5 @@
 export class Itinerary {
-    constructor({ id, userId, title, description, location, startDate, endDate, createdAt, updatedAt, photoUrl, budget, numberOfPeople, likesCount, commentsCount }) {
+    constructor({ id, userId, title, description, location, startDate, endDate, createdAt, updatedAt, photoUrl, budget, numberOfPeople, likesCount, commentsCount, category }) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -15,6 +15,7 @@ export class Itinerary {
         this.numberOfPeople = numberOfPeople;
         this.likesCount = likesCount;
         this.commentsCount = commentsCount;
+        this.category = category?.toLowerCase();;
     }
 
     static fromDb(row) {
@@ -33,6 +34,7 @@ export class Itinerary {
             numberOfPeople: row.number_of_people,
             likesCount: row.likes_count,
             commentsCount: row.comments_count,
+            category: row.category,
         });
     }
 
@@ -54,6 +56,7 @@ export class Itinerary {
             numberOfPeople: this.numberOfPeople,
             likesCount: this.likesCount,
             commentsCount: this.commentsCount,
+            category: this.category,
         };
     }
 

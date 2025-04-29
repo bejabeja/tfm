@@ -4,7 +4,7 @@ import { GoPeople } from "react-icons/go";
 import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
-import { categoryIcons } from "../../assets/icons.js";
+import { getCategoryIcon } from "../../assets/icons.js";
 import {
   deleteItinerary,
   getItineraryById,
@@ -45,6 +45,8 @@ const Itinerary = () => {
   if (error) {
     return <div>Error fetching data</div>;
   }
+
+  console.log(itinerary);
 
   const handleRemove = async () => {
     await deleteItinerary(itinerary.id);
@@ -121,7 +123,7 @@ const Itinerary = () => {
 };
 
 const Place = ({ place, index }) => {
-  const Icon = categoryIcons[place.category] || FaCity;
+  const Icon = getCategoryIcon(place.category) || FaCity;
   return (
     <div className="place">
       <h3 className="place__title">
