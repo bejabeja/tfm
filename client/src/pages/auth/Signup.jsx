@@ -73,9 +73,8 @@ const Signup = () => {
           {error && Object.keys(errors).length === 0 ? error : "\u00A0"}
         </div>
 
-        <SubmitButton label="Sign Up" />
-
         <div className="auth__form-link">
+          <SubmitButton label="Sign Up" />
           <Link to="/login">Already have an account? Log in!</Link>
         </div>
       </form>

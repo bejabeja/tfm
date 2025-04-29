@@ -58,6 +58,7 @@ body {
     background-color: var(--primary-color);
     color: var(--white-color);
     border: none;
+    max-width: 240px;
 
     &:hover {
       background-color: var(--primary-color-hover);

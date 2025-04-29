@@ -68,9 +68,8 @@ const Login = () => {
           {error && Object.keys(errors).length === 0 ? error : "\u00A0"}
         </div>
 
-        <SubmitButton label="Log In" />
-
         <div className="auth__form-link">
+          <SubmitButton label="Log In" />
           <Link to="/register">Don't have an account? Register!</Link>
         </div>
       </form>
