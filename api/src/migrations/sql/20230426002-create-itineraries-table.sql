@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS itineraries (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
     budget DECIMAL(10, 2) DEFAULT 0.00,
+    currency VARCHAR(10) DEFAULT 'USD',
     number_of_people INT DEFAULT 1,
     likes_count INT DEFAULT 0,
     comments_count INT DEFAULT 0,

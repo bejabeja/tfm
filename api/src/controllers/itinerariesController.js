@@ -32,4 +32,15 @@ export class ItinerariesController {
             next(error);
         }
     }
+
+    async updateItinerary(req, res, next) {
+        try {
+            const { id } = req.params;
+            await this.itinerariesService.updateItinerary(id, req.body);
+            res.status(200).json({ message: "Itinerary updated successfully" });
+
+        } catch (error) {
+            next(error);
+        }
+    }
 }
