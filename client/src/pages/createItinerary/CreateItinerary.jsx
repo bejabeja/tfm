@@ -64,52 +64,8 @@ const CreateItinerary = () => {
       <h1 className="form__title">Create Itinerary</h1>
 
       <form className="form__container" onSubmit={handleSubmit(addItinerary)}>
-        <div className="form__basic-info">
-          <h2 className="form__subtitle">Basic Information</h2>
-          <div className="form__row-group">
-            <InputForm
-              name="title"
-              label="Title"
-              type="text"
-              control={control}
-              error={errors.title}
-            ></InputForm>
-            <InputForm
-              name="destination"
-              label="Destination"
-              type="text"
-              control={control}
-              error={errors.destination}
-            ></InputForm>
-          </div>
-
-          <TextAreaForm
-            name="description"
-            label="Description"
-            type="text"
-            control={control}
-            error={errors.description}
-          ></TextAreaForm>
-        </div>
-        <div className="form__dates">
-          <h2 className="form__subtitle">Dates</h2>
-          <div className="form__row-group">
-            <InputForm
-              name="startDate"
-              label="Start Date"
-              type="date"
-              control={control}
-              error={errors.startDate}
-            ></InputForm>
-            <InputForm
-              name="endDate"
-              label="End Date"
-              type="date"
-              control={control}
-              error={errors.endDate}
-            ></InputForm>
-          </div>
-        </div>
+        <BasicInfoForm control={control} errors={errors} />
+        <DatesForm control={control} errors={errors} />
         <PlacesForm
           control={control}
           errors={errors}
@@ -117,37 +73,8 @@ const CreateItinerary = () => {
           append={append}
           remove={remove}
         />
-        <div className="form__budget">
-          <h2 className="form__subtitle">Budget</h2>
-          <div className="form__row-group">
-            <InputForm
-              name="budget"
-              label="Budget"
-              type="number"
-              control={control}
-              error={errors.budget}
-            ></InputForm>
-            <InputForm
-              name="currency"
-              label="Currency"
-              type="text"
-              control={control}
-              error={errors.currency}
-            ></InputForm>
-          </div>
-        </div>
-        <div className="form__travellers">
-          <h2 className="form__subtitle">Travellers</h2>
-          <div className="form__row-group">
-            <InputForm
-              name="numberOfTravellers"
-              label="Number of Travellers"
-              type="number"
-              control={control}
-              error={errors.numberOfTravellers}
-            ></InputForm>
-          </div>
-        </div>
+        <BudgetForm control={control} errors={errors} />
+        <TravellersForm control={control} errors={errors} />
         <div className="form__cta">
           <Link
             to={`/my-itineraries`}
@@ -164,6 +91,58 @@ const CreateItinerary = () => {
 };
 
 export default CreateItinerary;
+
+const BasicInfoForm = ({ control, errors }) => (
+  <div className="form__basic-info">
+    <h2 className="form__subtitle">Basic Information</h2>
+    <div className="form__row-group">
+      <InputForm
+        name="title"
+        label="Title"
+        type="text"
+        control={control}
+        error={errors.title}
+      ></InputForm>
+      <InputForm
+        name="destination"
+        label="Destination"
+        type="text"
+        control={control}
+        error={errors.destination}
+      ></InputForm>
+    </div>
+
+    <TextAreaForm
+      name="description"
+      label="Description"
+      type="text"
+      control={control}
+      error={errors.description}
+    ></TextAreaForm>
+  </div>
+);
+
+const DatesForm = ({ control, errors }) => (
+  <div className="form__dates">
+    <h2 className="form__subtitle">Dates</h2>
+    <div className="form__row-group">
+      <InputForm
+        name="startDate"
+        label="Start Date"
+        type="date"
+        control={control}
+        error={errors.startDate}
+      ></InputForm>
+      <InputForm
+        name="endDate"
+        label="End Date"
+        type="date"
+        control={control}
+        error={errors.endDate}
+      ></InputForm>
+    </div>
+  </div>
+);
 
 const PlacesForm = ({ control, errors, fields, append, remove }) => {
   const handleAddPlace = () => append({ title: "", description: "" });
@@ -227,6 +206,43 @@ const PlaceField = ({ control, index, errors, remove }) => (
       >
         Delete place
       </button>
+    </div>
+  </div>
+);
+
+const BudgetForm = ({ control, errors }) => (
+  <div className="form__budget">
+    <h2 className="form__subtitle">Budget</h2>
+    <div className="form__row-group">
+      <InputForm
+        name="budget"
+        label="Budget"
+        type="number"
+        control={control}
+        error={errors.budget}
+      ></InputForm>
+      <InputForm
+        name="currency"
+        label="Currency"
+        type="text"
+        control={control}
+        error={errors.currency}
+      ></InputForm>
+    </div>
+  </div>
+);
+
+const TravellersForm = ({ control, errors }) => (
+  <div className="form__travellers">
+    <h2 className="form__subtitle">Travellers</h2>
+    <div className="form__row-group">
+      <InputForm
+        name="numberOfTravellers"
+        label="Number of Travellers"
+        type="number"
+        control={control}
+        error={errors.numberOfTravellers}
+      ></InputForm>
     </div>
   </div>
 );
