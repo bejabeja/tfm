@@ -1,17 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
+import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import { getUserById } from "../../services/user";
 import "./Profile.scss";
 
-const Profile = ({ isMyProfile }) => {
+const Profile = () => {
   const { id } = useParams();
+  const { user } = useSelector((state) => state.auth);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
-
+  const isMyProfile = () => {
+    if (!user) return false;
+    return user.id === id;
+  };
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -41,9 +46,7 @@ const Profile = ({ isMyProfile }) => {
   return (
     <section className="profile section__container">
       <HeaderSection userData={userData} isMyProfile={isMyProfile} />
-
       <AboutSection userData={userData} />
-
       <ItinerariesSection user={userData} />
     </section>
   );
@@ -81,10 +84,7 @@ const HeaderSection = ({ userData, isMyProfile }) => {
       </div>
       <div className="profile__header-actions">
         {isMyProfile ? (
-          <Link
-            to={`/edit-profile/${userData?.id}/me`}
-            className="btn btn-primary"
-          >
+          <Link to={`/profile/edit/${userData?.id}`} className="btn btn-primary">
             Edit Profile
           </Link>
         ) : (

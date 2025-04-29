@@ -60,11 +60,8 @@ const App = () => {
             <Route element={<PrivateLayout />}>
               <Route path="/my-itineraries" element={<MyItineraries />} />
               <Route path="/friends" element={<div>Friends</div>} />
-              <Route
-                path="/profile/:id"
-                element={<Profile isMyProfile={true} />}
-              />
-              <Route path="/edit-profile/:id/me" element={<EditProfile />} />
+              <Route path="/profile/:id" element={<Profile />} />
+              <Route path="profile/edit/:id" element={<EditProfile />} />
               <Route path="/create-itinerary" element={<CreateItinerary />} />
             </Route>
           </Routes>
