@@ -41,3 +41,17 @@ export const deleteItinerary = async (id) => {
     }
     return null;
 }
+
+export const updateItinerary = async (id, itinerary) => {
+    const response = await fetch(`${baseUrl}/itineraries/edit/${id}`, {
+        method: "PATCH",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(itinerary),
+    });
+    if (!response.ok) {
+        await parseError("Failed to update itinerary");
+    }
+    return response.json();
+}

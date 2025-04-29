@@ -92,6 +92,7 @@ export const createItinerarySchema = z
         places: z
             .array(
                 z.object({
+                    id: z.string().uuid().optional(),
                     title: z
                         .string()
                         .min(2, "Place name is required")

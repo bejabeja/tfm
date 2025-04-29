@@ -117,6 +117,12 @@
   }
 }
 
+.itinerary__container-primary-actions {
+  display: flex;
+  flex-direction: row;
+  gap: 1rem;
+}
+
 @media (min-width: 768px) {
   .itinerary__container {
     flex-direction: row;

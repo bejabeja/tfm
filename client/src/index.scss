@@ -81,6 +81,7 @@ body {
     color: var(--text-color);
     border: 1px solid var(--secondary-color);
     box-shadow: none;
+    max-width: 240px;
 
     &:hover {
       background-color: var(--secondary-color);

@@ -46,8 +46,6 @@ const Itinerary = () => {
     return <div>Error fetching data</div>;
   }
 
-  console.log(itinerary);
-
   const handleRemove = async () => {
     await deleteItinerary(itinerary.id);
   };
@@ -105,13 +103,21 @@ const Itinerary = () => {
             ))}
           </div>
           {isMyItinerary() && (
-            <Link
-              to={`/profile/${user.id}`}
-              className="btn btn--danger"
-              onClick={handleRemove}
-            >
-              Delete
-            </Link>
+            <div className="itinerary__container-primary-actions">
+              <Link
+                to={`/profile/${user.id}`}
+                className="btn btn--danger"
+                onClick={handleRemove}
+              >
+                Delete
+              </Link>
+              <Link
+                to={`/itinerary/edit/${itinerary.id}`}
+                className="btn btn-primary"
+              >
+                Edit
+              </Link>
+            </div>
           )}
         </div>
         <div className="itinerary__container-secondary">

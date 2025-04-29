@@ -8,9 +8,10 @@ import PrivateLayout from "./pages/PrivateLayout";
 import Login from "./pages/auth/Login";
 import Logout from "./pages/auth/Logout";
 import Signup from "./pages/auth/Signup";
-import CreateItinerary from "./pages/createItinerary/CreateItinerary";
 import Home from "./pages/home/Home";
 import Itinerary from "./pages/itinerary/Itinerary";
+import CreateItinerary from "./pages/itinerary/create/CreateItinerary";
+import EditItinerary from "./pages/itinerary/edit/EditItinerary";
 import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
@@ -63,6 +64,7 @@ const App = () => {
               <Route path="/profile/:id" element={<Profile />} />
               <Route path="profile/edit/:id" element={<EditProfile />} />
               <Route path="/create-itinerary" element={<CreateItinerary />} />
+              <Route path="/itinerary/edit/:id" element={<EditItinerary />} />
             </Route>
           </Routes>
         </div>
