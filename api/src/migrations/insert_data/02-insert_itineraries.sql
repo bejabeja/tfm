@@ -1,7 +1,27 @@
 INSERT INTO itineraries (id, user_id, title, description, location, start_date, end_date, budget, currency, number_of_people, likes_count, comments_count, category)
 VALUES
+  -- Demo1234 itineraries
   ('a90e8d2f-2781-41e5-b72b-c7d58a57b2df', 'c7b7fb94-ae30-4bbb-a71e-df24f96dd1cc', 'Exploring New York', 'A trip to explore New York City', 'New York', '2025-09-01 10:00:00+00', '2025-09-07 18:00:00+00', 1500.00, 'EUR', 2, 11, 55, 'backpacking'),
-  ('9f2c9f0e-8f98-46be-8fdd-f5f82b4169a3', 'c7b7fb94-ae30-4bbb-a71e-df24f96dd1cc', 'Tokyo Adventures', 'A journey through the vibrant city of Tokyo', 'Tokyo', '2025-09-10 09:00:00+00', '2025-09-17 19:00:00+00', 2000.00,'¥', 3, 11, 55, 'romantic'),
-  ('d1b2c0f4-9283-4f7c-baa4-39920d2b4d6b', 'c7b7fb94-ae30-4bbb-a71e-df24f96dd1cc', 'Journey to Rome', 'Exploring the ancient city of Rome', 'Rome', '2025-10-01 10:00:00+00', '2025-10-07 18:00:00+00', 1800.00,'EUR', 4, 11, 55, 'family'),
-  ('fe35c13c-4708-4c5d-8467-13970a5f3d8f', 'c7b7fb94-ae30-4bbb-a71e-df24f96dd1cc', 'Visit to Sydney', 'Discover the landmarks of Sydney', 'Sydney', '2025-10-10 10:00:00+00', '2025-10-14 18:00:00+00', 2200.00,'$', 2, 11, 55, 'other');
+  ('9f2c9f0e-8f98-46be-8fdd-f5f82b4169a3', 'c7b7fb94-ae30-4bbb-a71e-df24f96dd1cc', 'Tokyo Adventures', 'A journey through the vibrant city of Tokyo', 'Tokyo', '2025-09-10 09:00:00+00', '2025-09-17 19:00:00+00', 2000.00, '¥', 3, 11, 55, 'romantic'),
+  ('d1b2c0f4-9283-4f7c-baa4-39920d2b4d6b', 'c7b7fb94-ae30-4bbb-a71e-df24f96dd1cc', 'Journey to Rome', 'Exploring the ancient city of Rome', 'Rome', '2025-10-01 10:00:00+00', '2025-10-07 18:00:00+00', 1800.00, 'EUR', 4, 11, 55, 'family'),
+  ('fe35c13c-4708-4c5d-8467-13970a5f3d8f', 'c7b7fb94-ae30-4bbb-a71e-df24f96dd1cc', 'Visit to Sydney', 'Discover the landmarks of Sydney', 'Sydney', '2025-10-10 10:00:00+00', '2025-10-14 18:00:00+00', 2200.00, '$', 2, 11, 55, 'other'),
 
+  -- SS itineraries
+  ('4d8e5f10-529f-44a3-9f1e-20dc6efc7b1b', '87a4b40c-f472-42ab-84f4-7befee5a6db2', 'Discover Sydney', 'Exploring beaches and city life in Sydney', 'Sydney', '2025-08-01 09:00:00+00', '2025-08-07 18:00:00+00', 1800.00, 'AUD', 2, 5, 2, 'city'),
+  ('9edc6fa2-3908-4c53-9359-1e6a2fb9e5f7', '87a4b40c-f472-42ab-84f4-7befee5a6db2', 'Paris Adventure', 'Experience the romance of Paris', 'Paris', '2025-09-15 09:00:00+00', '2025-09-20 18:00:00+00', 2000.00, 'EUR', 2, 7, 3, 'romantic'),
+
+  -- Lucy Brown itineraries
+  ('38a29e10-9ebc-4b36-824b-8f4a726f9815', '33273cea-a2d5-4c46-a70d-c95f86c0c4e1', 'Barcelona Food Tour', 'Tasting the best food in Barcelona', 'Barcelona', '2025-08-10 09:00:00+00', '2025-08-15 18:00:00+00', 1200.00, 'EUR', 1, 10, 4, 'food'),
+  ('a92e9e57-bf67-47b7-9b7a-8a4a04df2e16', '33273cea-a2d5-4c46-a70d-c95f86c0c4e1', 'Central Park Relax', 'Chilling in Central Park', 'New York', '2025-08-01 09:00:00+00', '2025-08-03 18:00:00+00', 700.00, 'USD', 1, 3, 1, 'relax'),
+
+  -- Tom White itineraries
+  ('4a5b8f0a-6c41-4463-b68d-cf5a97034d96', '860681e5-f2d3-446f-bff4-ddabc4989484', 'Swiss Alps Adventure', 'Hiking and sightseeing in the Swiss Alps', 'Zurich', '2025-07-20 09:00:00+00', '2025-07-25 18:00:00+00', 2500.00, 'CHF', 2, 8, 5, 'hiking'),
+  ('18af5fc9-d807-4c65-856c-f39c8d4188c4', '860681e5-f2d3-446f-bff4-ddabc4989484', 'Paris Museums Tour', 'Visiting the famous museums of Paris', 'Paris', '2025-09-01 09:00:00+00', '2025-09-05 18:00:00+00', 1300.00, 'EUR', 1, 7, 3, 'culture'),
+
+  -- Mike Jones itineraries
+  ('cb191fd5-8656-4142-8182-6f98d7659d42', '82eeffd7-d10d-47eb-b06a-e45e576e4529', 'Paris Nightlife', 'Discovering Paris by night', 'Paris', '2025-09-07 09:00:00+00', '2025-09-11 18:00:00+00', 1100.00, 'EUR', 2, 5, 2, 'nightlife'),
+  ('f2b4e7b1-5c2f-4cc5-8fb7-ec4f814c0835', '82eeffd7-d10d-47eb-b06a-e45e576e4529', 'Zurich City Tour', 'Exploring Zurich’s old town', 'Zurich', '2025-08-15 09:00:00+00', '2025-08-18 18:00:00+00', 1500.00, 'CHF', 1, 4, 1, 'city'),
+
+  -- John Doe itineraries
+  ('fb358159-0c18-4d7c-8a59-3d98b66f759d', '1b3d79ed-bc45-4f28-a581-e773500ec178', 'New York Museums', 'Explore New York\s best museums', 'New York', '2025-07-10 09:00:00+00', '2025-07-15 18:00:00+00', 1700.00, 'USD', 1, 8, 6, 'culture'),
+  ('dc7392d0-f41e-41cc-9d86-2cf119a3d3f3', '1b3d79ed-bc45-4f28-a581-e773500ec178', 'Barcelona Beach Days', 'Relaxing by the Mediterranean', 'Barcelona', '2025-09-05 09:00:00+00', '2025-09-10 18:00:00+00', 900.00, 'EUR', 2, 6, 2, 'beach');

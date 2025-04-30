@@ -83,7 +83,7 @@ const HeaderSection = ({ userData, isMyProfile }) => {
         </div>
       </div>
       <div className="profile__header-actions">
-        {isMyProfile ? (
+        {isMyProfile() ? (
           <Link
             to={`/profile/edit/${userData?.id}`}
             className="btn btn-primary"
