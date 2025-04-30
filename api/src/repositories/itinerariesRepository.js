@@ -10,9 +10,9 @@ export class ItineraryRepository {
         return result.rows.map(row => Itinerary.fromDb(row));
     }
 
-    async getItineraryById(id) {
+    async getItineraryById(itineraryId) {
         const query = `SELECT * FROM itineraries WHERE id = $1`;
-        const result = await client.query(query, [id]);
+        const result = await client.query(query, [itineraryId]);
         if (result.rows.length === 0) {
             return null;
         }
@@ -63,7 +63,7 @@ export class ItineraryRepository {
         await client.query(deleteItineraryQuery, [itineraryId]);
     }
 
-    async updateItinerary(id, itineraryData) {
+    async updateItinerary(itineraryId, itineraryData) {
         const {
             title,
             description,
@@ -84,7 +84,7 @@ export class ItineraryRepository {
             `;
 
         const result = await client.query(updateItineraryQuery, [
-            id,
+            itineraryId,
             title,
             description,
             location,
@@ -112,7 +112,7 @@ export class ItineraryRepository {
             orderIndex,
         ]);
     }
-    
+
     async updatePlaceInItinerary(itineraryId, placeData) {
         const itineraryPlaceQuery = `
             UPDATE itinerary_places
