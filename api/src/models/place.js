@@ -12,18 +12,18 @@ export class Place {
         this.orderIndex = orderIndex;
     }
 
-    static fromDb(row) {
+    static fromDb(row, orderIndex) {
         return new Place({
-            id: row.place_id,
-            title: row.place_title,
-            description: row.place_description,
+            id: row.id,
+            title: row.title,
+            description: row.description,
             address: row.address,
             latitude: row.latitude,
             longitude: row.longitude,
             category: row.category,
-            createdAt: row.place_created_at,
-            updatedAt: row.place_updated_at,
-            orderIndex: row.order_index,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at,
+            orderIndex,
         });
     }
 

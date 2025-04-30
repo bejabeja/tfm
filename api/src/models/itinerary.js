@@ -21,15 +21,15 @@ export class Itinerary {
 
     static fromDb(row) {
         return new Itinerary({
-            id: row.itinerary_id,
+            id: row.id,
             userId: row.user_id,
-            title: row.itinerary_title,
-            description: row.itinerary_description,
+            title: row.title,
+            description: row.description,
             location: row.location,
             startDate: row.start_date,
             endDate: row.end_date,
-            createdAt: row.itinerary_created_at,
-            updatedAt: row.itinerary_updated_at,
+            createdAt: row.created_at,
+            updatedAt: row.updated_at,
             photoUrl: row.photo_url,
             budget: row.budget,
             numberOfPeople: row.number_of_people,
