@@ -11,6 +11,7 @@
   justify-content: center;
   padding: 1rem;
   min-height: fit-content;
+  opacity: 0;
 
   &__overlay {
     position: absolute;
@@ -45,6 +46,11 @@
       width: 100%;
     }
   }
+}
+
+.loaded {
+  opacity: 1;
+  transition: opacity 0.5s ease-in-out;
 }
 
 @media (min-width: 480px) {

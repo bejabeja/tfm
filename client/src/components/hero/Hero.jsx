@@ -1,12 +1,25 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
+import { setImageHeroLoaded } from "../../reducers/authReducer";
+import { preloadImg } from "../../utils/preloadImg";
 import "./Hero.scss";
+import { heroImage } from "../../utils/constants";
 
 const Hero = () => {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { isAuthenticated, imageHeroLoaded } = useSelector(
+    (state) => state.auth
+  );
+  useEffect(() => {
+    if (imageHeroLoaded) return;
+    preloadImg(heroImage, () => {
+      dispatch(setImageHeroLoaded());
+    });
+  }, [dispatch, imageHeroLoaded]);
+
   return (
-    <section className="hero">
+    <section className={`hero ${imageHeroLoaded ? "loaded" : ""}`}>
       <div className="hero__overlay" />
       <div className="hero__content">
         <h1 className="hero__content__title">Connect with Your World</h1>

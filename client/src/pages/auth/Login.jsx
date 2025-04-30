@@ -1,11 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
-import { loginUser } from "../../reducers/authReducer";
+import { loginUser, setImageAuthLoaded } from "../../reducers/authReducer";
+import { authImage } from "../../utils/constants";
+import { preloadImg } from "../../utils/preloadImg";
 import { loginSchema } from "../../utils/schemasValidation";
 import "./Auth.scss";
 
@@ -17,7 +19,14 @@ const fields = [
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error } = useSelector((state) => state.auth);
+  const { error, imageAuthLoaded } = useSelector((state) => state.auth);
+
+  useEffect(() => {
+    if (imageAuthLoaded) return;
+    preloadImg(authImage, () => {
+      dispatch(setImageAuthLoaded());
+    });
+  }, [dispatch, imageAuthLoaded]);
 
   const {
     control,
@@ -38,17 +47,10 @@ const Login = () => {
       })
     );
   };
-  console.log(errors);
 
   return (
     <section className="auth">
-      <img
-        src="/images/form-bg-login.webp"
-        alt="Foto de Annie Spratt en Unsplash"
-        className="auth__bg"
-        loading="eager"
-        fetchPriority="high"
-      />
+      <div className={`auth__bg ${imageAuthLoaded ? "loaded" : ""}`} />
 
       <form onSubmit={handleSubmit(checkUser)} className="auth__form">
         <h1 className="auth__form-title">Log in</h1>

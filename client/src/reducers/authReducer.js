@@ -6,6 +6,8 @@ const initialState = {
     isAuthenticated: false,
     loading: true,
     error: null,
+    imageHeroLoaded: false,
+    imageAuthLoaded: false,
 };
 
 export const authReducer = (state = initialState, action) => {
@@ -47,6 +49,20 @@ export const authReducer = (state = initialState, action) => {
             ...state,
             error: null,
         }
+    }
+
+    if (action.type === "@auth/setImageHeroLoaded") {
+        return {
+            ...state,
+            imageHeroLoaded: true,
+        };
+    }
+
+    if (action.type === "@auth/setImageAuthLoaded") {
+        return {
+            ...state,
+            imageAuthLoaded: true,
+        };
     }
 
     return state;
@@ -121,6 +137,22 @@ export const clearError = () => {
     return async (dispatch) => {
         dispatch({
             type: "@auth/clearError",
+        });
+    }
+}
+
+export const setImageHeroLoaded = () => {
+    return async (dispatch) => {
+        dispatch({
+            type: "@auth/setImageHeroLoaded",
+        });
+    }
+}
+
+export const setImageAuthLoaded = () => {
+    return async (dispatch) => {
+        dispatch({
+            type: "@auth/setImageAuthLoaded",
         });
     }
 }
