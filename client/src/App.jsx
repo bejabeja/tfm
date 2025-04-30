@@ -16,17 +16,24 @@ import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
 import { clearError, initUser } from "./reducers/authReducer";
+import { initUserLoggedInfo } from "./reducers/userLoggedReducer";
 import { initUsers } from "./reducers/usersReducer";
 
 const App = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
+  const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     dispatch(initUser());
     dispatch(initUsers());
   }, []);
+
+  useEffect(() => {
+    if (isAuthenticated && user?.id) {
+      dispatch(initUserLoggedInfo(user.id));
+    }
+  }, [dispatch, isAuthenticated, user?.id]);
 
   useEffect(() => {
     dispatch(clearError());

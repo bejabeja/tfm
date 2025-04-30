@@ -1,12 +1,12 @@
 import { applyMiddleware, combineReducers, compose, createStore } from "redux";
 import { thunk } from "redux-thunk";
 import { authReducer } from "./reducers/authReducer";
-import { userReducer } from "./reducers/userReducer";
+import { userLoggedReducer } from "./reducers/userLoggedReducer.js";
 import { usersReducer } from "./reducers/usersReducer.js";
 
 const reducer = combineReducers({
     auth: authReducer,
-    user: userReducer,
+    myInfo: userLoggedReducer,
     users: usersReducer,
 });
 
