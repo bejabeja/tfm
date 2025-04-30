@@ -78,7 +78,17 @@ export class ItineraryRepository {
 
         const updateItineraryQuery = `
                 UPDATE itineraries
-                SET title = $2, description = $3, location = $4, start_date = $5, end_date = $6, number_of_people = $7, budget = $8, currency = $9, category = $10
+                SET 
+                    title = $2, 
+                    description = $3, 
+                    location = $4, 
+                    start_date = $5, 
+                    end_date = $6, 
+                    number_of_people = $7, 
+                    budget = $8, 
+                    currency = $9, 
+                    category = $10,
+                    updated_at = NOW()
                 WHERE id = $1
                 RETURNING *;
             `;
@@ -128,5 +138,17 @@ export class ItineraryRepository {
         ]);
 
         return result.rows[0];
+    }
+
+    async unlinkPlaceFromItinerary(itineraryId, placeId) {
+        const itineraryPlaceQuery = `
+            DELETE FROM itinerary_places
+            WHERE itinerary_id = $1 AND place_id = $2;
+        `;
+
+        await client.query(itineraryPlaceQuery, [
+            itineraryId,
+            placeId
+        ]);
     }
 }

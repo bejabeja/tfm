@@ -49,6 +49,13 @@ export class ItinerariesService {
         }
         const itineraryPlaces = await this.placesRepository.getPlacesByItineraryId(itinerary.id);
 
+        const incomingPlacesIds = new Set(itineraryData.places.map(place => place.id));
+        for (const place of itineraryPlaces) {
+            if (!incomingPlacesIds.has(place.id)) {
+                await this.itinerariesRepository.unlinkPlaceFromItinerary(itinerary.id, place.id);
+            }
+        }  
+        
         if (itineraryData.places?.length) {
             for (const placeData of itineraryData.places) {
                 const existingPlace = itineraryPlaces.find(place => place.id === placeData.id);
@@ -56,7 +63,6 @@ export class ItinerariesService {
                     const place = await this.placesRepository.updatePlace(placeData);
                     await this.itinerariesRepository.updatePlaceInItinerary(itinerary.id, place);
                 } else {
-                    console.log('aqui no entro')
                     const place = await this.placesRepository.insertPlace(placeData);
                     await this.itinerariesRepository.linkPlaceToItinerary(itinerary.id, place.id, placeData.orderIndex);
                     itinerary.addPlace(place);
@@ -65,6 +71,5 @@ export class ItinerariesService {
         }
 
         await this.itinerariesRepository.updateItinerary(id, itineraryData);
-        console.log('aqui no entro 2')
     }
 }
