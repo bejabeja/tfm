@@ -98,6 +98,11 @@ export class UserService {
             throw new NotFoundError("No featured users found");
         }
 
+        for (const user of users) {
+            const countItineraries = await this.itinerariesRepository.getTotalItinerariesByUserId(user.id);
+            user.totalItineraries = countItineraries;
+        }
+
         return users.map(user => user.toFeaturedDTO());
     }
 }

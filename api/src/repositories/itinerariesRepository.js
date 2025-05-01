@@ -151,4 +151,14 @@ export class ItineraryRepository {
             placeId
         ]);
     }
+
+    async getTotalItinerariesByUserId(userId) {
+        const query = `
+            SELECT COUNT(*) as total
+            FROM itineraries
+            WHERE user_id = $1
+        `;
+        const result = await client.query(query, [userId]);
+        return parseInt(result.rows[0].total, 10);
+    }
 }

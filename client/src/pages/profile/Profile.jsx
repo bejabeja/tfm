@@ -76,7 +76,7 @@ const HeaderSection = ({ userData, isMyProfile }) => {
               <strong>{userData?.following}</strong> following
             </p>
             <p>
-              <strong>{userData?.tripsShared}</strong> itineraries
+              <strong>{userData?.totalItineraries}</strong> itineraries
             </p>
           </div>
           <p className="profile__header-info-bio">{userData?.bio}</p>

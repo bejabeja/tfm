@@ -2,7 +2,7 @@ import { generateAvatar } from "../utils/avatar.js";
 import { formatDate } from "../utils/date.js";
 
 export class User {
-    constructor({ id, username, email, password, location, avatarUrl, createdAt, updatedAt, name, tripsShared, followers, following, itineraries, bio, about }) {
+    constructor({ id, username, email, password, location, avatarUrl, createdAt, updatedAt, name, followersList, followingList, itineraries, bio, about, totalItineraries }) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -12,12 +12,12 @@ export class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.name = name || "No name";
-        this.tripsShared = tripsShared || 0;
-        this.followers = followers || 0;
-        this.following = following || 0;
+        this.followersList = followersList || [];
+        this.followingList = followingList || [];
         this.itineraries = itineraries || [];
         this.bio = bio || "No bio available";
         this.about = about || "No about information available";
+        this.totalItineraries = totalItineraries || 0;
     }
 
     static fromDb(row) {
@@ -31,10 +31,6 @@ export class User {
             createdAt: row.created_at,
             updatedAt: row.updated_at,
             name: row.name,
-            tripsShared: row.trips_shared,
-            followers: row.followers,
-            following: row.following,
-            itineraries: row.itineraries,
             bio: row.bio,
             about: row.about
         });
@@ -50,6 +46,18 @@ export class User {
         this.updatedAt = new Date();
     }
 
+    countItineraries() {
+        return this.itineraries.length || this.totalItineraries;
+    }
+
+    totalFollowers() {
+        return this.followersList.length;
+    }
+
+    totalFollowing() {
+        return this.followingList.length;
+    }
+
     toDTO() {
         return {
             id: this.id,
@@ -60,9 +68,11 @@ export class User {
             createdAt: formatDate(this.createdAt),
             updatedAt: formatDate(this.updatedAt),
             name: this.name,
-            tripsShared: this.tripsShared,
-            followers: this.followers,
-            following: this.following,
+            totalItineraries: this.countItineraries(),
+            followersList: this.followersList,
+            followingList: this.followingList,
+            followers: this.totalFollowers(),
+            following: this.totalFollowing(),
             itineraries: this.itineraries,
             bio: this.bio,
             about: this.about
@@ -82,8 +92,9 @@ export class User {
             id: this.id,
             username: this.username,
             location: this.location,
-            tripsShared: this.tripsShared,
+            totalItineraries: this.countItineraries(),
             avatarUrl: this.avatarUrl,
         };
     }
+
 }
