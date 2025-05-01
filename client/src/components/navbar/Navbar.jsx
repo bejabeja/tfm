@@ -1,14 +1,24 @@
 import React, { useEffect, useState } from "react";
 import { FaBars } from "react-icons/fa";
-import { GoBook, GoHome, GoPeople, GoSignIn, GoSignOut } from "react-icons/go";
+import {
+  GoBook,
+  GoHome,
+  GoPeople,
+  GoPerson,
+  GoSignIn,
+  GoSignOut,
+} from "react-icons/go";
 import { IoSearch } from "react-icons/io5";
 import { RiUserCommunityLine } from "react-icons/ri";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation } from "react-router-dom";
+import { logoutUser } from "../../store/auth/authActions";
 import "./Navbar.scss";
 
 const Navbar = () => {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
+  const { isAuthenticated, loading } = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.myInfo);
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
@@ -20,6 +30,11 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
   const isActive = (path) => location.pathname === path;
+
+  const handleLogout = () => {
+    dispatch(logoutUser());
+    setIsOpen(false);
+  };
 
   return (
     <section>
@@ -58,49 +73,93 @@ const Navbar = () => {
             <span>Community</span>
           </Link>
         </div>
-        <div className="nav-section">
-          <h3>Private</h3>
-          {isAuthenticated ? (
-            <>
-              <Link
-                to="/my-itineraries"
-                className={`nav-item ${
-                  isActive("/my-itineraries") ? "active" : ""
-                }`}
-              >
-                <GoBook className="nav-icon" />
-                <span>My Itineraries</span>
-              </Link>
-              <Link
-                to="/friends"
-                className={`nav-item ${isActive("/friends") ? "active" : ""}`}
-              >
-                <GoPeople className="nav-icon" />
-                <span>Friends</span>
-              </Link>
-            </>
-          ) : (
-            <>
-              <Link
-                to="/login"
-                className={`nav-item ${isActive("/login") ? "active" : ""}`}
-              >
-                <GoSignIn className="nav-icon" />
-                <span>Login</span>
-              </Link>
-              <Link
-                to="/register"
-                className={`nav-item ${isActive("/register") ? "active" : ""}`}
-              >
-                <GoSignOut className="nav-icon" />
-                <span>Register</span>
-              </Link>
-            </>
-          )}
-        </div>
+
+        {loading ? (
+          <div className="loading-placeholder nav-section">
+            <h3>Private</h3>
+            <p>
+              <GoBook className="nav-icon" />
+              <span>Loading...</span>
+            </p>
+            <p>
+              <GoBook className="nav-icon" />
+              <span>Loading...</span>
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="nav-section">
+              <h3>Private</h3>
+              {isAuthenticated ? (
+                <>
+                  <Link
+                    to="/my-itineraries"
+                    className={`nav-item ${
+                      isActive("/my-itineraries") ? "active" : ""
+                    }`}
+                  >
+                    <GoBook className="nav-icon" />
+                    <span>My Itineraries</span>
+                  </Link>
+                  <Link
+                    to="/friends"
+                    className={`nav-item ${
+                      isActive("/friends") ? "active" : ""
+                    }`}
+                  >
+                    <GoPeople className="nav-icon" />
+                    <span>Friends</span>
+                  </Link>
+                  {isOpen && (
+                    <>
+                      <Link
+                        to={`/profile/${userInfo.id}`}
+                        className={`nav-item ${
+                          isActive("/profile") ? "active" : ""
+                        }`}
+                      >
+                        <GoPerson className="nav-icon" />
+                        <span>Profile</span>
+                      </Link>
+                      <Link
+                        to="/logout"
+                        onClick={handleLogout}
+                        className="nav-item"
+                      >
+                        <GoSignOut className="nav-icon" />
+                        <span>Logout</span>
+                      </Link>
+                    </>
+                  )}
+                </>
+              ) : (
+                <>
+                  <Link
+                    to="/login"
+                    className={`nav-item ${isActive("/login") ? "active" : ""}`}
+                  >
+                    <GoSignIn className="nav-icon" />
+                    <span>Login</span>
+                  </Link>
+                  <Link
+                    to="/register"
+                    className={`nav-item ${
+                      isActive("/register") ? "active" : ""
+                    }`}
+                  >
+                    <GoSignOut className="nav-icon" />
+                    <span>Register</span>
+                  </Link>
+                </>
+              )}
+            </div>
+          </>
+        )}
       </nav>
     </section>
   );
 };
 
 export default Navbar;
+
+
