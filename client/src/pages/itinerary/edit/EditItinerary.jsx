@@ -1,13 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import SubmitButton from "../../../components/form/SubmitButton";
 import {
   getItineraryById,
   updateItinerary,
 } from "../../../services/itineraries";
+import { initUserInfo } from "../../../store/user/userInfoActions";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sections/BasicInfoForm";
 import BudgetForm from "../sections/BudgetForm";
@@ -16,15 +17,16 @@ import PlacesForm from "../sections/PlacesForm";
 import TravellersForm from "../sections/TravellersForm";
 
 const EditItinerary = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
-  const { user } = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.myInfo);
 
   const [itineraryData, setItineraryData] = useState(null);
   const navigate = useNavigate();
 
   const isMyItinerary = () => {
-    if (!user || !itineraryData) return false;
-    return user.id === itineraryData.userId;
+    if (!userInfo || !itineraryData) return false;
+    return userInfo.id === itineraryData.userId;
   };
 
   const {
@@ -82,7 +84,7 @@ const EditItinerary = () => {
 
   const editItinerary = async (data) => {
     const body = {
-      userId: user.id,
+      userId: userInfo.id,
       title: data.title,
       description: data.description,
       location: data.destination,
@@ -102,7 +104,8 @@ const EditItinerary = () => {
     };
 
     await updateItinerary(id, body);
-    navigate(`/profile/${user.id}`);
+    dispatch(initUserInfo(userInfo.id));
+    navigate(`/profile/${userInfo.id}`);
   };
 
   return (

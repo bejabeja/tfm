@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 import { GoPerson, GoSignOut } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { logoutUser } from "../../reducers/authReducer.js";
+import { logoutUser } from "../../store/auth/authActions.js";
 import "./Topbar.scss";
 
 const Topbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useDispatch();
-  const { user } = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.myInfo);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -38,16 +38,16 @@ const Topbar = () => {
       <div className="dropdown">
         <button className="dropbtn" onClick={toggleDropdown}>
           <img
-            src={user?.avatarUrl}
+            src={userInfo?.avatarUrl}
             alt="user photo avatar"
             className="avatar"
           />
-          <span>{user?.username}</span>
+          <span>{userInfo?.username}</span>
         </button>
         {dropdownOpen && (
           <div className="dropdown-content">
             <Link
-              to={`/profile/${user.id}`}
+              to={`/profile/${userInfo.id}`}
               className="nav-item"
               onClick={toggleDropdown}
             >

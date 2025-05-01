@@ -13,7 +13,7 @@ import "./Itinerary.scss";
 
 const Itinerary = () => {
   const { id } = useParams();
-  const { user } = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.myInfo);
   const [itinerary, setItinerary] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -51,9 +51,9 @@ const Itinerary = () => {
   };
 
   const isMyItinerary = () => {
-    if (!user || !itinerary) return false;
+    if (!userInfo || !itinerary) return false;
 
-    return user.id === itinerary.userId;
+    return userInfo.id === itinerary.userId;
   };
 
   return (
@@ -105,7 +105,7 @@ const Itinerary = () => {
           {isMyItinerary() && (
             <div className="itinerary__container-primary-actions">
               <Link
-                to={`/profile/${user.id}`}
+                to={`/profile/${userInfo.id}`}
                 className="btn btn--danger"
                 onClick={handleRemove}
               >
@@ -121,7 +121,7 @@ const Itinerary = () => {
           )}
         </div>
         <div className="itinerary__container-secondary">
-          <h1 className="itinerary__title">Trip Area</h1>
+          {/* <h1 className="itinerary__title">Trip Area</h1> */}
         </div>
       </div>
     </section>

@@ -1,32 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
-import { getUserById } from "../../services/user";
 import "./MyItineraries.scss";
 
 const MyItineraries = () => {
-  const { id } = useSelector((state) => state.auth.user);
-  const [userData, setUserData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await getUserById(id);
-        setUserData(response);
-      } catch (err) {
-        setError(err.message || "An error occurred");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (id) {
-      fetchUserData();
-    }
-  }, [id]);
+  const { userInfo, loading, error } = useSelector((state) => state.myInfo);
 
   if (loading) {
     return (
@@ -47,8 +26,8 @@ const MyItineraries = () => {
           Create new trip
         </Link>
       </div>
-      {userData && userData.itineraries ? (
-        <ItinerariesSection user={userData} isMyProfile={true} />
+      {userInfo && userInfo.itineraries ? (
+        <ItinerariesSection user={userInfo} isMyProfile={true} />
       ) : (
         <div>No itineraries found</div>
       )}

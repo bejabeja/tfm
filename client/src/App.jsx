@@ -15,9 +15,9 @@ import EditItinerary from "./pages/itinerary/edit/EditItinerary";
 import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
-import { clearError, initUser } from "./reducers/authReducer";
-import { initUserLoggedInfo } from "./reducers/userLoggedReducer";
-import { initUsers } from "./reducers/usersReducer";
+import { clearError, initUser } from "./store/auth/authActions";
+import { initUserInfo } from "./store/user/userInfoActions";
+import { initUsers } from "./store/users/usersActions";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -31,7 +31,7 @@ const App = () => {
 
   useEffect(() => {
     if (isAuthenticated && user?.id) {
-      dispatch(initUserLoggedInfo(user.id));
+      dispatch(initUserInfo(user.id));
     }
   }, [dispatch, isAuthenticated, user?.id]);
 
@@ -57,8 +57,18 @@ const App = () => {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Signup />} />
             <Route path="/logout" element={<Logout />} />
-            <Route path="/explore" element={<div>Explore</div>} />
-            <Route path="/community" element={<div>Community</div>} />
+            <Route
+              path="/explore"
+              element={
+                <section className="section__container">Explore</section>
+              }
+            />
+            <Route
+              path="/community"
+              element={
+                <section className="section__container">Community</section>
+              }
+            />
 
             {/* routes to decide if private or not */}
             <Route path="/friend-profile/:id" element={<Profile />} />
@@ -67,7 +77,12 @@ const App = () => {
             {/* private routes */}
             <Route element={<PrivateLayout />}>
               <Route path="/my-itineraries" element={<MyItineraries />} />
-              <Route path="/friends" element={<div>Friends</div>} />
+              <Route
+                path="/friends"
+                element={
+                  <section className="section__container">Friends</section>
+                }
+              />
               <Route path="/profile/:id" element={<Profile />} />
               <Route path="profile/edit/:id" element={<EditProfile />} />
               <Route path="/create-itinerary" element={<CreateItinerary />} />

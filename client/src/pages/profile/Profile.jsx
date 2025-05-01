@@ -9,13 +9,13 @@ import "./Profile.scss";
 
 const Profile = () => {
   const { id } = useParams();
-  const { user } = useSelector((state) => state.auth);
+  const { userInfo } = useSelector((state) => state.myInfo);
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const isMyProfile = () => {
-    if (!user) return false;
-    return user.id === id;
+    if (!userInfo) return false;
+    return userInfo.id === id;
   };
   useEffect(() => {
     const fetchUserData = async () => {

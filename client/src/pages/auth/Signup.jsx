@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
-import { createUser, setImageAuthLoaded } from "../../reducers/authReducer";
+import { createUser, setImageAuthLoaded } from "../../store/auth/authActions";
 import { authImage } from "../../utils/constants";
 import { preloadImg } from "../../utils/preloadImg";
 import { signupSchema } from "../../utils/schemasValidation";

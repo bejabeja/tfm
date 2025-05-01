@@ -2,21 +2,20 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { IoLocationOutline } from "react-icons/io5";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
-import { initUser } from "../../reducers/authReducer";
-import { getUserById, updateUser } from "../../services/user";
+import { updateUser } from "../../services/user";
+import { initUser } from "../../store/auth/authActions";
+import { initUserInfo } from "../../store/user/userInfoActions";
 import { updateUserSchema } from "../../utils/schemasValidation";
 import "./EditProfile.scss";
 
 const EditProfile = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const [userData, setUserData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
-
+  const { userInfo, loading, error } = useSelector((state) => state.myInfo);
+  const [errorSubmit, setErrorSubmit] = useState(null);
   const navigate = useNavigate();
 
   const {
@@ -29,24 +28,18 @@ const EditProfile = () => {
   });
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await getUserById(id);
-        setUserData(response);
+    dispatch(initUserInfo(id));
+  }, [dispatch, id]);
 
-        setValue("username", response.username);
-        setValue("bio", response.bio);
-        setValue("location", response.location);
-        setValue("name", response.name);
-        setValue("about", response.about);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserData();
-  }, [id, setValue]);
+  useEffect(() => {
+    if (!userInfo) return;
+
+    setValue("username", userInfo.username);
+    setValue("bio", userInfo.bio);
+    setValue("location", userInfo.location);
+    setValue("name", userInfo.name);
+    setValue("about", userInfo.about);
+  }, [userInfo, setValue]);
 
   if (loading) {
     return (
@@ -60,20 +53,20 @@ const EditProfile = () => {
     try {
       await updateUser(data);
       dispatch(initUser());
+      dispatch(initUserInfo(id));
       navigate(`/profile/${id}`);
     } catch (err) {
       console.error("Error updating profile", err);
-
-      setError(err.message);
+      setErrorSubmit(err.message);
     }
   };
 
   return (
     <section className="edit-profile section__container">
       <form onSubmit={handleSubmit(saveUser)} className="edit-profile__form">
-        <HeaderSection userData={userData} control={control} errors={errors} />
+        <HeaderSection userInfo={userInfo} control={control} errors={errors} />
         <AboutSection control={control} errors={errors} />
-        {error && <div className="error-message">{error}</div>}
+        {errorSubmit && <div className="error-message">{error}</div>}
         <div className="edit-profile__header-actions">
           <button type="submit" className="btn btn-primary">
             Save Profile
@@ -86,12 +79,12 @@ const EditProfile = () => {
 
 export default EditProfile;
 
-const HeaderSection = ({ userData, control, errors }) => {
+const HeaderSection = ({ userInfo, control, errors }) => {
   return (
     <div className="edit-profile__header">
       <img
         className="profile__header-image"
-        src={userData?.avatarUrl}
+        src={userInfo?.avatarUrl}
         alt="Profile"
       />
       <div className="edit-profile__header-info">
@@ -133,6 +126,7 @@ const AboutSection = ({ control, errors }) => {
             control={control}
             type="text"
             placeholder="Edit your about"
+            error={errors.about}
           />
         </div>
         <div className="profile__about-content-stats">
