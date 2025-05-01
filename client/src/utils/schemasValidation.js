@@ -63,16 +63,16 @@ export const createItinerarySchema = z
         title: z
             .string()
             .min(2, "Title is required")
-            .max(100, "Title must be less than 100 characters"),
+            .max(50, "Title must be less than 50 characters"),
 
         destination: z
             .string()
             .min(2, "Destination is required")
-            .max(100, "Destination must be less than 100 characters"),
+            .max(50, "Destination must be less than 50 characters"),
 
         description: z
             .string()
-            .max(1000, "Description must be less than 1000 characters")
+            .max(500, "Description must be less than 500 characters")
             .optional(),
 
         startDate: z
@@ -96,11 +96,11 @@ export const createItinerarySchema = z
                     title: z
                         .string()
                         .min(2, "Place name is required")
-                        .max(100, "Place name must be less than 100 characters"),
+                        .max(50, "Place name must be less than 50 characters"),
 
                     description: z
                         .string()
-                        .max(1000, "Description must be less than 1000 characters")
+                        .max(500, "Description must be less than 500 characters")
                         .optional()
                         .or(z.literal("other")),
 

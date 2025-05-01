@@ -128,6 +128,12 @@ body {
   animation: spin 1s linear infinite;
 }
 
+.break-text {
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: anywhere;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);

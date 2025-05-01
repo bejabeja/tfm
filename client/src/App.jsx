@@ -40,7 +40,7 @@ const App = () => {
   }, [dispatch, location]);
 
   return (
-    <div className="App">
+    <div className="App ">
       <div className="side-content">
         <Navbar />
       </div>

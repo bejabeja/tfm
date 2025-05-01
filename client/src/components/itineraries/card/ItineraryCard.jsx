@@ -3,15 +3,8 @@ import { FaHeart, FaRegComment, FaRegHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const ItineraryCard = ({ itinerary, user }) => {
-  const {
-    id,
-    title,
-    photoUrl,
-    location,
-    tripTotalDays,
-    commentsCount,
-    likesCount,
-  } = itinerary;
+  const { id, photoUrl, location, tripTotalDays, commentsCount, likesCount } =
+    itinerary;
   const { username } = user;
 
   const [isFavorited, setIsFavorited] = useState(false);
@@ -21,7 +14,7 @@ const ItineraryCard = ({ itinerary, user }) => {
   };
 
   return (
-    <div className="itinerary-card-section">
+    <div className="itinerary-card-section break-text">
       <Link className="itinerary-card" to={`/itinerary/${id}`}>
         <div className="itinerary-card__header">
           <img

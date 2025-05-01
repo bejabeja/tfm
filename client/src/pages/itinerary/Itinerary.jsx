@@ -57,7 +57,7 @@ const Itinerary = () => {
   };
 
   return (
-    <section className="itinerary">
+    <section className="itinerary break-text">
       <div className="itinerary__hero">
         <div className="itinerary__hero-overlay" />
         <div className="itinerary__hero-content">
@@ -132,7 +132,7 @@ const Place = ({ place, index }) => {
   const Icon = getCategoryIcon(place.category) || FaCity;
   return (
     <div className="place">
-      <h3 className="place__title">
+      <h3 className="place__title ">
         Place {index + 1} : {place.title}
       </h3>
       <div className="place__info">
