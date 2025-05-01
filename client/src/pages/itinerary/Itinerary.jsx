@@ -10,6 +10,7 @@ import {
   deleteItinerary,
   getItineraryById,
 } from "../../services/itineraries.js";
+import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
 
 const Itinerary = () => {
@@ -74,9 +75,13 @@ const Itinerary = () => {
           <p className="itinerary__description">{itinerary.description}</p>
           <div className="itinerary__container-primary-stats">
             <div className="itinerary__container-stats-budget">
-              <MdOutlineAttachMoney className="icon" />
+              {getCurrencySymbol(itinerary.currency) ?? (
+                <MdOutlineAttachMoney className="icon" />
+              )}
               <strong className="itinerary__title">Budget</strong>
-              <p className="itinerary__description">{itinerary.budget} USD</p>
+              <p className="itinerary__description">
+                {itinerary.budget} {itinerary.currency}
+              </p>
             </div>
             <div className="itinerary__container-stats-days">
               <MdOutlineCalendarMonth className="icon" />

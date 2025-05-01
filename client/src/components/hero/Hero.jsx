@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { setImageHeroLoaded } from "../../store/auth/authActions";
-import { heroImage } from "../../utils/constants";
+import { heroImage } from "../../utils/constants/constants";
 import { preloadImg } from "../../utils/preloadImg";
 import "./Hero.scss";
 

@@ -2,7 +2,7 @@ import React from "react";
 import { Controller } from "react-hook-form";
 import { getCategoryIcon } from "../../../assets/icons";
 import { InputForm, TextAreaForm } from "../../../components/form/InputForm";
-import { itineraryCategories } from "../../../utils/constants";
+import { itineraryCategories } from "../../../utils/constants/constants";
 
 const BasicInfoForm = ({ control, errors }) => (
   <div className="form__basic-info">

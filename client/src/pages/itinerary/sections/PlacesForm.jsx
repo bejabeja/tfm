@@ -2,7 +2,7 @@ import React from "react";
 import { Controller } from "react-hook-form";
 import { getCategoryIcon } from "../../../assets/icons";
 import { InputForm, TextAreaForm } from "../../../components/form/InputForm";
-import { placeCategories } from "../../../utils/constants";
+import { placeCategories } from "../../../utils/constants/constants";
 
 const PlacesForm = ({ control, errors, fields, append, remove }) => {
   const handleAddPlace = () => append({ title: "", description: "" });

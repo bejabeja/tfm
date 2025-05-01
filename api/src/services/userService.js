@@ -64,7 +64,7 @@ export class UserService {
         if (!itineraries) {
             throw new NotFoundError("No itineraries found");
         }
-        user.itineraries = itineraries.map(itinerary => itinerary.toSimpleDTO());
+        user.itineraries = itineraries.map(itinerary => itinerary.toDTO());
 
         return user.toDTO();
     }

@@ -28,3 +28,5 @@ export const itineraryCategories = [
   { value: "sport", label: "Sport" },
   { value: "other", label: "Other" },
 ];
+
+

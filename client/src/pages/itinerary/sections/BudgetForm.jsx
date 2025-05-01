@@ -1,5 +1,6 @@
 import React from "react";
-import { InputForm } from "../../../components/form/InputForm";
+import { DropdownForm, InputForm } from "../../../components/form/InputForm";
+import { currencyOptions } from "../../../utils/constants/currencies";
 
 const BudgetForm = ({ control, errors }) => (
   <div className="form__budget">
@@ -12,13 +13,14 @@ const BudgetForm = ({ control, errors }) => (
         control={control}
         error={errors.budget}
       ></InputForm>
-      <InputForm
+      <DropdownForm
         name="currency"
         label="Currency"
-        type="text"
+        type="select"
+        options={currencyOptions}
         control={control}
         error={errors.currency}
-      ></InputForm>
+      />
     </div>
   </div>
 );

@@ -6,7 +6,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { loginUser, setImageAuthLoaded } from "../../store/auth/authActions";
-import { authImage } from "../../utils/constants";
+import { authImage } from "../../utils/constants/constants";
 import { preloadImg } from "../../utils/preloadImg";
 import { loginSchema } from "../../utils/schemasValidation";
 import "./Auth.scss";
