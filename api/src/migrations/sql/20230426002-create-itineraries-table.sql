@@ -13,5 +13,6 @@ CREATE TABLE IF NOT EXISTS itineraries (
     number_of_people INT DEFAULT 1,
     likes_count INT DEFAULT 0,
     comments_count INT DEFAULT 0,
-    category VARCHAR(50)
+    category VARCHAR(50),
+    photo_url VARCHAR(255)
 );
