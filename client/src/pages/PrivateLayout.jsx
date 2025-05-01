@@ -1,16 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { Navigate, Outlet } from "react-router-dom";
+import Spinner from "../components/spinner/Spinner";
 
 const PrivateLayout = () => {
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
 
   if (loading) {
-    return (
-      <div className="loading-container ">
-        <div className="loading-spinner"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   return isAuthenticated ? <Outlet /> : <Navigate to="/login" replace />;

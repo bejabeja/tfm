@@ -5,6 +5,7 @@ import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { getCategoryIcon } from "../../assets/icons.js";
+import Spinner from "../../components/spinner/Spinner.jsx";
 import {
   deleteItinerary,
   getItineraryById,
@@ -35,11 +36,7 @@ const Itinerary = () => {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="loading-container ">
-        <div className="loading-spinner"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (error) {

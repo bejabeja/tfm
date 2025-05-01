@@ -5,6 +5,7 @@ import { IoLocationOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
+import Spinner from "../../components/spinner/Spinner";
 import { updateUser } from "../../services/user";
 import { initUser } from "../../store/auth/authActions";
 import { initUserInfo } from "../../store/user/userInfoActions";
@@ -42,11 +43,7 @@ const EditProfile = () => {
   }, [userInfo, setValue]);
 
   if (loading) {
-    return (
-      <div className="loading-container ">
-        <div className="loading-spinner"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   const saveUser = async (data) => {

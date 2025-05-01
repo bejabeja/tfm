@@ -4,6 +4,7 @@ import { MdOutlineCalendarMonth } from "react-icons/md";
 import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
+import Spinner from "../../components/spinner/Spinner";
 import { getUserById } from "../../services/user";
 import "./Profile.scss";
 
@@ -32,11 +33,7 @@ const Profile = () => {
   }, [id]);
 
   if (loading) {
-    return (
-      <div className="loading-container ">
-        <div className="loading-spinner"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (error) {

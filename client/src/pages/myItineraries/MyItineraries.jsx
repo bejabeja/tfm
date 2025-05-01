@@ -2,17 +2,14 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
+import Spinner from "../../components/spinner/Spinner";
 import "./MyItineraries.scss";
 
 const MyItineraries = () => {
   const { userInfo, loading, error } = useSelector((state) => state.myInfo);
 
   if (loading) {
-    return (
-      <div className="loading-container ">
-        <div className="loading-spinner"></div>
-      </div>
-    );
+    return <Spinner />;
   }
 
   if (error) {
