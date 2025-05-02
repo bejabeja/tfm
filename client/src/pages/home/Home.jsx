@@ -1,26 +1,28 @@
-import React from "react";
-import { useSelector } from "react-redux";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Hero from "../../components/hero/Hero.jsx";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection.jsx";
 import UsersSection from "../../components/users/UsersSection.jsx";
+import { initItineraries } from "../../store/itineraries/itinerariesActions.js";
+import { initUsers } from "../../store/users/usersActions.js";
 import { getImagesInfo } from "../../utils/constants/images.js";
 import "./Home.scss";
 
 const Home = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(initUsers());
+    dispatch(initItineraries());
+  }, []);
+
   const { featured, loading } = useSelector((state) => state.users);
   const { featuredItineraries } = useSelector((state) => state.itineraries);
 
   return (
     <section className="home">
       <Hero />
-      <div className="section__container home__cta">
-        <h2>Start Your Adventure</h2>
-        <p>Create and share your next trip in just a few clicks.</p>
-        <Link to="/create-itinerary" className="btn btn-primary">
-          Plan a Trip
-        </Link>
-      </div>
       <div className="home__users section__container">
         <h2>Featured Travel Journeys</h2>
         <p>Where will your next adventure take you?</p>
@@ -48,6 +50,13 @@ const Home = () => {
         <h2>People You May Like</h2>
         <p>Discover fellow travelers who share your passion..</p>
         <UsersSection users={featured} isLoading={loading} />
+      </div>
+      <div className="section__container home__cta">
+        <h2>Start Your Adventure</h2>
+        <p>Create and share your next trip in just a few clicks.</p>
+        <Link to="/create-itinerary" className="btn btn-secondary">
+          Plan a Trip
+        </Link>
       </div>
     </section>
   );

@@ -10,6 +10,7 @@ import {
   deleteItinerary,
   getItineraryById,
 } from "../../services/itineraries.js";
+import { getUserById } from "../../services/user.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
 
@@ -19,6 +20,7 @@ const Itinerary = () => {
   const [itinerary, setItinerary] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userItinerary, setUserItinerary] = useState(null);
 
   useEffect(() => {
     const fetchItinerary = async () => {
@@ -35,6 +37,18 @@ const Itinerary = () => {
 
     fetchItinerary();
   }, [id]);
+
+  useEffect(() => {
+    if (!itinerary?.userId) {
+      return;
+    }
+    const fecthUser = async () => {
+      const response = await getUserById(itinerary.userId);
+      setUserItinerary(response);
+    };
+
+    fecthUser();
+  }, [itinerary?.userId]);
 
   if (loading) {
     return <Spinner />;
@@ -53,25 +67,44 @@ const Itinerary = () => {
 
     return userInfo.id === itinerary.userId;
   };
-
+  
   return (
     <section className="itinerary break-text">
-      <div className="itinerary__hero">
+      <div
+        className="itinerary__hero"
+        style={{
+          backgroundImage: `url(${itinerary.photoUrl || "/images/hero.jpg"})`,
+        }}
+      >
         <div className="itinerary__hero-overlay" />
         <div className="itinerary__hero-content">
-          <h1 className="itinerary__title">{itinerary.title}</h1>
+          <h1 className="itinerary__title">
+            {itinerary.title}{"   "}
+            {itinerary.category !== "other" && (
+              <span className="itinerary__badge">{itinerary.category}</span>
+            )}
+          </h1>
           <div className="itinerary__hero-content-stats">
-            <p className="itinerary__hero-content-stats-days">
+            <div className="itinerary__hero-content-stats-row">
+              <img
+                src={userItinerary?.avatarUrl}
+                alt={userItinerary?.location}
+                className="itinerary__hero-image"
+              />
+              <span>@{userItinerary?.username}</span>
+            </div>
+
+            <div className="itinerary__hero-content-stats-row">
               <MdOutlineCalendarMonth className="nav-icon" />
-              <span>{itinerary.tripTotalDays} days</span>
-            </p>
+              <span>{itinerary.tripDates}</span>
+            </div>
           </div>
         </div>
       </div>
 
       <div className="itinerary__container section__container">
         <div className="itinerary__container-primary">
-          <h1 className="itinerary__title">Trip Overview</h1>
+          <h1 className="itinerary__title">Description</h1>
           <p className="itinerary__description">{itinerary.description}</p>
           <div className="itinerary__container-primary-stats">
             <div className="itinerary__container-stats-budget">

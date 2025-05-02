@@ -1,3 +1,5 @@
+import { formatDateRange } from '../utils/date.js';
+
 export class Itinerary {
     constructor({ id, userId, title, description, location, startDate, endDate, createdAt, updatedAt, photoUrl, budget, numberOfPeople, likesCount, commentsCount, category, currency }) {
         this.id = id;
@@ -64,11 +66,8 @@ export class Itinerary {
             likesCount: this.likesCount,
             commentsCount: this.commentsCount,
             category: this.category,
-            startDate: this.startDate,
-            endDate: this.endDate,
-            createdAt: this.createdAt,
-            updatedAt: this.updatedAt,
             currency: this.currency,
+            tripDates: formatDateRange(this.startDate, this.endDate)
         };
     }
 

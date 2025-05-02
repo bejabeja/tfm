@@ -16,9 +16,7 @@ import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
 import { clearError, initUser } from "./store/auth/authActions";
-import { initItineraries } from "./store/itineraries/itinerariesActions";
 import { initUserInfo } from "./store/user/userInfoActions";
-import { initUsers } from "./store/users/usersActions";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -27,8 +25,6 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initUser());
-    dispatch(initUsers());
-    dispatch(initItineraries());
   }, []);
 
   useEffect(() => {
