@@ -1,7 +1,7 @@
 import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 
-export class ItinerariesService {
+export class ItineraryService {
     constructor(itinerariesRepository, placesRepository, userRepository) {
         this.itinerariesRepository = itinerariesRepository;
         this.placesRepository = placesRepository;

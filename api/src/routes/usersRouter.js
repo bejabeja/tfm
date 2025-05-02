@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController.js";
 import { authenticate } from "../middlewares/authenticate.js";
-import { ItineraryRepository } from "../repositories/itinerariesRepository.js";
+import { ItineraryRepository } from "../repositories/itineraryRepository.js";
 import { UserRepository } from "../repositories/userRepository.js";
 import { UserService } from "../services/userService.js";
 
