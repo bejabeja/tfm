@@ -84,7 +84,16 @@ const HeaderSection = ({ userData, isMyProfile }) => {
         </div>
       </div>
       <div className="profile__header-actions">
-        {isMyProfile() ? (
+        {isMyProfile() && (
+          <Link
+            to={`/profile/edit/${userData?.id}`}
+            className="btn btn-primary"
+          >
+            Edit Profile
+          </Link>
+        )}
+        {/* TODO */}
+        {/* {isMyProfile() ? (
           <Link
             to={`/profile/edit/${userData?.id}`}
             className="btn btn-primary"
@@ -95,7 +104,7 @@ const HeaderSection = ({ userData, isMyProfile }) => {
           <button className="btn btn-primary">
             {userData?.isFollowing ? "Unfollow" : "Follow"}
           </button>
-        )}
+        )} */}
       </div>
     </div>
   );

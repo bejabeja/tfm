@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { FaHeart, FaRegComment, FaRegHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
 const ItineraryCard = ({ itinerary, user: userProp }) => {
@@ -41,7 +40,9 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
           <p className="itinerary-card__days">{tripTotalDays} trip days</p>
         </div>
       </Link>
-      <div className="itinerary-card__actions">
+
+      {/* TODO */}
+      {/* <div className="itinerary-card__actions">
         <button
           className={`btn__itinerary-card ${isFavorited ? "active" : ""}`}
           onClick={() => setIsFavorited(!isFavorited)}
@@ -57,7 +58,7 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
           <FaRegComment className="icon" />
           <span>{commentsCount}</span>
         </Link>
-      </div>
+      </div> */}
     </div>
   );
 };
