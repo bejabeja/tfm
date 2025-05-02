@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.scss";
+import Footer from "./components/footer/Footer";
 import Navbar from "./components/navbar/Navbar";
 import Topbar from "./components/topbar/Topbar";
 import PrivateLayout from "./pages/PrivateLayout";
@@ -37,6 +38,13 @@ const App = () => {
     dispatch(clearError());
   }, [dispatch, location]);
 
+  const publicRoutes = ["/", "/explore", "/community"];
+
+  const isPublicRoute = publicRoutes.some((route) => {
+    const regex = new RegExp(`^${route.replace(/:[^\s/]+/g, "[^/]+")}$`);
+    return regex.test(location.pathname);
+  });
+
   return (
     <div className="App ">
       <div className="side-content">
@@ -51,10 +59,10 @@ const App = () => {
         <div className="content">
           <Routes>
             {/* public routes */}
-            <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Signup />} />
             <Route path="/logout" element={<Logout />} />
+            <Route path="/" element={<Home />} />
             <Route
               path="/explore"
               element={
@@ -88,6 +96,8 @@ const App = () => {
             </Route>
           </Routes>
         </div>
+
+        {isPublicRoute && <Footer />}
       </div>
     </div>
   );

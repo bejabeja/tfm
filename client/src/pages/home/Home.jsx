@@ -23,40 +23,42 @@ const Home = () => {
   return (
     <section className="home">
       <Hero />
-      <div className="home__users section__container">
-        <h2>Featured Travel Journeys</h2>
-        <p>Where will your next adventure take you?</p>
-        <ItinerariesSection
-          user={featuredItineraries?.user}
-          itineraries={featuredItineraries}
-        />
-      </div>
-      <div className="section__container home__destinations">
-        <h2>Popular Destinations</h2>
-        <p>Where our community loves to go.</p>
-        <div className="destinations-grid">
-          {["paris", "tokyo", "newYork", "barcelona"].map((city) => {
-            const cityInfo = getImagesInfo(city);
-            return (
-              <Link className="destination-card" key={city}>
-                <img src={cityInfo.photoUrl} alt={cityInfo.city} />
-                <span>{cityInfo.city}</span>
-              </Link>
-            );
-          })}
+      <div className="section__container home__container">
+        <div className="home__users">
+          <h2>Featured Travel Journeys</h2>
+          <p>Where will your next adventure take you?</p>
+          <ItinerariesSection
+            user={featuredItineraries?.user}
+            itineraries={featuredItineraries}
+          />
         </div>
-      </div>
-      <div className="home__users section__container">
-        <h2>People You May Like</h2>
-        <p>Discover fellow travelers who share your passion..</p>
-        <UsersSection users={featured} isLoading={loading} />
-      </div>
-      <div className="section__container home__cta">
-        <h2>Start Your Adventure</h2>
-        <p>Create and share your next trip in just a few clicks.</p>
-        <Link to="/create-itinerary" className="btn btn-secondary">
-          Plan a Trip
-        </Link>
+        <div className="home__destinations">
+          <h2>Popular Destinations</h2>
+          <p>Where our community loves to go.</p>
+          <div className="destinations-grid">
+            {["paris", "tokyo", "newYork", "barcelona"].map((city) => {
+              const cityInfo = getImagesInfo(city);
+              return (
+                <Link className="destination-card" key={city}>
+                  <img src={cityInfo.photoUrl} alt={cityInfo.city} />
+                  <span>{cityInfo.city}</span>
+                </Link>
+              );
+            })}
+          </div>
+        </div>
+        <div className="home__users">
+          <h2>People You May Like</h2>
+          <p>Discover fellow travelers who share your passion..</p>
+          <UsersSection users={featured} isLoading={loading} />
+        </div>
+        <div className=" home__cta">
+          <h2>Start Your Adventure</h2>
+          <p>Create and share your next trip in just a few clicks.</p>
+          <Link to="/create-itinerary" className="btn btn-secondary">
+            Plan a Trip
+          </Link>
+        </div>
       </div>
     </section>
   );
