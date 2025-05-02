@@ -161,4 +161,37 @@ export class ItineraryRepository {
         const result = await client.query(query, [userId]);
         return parseInt(result.rows[0].total, 10);
     }
+
+    async findByFilters({ category, destination, page = 1, limit = 10 }) {
+        const offset = (page - 1) * limit;
+        const filters = [];
+        const values = [];
+        let index = 1;
+
+        if (category && category !== "all") {
+            filters.push(`category = $${index++}`);
+            values.push(category);
+        }
+
+        if (destination) {
+            filters.push(`LOWER(location) LIKE LOWER($${index++})`);
+            values.push(`%${destination}%`);
+        }
+
+        const whereClause = filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "";
+
+        const query = `
+            SELECT *
+            FROM itineraries
+            ${whereClause}
+            ORDER BY created_at DESC
+            LIMIT $${index++} OFFSET $${index}
+        `;
+
+        values.push(limit);
+        values.push(offset);
+
+        const result = await client.query(query, values);
+        return result.rows.map(row => Itinerary.fromDb(row));
+    }
 }

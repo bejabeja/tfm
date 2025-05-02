@@ -6,6 +6,7 @@ import './src/config/instrument.js';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
 import { createAuthRouter } from './src/routes/authRouter.js';
+import { createItinerariesRouter } from "./src/routes/itinerariesRouter.js";
 import { createItineraryRouter } from './src/routes/itineraryRouter.js';
 import { createUsersRouter } from './src/routes/usersRouter.js';
 
@@ -19,6 +20,7 @@ app.use(cookieParser())
 app.use('/itinerary', createItineraryRouter());
 app.use('/users', createUsersRouter());
 app.use('/auth', createAuthRouter());
+app.use('/itineraries', createItinerariesRouter())
 
 app.use('/api', (req, res) => {
     res.status(200).json({ message: 'API is running' });
