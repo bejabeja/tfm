@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FaCity } from "react-icons/fa";
 import { GoPeople } from "react-icons/go";
 import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { getCategoryIcon } from "../../assets/icons.js";
 import Spinner from "../../components/spinner/Spinner.jsx";
@@ -11,10 +11,12 @@ import {
   getItineraryById,
 } from "../../services/itineraries.js";
 import { getUserById } from "../../services/user.js";
+import { initUserInfo } from "../../store/user/userInfoActions.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
 
 const Itinerary = () => {
+  const dispatch = useDispatch();
   const { id } = useParams();
   const { userInfo } = useSelector((state) => state.myInfo);
   const [itinerary, setItinerary] = useState(null);
@@ -60,6 +62,7 @@ const Itinerary = () => {
 
   const handleRemove = async () => {
     await deleteItinerary(itinerary.id);
+    dispatch(initUserInfo(itinerary?.userId));
   };
 
   const isMyItinerary = () => {
@@ -67,7 +70,7 @@ const Itinerary = () => {
 
     return userInfo.id === itinerary.userId;
   };
-  
+
   return (
     <section className="itinerary break-text">
       <div
@@ -79,7 +82,8 @@ const Itinerary = () => {
         <div className="itinerary__hero-overlay" />
         <div className="itinerary__hero-content">
           <h1 className="itinerary__title">
-            {itinerary.title}{"   "}
+            {itinerary.title}
+            {"   "}
             {itinerary.category !== "other" && (
               <span className="itinerary__badge">{itinerary.category}</span>
             )}

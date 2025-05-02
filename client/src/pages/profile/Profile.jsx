@@ -14,10 +14,14 @@ const Profile = () => {
   const [userData, setUserData] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+
   const isMyProfile = () => {
     if (!userInfo) return false;
     return userInfo.id === id;
   };
+
+  const user = isMyProfile() ? userInfo : userData;
+
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -42,11 +46,11 @@ const Profile = () => {
 
   return (
     <section className="profile section__container">
-      <HeaderSection userData={userData} isMyProfile={isMyProfile} />
-      <AboutSection userData={userData} />
+      <HeaderSection user={user} isMyProfile={isMyProfile} />
+      <AboutSection user={user} />
       <ItinerariesSection
-        user={userData}
-        itineraries={userData.itineraries}
+        user={user}
+        itineraries={user.itineraries}
         title="Shared Itineraries"
       />
     </section>
@@ -55,54 +59,49 @@ const Profile = () => {
 
 export default Profile;
 
-const HeaderSection = ({ userData, isMyProfile }) => {
+const HeaderSection = ({ user, isMyProfile }) => {
   return (
     <div className="profile__header">
       <div className="profile__header-main-content">
         <img
           className="profile__header-image"
-          src={userData?.avatarUrl}
+          src={user?.avatarUrl}
           alt="Profile"
         />
         <div className="profile__header-info">
-          <h1 className="profile__header-info-name">{userData?.name}</h1>
-          <h2 className="profile__header-info-username">
-            @{userData?.username}
-          </h2>
+          <h1 className="profile__header-info-name">{user?.name}</h1>
+          <h2 className="profile__header-info-username">@{user?.username}</h2>
           <div className="profile__header-info-stats">
             <p>
-              <strong>{userData?.followers}</strong> followers
+              <strong>{user?.followers}</strong> followers
             </p>
             <p>
-              <strong>{userData?.following}</strong> following
+              <strong>{user?.following}</strong> following
             </p>
             <p>
-              <strong>{userData?.totalItineraries}</strong> itineraries
+              <strong>{user?.totalItineraries}</strong> itineraries
             </p>
           </div>
-          <p className="profile__header-info-bio">{userData?.bio}</p>
+          <p className="profile__header-info-bio">{user?.bio}</p>
         </div>
       </div>
       <div className="profile__header-actions">
         {isMyProfile() && (
-          <Link
-            to={`/profile/edit/${userData?.id}`}
-            className="btn btn-primary"
-          >
+          <Link to={`/profile/edit/${user?.id}`} className="btn btn-primary">
             Edit Profile
           </Link>
         )}
         {/* TODO */}
         {/* {isMyProfile() ? (
           <Link
-            to={`/profile/edit/${userData?.id}`}
+            to={`/profile/edit/${user?.id}`}
             className="btn btn-primary"
           >
             Edit Profile
           </Link>
         ) : (
           <button className="btn btn-primary">
-            {userData?.isFollowing ? "Unfollow" : "Follow"}
+            {user?.isFollowing ? "Unfollow" : "Follow"}
           </button>
         )} */}
       </div>
@@ -110,21 +109,21 @@ const HeaderSection = ({ userData, isMyProfile }) => {
   );
 };
 
-const AboutSection = ({ userData }) => {
+const AboutSection = ({ user }) => {
   return (
     <div className="profile__about">
       <h2 className="profile__about-title">About</h2>
 
       <div className="profile__about-content">
-        <p className="profile__about-content-description">{userData?.about}</p>
+        <p className="profile__about-content-description">{user?.about}</p>
         <div className="profile__about-content-stats">
           <p className="profile__about-content-stats-location">
             <IoLocationOutline className="nav-icon" />
-            <span>{userData?.location}</span>
+            <span>{user?.location}</span>
           </p>
           <p className="profile__about-content-stats-created-at">
             <MdOutlineCalendarMonth className="nav-icon" />
-            <span>{userData?.createdAt}</span>
+            <span>{user?.createdAt}</span>
           </p>
         </div>
       </div>
