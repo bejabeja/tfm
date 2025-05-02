@@ -15,3 +15,12 @@ export const setDestination = (destination) => (dispatch) => {
 export const resetFilters = () => (dispatch) => {
     dispatch({ type: "@filters/reset" });
 };
+
+
+export const initFilters = () => (dispatch) => {
+    const defaultCategory = "all";
+    const defaultDestination = "";
+
+    dispatch(setCategory(defaultCategory));
+    dispatch(setDestination(defaultDestination));
+};

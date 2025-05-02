@@ -1,26 +1,29 @@
 import { NotFoundError } from '../errors/NotFoundError.js';
 
 export class ItinerariesService {
-    constructor(itinerariesRepository, placesRepository) {
+    constructor(itinerariesRepository, userRepository) {
         this.itinerariesRepository = itinerariesRepository;
-        this.placesRepository = placesRepository;
+        this.userRepository = userRepository;
     }
 
     async getFilteredItineraries({ category, destination, page, limit }) {
-        const itineraries = await this.itinerariesRepository.findByFilters({ category, destination, page, limit });
+        const totalItems = await this.itinerariesRepository.countByFilters({ category, destination });
 
+        const itineraries = await this.itinerariesRepository.findByFilters({ category, destination, page, limit });
         if (!itineraries.length) {
             throw new NotFoundError("Itineraries not found");
         }
 
         for (const itinerary of itineraries) {
-            const places = await this.placesRepository.getPlacesByItineraryId(itinerary.id);
-            for (const place of places) {
-                itinerary.addPlace(place);
+            const user = await this.userRepository.getUserById(itinerary.userId);
+            if (user) {
+                itinerary.addUser(user.toSimpleDTO());
             }
         }
 
-        return itineraries;
+        const totalPages = Math.ceil(totalItems / limit);
+
+        return { itineraries, totalItems, totalPages, page };
     }
 
 

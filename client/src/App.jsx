@@ -9,6 +9,7 @@ import PrivateLayout from "./pages/PrivateLayout";
 import Login from "./pages/auth/Login";
 import Logout from "./pages/auth/Logout";
 import Signup from "./pages/auth/Signup";
+import Explore from "./pages/explore/Explore";
 import Home from "./pages/home/Home";
 import Itinerary from "./pages/itinerary/Itinerary";
 import CreateItinerary from "./pages/itinerary/create/CreateItinerary";
@@ -17,6 +18,7 @@ import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
 import { clearError, initUser } from "./store/auth/authActions";
+import { initFilters } from "./store/filters/filterActions";
 import { initUserInfo } from "./store/user/userInfoActions";
 
 const App = () => {
@@ -26,6 +28,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(initUser());
+    dispatch(initFilters());
   }, []);
 
   useEffect(() => {
@@ -63,12 +66,7 @@ const App = () => {
             <Route path="/register" element={<Signup />} />
             <Route path="/logout" element={<Logout />} />
             <Route path="/" element={<Home />} />
-            <Route
-              path="/explore"
-              element={
-                <section className="section__container">Explore</section>
-              }
-            />
+            <Route path="/explore" element={<Explore />} />
             <Route
               path="/community"
               element={

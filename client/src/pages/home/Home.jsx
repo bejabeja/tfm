@@ -4,21 +4,22 @@ import { Link } from "react-router-dom";
 import Hero from "../../components/hero/Hero.jsx";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection.jsx";
 import UsersSection from "../../components/users/UsersSection.jsx";
-import { initItineraries } from "../../store/itineraries/itinerariesActions.js";
+import { initFeaturedItineraries } from "../../store/itineraries/itinerariesActions.js";
 import { initUsers } from "../../store/users/usersActions.js";
 import { getImagesInfo } from "../../utils/constants/images.js";
 import "./Home.scss";
 
 const Home = () => {
   const dispatch = useDispatch();
+  const { featured, loading } = useSelector((state) => state.users);
+  const { itineraries } = useSelector((state) => state);
 
   useEffect(() => {
     dispatch(initUsers());
-    dispatch(initItineraries());
+    dispatch(initFeaturedItineraries());
   }, []);
 
-  const { featured, loading } = useSelector((state) => state.users);
-  const { featuredItineraries } = useSelector((state) => state.itineraries);
+  const featuredItineraries = itineraries?.featuredItineraries?.data;
 
   return (
     <section className="home">

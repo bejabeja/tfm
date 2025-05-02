@@ -13,8 +13,18 @@ export class ItinerariesController {
                 limit: parseInt(limit),
             };
 
-            const filteredItineraries = await this.itinerariesService.getFilteredItineraries(filters);
-            res.status(200).json(filteredItineraries);
+            const {
+                itineraries,
+                totalPages,
+                totalItems
+            } = await this.itinerariesService.getFilteredItineraries(filters);
+
+            res.status(200).json({
+                itineraries,
+                totalPages,
+                totalItems,
+                page: filters.page
+            });
         } catch (error) {
             next(error);
         }

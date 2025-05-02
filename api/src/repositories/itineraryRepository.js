@@ -194,4 +194,33 @@ export class ItineraryRepository {
         const result = await client.query(query, values);
         return result.rows.map(row => Itinerary.fromDb(row));
     }
+    
+    async countByFilters({ category, destination }) {
+        const filters = [];
+        const values = [];
+        let index = 1;
+
+        if (category && category !== "all") {
+            filters.push(`category = $${index++}`);
+            values.push(category);
+        }
+
+        if (destination) {
+            filters.push(`LOWER(location) LIKE LOWER($${index++})`);
+            values.push(`%${destination}%`);
+        }
+
+        const whereClause = filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "";
+
+        const query = `
+            SELECT COUNT(*) AS total
+            FROM itineraries
+            ${whereClause}
+        `;
+
+        const result = await client.query(query, values);
+        return parseInt(result.rows[0].total, 10);
+    }
+
+
 }
