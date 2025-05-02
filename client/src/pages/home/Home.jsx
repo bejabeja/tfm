@@ -45,8 +45,8 @@ const Home = () => {
         </div>
       </div>
       <div className="home__users section__container">
-        <h2>Meet the Travelers</h2>
-        <p>Follow, connect, and share your journey.</p>
+        <h2>People You May Like</h2>
+        <p>Discover fellow travelers who share your passion..</p>
         <UsersSection users={featured} isLoading={loading} />
       </div>
     </section>

@@ -11,55 +11,60 @@
 }
 
 .user-card {
+  border-radius: 1rem;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.05);
+  padding: 1.5rem;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  gap: 2rem;
-  border: 1px solid var(--secondary-color);
-  border-radius: 8px;
-  padding: 1rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  transition: box-shadow 0.3s ease;
+
+  &:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+  }
 
   &__header {
     display: flex;
-    flex-direction: row;
     align-items: center;
     gap: 1rem;
+    margin-bottom: 1rem;
+  }
+
+  &__image {
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--primary-color);
   }
 
   &__header--info {
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    text-align: left;
-  }
 
-  &__image {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    object-fit: cover;
-  }
+    .user-card__name {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--primary-color);
+    }
 
-  &__name {
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-
-  &__location {
-    font-size: 0.9rem;
-    color: var(--text-secondary-color);
-    margin-bottom: 0.5rem;
+    .user-card__location {
+      font-size: 0.9rem;
+      color: var(--text-secondary-color);
+    }
   }
 
   &__trips {
-    font-size: 0.9rem;
+    font-size: 0.95rem;
+    margin-top: 0.5rem;
+    color: var(--text-secondary-color);
+    text-align: center;
   }
 
   &__buttons {
     display: flex;
     justify-content: center;
-    gap: 0.5rem;
+    gap: 1rem;
+    margin-top: 1rem;
   }
 }
 
