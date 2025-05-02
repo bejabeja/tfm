@@ -68,7 +68,7 @@ const Explore = () => {
           />
         </label>
 
-        <button onClick={handleReset} className="explore__reset">
+        <button onClick={handleReset} className="btn btn-primary">
           Reset Filters
         </button>
       </div>
