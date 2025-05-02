@@ -20,11 +20,15 @@ const MyItineraries = () => {
     <section className="my-itineraries section__container">
       <div className="my-itineraries__section-ctas">
         <Link to="/create-itinerary" className="btn btn-secondary">
-          Create new trip
+          Plan a trip
         </Link>
       </div>
       {userInfo && userInfo.itineraries ? (
-        <ItinerariesSection user={userInfo} isMyProfile={true} />
+        <ItinerariesSection
+          user={userInfo}
+          itineraries={userInfo.itineraries}
+          // title="Shared Itineraries"
+        />
       ) : (
         <div>No itineraries found</div>
       )}

@@ -2,10 +2,19 @@ import React, { useState } from "react";
 import { FaHeart, FaRegComment, FaRegHeart } from "react-icons/fa";
 import { Link } from "react-router-dom";
 
-const ItineraryCard = ({ itinerary, user }) => {
-  const { id, photoUrl, location, tripTotalDays, commentsCount, likesCount } =
-    itinerary;
-  const { username } = user;
+const ItineraryCard = ({ itinerary, user: userProp }) => {
+  const {
+    id,
+    photoUrl,
+    location,
+    tripTotalDays,
+    commentsCount,
+    likesCount,
+    user: userFromItinerary,
+  } = itinerary;
+
+  const user = userFromItinerary || userProp || {};
+  const { username = "Anonymous", avatarUrl = "" } = user;
 
   const [isFavorited, setIsFavorited] = useState(false);
 
@@ -19,7 +28,7 @@ const ItineraryCard = ({ itinerary, user }) => {
         <div className="itinerary-card__header">
           <img
             className="itinerary-card__header-avatar"
-            src={user.avatarUrl}
+            src={avatarUrl}
             alt={username}
           />
           <h3 className="itinerary-card__header-name">@{username}</h3>
@@ -27,7 +36,7 @@ const ItineraryCard = ({ itinerary, user }) => {
         <div className="itinerary-card__image-wrapper">
           <img
             src={photoUrl}
-            alt={username}
+            alt={location}
             className="itinerary-card__image"
           />
         </div>

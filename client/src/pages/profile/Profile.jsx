@@ -44,7 +44,11 @@ const Profile = () => {
     <section className="profile section__container">
       <HeaderSection userData={userData} isMyProfile={isMyProfile} />
       <AboutSection userData={userData} />
-      <ItinerariesSection user={userData} />
+      <ItinerariesSection
+        user={userData}
+        itineraries={userData.itineraries}
+        title="Shared Itineraries"
+      />
     </section>
   );
 };

@@ -2,14 +2,12 @@ import React from "react";
 import "./ItinerariesSection.scss";
 import ItineraryCard from "./card/ItineraryCard.jsx";
 
-const ItinerariesSection = ({ user, isMyProfile = false }) => {
+const ItinerariesSection = ({ user, itineraries, title = "" }) => {
   const skeletonCount = 3;
-  const itineraries = user.itineraries;
+
   return (
     <div className="itineraries-section">
-      {!isMyProfile && (
-        <h2 className="itineraries-section__title">Shared Itineraries</h2>
-      )}
+      <h2 className="itineraries-section__title">{title}</h2>
 
       <div className="itineraries-section__grid">
         {itineraries.length === 0 ? (

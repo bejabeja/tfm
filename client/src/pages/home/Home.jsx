@@ -1,18 +1,52 @@
 import React from "react";
 import { useSelector } from "react-redux";
+import { Link } from "react-router-dom";
 import Hero from "../../components/hero/Hero.jsx";
+import ItinerariesSection from "../../components/itineraries/ItinerariesSection.jsx";
 import UsersSection from "../../components/users/UsersSection.jsx";
+import { getImagesInfo } from "../../utils/constants/images.js";
 import "./Home.scss";
 
 const Home = () => {
   const { featured, loading } = useSelector((state) => state.users);
+  const { featuredItineraries } = useSelector((state) => state.itineraries);
 
   return (
     <section className="home">
       <Hero />
+      <div className="section__container home__cta">
+        <h2>Start Your Adventure</h2>
+        <p>Create and share your next trip in just a few clicks.</p>
+        <Link to="/create-itinerary" className="btn btn-primary">
+          Plan a Trip
+        </Link>
+      </div>
       <div className="home__users section__container">
-        <h2>People</h2>
-        <p>Discover amazing people and their travel stories.</p>
+        <h2>Featured Travel Journeys</h2>
+        <p>Where will your next adventure take you?</p>
+        <ItinerariesSection
+          user={featuredItineraries?.user}
+          itineraries={featuredItineraries}
+        />
+      </div>
+      <div className="section__container home__destinations">
+        <h2>Popular Destinations</h2>
+        <p>Where our community loves to go.</p>
+        <div className="destinations-grid">
+          {["paris", "tokyo", "newYork", "barcelona"].map((city) => {
+            const cityInfo = getImagesInfo(city);
+            return (
+              <Link className="destination-card" key={city}>
+                <img src={cityInfo.photoUrl} alt={cityInfo.city} />
+                <span>{cityInfo.city}</span>
+              </Link>
+            );
+          })}
+        </div>
+      </div>
+      <div className="home__users section__container">
+        <h2>Meet the Travelers</h2>
+        <p>Follow, connect, and share your journey.</p>
         <UsersSection users={featured} isLoading={loading} />
       </div>
     </section>
