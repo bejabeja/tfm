@@ -1,4 +1,4 @@
-import { getfeaturedItineraries } from "../../services/itineraries";
+import { getfeaturedItineraries } from "../../services/itinerary";
 
 export const initItineraries = () => {
     return async (dispatch) => {
