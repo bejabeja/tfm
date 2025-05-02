@@ -4,7 +4,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import SubmitButton from "../../../components/form/SubmitButton";
-import { createItinerary } from "../../../services/itineraries";
+import { createItinerary } from "../../../services/itinerary";
 import { initUserInfo } from "../../../store/user/userInfoActions";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sections/BasicInfoForm";

@@ -16,7 +16,7 @@ app.use(express.json());
 app.disable('x-powered-by');
 app.use(cookieParser())
 
-app.use('/itineraries', createItineraryRouter());
+app.use('/itinerary', createItineraryRouter());
 app.use('/users', createUsersRouter());
 app.use('/auth', createAuthRouter());
 

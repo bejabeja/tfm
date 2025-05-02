@@ -6,10 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import { getCategoryIcon } from "../../assets/icons.js";
 import Spinner from "../../components/spinner/Spinner.jsx";
-import {
-  deleteItinerary,
-  getItineraryById,
-} from "../../services/itineraries.js";
+import { deleteItinerary, getItineraryById } from "../../services/itinerary.js";
 import { getUserById } from "../../services/user.js";
 import { initUserInfo } from "../../store/user/userInfoActions.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";

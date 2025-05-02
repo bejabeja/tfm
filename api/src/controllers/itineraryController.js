@@ -1,5 +1,5 @@
 
-export class ItinerariesController {
+export class ItineraryController {
     constructor(itinerariesService) {
         this.itinerariesService = itinerariesService;
     }

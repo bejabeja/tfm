@@ -1,9 +1,9 @@
 import { parseError } from "../utils/parseError";
 
-const baseUrl = import.meta.env.VITE_API_URL;
+const baseUrl = `${import.meta.env.VITE_API_URL}/itinerary`;
 
 export const getItineraryById = async (id) => {
-    const response = await fetch(`${baseUrl}/itineraries/${id}`, {
+    const response = await fetch(`${baseUrl}/${id}`, {
         method: "GET",
         headers: {
             "Content-Type": "application/json",
@@ -16,7 +16,7 @@ export const getItineraryById = async (id) => {
 }
 
 export const createItinerary = async (itinerary) => {
-    const response = await fetch(`${baseUrl}/itineraries`, {
+    const response = await fetch(`${baseUrl}`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -30,7 +30,7 @@ export const createItinerary = async (itinerary) => {
 }
 
 export const deleteItinerary = async (id) => {
-    const response = await fetch(`${baseUrl}/itineraries/${id}`, {
+    const response = await fetch(`${baseUrl}/${id}`, {
         method: "DELETE",
         headers: {
             "Content-Type": "application/json",
@@ -43,7 +43,7 @@ export const deleteItinerary = async (id) => {
 }
 
 export const updateItinerary = async (id, itinerary) => {
-    const response = await fetch(`${baseUrl}/itineraries/edit/${id}`, {
+    const response = await fetch(`${baseUrl}/edit/${id}`, {
         method: "PATCH",
         headers: {
             "Content-Type": "application/json",
@@ -57,7 +57,7 @@ export const updateItinerary = async (id, itinerary) => {
 }
 
 export const getfeaturedItineraries = async () => {
-    const response = await fetch(`${baseUrl}/itineraries/featured`, {
+    const response = await fetch(`${baseUrl}/featured`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
