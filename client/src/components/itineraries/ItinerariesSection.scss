@@ -1,123 +1,178 @@
 .itineraries-section {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1rem;
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-color);
+  }
+
+  &__empty {
+    font-size: 1rem;
+    color: var(--text-secondary-color);
+  }
+
+  &__grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  }
 }
 
-.itineraries-section__grid {
-  display: grid;
-  grid-template-columns: repeat(1, 1fr);
-  gap: 1.5rem;
-  margin: 0 auto;
-  max-width: 100%;
-}
-
-.itinerary-card-section {
-  display: flex;
-  flex-direction: column;
-  border: 1px solid var(--secondary-color);
-  border-radius: 8px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-  max-width: 400px;
-  width: 100%;
-  justify-content: space-between;
-  height: 100%;
-}
 .itinerary-card {
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-
-  text-decoration: none;
-  color: var(--text-color);
-  transition: all 0.2s ease;
+  background-color: var(--white-color);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+  transition: transform 0.3s ease;
 
   &:hover {
-    background-color: var(--secondary-color);
+    transform: translateY(-4px);
+  }
+
+  &__link {
+    text-decoration: none;
+    color: inherit;
   }
 
   &__header {
     display: flex;
-    flex-direction: row;
     align-items: center;
-    gap: 1rem;
     padding: 1rem;
+    gap: 1rem;
+  }
 
-    &-name {
-      font-weight: 600;
-    }
+  &__avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
 
-    &-avatar {
-      height: 32px;
-      width: 32px;
-      border-radius: 50%;
-    }
+  &__username {
+    font-weight: 600;
+    color: var(--text-color);
   }
 
   &__image-wrapper {
-    position: relative;
     width: 100%;
+    height: 180px;
+    overflow: hidden;
   }
 
   &__image {
     width: 100%;
-    height: 200px;
+    height: 100%;
     object-fit: cover;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: scale(1.05);
+    }
   }
 
   &__info {
     padding: 1rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
   }
 
-  &__buttons {
+  &__location {
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+
+  &__days {
+    font-size: 0.9rem;
+    color: var(--text-secondary-color);
+  }
+
+  &__actions {
     display: flex;
-    flex-direction: row;
-    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid var(--secondary-color);
+    padding: 0.75rem 1rem;
+    background-color: #fafafa;
   }
 }
 
 .btn__itinerary-card {
   display: flex;
-  flex-direction: row;
-  justify-content: center;
-  background-color: transparent;
-  border: none;
-  color: var(--text-color);
-  width: 100%;
-  gap: 0.5rem;
-  text-decoration: none;
   align-items: center;
-  padding: 1rem 0;
-  height: 100%;
-  transition: all 0.2s ease;
+  justify-content: center;
+  gap: 0.4rem;
+  background: none;
+  border: none;
+  font-size: 1rem;
+  color: var(--text-color);
+  cursor: pointer;
+  transition: color 0.3s ease;
+  text-decoration: none;
+
+  svg {
+    display: flex;
+    align-items: flex-start;
+    text-decoration: none;
+    font-size: 1.1rem;
+  }
 
   span {
-    font-size: 1.2rem;
     width: fit-content;
+    display: flex;
+    align-items: flex-start;
+    text-decoration: none;
   }
 
   &:hover {
-    background-color: var(--secondary-color);
     color: var(--primary-color);
   }
-}
 
-.icon {
-  display: flex;
-  font-size: 1.2rem;
-  width: fit-content;
-  align-items: center;
-  font-weight: 600;
-}
+  .icon {
+    width: fit-content;
+    font-size: 1.2rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: right;
+  }
 
-@media (min-width: 600px) {
-  .itineraries-section__grid {
-    grid-template-columns: repeat(2, 1fr);
+  &.active {
+    color: #e63946;
   }
 }
 
 @media (min-width: 1024px) {
-  .itineraries-section__grid {
-    grid-template-columns: repeat(3, 1fr);
+  .itineraries-section {
+    padding-top: 2rem;
+
+    &__title {
+      font-size: 2rem;
+    }
+
+    &__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  .itinerary-card {
+    &__image-wrapper {
+      height: 220px;
+    }
+
+    &__info {
+      padding: 1.25rem;
+    }
+
+    &__location {
+      font-size: 1.2rem;
+    }
+
+    &__days {
+      font-size: 1rem;
+    }
   }
 }
