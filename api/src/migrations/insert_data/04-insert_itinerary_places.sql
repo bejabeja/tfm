@@ -18,6 +18,10 @@ VALUES
   ('c1001c6e-6e9e-11ee-b962-0242ac120008', 'd1b2c0f4-9283-4f7c-baa4-39920d2b4d6b', 'd3f0f54c-8d91-4674-b8bc-fb3f1d55a922', 1), -- Colosseum
   ('c1002c6e-6e9e-11ee-b962-0242ac120009', 'd1b2c0f4-9283-4f7c-baa4-39920d2b4d6b', 'f7e5ff5e-b4c5-4dbf-944e-2ea10919b0fb', 2), -- Vatican City
   ('c1003c6e-6e9e-11ee-b962-0242ac120010', 'd1b2c0f4-9283-4f7c-baa4-39920d2b4d6b', 'b7eae59b-364a-4931-a3b3-0a3b830b9ac2', 3), -- Pantheon
+  ('c1001c6e-6e9e-11ee-b962-0242ac120027', 'd1b2c0f4-9283-4f7c-baa4-39920d2b4d6c', 'd3f0f54c-8d91-4674-b8bc-fb3f1d55a922', 1), -- Colosseum
+  ('c1002c6e-6e9e-11ee-b962-0242ac120028', 'd1b2c0f4-9283-4f7c-baa4-39920d2b4d6c', 'f7e5ff5e-b4c5-4dbf-944e-2ea10919b0fb', 2), -- Vatican City
+  ('c1003c6e-6e9e-11ee-b962-0242ac120029', 'd1b2c0f4-9283-4f7c-baa4-39920d2b4d6c', 'b7eae59b-364a-4931-a3b3-0a3b830b9ac2', 3), -- Pantheon
+
 
   -- Sydney itinerary places
   ('d1001c6e-6e9e-11ee-b962-0242ac120011', 'fe35c13c-4708-4c5d-8467-13970a5f3d8f', 'd3f0f54c-8d91-4674-b8bc-fb3f1d55a924', 1), -- Sydney Opera House

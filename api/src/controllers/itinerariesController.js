@@ -43,4 +43,13 @@ export class ItinerariesController {
             next(error);
         }
     }
+
+    async featuredItineraries(req, res, next) {
+        try {
+            const itineraries = await this.itinerariesService.getFeaturedItineraries();
+            res.status(200).json(itineraries)
+        } catch (error) {
+            next(error)
+        }
+    }
 }

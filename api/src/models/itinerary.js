@@ -9,7 +9,6 @@ export class Itinerary {
         this.endDate = endDate;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
-        this.places = [];
         this.photoUrl = photoUrl || this.getPlaceholderImage();
         this.budget = budget;
         this.numberOfPeople = numberOfPeople;
@@ -17,6 +16,8 @@ export class Itinerary {
         this.commentsCount = commentsCount;
         this.category = category?.toLowerCase();
         this.currency = currency;
+        this.places = [];
+        this.user = null;
     }
 
     static fromDb(row) {
@@ -42,6 +43,10 @@ export class Itinerary {
 
     addPlace(place) {
         this.places.push(place);
+    }
+
+    addUser(user) {
+        this.user = user
     }
 
     toDTO() {
@@ -77,6 +82,7 @@ export class Itinerary {
             photoUrl: this.photoUrl,
             likesCount: this.likesCount,
             commentsCount: this.commentsCount,
+            user: this.user
         };
     }
 

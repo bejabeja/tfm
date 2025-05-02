@@ -13,6 +13,7 @@ VALUES
   -- Lucy Brown itineraries
   ('38a29e10-9ebc-4b36-824b-8f4a726f9815', '33273cea-a2d5-4c46-a70d-c95f86c0c4e1', 'Barcelona Food Tour', 'Tasting the best food in Barcelona', 'Barcelona', '2025-08-10 09:00:00+00', '2025-08-15 18:00:00+00', 1200.00, 'EUR', 1, 10, 4, 'food', 'https://images.pexels.com/photos/1388030/pexels-photo-1388030.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
   ('a92e9e57-bf67-47b7-9b7a-8a4a04df2e16', '33273cea-a2d5-4c46-a70d-c95f86c0c4e1', 'Central Park Relax', 'Chilling in Central Park', 'New York', '2025-08-01 09:00:00+00', '2025-08-03 18:00:00+00', 700.00, 'USD', 1, 3, 1, 'relax', 'https://images.pexels.com/photos/290386/pexels-photo-290386.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
+  ('d1b2c0f4-9283-4f7c-baa4-39920d2b4d6c', '33273cea-a2d5-4c46-a70d-c95f86c0c4e1', 'Journey to Rome', 'Exploring the ancient city of Rome', 'Rome', '2025-10-01 10:00:00+00', '2025-10-07 18:00:00+00', 1800.00, 'EUR', 4, 11, 55, 'family', 'https://images.pexels.com/photos/532263/pexels-photo-532263.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
 
   -- Tom White itineraries
   ('4a5b8f0a-6c41-4463-b68d-cf5a97034d96', '860681e5-f2d3-446f-bff4-ddabc4989484', 'Swiss Alps Adventure', 'Hiking and sightseeing in the Swiss Alps', 'Zurich', '2025-07-20 09:00:00+00', '2025-07-25 18:00:00+00', 2500.00, 'CHF', 2, 8, 5, 'hiking', 'https://images.pexels.com/photos/2779863/pexels-photo-2779863.jpeg?auto=compress&cs=tinysrgb&w=1260&h=750&dpr=1'),
