@@ -73,7 +73,7 @@ body {
     &:hover {
       // background: linear-gradient(to right, #005f91, #0096c7);
       background: var(--primary-color-hover);
-      transform: scale(1.01);
+      // transform: scale(1.01);
     }
   }
 
@@ -83,7 +83,7 @@ body {
 
     &:hover {
       background-color: #f4a261;
-      transform: scale(1.01);
+      // transform: scale(1.01);
     }
   }
 
@@ -94,7 +94,7 @@ body {
 
     &:hover {
       background-color: rgba(0, 119, 182, 0.08);
-      transform: scale(1.01);
+      // transform: scale(1.01);
     }
   }
 
@@ -105,7 +105,7 @@ body {
 
     &:hover {
       background-color: #b71c1c;
-      transform: scale(1.01);
+      // transform: scale(1.01);
     }
   }
 }
