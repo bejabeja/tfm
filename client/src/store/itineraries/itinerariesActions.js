@@ -31,8 +31,9 @@ export const initExploreItineraries = (filters) => async (dispatch) => {
     dispatch({ type: START_LOADING_EXPLORE_ITINERARIES });
     try {
         const response = await getItinerariesByFilters(filters);
-        const { itineraries, totalPages, totalItems, page } = response;
+        console.log('RESPONSE', response)
 
+        const { itineraries, totalPages, totalItems, page } = response;
         dispatch({
             type: SET_EXPLORE_ITINERARIES,
             payload: { itineraries, totalPages, totalItems, page }

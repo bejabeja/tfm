@@ -1,4 +1,3 @@
-import { NotFoundError } from '../errors/NotFoundError.js';
 
 export class ItinerariesService {
     constructor(itinerariesRepository, userRepository) {
@@ -11,7 +10,7 @@ export class ItinerariesService {
 
         const itineraries = await this.itinerariesRepository.findByFilters({ category, destination, page, limit });
         if (!itineraries.length) {
-            throw new NotFoundError("Itineraries not found");
+            return { itineraries: [], totalPages: 0, totalItems: 0, page: 1 }
         }
 
         for (const itinerary of itineraries) {
@@ -23,7 +22,7 @@ export class ItinerariesService {
 
         const totalPages = Math.ceil(totalItems / limit);
 
-        return { itineraries, totalItems, totalPages, page };
+        return { itineraries: itineraries.map(it => (it.toSimpleDTO())), totalItems, totalPages, page };
     }
 
 

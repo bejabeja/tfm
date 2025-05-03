@@ -64,7 +64,7 @@ const PlaceField = ({ control, index, errors, remove }) => {
       <div className="form__cta-delete">
         <button
           type="button"
-          className="btn btn--danger"
+          className="btn btn__danger"
           onClick={() => remove(index)}
         >
           Delete place

@@ -56,7 +56,10 @@ export const itinerariesReducer = (state = initialState, action) => {
             return {
                 ...state,
                 exploreItineraries: {
-                    data: action.payload.itineraries,
+                    ...state.exploreItineraries,
+                    data: action.payload.page === 1
+                        ? action.payload.itineraries
+                        : [...state.exploreItineraries.data, ...action.payload.itineraries],
                     loading: false,
                     error: null,
                     page: action.payload.page,

@@ -87,7 +87,7 @@ body {
     }
   }
 
-  &--tertiary {
+  &__tertiary {
     background-color: transparent;
     color: var(--primary-color);
     border: 2px solid var(--primary-color);
@@ -98,7 +98,7 @@ body {
     }
   }
 
-  &--danger {
+  &__danger {
     background-color: #e63946;
     color: var(--white-color);
     border: none;
@@ -106,6 +106,19 @@ body {
     &:hover {
       background-color: #b71c1c;
       // transform: scale(1.01);
+    }
+
+    &-outline {
+      border: 1px solid #e63946;
+      background: transparent;
+      color: #e63946;
+      padding: 0.5rem 1rem;
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: var(--white-color);
+        background-color: #e63946;
+      }
     }
   }
 }

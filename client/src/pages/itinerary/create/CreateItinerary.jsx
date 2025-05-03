@@ -90,7 +90,7 @@ const CreateItinerary = () => {
           <Link
             to={`/my-itineraries`}
             type="button"
-            className="btn btn--tertiary"
+            className="btn btn__tertiary"
           >
             Cancel
           </Link>

@@ -142,7 +142,7 @@ const Itinerary = () => {
             <div className="itinerary__container-primary-actions">
               <Link
                 to={`/profile/${userInfo.id}`}
-                className="btn btn--danger"
+                className="btn btn__danger"
                 onClick={handleRemove}
               >
                 Delete
