@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection.jsx";
+import useDebouncedEffect from "../../hooks/useDebounced.js";
 import {
   resetFilters,
   setCategory,
@@ -20,28 +21,38 @@ const Explore = () => {
   const {
     exploreItineraries: { data, loading, page, totalPages, error },
   } = useSelector((state) => state.itineraries);
+  const [localDestination, setLocalDestination] = useState(destination);
+  const [debounceTimeout, setDebounceTimeout] = useState(null);
 
   useEffect(() => {
     dispatch(setExplorePagination(1));
     dispatch(initExploreItineraries({ category, destination, page: 1 }));
   }, [category, destination, dispatch]);
 
+  useDebouncedEffect(
+    () => {
+      dispatch(setDestination(localDestination));
+    },
+    [localDestination],
+    600
+  );
+
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
-    switch (name) {
-      case "category":
-        dispatch(setCategory(value));
-        break;
-      case "destination":
-        dispatch(setDestination(value));
-        break;
-      default:
-        break;
+
+    if (name === "category") {
+      dispatch(setCategory(value));
+      return;
+    }
+
+    if (name === "destination") {
+      setLocalDestination(value);
     }
   };
 
   const handleReset = () => {
     dispatch(resetFilters());
+    setLocalDestination("");
   };
 
   const loadMore = () => {
@@ -80,7 +91,7 @@ const Explore = () => {
           <input
             type="text"
             name="destination"
-            value={destination}
+            value={localDestination}
             placeholder="Search destination..."
             onChange={handleFilterChange}
           />
