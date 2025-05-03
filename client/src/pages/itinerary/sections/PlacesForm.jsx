@@ -30,7 +30,7 @@ const PlacesForm = ({ control, errors, fields, append, remove }) => {
       <div className="form__cta">
         <button
           type="button"
-          className="btn btn-primary"
+          className="btn btn__primary"
           onClick={handleAddPlace}
         >
           Add place

@@ -65,7 +65,7 @@ const EditProfile = () => {
         <AboutSection control={control} errors={errors} />
         {errorSubmit && <div className="error-message">{error}</div>}
         <div className="edit-profile__header-actions">
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn__primary">
             Save Profile
           </button>
         </div>

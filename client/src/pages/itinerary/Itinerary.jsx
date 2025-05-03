@@ -149,7 +149,7 @@ const Itinerary = () => {
               </Link>
               <Link
                 to={`/itinerary/edit/${itinerary.id}`}
-                className="btn btn-primary"
+                className="btn btn__primary"
               >
                 Edit
               </Link>

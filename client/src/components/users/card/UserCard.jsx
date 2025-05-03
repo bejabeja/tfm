@@ -15,8 +15,8 @@ const UserCard = ({ id, username, location, totalItineraries, avatarUrl }) => {
       <p className="user-card__trips">{totalItineraries} itineraries shared</p>
       <div className="user-card__buttons">
         {/* TODO */}
-        {/* <button className="btn btn-primary">Follow</button> */}
-        <Link to={`/friend-profile/${id}`} className="btn btn-primary">
+        {/* <button className="btn btn__primary">Follow</button> */}
+        <Link to={`/friend-profile/${id}`} className="btn btn__primary">
           Profile
         </Link>
       </div>

@@ -19,7 +19,7 @@ const MyItineraries = () => {
   return (
     <section className="my-itineraries section__container">
       <div className="my-itineraries__section-ctas">
-        <Link to="/create-itinerary" className="btn btn-secondary">
+        <Link to="/create-itinerary" className="btn btn__secondary">
           Plan a trip
         </Link>
       </div>

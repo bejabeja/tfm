@@ -56,7 +56,7 @@ const Home = () => {
         <div className=" home__cta">
           <h2>Start Your Adventure</h2>
           <p>Create and share your next trip in just a few clicks.</p>
-          <Link to="/create-itinerary" className="btn btn-secondary">
+          <Link to="/create-itinerary" className="btn btn__secondary">
             Plan a Trip
           </Link>
         </div>

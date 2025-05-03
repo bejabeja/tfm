@@ -29,7 +29,7 @@ const Hero = () => {
         </p>
         {!isAuthenticated && (
           <div className="hero__content__buttons">
-            <Link to="/register" className="btn btn-secondary">
+            <Link to="/register" className="btn btn__secondary">
               Join Now
             </Link>
           </div>

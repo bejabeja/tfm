@@ -86,7 +86,7 @@ const Explore = () => {
           />
         </label>
 
-        <button onClick={handleReset} className="btn btn-primary">
+        <button onClick={handleReset} className="btn btn__primary">
           Reset Filters
         </button>
       </div>
@@ -118,7 +118,7 @@ const Explore = () => {
               {hasMore && (
                 <button
                   onClick={loadMore}
-                  className="btn btn-secondary"
+                  className="btn btn__secondary"
                   disabled={loading}
                 >
                   {loading ? "Loading..." : "Show more"}
