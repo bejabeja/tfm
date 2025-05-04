@@ -55,17 +55,3 @@ export const updateItinerary = async (id, itinerary) => {
     }
     return response.json();
 }
-
-export const getfeaturedItineraries = async () => {
-    const response = await fetch(`${baseUrl}/featured`, {
-        method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
-    });
-
-    if (!response.ok) {
-        await parseError(response, 'Failed to get itineraries');
-    }
-    return response.json();
-}

@@ -14,7 +14,6 @@ export const createItineraryRouter = () => {
     const itinerariesService = new ItineraryService(itinerariesRepository, placesRepository, userRepository);
     const itinerariesController = new ItineraryController(itinerariesService)
 
-    itinerariesRouter.get("/featured", itinerariesController.featuredItineraries.bind(itinerariesController));
     itinerariesRouter.post("/", itinerariesController.createItinerary.bind(itinerariesController));
 
     itinerariesRouter.patch("/edit/:id", itinerariesController.updateItinerary.bind(itinerariesController));

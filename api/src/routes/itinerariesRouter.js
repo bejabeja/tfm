@@ -13,6 +13,7 @@ export const createItinerariesRouter = () => {
     const itinerariesController = new ItinerariesController(itinerariesService)
 
     itinerariesRouter.get("/", itinerariesController.filterItinerariesBy.bind(itinerariesController));
+    itinerariesRouter.get("/featured", itinerariesController.featuredItineraries.bind(itinerariesController));
 
     return itinerariesRouter;
 }

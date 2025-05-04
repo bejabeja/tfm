@@ -1,5 +1,4 @@
-import { getItinerariesByFilters } from "../../services/itineraries.js";
-import { getfeaturedItineraries } from "../../services/itinerary.js";
+import { getItinerariesByFilters, getfeaturedItineraries } from "../../services/itineraries.js";
 
 export const START_LOADING_FEATURED_ITINERARIES = "@featuredItineraries/init/start";
 export const SET_FEATURED_ITINERARIES = "@featuredItineraries/init/success";
