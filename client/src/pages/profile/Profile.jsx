@@ -1,52 +1,29 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
-import { useSelector } from "react-redux";
 import { Link, useParams } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import Spinner from "../../components/spinner/Spinner";
-import { getUserById } from "../../services/user";
+import { useFollow } from "../../hooks/useFollow";
+import { useProfileData } from "../../hooks/useProfileData";
 import "./Profile.scss";
 
 const Profile = () => {
   const { id } = useParams();
-  const { userInfo } = useSelector((state) => state.myInfo);
-  const [userData, setUserData] = useState(null);
-  const [error, setError] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const { user, loading, error, isMyProfile } = useProfileData(id);
+  const { isFollowing, handleFollowToggle } = useFollow(id);
 
-  const isMyProfile = () => {
-    if (!userInfo) return false;
-    return userInfo.id === id;
-  };
-
-  const user = isMyProfile() ? userInfo : userData;
-
-  useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        const response = await getUserById(id);
-        setUserData(response);
-      } catch (err) {
-        setError(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchUserData();
-  }, [id]);
-
-  if (loading) {
-    return <Spinner />;
-  }
-
-  if (error) {
-    return <div>Error fetching data</div>;
-  }
+  if (loading) return <Spinner />;
+  if (error) return <div>Error fetching data</div>;
 
   return (
     <section className="profile section__container">
-      <HeaderSection user={user} isMyProfile={isMyProfile} />
+      <HeaderSection
+        user={user}
+        isMyProfile={isMyProfile}
+        isFollowing={isFollowing}
+        onFollowToggle={handleFollowToggle}
+      />
       <AboutSection user={user} />
       <ItinerariesSection
         user={user}
@@ -59,7 +36,7 @@ const Profile = () => {
 
 export default Profile;
 
-const HeaderSection = ({ user, isMyProfile }) => {
+const HeaderSection = ({ user, isMyProfile, isFollowing, onFollowToggle }) => {
   return (
     <div className="profile__header">
       <div className="profile__header-main-content">
@@ -86,47 +63,35 @@ const HeaderSection = ({ user, isMyProfile }) => {
         </div>
       </div>
       <div className="profile__header-actions">
-        {isMyProfile() && (
+        {isMyProfile ? (
           <Link to={`/profile/edit/${user?.id}`} className="btn btn__primary">
             Edit Profile
           </Link>
-        )}
-        {/* TODO */}
-        {/* {isMyProfile() ? (
-          <Link
-            to={`/profile/edit/${user?.id}`}
-            className="btn btn__primary"
-          >
-            Edit Profile
-          </Link>
         ) : (
-          <button className="btn btn__primary">
-            {user?.isFollowing ? "Unfollow" : "Follow"}
+          <button className="btn btn__primary" onClick={onFollowToggle}>
+            {isFollowing ? "Unfollow" : "Follow"}
           </button>
-        )} */}
+        )}
       </div>
     </div>
   );
 };
 
-const AboutSection = ({ user }) => {
-  return (
-    <div className="profile__about">
-      <h2 className="profile__about-title">About</h2>
-
-      <div className="profile__about-content">
-        <p className="profile__about-content-description">{user?.about}</p>
-        <div className="profile__about-content-stats">
-          <p className="profile__about-content-stats-location">
-            <IoLocationOutline className="nav-icon" />
-            <span>{user?.location}</span>
-          </p>
-          <p className="profile__about-content-stats-created-at">
-            <MdOutlineCalendarMonth className="nav-icon" />
-            <span>{user?.createdAt}</span>
-          </p>
-        </div>
+const AboutSection = ({ user }) => (
+  <div className="profile__about">
+    <h2 className="profile__about-title">About</h2>
+    <div className="profile__about-content">
+      <p className="profile__about-content-description">{user?.about}</p>
+      <div className="profile__about-content-stats">
+        <p className="profile__about-content-stats-location">
+          <IoLocationOutline className="nav-icon" />
+          <span>{user?.location}</span>
+        </p>
+        <p className="profile__about-content-stats-created-at">
+          <MdOutlineCalendarMonth className="nav-icon" />
+          <span>{user?.createdAt}</span>
+        </p>
       </div>
     </div>
-  );
-};
+  </div>
+);

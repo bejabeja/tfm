@@ -12,14 +12,14 @@ import "./Home.scss";
 const Home = () => {
   const dispatch = useDispatch();
   const { featured, loading } = useSelector((state) => state.users);
-  const { itineraries } = useSelector((state) => state);
-
+  const { featuredItineraries } = useSelector((state) => state.itineraries);
+  
   useEffect(() => {
     dispatch(initUsers());
     dispatch(initFeaturedItineraries());
   }, []);
 
-  const featuredItineraries = itineraries?.featuredItineraries?.data;
+  const featuredItinerariesData = featuredItineraries?.data;
 
   return (
     <section className="home">
@@ -29,8 +29,8 @@ const Home = () => {
           <h2>Featured Travel Journeys</h2>
           <p>Where will your next adventure take you?</p>
           <ItinerariesSection
-            user={featuredItineraries?.user}
-            itineraries={featuredItineraries}
+            user={featuredItinerariesData?.user}
+            itineraries={featuredItinerariesData}
           />
         </div>
         <div className="home__destinations">

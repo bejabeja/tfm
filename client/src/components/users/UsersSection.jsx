@@ -1,28 +1,12 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { followUser, unfollowUser } from "../../services/followers";
-import { initUserInfo } from "../../store//user/userInfoActions";
+import { useSelector } from "react-redux";
+import { useFollow } from "../../hooks/useFollow";
 import "./UsersSection.scss";
 import UserCard from "./card/UserCard";
 import UserCardSkeleton from "./card/UserCardSkeleton";
 
 const UsersSection = ({ users, isLoading }) => {
-  const dispatch = useDispatch();
-  const authUser = useSelector((state) => state.myInfo.userInfo);
   const { isAuthenticated } = useSelector((state) => state.auth);
-  const handleFollowToggle = async (userId, isCurrentFollowing) => {
-    try {
-      if (isCurrentFollowing) {
-        await unfollowUser(userId);
-        dispatch(initUserInfo(authUser.id));
-      } else {
-        await followUser(userId);
-        dispatch(initUserInfo(authUser.id));
-      }
-    } catch (error) {
-      console.error("Error toggling follow:", error);
-    }
-  };
   const skeletonCount = 3;
 
   return (
@@ -32,26 +16,29 @@ const UsersSection = ({ users, isLoading }) => {
           ? Array.from({ length: skeletonCount }).map((_, i) => (
               <UserCardSkeleton key={i} />
             ))
-          : users.map((user, index) => {
-              const isFollowing = authUser?.followingListIds?.some(
-                (followedUser) => followedUser.id === user.id
-              );
-              
-              return (
-                <UserCard
-                  key={index}
-                  {...user}
-                  isAuthenticated={isAuthenticated}
-                  isFollowing={isFollowing}
-                  onFollowToggle={() =>
-                    handleFollowToggle(user.id, isFollowing)
-                  }
-                />
-              );
-            })}
+          : users.map((user) => (
+              <UserCardWithFollow
+                key={user.id}
+                user={user}
+                isAuthenticated={isAuthenticated}
+              />
+            ))}
       </div>
     </div>
   );
 };
 
 export default UsersSection;
+
+const UserCardWithFollow = ({ user, isAuthenticated }) => {
+  const { isFollowing, handleFollowToggle } = useFollow(user.id);
+
+  return (
+    <UserCard
+      {...user}
+      isAuthenticated={isAuthenticated}
+      isFollowing={isFollowing}
+      onFollowToggle={handleFollowToggle}
+    />
+  );
+};
