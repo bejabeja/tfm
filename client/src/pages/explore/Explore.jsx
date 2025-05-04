@@ -22,7 +22,6 @@ const Explore = () => {
     exploreItineraries: { data, loading, page, totalPages, error },
   } = useSelector((state) => state.itineraries);
   const [localDestination, setLocalDestination] = useState(destination);
-  const [debounceTimeout, setDebounceTimeout] = useState(null);
 
   useEffect(() => {
     dispatch(setExplorePagination(1));
