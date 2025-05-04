@@ -2,9 +2,9 @@ import { AuthError } from '../errors/AuthError.js';
 import { AuthService } from '../services/authService.js';
 const authService = new AuthService();
 export const authenticate = async (req, res, next) => {
-    const token = req.cookies.access_token;
+    const token = req.headers.authorization?.split(" ")[1] || req.cookies.access_token;
     const refreshToken = req.cookies.refresh_token;
-    
+
     if (!token && refreshToken) {
         try {
             await authService.refreshAccessToken(refreshToken, res, req);

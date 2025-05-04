@@ -5,15 +5,21 @@ import { UserRepository } from "../repositories/userRepository.js";
 import { ItinerariesService } from "../services/itinerariesService.js";
 
 export const createItinerariesRouter = () => {
-    const itinerariesRouter = Router();
+    const router = Router();
 
     const itinerariesRepository = new ItineraryRepository();
     const userRepository = new UserRepository();
     const itinerariesService = new ItinerariesService(itinerariesRepository, userRepository);
     const itinerariesController = new ItinerariesController(itinerariesService)
 
-    itinerariesRouter.get("/", itinerariesController.filterItinerariesBy.bind(itinerariesController));
-    itinerariesRouter.get("/featured", itinerariesController.featuredItineraries.bind(itinerariesController));
+    router.get("/", itinerariesController.filterItinerariesBy.bind(itinerariesController));
+    router.get("/featured", itinerariesController.featuredItineraries.bind(itinerariesController));
 
-    return itinerariesRouter;
+    // router.get("/:id/comments", commentsController.list);
+    // router.post("/:id/comments", authenticate, commentsController.create);
+    // router.post("/:id/like", authenticate, itinerariesController.likeItinerary);
+    // router.delete("/:id/like", authenticate, itinerariesController.unlikeItinerary);
+
+
+    return router;
 }

@@ -3,9 +3,11 @@ import cookieParser from 'cookie-parser';
 import express from 'express';
 import config from "./src/config/config.js";
 import './src/config/instrument.js';
+import { authenticate } from "./src/middlewares/authenticate.js";
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
 import { createAuthRouter } from './src/routes/authRouter.js';
+import { createFollowRouter } from "./src/routes/followRouter.js";
 import { createItinerariesRouter } from "./src/routes/itinerariesRouter.js";
 import { createItineraryRouter } from './src/routes/itineraryRouter.js';
 import { createUsersRouter } from './src/routes/usersRouter.js';
@@ -18,7 +20,8 @@ app.disable('x-powered-by');
 app.use(cookieParser())
 
 app.use('/itinerary', createItineraryRouter());
-app.use('/users', createUsersRouter());
+app.use('/users', authenticate, createUsersRouter());
+app.use('/users', createFollowRouter());
 app.use('/auth', createAuthRouter());
 app.use('/itineraries', createItinerariesRouter())
 
