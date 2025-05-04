@@ -2,7 +2,7 @@ import { generateAvatar } from "../utils/avatar.js";
 import { formatDate } from "../utils/date.js";
 
 export class User {
-    constructor({ id, username, email, password, location, avatarUrl, createdAt, updatedAt, name, followersList, followingList, itineraries, bio, about, totalItineraries }) {
+    constructor({ id, username, email, password, location, avatarUrl, createdAt, updatedAt, name, followersListIds, followingListIds, itineraries, bio, about, totalItineraries }) {
         this.id = id;
         this.username = username;
         this.email = email;
@@ -12,8 +12,8 @@ export class User {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.name = name || "No name";
-        this.followersList = followersList || [];
-        this.followingList = followingList || [];
+        this.followersListIds = followersListIds || [];
+        this.followingListIds = followingListIds || [];
         this.itineraries = itineraries || [];
         this.bio = bio || "No bio available";
         this.about = about || "No about information available";
@@ -51,11 +51,11 @@ export class User {
     }
 
     totalFollowers() {
-        return this.followersList.length;
+        return this.followersListIds.length;
     }
 
     totalFollowing() {
-        return this.followingList.length;
+        return this.followingListIds.length;
     }
 
     toDTO() {
@@ -69,8 +69,8 @@ export class User {
             updatedAt: formatDate(this.updatedAt),
             name: this.name,
             totalItineraries: this.countItineraries(),
-            followersList: this.followersList,
-            followingList: this.followingList,
+            followersListIds: this.followersListIds,
+            followingListIds: this.followingListIds,
             followers: this.totalFollowers(),
             following: this.totalFollowing(),
             itineraries: this.itineraries,

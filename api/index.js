@@ -20,8 +20,8 @@ app.disable('x-powered-by');
 app.use(cookieParser())
 
 app.use('/itinerary', createItineraryRouter());
-app.use('/users', authenticate, createUsersRouter());
-app.use('/users', createFollowRouter());
+app.use('/users', createUsersRouter());
+app.use('/users', authenticate, createFollowRouter());
 app.use('/auth', createAuthRouter());
 app.use('/itineraries', createItinerariesRouter())
 

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController.js";
 import { authenticate } from "../middlewares/authenticate.js";
+import { FollowRepository } from "../repositories/followRepository.js";
 import { ItineraryRepository } from "../repositories/itineraryRepository.js";
 import { UserRepository } from "../repositories/userRepository.js";
 import { UserService } from "../services/userService.js";
@@ -9,7 +10,8 @@ export const createUsersRouter = () => {
     const router = Router();
     const itinerariesRepository = new ItineraryRepository();
     const userRepository = new UserRepository();
-    const userService = new UserService(userRepository, itinerariesRepository);
+    const followRepository = new FollowRepository()
+    const userService = new UserService(userRepository, itinerariesRepository, followRepository);
     const userController = new UserController(userService);
 
     router.get("/", authenticate, userController.getAllUsers.bind(userController));

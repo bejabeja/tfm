@@ -1,7 +1,25 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
-const UserCard = ({ id, username, location, totalItineraries, avatarUrl }) => {
+const UserCard = ({
+  id,
+  username,
+  location,
+  totalItineraries,
+  avatarUrl,
+  isAuthenticated,
+  isFollowing,
+  onFollowToggle,
+}) => {
+  const navigate = useNavigate();
+  const handleFollow = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    onFollowToggle(id, isFollowing);
+  };
+
   return (
     <div className="user-card">
       <div className="user-card__header">
@@ -14,8 +32,9 @@ const UserCard = ({ id, username, location, totalItineraries, avatarUrl }) => {
 
       <p className="user-card__trips">{totalItineraries} itineraries shared</p>
       <div className="user-card__buttons">
-        {/* TODO */}
-        {/* <button className="btn btn__primary">Follow</button> */}
+        <button className="btn btn__primary" onClick={handleFollow}>
+          {isFollowing ? "Unfollow" : "Follow"}
+        </button>
         <Link to={`/friend-profile/${id}`} className="btn btn__primary">
           Profile
         </Link>

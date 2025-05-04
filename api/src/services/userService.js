@@ -5,9 +5,10 @@ import { NotFoundError } from "../errors/NotFoundError.js";
 import { generateAvatar } from "../utils/avatar.js";
 
 export class UserService {
-    constructor(userRepository, itinerariesRepository) {
+    constructor(userRepository, itinerariesRepository, followRepository) {
         this.userRepository = userRepository;
         this.itinerariesRepository = itinerariesRepository;
+        this.followRepository = followRepository;
     }
 
     async create(userData) {
@@ -60,11 +61,15 @@ export class UserService {
             throw new NotFoundError("User not found");
         }
 
-        const itineraries = await this.itinerariesRepository.getItinerariesByUserId(id);
-        if (!itineraries) {
-            throw new NotFoundError("No itineraries found");
-        }
-        user.itineraries = itineraries.map(itinerary => itinerary.toDTO());
+        const [itineraries, followersListIds, followingListIds] = await Promise.all([
+            this.itinerariesRepository.getItinerariesByUserId(id),
+            this.followRepository.getFollowers(id),
+            this.followRepository.getFollowing(id)
+        ]);
+
+        user.itineraries = itineraries.map((itinerary) => itinerary.toDTO());
+        user.followersListIds = followersListIds;
+        user.followingListIds = followingListIds;
 
         return user.toDTO();
     }
