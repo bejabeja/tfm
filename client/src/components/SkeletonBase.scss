@@ -1,0 +1,67 @@
+// SkeletonBase.scss
+
+.skeleton {
+    background: var(--secondary-color);
+    border-radius: 4px;
+    animation: pulse 1.5s infinite ease-in-out;
+  }
+  
+  @keyframes pulse {
+    0% { opacity: 1; }
+    50% { opacity: 0.5; }
+    100% { opacity: 1; }
+  }
+  
+  // Common skeleton types
+  .skeleton--avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+  
+    @media (min-width: 768px) {
+      width: 64px;
+      height: 64px;
+    }
+  }
+  
+  .skeleton--text {
+    height: 12px;
+    margin: 4px 0;
+  
+    &.short {
+      width: 30%;
+    }
+  
+    &.shorter {
+      width: 60%;
+    }
+  
+    &.username {
+      width: 100px;
+    }
+  
+    &.location {
+      width: 80px;
+    }
+  
+    &.trips {
+      width: 120px;
+      height: 16px;
+    }
+  }
+  
+  .skeleton--image {
+    width: 100%;
+    height: 180px;
+  
+    @media (min-width: 1024px) {
+      height: 220px;
+    }
+  }
+  
+  .skeleton--button {
+    width: 100%;
+    height: 44px;
+    border-radius: 8px;
+  }
+  

@@ -1,0 +1,15 @@
+@import "../../SkeletonBase.scss";
+
+.skeleton-card__header {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.skeleton-card__info {
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
