@@ -13,14 +13,14 @@ const Home = () => {
   const dispatch = useDispatch();
   const { featured, loading } = useSelector((state) => state.users);
   const { featuredItineraries } = useSelector((state) => state.itineraries);
-  
+
   useEffect(() => {
     dispatch(initUsers());
     dispatch(initFeaturedItineraries());
   }, []);
 
   const featuredItinerariesData = featuredItineraries?.data;
-
+  
   return (
     <section className="home">
       <Hero />
@@ -31,6 +31,7 @@ const Home = () => {
           <ItinerariesSection
             user={featuredItinerariesData?.user}
             itineraries={featuredItinerariesData}
+            isLoading={featuredItineraries?.loading}
           />
         </div>
         <div className="home__destinations">

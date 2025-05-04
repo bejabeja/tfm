@@ -27,8 +27,9 @@ const Profile = () => {
       <AboutSection user={user} />
       <ItinerariesSection
         user={user}
-        itineraries={user.itineraries}
+        itineraries={user?.itineraries}
         title="Shared Itineraries"
+        isLoading={loading}
       />
     </section>
   );
