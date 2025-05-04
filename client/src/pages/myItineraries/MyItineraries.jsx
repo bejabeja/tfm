@@ -6,13 +6,13 @@ import Spinner from "../../components/spinner/Spinner";
 import "./MyItineraries.scss";
 
 const MyItineraries = () => {
-  const { userInfo, loading, error } = useSelector((state) => state.myInfo);
-
-  if (loading) {
+  const { me, myItineraries } = useSelector((state) => state.myInfo);
+  const userInfo = me.data;
+  if (me.loading) {
     return <Spinner />;
   }
 
-  if (error) {
+  if (me.error) {
     return <div>Error: {error}</div>;
   }
 
@@ -23,14 +23,13 @@ const MyItineraries = () => {
           Plan a trip
         </Link>
       </div>
-      {userInfo && userInfo.itineraries ? (
+      {!me.loading && (
         <ItinerariesSection
           user={userInfo}
-          itineraries={userInfo.itineraries}
+          itineraries={myItineraries.data}
           // title="Shared Itineraries"
+          isLoading={myItineraries.loading}
         />
-      ) : (
-        <div>No itineraries found</div>
       )}
     </section>
   );

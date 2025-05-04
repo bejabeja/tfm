@@ -38,4 +38,14 @@ export class ItinerariesController {
             next(error)
         }
     }
+
+    async getItinerariesByUserId(req, res, next) {
+        try {
+            const { id } = req.params;
+            const itineraries = await this.itinerariesService.getItinerariesByUserId(id);
+            res.status(200).json(itineraries)
+        } catch (error) {
+            next(error)
+        }
+    }
 }

@@ -18,10 +18,12 @@ import "./Navbar.scss";
 const Navbar = () => {
   const dispatch = useDispatch();
   const { isAuthenticated, loading } = useSelector((state) => state.auth);
-  const { userInfo } = useSelector((state) => state.myInfo);
+  const { me } = useSelector((state) => state.myInfo);
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
+  const userInfo = me.data;
+  
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
@@ -161,5 +163,3 @@ const Navbar = () => {
 };
 
 export default Navbar;
-
-

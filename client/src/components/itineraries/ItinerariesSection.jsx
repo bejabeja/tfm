@@ -5,7 +5,6 @@ import ItineraryCardSkeleton from "./card/ItineraryCardSkeleton.jsx";
 
 const ItinerariesSection = ({ user, itineraries, title = "", isLoading }) => {
   const skeletonCount = 3;
-  console.log(isLoading);
 
   return (
     <div className="itineraries-section">

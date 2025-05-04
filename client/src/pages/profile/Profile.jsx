@@ -3,17 +3,17 @@ import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
-import Spinner from "../../components/spinner/Spinner";
 import { useFollow } from "../../hooks/useFollow";
 import { useProfileData } from "../../hooks/useProfileData";
 import "./Profile.scss";
 
 const Profile = () => {
   const { id } = useParams();
-  const { user, loading, error, isMyProfile } = useProfileData(id);
+  const { user, myItineraries, loading, error, isMyProfile } =
+    useProfileData(id);
   const { isFollowing, handleFollowToggle } = useFollow(id);
 
-  if (loading) return <Spinner />;
+  // if (loading) return <Spinner />;
   if (error) return <div>Error fetching data</div>;
 
   return (
@@ -27,9 +27,9 @@ const Profile = () => {
       <AboutSection user={user} />
       <ItinerariesSection
         user={user}
-        itineraries={user?.itineraries}
+        itineraries={myItineraries.data}
         title="Shared Itineraries"
-        isLoading={loading}
+        isLoading={myItineraries.loading}
       />
     </section>
   );

@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import SubmitButton from "../../../components/form/SubmitButton";
 import { createItinerary } from "../../../services/itinerary";
-import { initUserInfo } from "../../../store/user/userInfoActions";
+import { setUserInfo } from "../../../store/user/userInfoActions";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sections/BasicInfoForm";
 import BudgetForm from "../sections/BudgetForm";
@@ -16,8 +16,9 @@ import "./CreateItinerary.scss";
 
 const CreateItinerary = () => {
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.myInfo);
+  const { me } = useSelector((state) => state.myInfo);
   const navigate = useNavigate();
+  const userInfo = me.data;
 
   const today = new Date().toISOString().split("T")[0];
   const {
@@ -66,7 +67,7 @@ const CreateItinerary = () => {
     };
 
     await createItinerary(body);
-    dispatch(initUserInfo(userInfo.id));
+    dispatch(setUserInfo(userInfo.id));
     navigate(`/profile/${userInfo.id}`);
   };
 

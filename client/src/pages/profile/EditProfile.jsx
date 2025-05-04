@@ -8,16 +8,17 @@ import { InputForm, TextAreaForm } from "../../components/form/InputForm";
 import Spinner from "../../components/spinner/Spinner";
 import { updateUser } from "../../services/user";
 import { initUser } from "../../store/auth/authActions";
-import { initUserInfo } from "../../store/user/userInfoActions";
+import { setUserInfo } from "../../store/user/userInfoActions";
 import { updateUserSchema } from "../../utils/schemasValidation";
 import "./EditProfile.scss";
 
 const EditProfile = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { userInfo, loading, error } = useSelector((state) => state.myInfo);
+  const { me } = useSelector((state) => state.myInfo);
   const [errorSubmit, setErrorSubmit] = useState(null);
   const navigate = useNavigate();
+  const userInfo = me.data;
 
   const {
     control,
@@ -29,7 +30,7 @@ const EditProfile = () => {
   });
 
   useEffect(() => {
-    dispatch(initUserInfo(id));
+    dispatch(setUserInfo(id));
   }, [dispatch, id]);
 
   useEffect(() => {
@@ -42,7 +43,7 @@ const EditProfile = () => {
     setValue("about", userInfo.about);
   }, [userInfo, setValue]);
 
-  if (loading) {
+  if (me.loading) {
     return <Spinner />;
   }
 
@@ -50,7 +51,7 @@ const EditProfile = () => {
     try {
       await updateUser(data);
       dispatch(initUser());
-      dispatch(initUserInfo(id));
+      dispatch(setUserInfo(id));
       navigate(`/profile/${id}`);
     } catch (err) {
       console.error("Error updating profile", err);
@@ -63,7 +64,7 @@ const EditProfile = () => {
       <form onSubmit={handleSubmit(saveUser)} className="edit-profile__form">
         <HeaderSection userInfo={userInfo} control={control} errors={errors} />
         <AboutSection control={control} errors={errors} />
-        {errorSubmit && <div className="error-message">{error}</div>}
+        {errorSubmit && <div className="error-message">{me.error}</div>}
         <div className="edit-profile__header-actions">
           <button type="submit" className="btn btn__primary">
             Save Profile

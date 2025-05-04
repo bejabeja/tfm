@@ -40,3 +40,19 @@ export const getfeaturedItineraries = async () => {
     }
     return response.json();
 }
+
+export const getItinerariesByUserId = async (id) => {
+    const response = await fetch(`${baseUrl}/${id}`, {
+        method: 'GET',
+        credentials: 'include',
+        headers: {
+            'Content-Type': 'application/json'
+        }
+    });
+
+    if (!response.ok) {
+        await parseError(response, 'Failed to get my itineraries');
+    }
+    return response.json();
+}
+

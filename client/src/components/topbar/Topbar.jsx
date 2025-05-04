@@ -8,7 +8,9 @@ import "./Topbar.scss";
 const Topbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useDispatch();
-  const { userInfo } = useSelector((state) => state.myInfo);
+  const { me } = useSelector((state) => state.myInfo);
+
+  const userInfo = me.data;
 
   useEffect(() => {
     const handleClickOutside = (event) => {

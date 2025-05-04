@@ -3,7 +3,7 @@ import client from '../db/clientPostgres.js';
 import { Itinerary } from '../models/itinerary.js';
 
 export class ItineraryRepository {
-    async getItinerariesByUserId(userId) {
+    async findByUserId(userId) {
         const query = `SELECT * FROM itineraries WHERE user_id = $1`
         const result = await client.query(query, [userId]);
 

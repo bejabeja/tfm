@@ -19,7 +19,7 @@ import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
 import { clearError, initUser } from "./store/auth/authActions";
 import { initFilters } from "./store/filters/filterActions";
-import { initUserInfo } from "./store/user/userInfoActions";
+import { loadUserDataAndItineraries } from "./store/user/userInfoActions";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -33,7 +33,7 @@ const App = () => {
 
   useEffect(() => {
     if (isAuthenticated && user?.id) {
-      dispatch(initUserInfo(user.id));
+      dispatch(loadUserDataAndItineraries(user.id));
     }
   }, [dispatch, isAuthenticated, user?.id]);
 

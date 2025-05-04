@@ -8,19 +8,20 @@ import { getCategoryIcon } from "../../assets/icons.js";
 import Spinner from "../../components/spinner/Spinner.jsx";
 import { deleteItinerary, getItineraryById } from "../../services/itinerary.js";
 import { getUserById } from "../../services/user.js";
-import { initUserInfo } from "../../store/user/userInfoActions.js";
+import { setUserInfo } from "../../store/user/userInfoActions.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
 
 const Itinerary = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { userInfo } = useSelector((state) => state.myInfo);
+  const { me } = useSelector((state) => state.myInfo);
   const [itinerary, setItinerary] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userItinerary, setUserItinerary] = useState(null);
-
+  const userInfo = me.data;
+  
   useEffect(() => {
     const fetchItinerary = async () => {
       setLoading(true);
@@ -59,7 +60,7 @@ const Itinerary = () => {
 
   const handleRemove = async () => {
     await deleteItinerary(itinerary.id);
-    dispatch(initUserInfo(itinerary?.userId));
+    dispatch(setUserInfo(itinerary?.userId));
   };
 
   const isMyItinerary = () => {

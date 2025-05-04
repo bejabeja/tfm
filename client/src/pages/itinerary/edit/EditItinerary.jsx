@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import SubmitButton from "../../../components/form/SubmitButton";
 import { getItineraryById, updateItinerary } from "../../../services/itinerary";
-import { initUserInfo } from "../../../store/user/userInfoActions";
+import { setUserInfo } from "../../../store/user/userInfoActions";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sections/BasicInfoForm";
 import BudgetForm from "../sections/BudgetForm";
@@ -16,7 +16,8 @@ import TravellersForm from "../sections/TravellersForm";
 const EditItinerary = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { userInfo } = useSelector((state) => state.myInfo);
+  const { me } = useSelector((state) => state.myInfo);
+  const userInfo = me.data;
 
   const [itineraryData, setItineraryData] = useState(null);
   const navigate = useNavigate();
@@ -101,7 +102,7 @@ const EditItinerary = () => {
     };
 
     await updateItinerary(id, body);
-    dispatch(initUserInfo(userInfo.id));
+    dispatch(setUserInfo(userInfo.id));
     navigate(`/profile/${userInfo.id}`);
   };
 

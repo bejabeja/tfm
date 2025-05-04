@@ -3,14 +3,13 @@ import { useSelector } from "react-redux";
 import { getUserById } from "../services/user";
 
 export const useProfileData = (profileId) => {
-    const { userInfo } = useSelector((state) => state.myInfo);
-    const isMyProfile = userInfo?.id === profileId;
+    const { me, myItineraries } = useSelector((state) => state.myInfo);
+    const isMyProfile = me?.data?.id === profileId;
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const user = isMyProfile ? userInfo : userData;
-
+    const user = isMyProfile ? me.data : userData;
     useEffect(() => {
         const fetchUser = async () => {
             if (isMyProfile) return setLoading(false);
@@ -28,5 +27,5 @@ export const useProfileData = (profileId) => {
         fetchUser();
     }, [profileId, isMyProfile]);
 
-    return { user, loading, error, isMyProfile };
+    return { user, myItineraries, loading, error, isMyProfile };
 };
