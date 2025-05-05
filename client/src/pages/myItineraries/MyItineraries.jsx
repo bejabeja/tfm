@@ -7,9 +7,6 @@ import "./MyItineraries.scss";
 const MyItineraries = () => {
   const { me, myItineraries } = useSelector((state) => state.myInfo);
   const userInfo = me.data;
-  // if (me.loading) {
-  //   return <Spinner />;
-  // }
 
   if (me.error) {
     return <div>Error: {error}</div>;

@@ -5,7 +5,8 @@ import {
     SET_FEATURED_ITINERARIES,
     SET_FEATURED_ITINERARIES_ERROR,
     START_LOADING_EXPLORE_ITINERARIES,
-    START_LOADING_FEATURED_ITINERARIES
+    START_LOADING_FEATURED_ITINERARIES,
+    START_LOADING_MORE_ITINERARIES
 } from './itinerariesActions';
 
 const initialState = {
@@ -52,6 +53,15 @@ export const itinerariesReducer = (state = initialState, action) => {
         case START_LOADING_EXPLORE_ITINERARIES:
             return { ...state, exploreItineraries: { ...state.exploreItineraries, loading: true } };
 
+        case START_LOADING_MORE_ITINERARIES:
+            return {
+                ...state,
+                exploreItineraries: {
+                    ...state.exploreItineraries,
+                    loadingMore: true,
+                },
+            };
+            
         case SET_EXPLORE_ITINERARIES:
             return {
                 ...state,
@@ -61,6 +71,7 @@ export const itinerariesReducer = (state = initialState, action) => {
                         ? action.payload.itineraries
                         : [...state.exploreItineraries.data, ...action.payload.itineraries],
                     loading: false,
+                    loadingMore: false,
                     error: null,
                     page: action.payload.page,
                     totalPages: action.payload.totalPages,

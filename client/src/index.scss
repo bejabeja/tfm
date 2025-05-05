@@ -10,7 +10,7 @@
   --secondary-color: #e0e0e0;
 
   --primary-color-hover: #005f91;
-  --error-color: #ff0000;
+  --error-color: #e63946;
   --container-whitout-navbar: calc(100vh - 80px);
 
   font-synthesis: none;
@@ -99,7 +99,7 @@ body {
   }
 
   &__danger {
-    background-color: #e63946;
+    background-color: var(--error-color);
     color: var(--white-color);
     border: none;
 
@@ -109,15 +109,15 @@ body {
     }
 
     &-outline {
-      border: 1px solid #e63946;
+      border: 1px solid var(--error-color);
       background: transparent;
-      color: #e63946;
+      color: var(--error-color);
       padding: 0.5rem 1rem;
       transition: all 0.3s ease;
 
       &:hover {
         color: var(--white-color);
-        background-color: #e63946;
+        background-color: var(--error-color);
       }
     }
   }

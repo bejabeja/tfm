@@ -18,8 +18,11 @@ import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
 import { clearError, initUser } from "./store/auth/authActions";
+import { initUsers } from "./store/users/usersActions";
+
 import { initFilters } from "./store/filters/filterActions";
 import { loadUserDataAndItineraries } from "./store/user/userInfoActions";
+import { initFeaturedItineraries } from "./store/itineraries/itinerariesActions";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -29,6 +32,8 @@ const App = () => {
   useEffect(() => {
     dispatch(initUser());
     dispatch(initFilters());
+    dispatch(initUsers());
+    dispatch(initFeaturedItineraries())
   }, []);
 
   useEffect(() => {

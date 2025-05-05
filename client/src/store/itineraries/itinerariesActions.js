@@ -7,6 +7,7 @@ export const START_LOADING_EXPLORE_ITINERARIES = "@exploreItineraries/startLoadi
 export const SET_EXPLORE_ITINERARIES = "@exploreItineraries/setItineraries";
 export const SET_EXPLORE_ITINERARIES_ERROR = "@exploreItineraries/setError";
 export const SET_EXPLORE_PAGINATION = "@exploreItineraries/setPagination";
+export const START_LOADING_MORE_ITINERARIES = "@exploreItineraries/startLoadingMore";
 
 export const initFeaturedItineraries = () => {
     return async (dispatch) => {
@@ -30,9 +31,8 @@ export const initExploreItineraries = (filters) => async (dispatch) => {
     dispatch({ type: START_LOADING_EXPLORE_ITINERARIES });
     try {
         const response = await getItinerariesByFilters(filters);
-        console.log('RESPONSE', response)
-
         const { itineraries, totalPages, totalItems, page } = response;
+
         dispatch({
             type: SET_EXPLORE_ITINERARIES,
             payload: { itineraries, totalPages, totalItems, page }
@@ -41,6 +41,26 @@ export const initExploreItineraries = (filters) => async (dispatch) => {
         dispatch({
             type: SET_EXPLORE_ITINERARIES_ERROR,
             payload: 'Error fetching explore itineraries'
+        });
+    }
+};
+
+
+export const loadMoreExploreItineraries = (filters, page) => async (dispatch) => {
+    dispatch({ type: START_LOADING_MORE_ITINERARIES }); 
+
+    try {
+        const response = await getItinerariesByFilters({ ...filters, page });
+        const { itineraries, totalPages, totalItems } = response;
+
+        dispatch({
+            type: SET_EXPLORE_ITINERARIES,
+            payload: { itineraries, totalPages, totalItems, page },
+        });
+    } catch (error) {
+        dispatch({
+            type: SET_EXPLORE_ITINERARIES_ERROR,
+            payload: 'Error fetching explore itineraries',
         });
     }
 };

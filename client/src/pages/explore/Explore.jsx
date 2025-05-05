@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 
+import LoadingButton from "../../components/LoadingButton.jsx";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection.jsx";
 import useDebouncedEffect from "../../hooks/useDebounced.js";
 import {
@@ -10,6 +11,7 @@ import {
 } from "../../store/filters/filterActions.js";
 import {
   initExploreItineraries,
+  loadMoreExploreItineraries,
   setExplorePagination,
 } from "../../store/itineraries/itinerariesActions.js";
 import { itineraryCategories } from "../../utils/constants/constants.js";
@@ -19,9 +21,10 @@ const Explore = () => {
   const dispatch = useDispatch();
   const { category, destination } = useSelector((state) => state.filters);
   const {
-    exploreItineraries: { data, loading, page, totalPages, error },
+    exploreItineraries: { data, loading, loadingMore, page, totalPages, error },
   } = useSelector((state) => state.itineraries);
   const [localDestination, setLocalDestination] = useState(destination);
+  const loadMoreRef = useRef(null);
 
   useEffect(() => {
     dispatch(setExplorePagination(1));
@@ -57,7 +60,16 @@ const Explore = () => {
   const loadMore = () => {
     const nextPage = page + 1;
     dispatch(setExplorePagination(nextPage));
-    dispatch(initExploreItineraries({ category, destination, page: nextPage }));
+    dispatch(
+      loadMoreExploreItineraries({ category, destination, page: nextPage })
+    ).then(() => {
+      if (loadMoreRef.current) {
+        loadMoreRef.current.scrollIntoView({
+          behavior: "smooth",
+          block: "start",
+        });
+      }
+    });
   };
 
   const handleRetry = () => {
@@ -68,38 +80,12 @@ const Explore = () => {
 
   return (
     <section className="explore section__container">
-      <div className="explore__filters">
-        <label>
-          Category:
-          <select
-            name="category"
-            value={category}
-            onChange={handleFilterChange}
-          >
-            <option value="all">All</option>
-            {itineraryCategories.map((cat, key) => (
-              <option key={key} value={cat.value}>
-                {cat.label}
-              </option>
-            ))}
-          </select>
-        </label>
-
-        <label>
-          Destination:
-          <input
-            type="text"
-            name="destination"
-            value={localDestination}
-            placeholder="Search destination..."
-            onChange={handleFilterChange}
-          />
-        </label>
-
-        <button onClick={handleReset} className="btn btn__primary">
-          Reset Filters
-        </button>
-      </div>
+      <Filters
+        category={category}
+        handleFilterChange={handleFilterChange}
+        localDestination={localDestination}
+        handleReset={handleReset}
+      />
 
       <div className="explore__results">
         <p>
@@ -128,15 +114,11 @@ const Explore = () => {
               itineraries={data}
               isLoading={loading}
             />
-            <div className="explore__results-ctas">
+            <div className="explore__results-ctas" ref={loadMoreRef}>
               {hasMore && (
-                <button
-                  onClick={loadMore}
-                  className="btn btn__secondary"
-                  disabled={loading}
-                >
-                  {loading ? "Loading..." : "Show more"}
-                </button>
+                <LoadingButton onClick={loadMore} isLoading={loadingMore}>
+                  Show more
+                </LoadingButton>
               )}
             </div>
           </>
@@ -147,3 +129,40 @@ const Explore = () => {
 };
 
 export default Explore;
+const Filters = ({
+  category,
+  handleFilterChange,
+  localDestination,
+  handleReset,
+}) => {
+  return (
+    <div className="explore__filters">
+      <label>
+        Category:
+        <select name="category" value={category} onChange={handleFilterChange}>
+          <option value="all">All</option>
+          {itineraryCategories.map((cat, key) => (
+            <option key={key} value={cat.value}>
+              {cat.label}
+            </option>
+          ))}
+        </select>
+      </label>
+
+      <label>
+        Destination:
+        <input
+          type="text"
+          name="destination"
+          value={localDestination}
+          placeholder="Search destination..."
+          onChange={handleFilterChange}
+        />
+      </label>
+
+      <button onClick={handleReset} className="btn btn__primary">
+        Reset Filters
+      </button>
+    </div>
+  );
+};
