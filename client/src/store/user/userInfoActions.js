@@ -1,5 +1,5 @@
 import { getItinerariesByUserId } from "../../services/itineraries";
-import { getUserById } from "../../services/user";
+import { getUserById } from "../../services/users";
 
 export const START_LOADING_MY_INFO_ME = "@myInfo/me/loading";
 export const SET_MY_INFO_ME = "@myInfo/me/init";

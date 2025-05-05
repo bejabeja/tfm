@@ -15,9 +15,9 @@ import {
   setExplorePagination,
 } from "../../store/itineraries/itinerariesActions.js";
 import { itineraryCategories } from "../../utils/constants/constants.js";
-import "./Explore.scss";
+import "./Friends.scss";
 
-const Explore = () => {
+const Friends = () => {
   const dispatch = useDispatch();
   const { category, destination } = useSelector((state) => state.filters);
   const {
@@ -128,7 +128,7 @@ const Explore = () => {
   );
 };
 
-export default Explore;
+export default Friends;
 const Filters = ({
   category,
   handleFilterChange,

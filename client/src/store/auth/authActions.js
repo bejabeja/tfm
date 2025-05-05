@@ -1,5 +1,5 @@
 import { createNewUser, login, logout } from "../../services/auth";
-import { getUserForAuth } from "../../services/user";
+import { getUserForAuth } from "../../services/users";
 import { resetUserInfo } from "../user/userInfoActions";
 
 export const createUser = (user, onSuccess) => {

@@ -6,7 +6,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
 import Spinner from "../../components/spinner/Spinner";
-import { updateUser } from "../../services/user";
+import { updateUser } from "../../services/users";
 import { initUser } from "../../store/auth/authActions";
 import { setUserInfo } from "../../store/user/userInfoActions";
 import { updateUserSchema } from "../../utils/schemasValidation";

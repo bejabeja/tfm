@@ -11,7 +11,6 @@ export const getItinerariesByFilters = async ({ category = "all", destination = 
     }
     params.append('page', page)
     params.append('limit', limit)
-    console.log(params.toString())
 
     const response = await fetch(`${baseUrl}?${params.toString()}`, {
         method: "GET",

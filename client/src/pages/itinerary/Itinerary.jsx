@@ -7,7 +7,7 @@ import { Link, useParams } from "react-router-dom";
 import { getCategoryIcon } from "../../assets/icons.js";
 import Spinner from "../../components/spinner/Spinner.jsx";
 import { deleteItinerary, getItineraryById } from "../../services/itinerary.js";
-import { getUserById } from "../../services/user.js";
+import { getUserById } from "../../services/users.js";
 import { setUserInfo } from "../../store/user/userInfoActions.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
