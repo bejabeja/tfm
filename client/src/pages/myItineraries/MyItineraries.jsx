@@ -2,15 +2,14 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
-import Spinner from "../../components/spinner/Spinner";
 import "./MyItineraries.scss";
 
 const MyItineraries = () => {
   const { me, myItineraries } = useSelector((state) => state.myInfo);
   const userInfo = me.data;
-  if (me.loading) {
-    return <Spinner />;
-  }
+  // if (me.loading) {
+  //   return <Spinner />;
+  // }
 
   if (me.error) {
     return <div>Error: {error}</div>;
@@ -23,14 +22,12 @@ const MyItineraries = () => {
           Plan a trip
         </Link>
       </div>
-      {!me.loading && (
-        <ItinerariesSection
-          user={userInfo}
-          itineraries={myItineraries.data}
-          // title="Shared Itineraries"
-          isLoading={myItineraries.loading}
-        />
-      )}
+      <ItinerariesSection
+        user={userInfo}
+        itineraries={myItineraries.data}
+        // title="Shared Itineraries"
+        isLoading={myItineraries.loading}
+      />
     </section>
   );
 };
