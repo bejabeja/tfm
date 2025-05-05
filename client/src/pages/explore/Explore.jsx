@@ -123,7 +123,11 @@ const Explore = () => {
           </div>
         ) : (
           <>
-            <ItinerariesSection user={data?.user} itineraries={data} />
+            <ItinerariesSection
+              user={data?.user}
+              itineraries={data}
+              isLoading={loading}
+            />
             <div className="explore__results-ctas">
               {hasMore && (
                 <button
