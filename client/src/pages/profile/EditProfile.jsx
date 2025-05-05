@@ -7,7 +7,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
 import Spinner from "../../components/spinner/Spinner";
 import { updateUser } from "../../services/users";
-import { initUser } from "../../store/auth/authActions";
+import { initAuthUser } from "../../store/auth/authActions";
 import { setUserInfo } from "../../store/user/userInfoActions";
 import { updateUserSchema } from "../../utils/schemasValidation";
 import "./EditProfile.scss";
@@ -50,7 +50,7 @@ const EditProfile = () => {
   const saveUser = async (data) => {
     try {
       await updateUser(data);
-      dispatch(initUser());
+      dispatch(initAuthUser());
       dispatch(setUserInfo(id));
       navigate(`/profile/${id}`);
     } catch (err) {

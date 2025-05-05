@@ -1,4 +1,4 @@
-import { RESET_MY_INFO_ITINERARIES, RESET_MY_INFO_ME, SET_ERROR_MY_INFO_ITINERARIES, SET_ERROR_MY_INFO_ME, SET_MY_INFO_ITINERARIES, SET_MY_INFO_ME, START_LOADING_MY_INFO_ITINERARIES, START_LOADING_MY_INFO_ME } from "./userInfoActions";
+import { RESET_MY_INFO_FOLLOWING, RESET_MY_INFO_ITINERARIES, RESET_MY_INFO_ME, SET_ERROR_MY_INFO_FOLLOWING, SET_ERROR_MY_INFO_ITINERARIES, SET_ERROR_MY_INFO_ME, SET_MY_INFO_FOLLOWING, SET_MY_INFO_ITINERARIES, SET_MY_INFO_ME, START_LOADING_MY_INFO_FOLLOWING, START_LOADING_MY_INFO_ITINERARIES, START_LOADING_MY_INFO_ME } from "./userInfoActions";
 
 const initialState = {
     me: {
@@ -11,6 +11,16 @@ const initialState = {
         loading: false,
         error: null,
     },
+    myFollowing: {
+        data: [],
+        loading: false,
+        error: null,
+    },
+    myFollowers: {
+        data: [],
+        loading: false,
+        error: null,
+    }
 };
 
 export const userInfoReducer = (state = initialState, action) => {
@@ -75,8 +85,39 @@ export const userInfoReducer = (state = initialState, action) => {
                 },
             };
 
+        case START_LOADING_MY_INFO_FOLLOWING:
+            return {
+                ...state,
+                myFollowing: {
+                    ...state.myFollowing,
+                    loading: true,
+                    error: null,
+                },
+            };
+
+        case SET_MY_INFO_FOLLOWING:
+            return {
+                ...state,
+                myFollowing: {
+                    data: action.payload,
+                    loading: false,
+                    error: null,
+                },
+            };
+
+        case SET_ERROR_MY_INFO_FOLLOWING:
+            return {
+                ...state,
+                myFollowing: {
+                    data: [],
+                    loading: false,
+                    error: action.payload,
+                },
+            };
+
         case RESET_MY_INFO_ME:
         case RESET_MY_INFO_ITINERARIES:
+        case RESET_MY_INFO_FOLLOWING:
             return initialState;
 
         default:

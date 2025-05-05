@@ -17,12 +17,12 @@ import EditItinerary from "./pages/itinerary/edit/EditItinerary";
 import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
-import { clearError, initUser } from "./store/auth/authActions";
+import { clearError, initAuthUser } from "./store/auth/authActions";
 import { initUsers } from "./store/users/usersActions";
 
 import { initFilters } from "./store/filters/filterActions";
-import { loadUserDataAndItineraries } from "./store/user/userInfoActions";
 import { initFeaturedItineraries } from "./store/itineraries/itinerariesActions";
+import { loadMyUserInfo } from "./store/user/userInfoActions";
 
 const App = () => {
   const dispatch = useDispatch();
@@ -30,15 +30,15 @@ const App = () => {
   const { isAuthenticated, user } = useSelector((state) => state.auth);
 
   useEffect(() => {
-    dispatch(initUser());
+    dispatch(initAuthUser());
     dispatch(initFilters());
     dispatch(initUsers());
-    dispatch(initFeaturedItineraries())
+    dispatch(initFeaturedItineraries());
   }, []);
 
   useEffect(() => {
     if (isAuthenticated && user?.id) {
-      dispatch(loadUserDataAndItineraries(user.id));
+      dispatch(loadMyUserInfo(user.id));
     }
   }, [dispatch, isAuthenticated, user?.id]);
 

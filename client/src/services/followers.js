@@ -34,15 +34,14 @@ export const unfollowUser = async (id) => {
     return response.json();
 }
 
-export const allFollowers = async (id) => {
-    const response = await fetch(`${baseUrl}/${id}/follow`, {
+export const getAllFollowers = async (id) => {
+    const response = await fetch(`${baseUrl}/${id}/followers`, {
         method: 'GET',
         credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         }
     });
-
     if (!response.ok) {
         await parseError(response, 'Failed to get all followers users');
     }
@@ -50,7 +49,7 @@ export const allFollowers = async (id) => {
     return response.json();
 }
 
-export const allFollowing = async (id) => {
+export const getAllFollowing = async (id) => {
     const response = await fetch(`${baseUrl}/${id}/following`, {
         method: 'GET',
         credentials: 'include',

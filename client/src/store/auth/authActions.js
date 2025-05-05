@@ -34,7 +34,7 @@ export const logoutUser = () => {
     };
 };
 
-export const initUser = () => {
+export const initAuthUser = () => {
     return async (dispatch) => {
         try {
             const user = await getUserForAuth();
