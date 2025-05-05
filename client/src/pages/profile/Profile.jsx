@@ -6,6 +6,7 @@ import ItinerariesSection from "../../components/itineraries/ItinerariesSection"
 import { useFollow } from "../../hooks/useFollow";
 import { useProfileData } from "../../hooks/useProfileData";
 import "./Profile.scss";
+import Spinner from '../../components/spinner/Spinner'
 
 const Profile = () => {
   const { id } = useParams();
