@@ -40,9 +40,16 @@ const Topbar = () => {
       <div className="dropdown">
         <button className="dropbtn" onClick={toggleDropdown}>
           <img
-            src={userInfo?.avatarUrl}
+            src={userInfo?.avatarUrl || ""}
             alt="user photo avatar"
-            className="avatar"
+            className={`avatar ${
+              !userInfo?.avatarUrl ? "avatar-fallback" : ""
+            }`}
+            onError={(e) => {
+              e.target.onerror = null; 
+              e.target.src = ""; 
+              e.target.classList.add("avatar-fallback");
+            }}
           />
           <span>{userInfo?.username}</span>
         </button>

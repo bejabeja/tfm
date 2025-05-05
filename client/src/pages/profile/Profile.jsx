@@ -13,7 +13,7 @@ const Profile = () => {
     useProfileData(id);
   const { isFollowing, handleFollowToggle } = useFollow(id);
 
-  // if (loading) return <Spinner />;
+  if (loading) return <Spinner />;
   if (error) return <div>Error fetching data</div>;
 
   return (

@@ -73,7 +73,6 @@ export class User {
             followingListIds: this.followingListIds,
             followers: this.totalFollowers(),
             following: this.totalFollowing(),
-            // itineraries: this.itineraries,
             bio: this.bio,
             about: this.about
         };
