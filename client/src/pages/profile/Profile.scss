@@ -49,6 +49,16 @@
         p {
           width: fit-content;
         }
+
+        a {
+          width: fit-content;
+          text-decoration: none;
+          color: var(--text-color);
+          transition: color 0.2s;
+        }
+        a:hover {
+          color: var(--primary-color);
+        }
       }
 
       &-bio {

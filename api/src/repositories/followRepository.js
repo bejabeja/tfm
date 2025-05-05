@@ -1,6 +1,7 @@
 
 import { v4 as uuidv4 } from 'uuid';
 import client from '../db/clientPostgres.js';
+import { User } from '../models/user.js';
 
 export class FollowRepository {
     async isFollowing(followerId, followedId) {
@@ -38,7 +39,7 @@ export class FollowRepository {
           WHERE user_followers.followed_id = $1
         `;
         const result = await client.query(query, [userId]);
-        return result.rows;
+        return result.rows.map(row => User.fromDb(row));;
     }
 
     async getFollowing(userId) {
@@ -49,6 +50,6 @@ export class FollowRepository {
           WHERE user_followers.follower_id = $1
         `;
         const result = await client.query(query, [userId]);
-        return result.rows;
+        return result.rows.map(row => User.fromDb(row));;
     }
 }

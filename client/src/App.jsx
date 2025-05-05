@@ -20,6 +20,8 @@ import Profile from "./pages/profile/Profile";
 import { clearError, initAuthUser } from "./store/auth/authActions";
 import { initUsers } from "./store/users/usersActions";
 
+import FollowersList from "./pages/follows/FollowersList";
+import FollowingList from "./pages/follows/FollowingList";
 import { initFilters } from "./store/filters/filterActions";
 import { initFeaturedItineraries } from "./store/itineraries/itinerariesActions";
 import { loadMyUserInfo } from "./store/user/userInfoActions";
@@ -82,6 +84,8 @@ const App = () => {
             {/* routes to decide if private or not */}
             <Route path="/friend-profile/:id" element={<Profile />} />
             <Route path="/itinerary/:id" element={<Itinerary />} />
+            <Route path="/profile/:id/followers" element={<FollowersList />} />
+            <Route path="/profile/:id/following" element={<FollowingList />} />
 
             {/* private routes */}
             <Route element={<PrivateLayout />}>

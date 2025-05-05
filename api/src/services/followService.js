@@ -39,8 +39,8 @@ export class FollowService {
         if (!user) {
             throw new NotFoundError("User not found");
         }
-
-        return this.followRepository.getFollowers(userId);
+        const followers = await this.followRepository.getFollowers(userId);
+        return followers.map(user => user.toDTO());
     }
 
     async getFollowing(userId) {
@@ -48,7 +48,7 @@ export class FollowService {
         if (!user) {
             throw new NotFoundError("User not found");
         }
-
-        return this.followRepository.getFollowing(userId);
+        const following = await this.followRepository.getFollowing(userId);
+        return following.map(user => user.toDTO());
     }
 }

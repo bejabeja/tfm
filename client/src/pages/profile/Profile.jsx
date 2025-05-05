@@ -3,10 +3,10 @@ import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
+import Spinner from "../../components/spinner/Spinner";
 import { useFollow } from "../../hooks/useFollow";
 import { useProfileData } from "../../hooks/useProfileData";
 import "./Profile.scss";
-import Spinner from '../../components/spinner/Spinner'
 
 const Profile = () => {
   const { id } = useParams();
@@ -51,12 +51,12 @@ const HeaderSection = ({ user, isMyProfile, isFollowing, onFollowToggle }) => {
           <h1 className="profile__header-info-name">{user?.name}</h1>
           <h2 className="profile__header-info-username">@{user?.username}</h2>
           <div className="profile__header-info-stats">
-            <p>
+            <Link to={`/profile/${user?.id}/followers`}>
               <strong>{user?.followers}</strong> followers
-            </p>
-            <p>
+            </Link>
+            <Link to={`/profile/${user?.id}/following`}>
               <strong>{user?.following}</strong> following
-            </p>
+            </Link>
             <p>
               <strong>{user?.totalItineraries}</strong> itineraries
             </p>

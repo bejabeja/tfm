@@ -32,9 +32,16 @@ const UserCard = ({
 
       <p className="user-card__trips">{totalItineraries} itineraries shared</p>
       <div className="user-card__buttons">
-        <button className="btn btn__primary" onClick={handleFollow}>
-          {isFollowing ? "Unfollow" : "Follow"}
-        </button>
+        {isFollowing ? (
+          <button className="btn btn__danger-outline" onClick={handleFollow}>
+            Unfollow
+          </button>
+        ) : (
+          <button className="btn btn__primary" onClick={handleFollow}>
+            Follow
+          </button>
+        )}
+
         <Link to={`/friend-profile/${id}`} className="btn btn__primary">
           Profile
         </Link>

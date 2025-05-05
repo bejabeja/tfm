@@ -1,0 +1,60 @@
+.follow-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+
+  &__title {
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+
+  &__grid {
+    display: grid;
+    gap: 1.5rem;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  }
+}
+
+.user-card {
+  display: flex;
+  align-items: center;
+  padding: 1rem;
+  background-color: var(--white-color);
+  border-radius: 1rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  text-decoration: none;
+  color: inherit;
+  transition: all 0.2s ease-in-out;
+
+  &:hover {
+    background-color: var(--secondary-color);
+    transform: translateY(-2px);
+  }
+
+  &__avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+  }
+
+  &__info {
+    margin-left: 1rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    & > .user-card__name {
+      font-size: 1.1rem;
+      font-weight: 500;
+      margin: 0;
+    }
+
+    & > .user-card__username {
+      font-size: 0.9rem;
+      color: var(--text-secondary-color);
+      margin: 0;
+    }
+  }
+}
