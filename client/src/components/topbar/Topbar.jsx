@@ -52,22 +52,21 @@ const Topbar = () => {
             <span>{userInfo?.username}</span>
           </button>
         )}
-        {dropdownOpen && (
-          <div className="dropdown-content">
-            <Link
-              to={`/profile/${userInfo.id}`}
-              className="nav-item"
-              onClick={toggleDropdown}
-            >
-              <GoPerson className="nav-icon" />
-              <span>Profile</span>
-            </Link>
-            <Link to="/logout" onClick={handleLogout} className="nav-item">
-              <GoSignOut className="nav-icon" />
-              <span>Logout</span>
-            </Link>
-          </div>
-        )}
+        <div className={`dropdown-content ${dropdownOpen ? "open-animation" : ""}`}>
+          {" "}
+          <Link
+            to={`/profile/${userInfo?.id}`}
+            className="nav-item"
+            onClick={toggleDropdown}
+          >
+            <GoPerson className="nav-icon" />
+            <span>Profile</span>
+          </Link>
+          <Link to="/logout" onClick={handleLogout} className="nav-item">
+            <GoSignOut className="nav-icon" />
+            <span>Logout</span>
+          </Link>
+        </div>
       </div>
     </section>
   );
