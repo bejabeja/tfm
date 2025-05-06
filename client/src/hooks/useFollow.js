@@ -24,7 +24,9 @@ export const useFollow = (targetUserId) => {
     const toggleFollow = async () => {
         if (!isAuthenticated) {
             navigate('/login')
+            return;
         }
+    
         try {
             if (isFollowing) {
                 await unfollowUser(targetUserId);
