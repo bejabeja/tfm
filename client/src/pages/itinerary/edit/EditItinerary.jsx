@@ -5,7 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import SubmitButton from "../../../components/form/SubmitButton";
 import { getItineraryById, updateItinerary } from "../../../services/itinerary";
-import { setUserInfo } from "../../../store/user/userInfoActions";
+import {
+  loadMyUserInfo,
+  setUserInfo,
+} from "../../../store/user/userInfoActions";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sections/BasicInfoForm";
 import BudgetForm from "../sections/BudgetForm";
@@ -103,6 +106,7 @@ const EditItinerary = () => {
 
     await updateItinerary(id, body);
     dispatch(setUserInfo(userInfo.id));
+    dispatch(loadMyUserInfo(userInfo.id));
     navigate(`/profile/${userInfo.id}`);
   };
 

@@ -1,10 +1,18 @@
 import React from "react";
 import { Controller } from "react-hook-form";
 import { getCategoryIcon } from "../../../assets/icons";
-import { InputForm, TextAreaForm } from "../../../components/form/InputForm";
+import AutocompleteInput from "../../../components/form/AutocompleteInput";
+import { TextAreaForm } from "../../../components/form/InputForm";
 import { placeCategories } from "../../../utils/constants/constants";
 
-const PlacesForm = ({ control, errors, fields, append, remove }) => {
+const PlacesForm = ({
+  control,
+  errors,
+  fields,
+  append,
+  remove,
+  destination,
+}) => {
   const handleAddPlace = () => append({ title: "", description: "" });
 
   return (
@@ -25,6 +33,7 @@ const PlacesForm = ({ control, errors, fields, append, remove }) => {
           errors={errors}
           remove={remove}
           disableRemove={fields.length === 1}
+          destination={destination}
         />
       ))}
       <div className="form__cta">
@@ -40,16 +49,22 @@ const PlacesForm = ({ control, errors, fields, append, remove }) => {
   );
 };
 
-const PlaceField = ({ control, index, errors, remove }) => {
+const PlaceField = ({ control, index, errors, remove, destination }) => {
   return (
     <div className="form__places-group">
       <div className="form__row-group">
-        <InputForm
+        <Controller
           name={`places.${index}.title`}
-          label="Place Name"
-          type="text"
           control={control}
-          error={errors?.places?.[index]?.title}
+          render={({ field }) => (
+            <AutocompleteInput
+              label="Place Name"
+              value={field.value}
+              onChange={field.onChange}
+              error={errors?.places?.[index]?.title}
+              cityContext={destination}
+            />
+          )}
         />
       </div>
       <TextAreaForm

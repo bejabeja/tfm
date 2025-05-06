@@ -25,6 +25,7 @@ const CreateItinerary = () => {
     control,
     handleSubmit,
     formState: { errors },
+    watch
   } = useForm({
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
@@ -84,6 +85,7 @@ const CreateItinerary = () => {
           fields={fields}
           append={append}
           remove={remove}
+          destination={watch("destination")}
         />
         <BudgetForm control={control} errors={errors} />
         <TravellersForm control={control} errors={errors} />
