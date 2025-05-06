@@ -105,8 +105,6 @@ export const resetUserInfo = () => {
         dispatch({ type: RESET_MY_INFO_ITINERARIES });
         dispatch({ type: RESET_MY_INFO_FOLLOWING });
         dispatch({ type: RESET_MY_INFO_FOLLOWERS });
-
-
     };
 };
 
