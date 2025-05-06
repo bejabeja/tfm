@@ -184,7 +184,7 @@ export class ItineraryRepository {
             SELECT *
             FROM itineraries
             ${whereClause}
-            ORDER BY created_at DESC
+            ORDER BY start_date DESC
             LIMIT $${index++} OFFSET $${index}
         `;
 

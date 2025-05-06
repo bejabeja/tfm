@@ -27,7 +27,6 @@ const Explore = () => {
   const loadMoreRef = useRef(null);
 
   useEffect(() => {
-    dispatch(setExplorePagination(1));
     dispatch(initExploreItineraries({ category, destination, page: 1 }));
   }, [category, destination, dispatch]);
 
@@ -61,7 +60,11 @@ const Explore = () => {
     const nextPage = page + 1;
     dispatch(setExplorePagination(nextPage));
     dispatch(
-      loadMoreExploreItineraries({ category, destination, page: nextPage })
+      loadMoreExploreItineraries({
+        category,
+        destination: localDestination,
+        page: nextPage,
+      })
     ).then(() => {
       if (loadMoreRef.current) {
         loadMoreRef.current.scrollIntoView({

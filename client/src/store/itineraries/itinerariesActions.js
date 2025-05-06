@@ -46,16 +46,16 @@ export const initExploreItineraries = (filters) => async (dispatch) => {
 };
 
 
-export const loadMoreExploreItineraries = (filters, page) => async (dispatch) => {
-    dispatch({ type: START_LOADING_MORE_ITINERARIES }); 
+export const loadMoreExploreItineraries = (filters) => async (dispatch) => {
+    dispatch({ type: START_LOADING_MORE_ITINERARIES });
 
     try {
-        const response = await getItinerariesByFilters({ ...filters, page });
+        const response = await getItinerariesByFilters(filters);
         const { itineraries, totalPages, totalItems } = response;
 
         dispatch({
             type: SET_EXPLORE_ITINERARIES,
-            payload: { itineraries, totalPages, totalItems, page },
+            payload: { itineraries, totalPages, totalItems, page: filters.page },
         });
     } catch (error) {
         dispatch({

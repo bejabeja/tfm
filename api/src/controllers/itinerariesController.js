@@ -5,7 +5,7 @@ export class ItinerariesController {
 
     async filterItinerariesBy(req, res, next) {
         try {
-            const { category, destination, page = 1, limit = 10 } = req.query;
+            const { category = 'all', destination = '', page = 1, limit = 10 } = req.query;
             const filters = {
                 category,
                 destination,
