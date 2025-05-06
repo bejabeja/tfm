@@ -67,7 +67,9 @@ export class Itinerary {
             commentsCount: this.commentsCount,
             category: this.category,
             currency: this.currency,
-            tripDates: formatDateRange(this.startDate, this.endDate)
+            tripDates: formatDateRange(this.startDate, this.endDate),
+            startDate: this.startDate,
+            endDate: this.endDate,
         };
     }
 
