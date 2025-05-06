@@ -39,7 +39,6 @@ export const getfeaturedItineraries = async () => {
 export const getItinerariesByUserId = async (id) => {
     const response = await fetch(`${baseUrl}/${id}`, {
         method: 'GET',
-        credentials: 'include',
         headers: {
             'Content-Type': 'application/json'
         }

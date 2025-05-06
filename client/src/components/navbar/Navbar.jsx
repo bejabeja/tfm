@@ -17,7 +17,7 @@ import "./Navbar.scss";
 
 const Navbar = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, loading } = useSelector((state) => state.auth);
+  const { isAuthenticated, authLoading } = useSelector((state) => state.auth);
   const { me } = useSelector((state) => state.myInfo);
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
@@ -76,7 +76,7 @@ const Navbar = () => {
           </Link>
         </div>
 
-        {loading ? (
+        {authLoading ? (
           <div className="loading-placeholder nav-section">
             <h3>Private</h3>
             <p>

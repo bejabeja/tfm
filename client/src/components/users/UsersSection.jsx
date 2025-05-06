@@ -31,14 +31,14 @@ const UsersSection = ({ users, isLoading }) => {
 export default UsersSection;
 
 const UserCardWithFollow = ({ user, isAuthenticated }) => {
-  const { isFollowing, handleFollowToggle } = useFollow(user.id);
+  const { isFollowing, toggleFollow } = useFollow(user.id);
 
   return (
     <UserCard
       {...user}
       isAuthenticated={isAuthenticated}
       isFollowing={isFollowing}
-      onFollowToggle={handleFollowToggle}
+      onFollowToggle={toggleFollow}
     />
   );
 };

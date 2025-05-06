@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from 'react-router-dom';
 import { followUser, unfollowUser } from "../services/followers";
-import { setUserInfo } from "../store/user/userInfoActions";
+import { setUserInfo, setUserInfoFollowing } from "../store/user/userInfoActions";
 
 export const useFollow = (targetUserId) => {
     const dispatch = useDispatch();
+    const navigate = useNavigate()
+    const { isAuthenticated } = useSelector((state) => state.auth);
     const { me } = useSelector((state) => state.myInfo);
     const [isFollowing, setIsFollowing] = useState(false);
 
@@ -18,15 +21,23 @@ export const useFollow = (targetUserId) => {
         checkFollowing();
     }, [userInfo, targetUserId]);
 
-    const handleFollowToggle = async () => {
+    const toggleFollow = async () => {
+        if (!isAuthenticated) {
+            navigate('/login')
+        }
         try {
-            isFollowing ? await unfollowUser(targetUserId) : await followUser(targetUserId);
+            if (isFollowing) {
+                await unfollowUser(targetUserId);
+            } else {
+                await followUser(targetUserId);
+            }
             dispatch(setUserInfo(userInfo.id));
+            dispatch(setUserInfoFollowing(userInfo.id));
             setIsFollowing((prev) => !prev);
         } catch (err) {
             console.error("Failed to toggle follow:", err);
         }
     };
 
-    return { isFollowing, handleFollowToggle };
+    return { isFollowing, toggleFollow };
 };

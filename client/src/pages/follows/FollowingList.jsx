@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { useFollow } from "../../hooks/useFollow";
 import { useProfileData } from "../../hooks/useProfileData";
 import "./Follows.scss";
 
@@ -26,13 +27,29 @@ const FollowingList = () => {
 export default FollowingList;
 
 const UserCard = ({ user }) => {
+  const { toggleFollow } = useFollow(user.id);
+
+  const handleUnfollowClick = (e) => {
+    e.preventDefault();
+    toggleFollow();
+  };
+
   return (
-    <Link to={`/profile/${user.id}`} className="user-card">
-      <img src={user.avatarUrl} alt={user.name} className="user-card__avatar" />
-      <div className="user-card__info">
-        <h3 className="user-card__name">{user.name}</h3>
-        <p className="user-card__username">@{user.username}</p>
-      </div>
-    </Link>
+    <div className="user-card">
+      <Link to={`/profile/${user.id}`} className="user-card__link">
+        <img
+          src={user.avatarUrl}
+          alt={user.name}
+          className="user-card__avatar"
+        />
+        <div className="user-card__info">
+          <h3 className="user-card__name">{user.name}</h3>
+          <p className="user-card__username">@{user.username}</p>
+        </div>
+      </Link>
+      <button className="btn btn__danger-outline" onClick={handleUnfollowClick}>
+        Unfollow
+      </button>
+    </div>
   );
 };

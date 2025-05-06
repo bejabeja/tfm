@@ -1,7 +1,7 @@
 const initialState = {
     user: null,
     isAuthenticated: false,
-    loading: true,
+    authLoading: true,
     error: null,
     imageHeroLoaded: false,
     imageAuthLoaded: false,
@@ -15,7 +15,7 @@ const initialState = {
           ...state,
           user: action.payload,
           isAuthenticated: !!action.payload,
-          loading: false,
+          authLoading: false,
           error: action.error || null,
         };
   
@@ -30,7 +30,7 @@ const initialState = {
           ...state,
           user: null,
           isAuthenticated: false,
-          loading: false,
+          authLoading: false,
         };
   
       case "@auth/clearError":

@@ -10,11 +10,18 @@ import "./Profile.scss";
 
 const Profile = () => {
   const { id } = useParams();
-  const { user, myItineraries, loading, error, isMyProfile } =
-    useProfileData(id);
-  const { isFollowing, handleFollowToggle } = useFollow(id);
+  const {
+    user,
+    itineraries,
+    loadingUser,
+    error,
+    isMyProfile,
+    loadingItineraries,
+    isAuthenticated,
+  } = useProfileData(id);
+  const { isFollowing, toggleFollow } = useFollow(id);
 
-  if (loading) return <Spinner />;
+  if (loadingUser) return <Spinner />;
   if (error) return <div>Error fetching data</div>;
 
   return (
@@ -23,14 +30,15 @@ const Profile = () => {
         user={user}
         isMyProfile={isMyProfile}
         isFollowing={isFollowing}
-        onFollowToggle={handleFollowToggle}
+        onFollowToggle={toggleFollow}
+        isAuthenticated={isAuthenticated}
       />
       <AboutSection user={user} />
       <ItinerariesSection
         user={user}
-        itineraries={myItineraries.data}
+        itineraries={itineraries}
         title="Shared Itineraries"
-        isLoading={myItineraries.loading}
+        isLoading={loadingItineraries}
       />
     </section>
   );
@@ -38,7 +46,13 @@ const Profile = () => {
 
 export default Profile;
 
-const HeaderSection = ({ user, isMyProfile, isFollowing, onFollowToggle }) => {
+const HeaderSection = ({
+  user,
+  isMyProfile,
+  isFollowing,
+  onFollowToggle,
+  isAuthenticated,
+}) => {
   return (
     <div className="profile__header">
       <div className="profile__header-main-content">
@@ -51,10 +65,14 @@ const HeaderSection = ({ user, isMyProfile, isFollowing, onFollowToggle }) => {
           <h1 className="profile__header-info-name">{user?.name}</h1>
           <h2 className="profile__header-info-username">@{user?.username}</h2>
           <div className="profile__header-info-stats">
-            <Link to={`/profile/${user?.id}/followers`}>
+            <Link
+              to={isAuthenticated ? `/profile/${user?.id}/followers` : "/login"}
+            >
               <strong>{user?.followers}</strong> followers
             </Link>
-            <Link to={`/profile/${user?.id}/following`}>
+            <Link
+              to={isAuthenticated ? `/profile/${user?.id}/following` : "/login"}
+            >
               <strong>{user?.following}</strong> following
             </Link>
             <p>

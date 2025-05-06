@@ -4,9 +4,9 @@ import { Navigate, Outlet } from "react-router-dom";
 import Spinner from "../components/spinner/Spinner";
 
 const PrivateLayout = () => {
-  const { isAuthenticated, loading } = useSelector((state) => state.auth);
+  const { isAuthenticated, authLoading } = useSelector((state) => state.auth);
 
-  if (loading) {
+  if (authLoading) {
     return <Spinner />;
   }
 
