@@ -25,12 +25,19 @@ const CreateItinerary = () => {
     control,
     handleSubmit,
     formState: { errors },
-    watch
+    watch,
   } = useForm({
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
       title: "",
-      destination: "",
+      destination: {
+        name: "",
+        label: "",
+        coordinates: {
+          lat: 0,
+          lon: 0,
+        },
+      },
       description: "",
       startDate: today,
       endDate: today,
@@ -52,7 +59,7 @@ const CreateItinerary = () => {
       userId: userInfo.id,
       title: data.title,
       description: data.description,
-      location: data.destination,
+      location: data.destination.label,
       startDate: data.startDate,
       endDate: data.endDate,
       budget: Number(data.budget),
@@ -66,7 +73,6 @@ const CreateItinerary = () => {
       })),
       category: data.category,
     };
-
     await createItinerary(body);
     dispatch(setUserInfo(userInfo.id));
     navigate(`/profile/${userInfo.id}`);

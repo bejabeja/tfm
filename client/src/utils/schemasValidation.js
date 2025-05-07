@@ -66,9 +66,14 @@ export const createItinerarySchema = z
             .max(50, "Title must be less than 50 characters"),
 
         destination: z
-            .string()
-            .min(2, "Destination is required")
-            .max(50, "Destination must be less than 50 characters"),
+            .object({
+                name: z.string(),
+                label: z.string(),
+                coordinates: z.object({
+                    lat: z.number(),
+                    lon: z.number(),
+                }),
+            }),
 
         description: z
             .string()
@@ -132,4 +137,9 @@ export const createItinerarySchema = z
     .refine((data) => data.endDate >= data.startDate, {
         message: "End date must be after or equal to start date",
         path: ["endDate"],
-    });
+    })
+    .refine((data) => data.destination.name && data.destination.label, {
+        message: "Please select a valid destination from the list",
+        path: ["destination"]
+    })
+    ;

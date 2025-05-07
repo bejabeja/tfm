@@ -1,9 +1,8 @@
 export const useGeocodeSearch = () => {
     const searchPlaces = async (query, cityContext = "") => {
-        const fullQuery = cityContext ? `${query}, ${cityContext}` : query;
-
+        const fullQuery = cityContext.name ? `${query} ${cityContext.name}` : query;
         const response = await fetch(
-            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullQuery)}&format=json&accept-language=es`
+            `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(fullQuery)}&format=json&accept-language=es&limit=5`
         );
 
         const data = await response.json();

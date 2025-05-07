@@ -1,9 +1,9 @@
 import React from "react";
 import { Controller } from "react-hook-form";
 import { getCategoryIcon } from "../../../assets/icons";
-import AutocompleteInput from "../../../components/form/AutocompleteInput";
 import { InputForm, TextAreaForm } from "../../../components/form/InputForm";
 import { itineraryCategories } from "../../../utils/constants/constants";
+import AutocompleteObjectInput from "../../../components/form/AutocompleteObjectInput";
 
 const BasicInfoForm = ({ control, errors }) => (
   <div className="form__basic-info">
@@ -16,17 +16,11 @@ const BasicInfoForm = ({ control, errors }) => (
         control={control}
         error={errors.title}
       ></InputForm>
-      <Controller
+      <AutocompleteObjectInput
         name="destination"
+        label="Destination"
         control={control}
-        render={({ field }) => (
-          <AutocompleteInput
-            label="Destination"
-            value={field.value}
-            onChange={field.onChange}
-            error={errors.destination}
-          />
-        )}
+        error={errors.destination}
       />
     </div>
 
