@@ -14,11 +14,16 @@ const AutocompleteStringInput = ({
   const [suggestions, setSuggestions] = useState([]);
   const { searchPlaces } = useGeocodeSearch();
   const inputRef = useRef(null);
+  const destinationRef = useRef(destination);
+
+  useEffect(() => {
+    destinationRef.current = destination;
+  }, [destination]);
 
   const debouncedSearch = useRef(
     debounce(async (val) => {
       if (val.length >= 3) {
-        const results = await searchPlaces(val, destination);
+        const results = await searchPlaces(val, destinationRef.current);
         setSuggestions(results);
       } else {
         setSuggestions([]);
@@ -54,7 +59,7 @@ const AutocompleteStringInput = ({
               className={`input__field ${error ? "input__field--invalid" : ""}`}
               autoComplete="off"
               aria-invalid={!!error}
-              disabled={!destination.name}
+              disabled={!destination?.name}
               ref={inputRef}
             />
             <div className="input__error">
@@ -70,7 +75,7 @@ const AutocompleteStringInput = ({
                   <li
                     key={index}
                     onClick={() => {
-                      field.onChange(place.label); // solo string
+                      field.onChange(place.name);
                       setSuggestions([]);
                     }}
                   >

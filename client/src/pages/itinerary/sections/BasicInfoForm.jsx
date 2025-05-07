@@ -1,11 +1,11 @@
 import React from "react";
 import { Controller } from "react-hook-form";
 import { getCategoryIcon } from "../../../assets/icons";
+import AutocompleteObjectInput from "../../../components/form/AutocompleteObjectInput";
 import { InputForm, TextAreaForm } from "../../../components/form/InputForm";
 import { itineraryCategories } from "../../../utils/constants/constants";
-import AutocompleteObjectInput from "../../../components/form/AutocompleteObjectInput";
 
-const BasicInfoForm = ({ control, errors }) => (
+const BasicInfoForm = ({ control, errors, disabled = false }) => (
   <div className="form__basic-info">
     <h2 className="form__subtitle">Basic Information</h2>
     <div className="form__row-group">
@@ -21,6 +21,7 @@ const BasicInfoForm = ({ control, errors }) => (
         label="Destination"
         control={control}
         error={errors.destination}
+        disabled={disabled}
       />
     </div>
 

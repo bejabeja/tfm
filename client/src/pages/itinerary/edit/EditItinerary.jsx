@@ -39,7 +39,14 @@ const EditItinerary = () => {
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
       title: "",
-      destination: "",
+      destination: {
+        name: "",
+        label: "",
+        coordinates: {
+          lat: 0,
+          lon: 0,
+        },
+      },
       description: "",
       startDate: "",
       endDate: "",
@@ -61,7 +68,7 @@ const EditItinerary = () => {
       const response = await getItineraryById(id);
       const resetValues = {
         title: response.title,
-        destination: response.location,
+        destination: { name: response.location },
         description: response.description,
         startDate: response.startDate.split("T")[0],
         endDate: response.endDate.split("T")[0],
@@ -76,7 +83,7 @@ const EditItinerary = () => {
           category: place.category,
         })),
       };
-
+      console.log(response);
       reset(resetValues);
       setItineraryData(response);
     };
@@ -115,7 +122,7 @@ const EditItinerary = () => {
       <h1 className="form__title">Edit Itinerary</h1>
 
       <form className="form__container" onSubmit={handleSubmit(editItinerary)}>
-        <BasicInfoForm control={control} errors={errors} />
+        <BasicInfoForm control={control} errors={errors} disabled={true} />
         <DatesForm control={control} errors={errors} />
         <PlacesForm
           control={control}

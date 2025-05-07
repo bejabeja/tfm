@@ -4,7 +4,13 @@ import { Controller } from "react-hook-form";
 import { useGeocodeSearch } from "../../hooks/useGeocodeSearch";
 import "./InputForm.scss";
 
-const AutocompleteObjectInput = ({ label, name, control, error }) => {
+const AutocompleteObjectInput = ({
+  label,
+  name,
+  control,
+  error,
+  disabled = false,
+}) => {
   const [suggestions, setSuggestions] = useState([]);
   const { searchPlaces } = useGeocodeSearch();
   const inputRef = useRef(null);
@@ -63,6 +69,7 @@ const AutocompleteObjectInput = ({ label, name, control, error }) => {
               autoComplete="off"
               aria-invalid={!!error}
               ref={inputRef}
+              disabled={disabled}
             />
             <div className="input__error">
               {error && !error?.label ? error.message : "\u00A0"}
