@@ -35,6 +35,7 @@ const EditItinerary = () => {
     handleSubmit,
     reset,
     formState: { errors, isLoading },
+    watch,
   } = useForm({
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
@@ -68,7 +69,14 @@ const EditItinerary = () => {
       const response = await getItineraryById(id);
       const resetValues = {
         title: response.title,
-        destination: { name: response.location },
+        destination: {
+          name: response.location,
+          label: response.location,
+          coordinates: {
+            lat: response.latitude || 0,
+            lon: response.longitude || 0,
+          },
+        },
         description: response.description,
         startDate: response.startDate.split("T")[0],
         endDate: response.endDate.split("T")[0],
@@ -83,19 +91,17 @@ const EditItinerary = () => {
           category: place.category,
         })),
       };
-      console.log(response);
       reset(resetValues);
       setItineraryData(response);
     };
     fetchItineraryData();
   }, []);
-
   const editItinerary = async (data) => {
     const body = {
       userId: userInfo.id,
       title: data.title,
       description: data.description,
-      location: data.destination,
+      location: data.destination.name,
       startDate: data.startDate,
       endDate: data.endDate,
       budget: Number(data.budget),
@@ -130,6 +136,7 @@ const EditItinerary = () => {
           fields={fields}
           append={append}
           remove={remove}
+          destination={watch("destination")}
         />
         <BudgetForm control={control} errors={errors} />
         <TravellersForm control={control} errors={errors} />

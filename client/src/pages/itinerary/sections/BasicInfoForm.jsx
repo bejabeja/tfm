@@ -5,36 +5,38 @@ import AutocompleteObjectInput from "../../../components/form/AutocompleteObject
 import { InputForm, TextAreaForm } from "../../../components/form/InputForm";
 import { itineraryCategories } from "../../../utils/constants/constants";
 
-const BasicInfoForm = ({ control, errors, disabled = false }) => (
-  <div className="form__basic-info">
-    <h2 className="form__subtitle">Basic Information</h2>
-    <div className="form__row-group">
-      <InputForm
-        name="title"
-        label="Title"
+const BasicInfoForm = ({ control, errors, disabled = false }) => {
+  return (
+    <div className="form__basic-info">
+      <h2 className="form__subtitle">Basic Information</h2>
+      <div className="form__row-group">
+        <InputForm
+          name="title"
+          label="Title"
+          type="text"
+          control={control}
+          error={errors.title}
+        ></InputForm>
+        <AutocompleteObjectInput
+          name="destination"
+          label="Destination"
+          control={control}
+          error={errors.destination}
+          disabled={disabled}
+        />
+      </div>
+
+      <TextAreaForm
+        name="description"
+        label="Description"
         type="text"
         control={control}
-        error={errors.title}
-      ></InputForm>
-      <AutocompleteObjectInput
-        name="destination"
-        label="Destination"
-        control={control}
-        error={errors.destination}
-        disabled={disabled}
-      />
+        error={errors.description}
+      ></TextAreaForm>
+      <TripCategoryForm control={control} />
     </div>
-
-    <TextAreaForm
-      name="description"
-      label="Description"
-      type="text"
-      control={control}
-      error={errors.description}
-    ></TextAreaForm>
-    <TripCategoryForm control={control} />
-  </div>
-);
+  );
+};
 
 const TripCategoryForm = ({ control }) => {
   return (
