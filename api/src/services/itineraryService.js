@@ -9,6 +9,7 @@ export class ItineraryService {
     }
     async getItineraryById(id) {
         const itinerary = await this.itinerariesRepository.getItineraryById(id);
+        console.log('itineraryyyyyy', itinerary)
         if (!itinerary) {
             throw new NotFoundError("Itinerary not found");
         }

@@ -44,7 +44,20 @@ const CreateItinerary = () => {
       description: "",
       startDate: today,
       endDate: today,
-      places: [{ title: "", description: "", category: "other" }],
+      places: [
+        {
+          description: "",
+          category: "other",
+          infoPlace: {
+            name: "",
+            label: "",
+            coordinates: {
+              lat: 0,
+              lon: 0,
+            },
+          },
+        },
+      ],
       budget: "0",
       currency: "",
       numberOfTravellers: "1",
@@ -65,8 +78,8 @@ const CreateItinerary = () => {
       location: {
         name: data.destination.name,
         label: data.destination.label,
-        lat: data.destination.lat,
-        lon: data.destination.lon,
+        lat: data.destination.coordinates.lat,
+        lon: data.destination.coordinates.lon,
       },
       startDate: data.startDate,
       endDate: data.endDate,
@@ -74,10 +87,15 @@ const CreateItinerary = () => {
       currency: data.currency,
       numberOfPeople: Number(data.numberOfTravellers),
       places: data.places.map((place, index) => ({
-        title: place.title,
         description: place.description,
         category: place.category || "other",
         orderIndex: index,
+        infoPlace: {
+          name: place.infoPlace.name,
+          label: place.infoPlace.label,
+          lat: place.infoPlace.coordinates.lat,
+          lon: place.infoPlace.coordinates.lon,
+        },
       })),
       category: data.category,
     };
@@ -86,7 +104,7 @@ const CreateItinerary = () => {
     dispatch(setUserInfoItineraries(userInfo.id));
     navigate(`/profile/${userInfo.id}`);
   };
-
+  
   return (
     <section className="create-itinerary section__container">
       <h1 className="form__title">Create Itinerary</h1>

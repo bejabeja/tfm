@@ -7,18 +7,19 @@ export class PlacesRepository {
     async insertPlace(placeData) {
         const placeId = uuidv4();
         const placeQuery = `
-            INSERT INTO places (id, title, description, address, latitude, longitude, category)
-            VALUES ($1, $2, $3, $4, $5, $6, $7)
+            INSERT INTO places (id, title, description, label, address, latitude, longitude, category)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
             RETURNING *;
         `;
 
         const result = await client.query(placeQuery, [
             placeId,
-            placeData.title,
+            placeData.infoPlace.name,
             placeData.description,
-            placeData.address,
-            placeData.latitude,
-            placeData.longitude,
+            placeData.infoPlace.label,
+            placeData.infoPlace.label,
+            placeData.infoPlace.lat,
+            placeData.infoPlace.lon,
             placeData.category,
         ]);
 
@@ -36,26 +37,34 @@ export class PlacesRepository {
 
         const result = await client.query(placesQuery, [itineraryId]);
         return result.rows.map(row => Place.fromDb(row, row.order_index));
-       
+
     }
 
     async updatePlace(placeData) {
         const { id } = placeData;
         const placeQuery = `
             UPDATE places
-            SET title = $2, description = $3, address = $4, latitude = $5, longitude = $6, category = $7
+            SET 
+                title = $2, 
+                description = $3, 
+                address = $4, 
+                label = $5, 
+                latitude = $6, 
+                longitude = $7, 
+                category = $8
             WHERE id = $1
             RETURNING *;
         `;
 
         const result = await client.query(placeQuery, [
             id,
-            placeData.title,
+            placeData.infoPlace.name,
             placeData.description,
-            placeData.address,
-            placeData.latitude,
-            placeData.longitude,
-            placeData.category,
+            placeData.infoPlace.label,
+            placeData.infoPlace.label,
+            placeData.infoPlace.lat,
+            placeData.infoPlace.lon,
+            placeData.infoPlace.category,
         ]);
 
         return Place.fromDb(result.rows[0], placeData.orderIndex);

@@ -1,7 +1,7 @@
 import React from "react";
 import { Controller } from "react-hook-form";
 import { getCategoryIcon } from "../../../assets/icons";
-import AutocompleteStringInput from "../../../components/form/AutocompleteStringInput";
+import AutocompletePlaceInput from "../../../components/form/AutocompletePlaceInput";
 import { TextAreaForm } from "../../../components/form/InputForm";
 import { placeCategories } from "../../../utils/constants/constants";
 
@@ -13,7 +13,7 @@ const PlacesForm = ({
   remove,
   destination,
 }) => {
-  const handleAddPlace = () => append({ title: "", description: "" });
+  const handleAddPlace = () => append({ description: "", infoPlace: {} });
 
   return (
     <div className="form__places">
@@ -52,17 +52,13 @@ const PlacesForm = ({
 const PlaceField = ({ control, index, errors, remove, destination }) => {
   return (
     <div className="form__places-group">
-      <AutocompleteStringInput
-        name={`places.${index}.title`}
+      <AutocompletePlaceInput
+        name={`places.${index}.infoPlace`}
+        label="Place name"
         control={control}
-        label="Place Name"
-        error={
-          errors?.places?.[index]?.title ||
-          (errors?.destination && "Please select a valid destination first")
-        }
+        error={errors.infoPlace}
         destination={destination}
-        
-      />
+      ></AutocompletePlaceInput>
 
       <TextAreaForm
         name={`places.${index}.description`}

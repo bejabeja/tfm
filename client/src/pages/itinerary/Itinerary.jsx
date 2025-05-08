@@ -174,7 +174,7 @@ const Place = ({ place, index }) => {
   return (
     <div className="place">
       <h3 className="place__title ">
-        Place {index + 1} : {place.title}
+        Place {index + 1} : {place.name}
       </h3>
       <div className="place__info">
         <div className="place__info-left">

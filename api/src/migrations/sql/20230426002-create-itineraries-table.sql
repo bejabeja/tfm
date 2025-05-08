@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS itineraries (
     id UUID PRIMARY KEY,
     user_id UUID REFERENCES users(id),
-    title VARCHAR(255) NOT NULL,
+    title TEXT NOT NULL,
     description TEXT,
     start_date TIMESTAMP WITH TIME ZONE,
     end_date TIMESTAMP WITH TIME ZONE,

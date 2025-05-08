@@ -51,7 +51,21 @@ const EditItinerary = () => {
       description: "",
       startDate: "",
       endDate: "",
-      places: [{ id: "", title: "", description: "", category: "" }],
+      places: [
+        {
+          id: "",
+          description: "",
+          category: "",
+          infoPlace: {
+            name: "",
+            label: "",
+            coordinates: {
+              lat: 0,
+              lon: 0,
+            },
+          },
+        },
+      ],
       budget: "",
       currency: "",
       numberOfTravellers: "",
@@ -73,8 +87,8 @@ const EditItinerary = () => {
           name: response.location.name,
           label: response.location.label,
           coordinates: {
-            lat: response.location.lat || 0,
-            lon: response.location.lon || 0,
+            lat: Number(response.location.lat) || 0,
+            lon: Number(response.location.lon) || 0,
           },
         },
         description: response.description,
@@ -86,9 +100,16 @@ const EditItinerary = () => {
         category: response.category,
         places: response.places.map((place) => ({
           id: place.id,
-          title: place.title,
           description: place.description,
           category: place.category,
+          infoPlace: {
+            name: place.name,
+            label: place.label,
+            coordinates: {
+              lat: Number(place.latitude),
+              lon: Number(place.longitude),
+            },
+          },
         })),
       };
       reset(resetValues);
@@ -114,10 +135,15 @@ const EditItinerary = () => {
       numberOfPeople: Number(data.numberOfTravellers),
       places: data.places.map((place, index) => ({
         id: place.id,
-        title: place.title,
         description: place.description,
         category: place.category || "other",
         orderIndex: index,
+        infoPlace: {
+          name: place.infoPlace.name,
+          label: place.infoPlace.label,
+          lat: place.infoPlace.coordinates.lat,
+          lon: place.infoPlace.coordinates.lon,
+        },
       })),
       category: data.category,
     };
@@ -127,7 +153,7 @@ const EditItinerary = () => {
     dispatch(loadMyUserInfo(userInfo.id));
     navigate(`/profile/${userInfo.id}`);
   };
-
+  
   return (
     <section className="create-itinerary section__container">
       <h1 className="form__title">Edit Itinerary</h1>

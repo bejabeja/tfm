@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS places (
     title TEXT NOT NULL,
     description TEXT,
     label TEXT,
-    address VARCHAR(100),
+    address TEXT,
     latitude DECIMAL(9, 6), --coming from google maps
     longitude DECIMAL(9, 6), --coming from google maps
     category VARCHAR(50),

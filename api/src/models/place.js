@@ -1,9 +1,11 @@
 export class Place {
-    constructor({ id, title, description, address, latitude, longitude, category, createdAt, updatedAt, orderIndex }) {
+    constructor({ id, title, name, description, address, label, latitude, longitude, category, createdAt, updatedAt, orderIndex }) {
         this.id = id;
         this.title = title;
+        this.name = name;
         this.description = description;
         this.address = address;
+        this.label = label;
         this.latitude = latitude;
         this.longitude = longitude;
         this.category = category?.toLowerCase() || "other";
@@ -15,9 +17,10 @@ export class Place {
     static fromDb(row, orderIndex) {
         return new Place({
             id: row.id,
-            title: row.title,
+            name: row.title,
             description: row.description,
             address: row.address,
+            label: row.label,
             latitude: row.latitude,
             longitude: row.longitude,
             category: row.category,
@@ -30,9 +33,10 @@ export class Place {
     toDTO() {
         return {
             id: this.id,
-            title: this.title,
+            name: this.name,
             description: this.description,
             address: this.address,
+            label: this.label,
             latitude: this.latitude,
             longitude: this.longitude,
             category: this.category,

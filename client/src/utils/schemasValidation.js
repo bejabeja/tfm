@@ -98,10 +98,6 @@ export const createItinerarySchema = z
             .array(
                 z.object({
                     id: z.string().uuid().optional(),
-                    title: z
-                        .string()
-                        .min(2, "Place name is required")
-                        .max(50, "Place name must be less than 50 characters"),
 
                     description: z
                         .string()
@@ -111,7 +107,17 @@ export const createItinerarySchema = z
 
                     category: z
                         .string()
-                        .optional()
+                        .optional(),
+
+                    infoPlace: z
+                        .object({
+                            name: z.string(),
+                            label: z.string(),
+                            coordinates: z.object({
+                                lat: z.number(),
+                                lon: z.number(),
+                            }),
+                        }),
                 })
             )
             .min(1, "At least one place is required"),
