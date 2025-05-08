@@ -27,9 +27,9 @@ const FollowingList = () => {
 export default FollowingList;
 
 const UserCard = ({ user }) => {
-  const { toggleFollow } = useFollow(user.id);
+  const { toggleFollow, isFollowing, isMyUser } = useFollow(user.id);
 
-  const handleUnfollowClick = (e) => {
+  const handleFollow = (e) => {
     e.preventDefault();
     toggleFollow();
   };
@@ -47,9 +47,16 @@ const UserCard = ({ user }) => {
           <p className="user-card__username">@{user.username}</p>
         </div>
       </Link>
-      <button className="btn btn__danger-outline" onClick={handleUnfollowClick}>
-        Unfollow
-      </button>
+      {!isMyUser &&
+        (isFollowing ? (
+          <button className="btn btn__danger-outline" onClick={handleFollow}>
+            Unfollow
+          </button>
+        ) : (
+          <button className="btn btn__primary" onClick={handleFollow}>
+            Follow
+          </button>
+        ))}
     </div>
   );
 };

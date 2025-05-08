@@ -12,6 +12,7 @@ export const useFollow = (targetUserId) => {
     const [isFollowing, setIsFollowing] = useState(false);
 
     const userInfo = me.data;
+    const isMyUser = targetUserId === me?.data?.id;
 
     useEffect(() => {
         const checkFollowing = () => {
@@ -26,7 +27,7 @@ export const useFollow = (targetUserId) => {
             navigate('/login')
             return;
         }
-    
+
         try {
             if (isFollowing) {
                 await unfollowUser(targetUserId);
@@ -41,5 +42,5 @@ export const useFollow = (targetUserId) => {
         }
     };
 
-    return { isFollowing, toggleFollow };
+    return { isFollowing, toggleFollow, isMyUser };
 };
