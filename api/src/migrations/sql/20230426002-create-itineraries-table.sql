@@ -3,7 +3,6 @@ CREATE TABLE IF NOT EXISTS itineraries (
     user_id UUID REFERENCES users(id),
     title VARCHAR(255) NOT NULL,
     description TEXT,
-    location VARCHAR(100),
     start_date TIMESTAMP WITH TIME ZONE,
     end_date TIMESTAMP WITH TIME ZONE,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -14,5 +13,9 @@ CREATE TABLE IF NOT EXISTS itineraries (
     likes_count INT DEFAULT 0,
     comments_count INT DEFAULT 0,
     category VARCHAR(50),
-    photo_url VARCHAR(255)
+    photo_url VARCHAR(255),
+    location_name TEXT,
+    location_label TEXT,
+    latitude DECIMAL,
+    longitude DECIMAL
 );
