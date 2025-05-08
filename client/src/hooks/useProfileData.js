@@ -45,13 +45,14 @@ export const useProfileData = (profileId) => {
         // if (!isReady) return;
 
         const fetchData = async () => {
+            if (isAuthenticated && me?.data === null) return;
             if (!isMyProfile) {
                 try {
                     const userRes = await getUserById(profileId);
                     const itinerariesRes = await getItinerariesByUserId(profileId)
                     setUserData(userRes);
                     setUserItineraries(itinerariesRes)
-                    
+
                     if (isAuthenticated) {
                         const [followersRes, followingRes] = await Promise.all([
                             getAllFollowers(profileId),
@@ -77,7 +78,7 @@ export const useProfileData = (profileId) => {
         };
 
         fetchData();
-    }, [isReady, profileId, isMyProfile]);
+    }, [isReady, profileId, isMyProfile, me]);
 
 
     return {

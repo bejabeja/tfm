@@ -1,4 +1,5 @@
 import { Link, useParams } from "react-router-dom";
+import { useFollow } from "../../hooks/useFollow";
 import { useProfileData } from "../../hooks/useProfileData";
 import "./Follows.scss";
 
@@ -13,7 +14,7 @@ const FollowersList = () => {
     <section className="follow-list section__container">
       <h2 className="follow-list__title">Followers</h2>
       <div className="follow-list__grid">
-        {followers.map((user) => (
+        {followers?.map((user) => (
           <UserCard key={user.id} user={user} />
         ))}
       </div>
@@ -24,13 +25,36 @@ const FollowersList = () => {
 export default FollowersList;
 
 const UserCard = ({ user }) => {
+  const { toggleFollow, isFollowing, isMyUser } = useFollow(user.id);
+
+  const handleFollow = (e) => {
+    e.preventDefault();
+    toggleFollow();
+  };
+
   return (
-    <Link to={`/profile/${user.id}`} className="user-card">
-      <img src={user.avatarUrl} alt={user.name} className="user-card__avatar" />
-      <div className="user-card__info">
-        <h3 className="user-card__name">{user.name}</h3>
-        <p className="user-card__username">@{user.username}</p>
-      </div>
-    </Link>
+    <div className="user-card">
+      <Link to={`/profile/${user.id}`} className="user-card__link">
+        <img
+          src={user.avatarUrl}
+          alt={user.name}
+          className="user-card__avatar"
+        />
+        <div className="user-card__info">
+          <h3 className="user-card__name">{user.name}</h3>
+          <p className="user-card__username">@{user.username}</p>
+        </div>
+      </Link>
+      {!isMyUser &&
+        (isFollowing ? (
+          <button className="btn btn__danger-outline" onClick={handleFollow}>
+            Unfollow
+          </button>
+        ) : (
+          <button className="btn btn__primary" onClick={handleFollow}>
+            Follow
+          </button>
+        ))}
+    </div>
   );
 };
