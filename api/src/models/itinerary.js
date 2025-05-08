@@ -6,7 +6,7 @@ export class Itinerary {
         this.userId = userId;
         this.title = title;
         this.description = description;
-        this.location = location;
+        this.location = location || {};
         this.startDate = startDate;
         this.endDate = endDate;
         this.createdAt = createdAt;
@@ -28,7 +28,12 @@ export class Itinerary {
             userId: row.user_id,
             title: row.title,
             description: row.description,
-            location: row.location,
+            location: {
+                name: row.location_name,
+                label: row.location_label,
+                lat: row.latitude,
+                lon: row.longitude
+            },
             startDate: row.start_date,
             endDate: row.end_date,
             createdAt: row.created_at,
