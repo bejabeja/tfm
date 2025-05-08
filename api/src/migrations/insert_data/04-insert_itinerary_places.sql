@@ -27,6 +27,8 @@ VALUES
   ('d1001c6e-6e9e-11ee-b962-0242ac120011', 'fe35c13c-4708-4c5d-8467-13970a5f3d8f', 'd3f0f54c-8d91-4674-b8bc-fb3f1d55a924', 1), -- Sydney Opera House
   ('d1002c6e-6e9e-11ee-b962-0242ac120012', 'fe35c13c-4708-4c5d-8467-13970a5f3d8f', 'b7eae59b-364a-4931-a3b3-0a3b830b9ac3', 2), -- Bondi Beach
   ('d1003c6e-6e9e-11ee-b962-0242ac120013', 'fe35c13c-4708-4c5d-8467-13970a5f3d8f', 'f3470f2c-321b-45e9-b3b3-e045cecd8d4b', 3), -- Sydney Harbour Bridge
+  ('d1003c6e-6e9e-11ee-b962-0242ac120555', '4d8e5f10-529f-44a3-9f1e-20dc6efc7b1b', 'f3470f2c-321b-45e9-b3b3-e045cecd8d4b', 3), -- Sydney Harbour Bridge
+  ('d1003c6e-6e9e-11ee-b962-0242ac120556', '4d8e5f10-529f-44a3-9f1e-20dc6efc7b1b', 'f3470f2c-321b-45e9-b3b3-e045cecd8d4b', 3), -- Sydney Harbour Bridge
 
   -- Paris itinerary places
   ('e1001c6e-6e9e-11ee-b962-0242ac120014', '9edc6fa2-3908-4c53-9359-1e6a2fb9e5f7', 'd3f0f54c-8d91-4674-b8bc-fb3f1d55a925', 1), -- Eiffel Tower

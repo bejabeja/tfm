@@ -70,11 +70,11 @@ const EditItinerary = () => {
       const resetValues = {
         title: response.title,
         destination: {
-          name: response.location,
-          label: response.location,
+          name: response.location.name,
+          label: response.location.label,
           coordinates: {
-            lat: response.latitude || 0,
-            lon: response.longitude || 0,
+            lat: response.location.lat || 0,
+            lon: response.location.lon || 0,
           },
         },
         description: response.description,
@@ -101,7 +101,12 @@ const EditItinerary = () => {
       userId: userInfo.id,
       title: data.title,
       description: data.description,
-      location: data.destination.name,
+      location: {
+        name: data.destination.name,
+        label: data.destination.label,
+        lat: data.destination.coordinates.lat,
+        lon: data.destination.coordinates.lon,
+      },
       startDate: data.startDate,
       endDate: data.endDate,
       budget: Number(data.budget),

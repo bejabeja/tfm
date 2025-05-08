@@ -62,7 +62,12 @@ const CreateItinerary = () => {
       userId: userInfo.id,
       title: data.title,
       description: data.description,
-      location: data.destination.name,
+      location: {
+        name: data.destination.name,
+        label: data.destination.label,
+        lat: data.destination.lat,
+        lon: data.destination.lon,
+      },
       startDate: data.startDate,
       endDate: data.endDate,
       budget: Number(data.budget),

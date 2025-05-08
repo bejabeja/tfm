@@ -1,5 +1,5 @@
 import { debounce } from "lodash";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useGeocodeSearch } from "../../hooks/useGeocodeSearch";
 import "./InputForm.scss";
@@ -46,6 +46,19 @@ const AutocompleteObjectInput = ({
     };
   }, []);
 
+  const handleInputChange = useCallback(
+    (val, onChange) => {
+      onChange({ name: val });
+      debouncedSearch(val);
+    },
+    [debouncedSearch]
+  );
+
+  const handleSuggestionClick = useCallback((place, onChange) => {
+    onChange(place);
+    setSuggestions([]);
+  }, []);
+
   return (
     <div className="autocomplete-input" ref={dropdownRef}>
       <label htmlFor={name} className="input__label">
@@ -60,11 +73,9 @@ const AutocompleteObjectInput = ({
               id={name}
               type="text"
               value={field.value?.name ?? ""}
-              onChange={(e) => {
-                const val = e.target.value;
-                field.onChange({ name: val });
-                debouncedSearch(val);
-              }}
+              onChange={(e) =>
+                handleInputChange(e.target.value, field.onChange)
+              }
               className={`input__field ${error ? "input__field--invalid" : ""}`}
               autoComplete="off"
               aria-invalid={!!error}
@@ -82,10 +93,7 @@ const AutocompleteObjectInput = ({
                 {suggestions.map((place, index) => (
                   <li
                     key={index}
-                    onClick={() => {
-                      field.onChange(place);
-                      setSuggestions([]);
-                    }}
+                    onClick={() => handleSuggestionClick(place, field.onChange)}
                   >
                     {place.label}
                   </li>

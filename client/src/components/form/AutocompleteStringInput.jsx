@@ -36,7 +36,7 @@ const AutocompleteStringInput = ({
       debouncedSearch.cancel();
     };
   }, [debouncedSearch]);
-  
+
   return (
     <div className="autocomplete-input">
       <label htmlFor={name} className="input__label">

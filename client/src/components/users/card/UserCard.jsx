@@ -26,7 +26,7 @@ const UserCard = ({
         <img src={avatarUrl} alt={username} className="user-card__image" />
         <div className="user-card__header--info">
           <h3 className="user-card__name">@{username}</h3>
-          <p className="user-card__location">{location}</p>
+          <p className="user-card__location">{location?.name}</p>
         </div>
       </div>
 

@@ -31,12 +31,12 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
         <div className="itinerary-card__image-wrapper">
           <img
             src={photoUrl}
-            alt={location}
+            alt={location?.name}
             className="itinerary-card__image"
           />
         </div>
         <div className="itinerary-card__info">
-          <h3 className="itinerary-card__location">{location}</h3>
+          <h3 className="itinerary-card__location">{location?.name}</h3>
           <p className="itinerary-card__days">{tripTotalDays} trip days</p>
         </div>
       </Link>

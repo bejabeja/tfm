@@ -94,7 +94,7 @@ const Itinerary = () => {
             <div className="itinerary__hero-content-stats-row">
               <img
                 src={userItinerary?.avatarUrl}
-                alt={userItinerary?.location}
+                alt={userItinerary?.location?.name}
                 className="itinerary__hero-image"
               />
               <span>@{userItinerary?.username}</span>
