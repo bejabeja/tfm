@@ -52,12 +52,6 @@ export const loginSchema = z.object({
     password: z.string().min(6, "Password must be at least 6 characters long"),
 });
 
-const getToday = () => {
-    const now = new Date();
-    now.setHours(0, 0, 0, 0);
-    return now;
-};
-
 export const createItinerarySchema = z
     .object({
         title: z
@@ -81,18 +75,10 @@ export const createItinerarySchema = z
             .optional(),
 
         startDate: z
-            .string()
-            .transform((str) => new Date(str))
-            .refine((date) => date >= getToday(), {
-                message: "Start date must be today or in the future",
-            }),
+            .string(),
 
         endDate: z
-            .string()
-            .transform((str) => new Date(str))
-            .refine((date) => date >= getToday(), {
-                message: "End date must be after or equal to start date",
-            }),
+            .string(),
 
         places: z
             .array(

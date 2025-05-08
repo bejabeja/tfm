@@ -31,7 +31,6 @@ export class ItineraryRepository {
             budget,
             currency,
         } = itineraryData;
-        console.log('itineraryData', itineraryData)
         const itineraryId = uuidv4();
         const itineraryQuery = `
             INSERT INTO itineraries (
