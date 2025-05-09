@@ -2,15 +2,19 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { setImageHeroLoaded } from "../../store/auth/authActions";
+import {
+  selectIsAuthenticated,
+  selectimageHeroLoaded,
+} from "../../store/auth/authSelectors";
 import { heroImage } from "../../utils/constants/constants";
 import { preloadImg } from "../../utils/preloadImg";
 import "./Hero.scss";
 
 const Hero = () => {
   const dispatch = useDispatch();
-  const { isAuthenticated, imageHeroLoaded } = useSelector(
-    (state) => state.auth
-  );
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const imageHeroLoaded = useSelector(selectimageHeroLoaded);
+
   useEffect(() => {
     if (imageHeroLoaded) return;
     preloadImg(heroImage, () => {

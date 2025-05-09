@@ -22,6 +22,10 @@ import { initUsers } from "./store/users/usersActions";
 
 import FollowersList from "./pages/follows/FollowersList";
 import FollowingList from "./pages/follows/FollowingList";
+import {
+  selectAuthUser,
+  selectIsAuthenticated,
+} from "./store/auth/authSelectors";
 import { initFilters } from "./store/filters/filterActions";
 import { initFeaturedItineraries } from "./store/itineraries/itinerariesActions";
 import { loadMyUserInfo } from "./store/user/userInfoActions";
@@ -29,7 +33,8 @@ import { loadMyUserInfo } from "./store/user/userInfoActions";
 const App = () => {
   const dispatch = useDispatch();
   const location = useLocation();
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const userAuthenticated = useSelector(selectAuthUser);
 
   useEffect(() => {
     dispatch(initAuthUser());
@@ -39,10 +44,10 @@ const App = () => {
   }, []);
 
   useEffect(() => {
-    if (isAuthenticated && user?.id) {
-      dispatch(loadMyUserInfo(user.id));
+    if (isAuthenticated && userAuthenticated?.id) {
+      dispatch(loadMyUserInfo(userAuthenticated.id));
     }
-  }, [dispatch, isAuthenticated, user?.id]);
+  }, [dispatch, isAuthenticated, userAuthenticated?.id]);
 
   useEffect(() => {
     dispatch(clearError());

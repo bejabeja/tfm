@@ -3,14 +3,13 @@ import { useSelector } from "react-redux";
 import { getAllFollowers, getAllFollowing } from "../services/followers";
 import { getItinerariesByUserId } from "../services/itineraries";
 import { getUserById } from "../services/users";
+import { selectIsAuthenticated } from "../store/auth/authSelectors";
 
 export const useProfileData = (profileId) => {
     const { me, myItineraries, myFollowers, myFollowing } = useSelector(
         (state) => state.myInfo
     );
-    const { isAuthenticated } = useSelector(
-        (state) => state.auth
-    );
+    const isAuthenticated = useSelector(selectIsAuthenticated)
 
     const [userData, setUserData] = useState(null);
     const [userItineraries, setUserItineraries] = useState(null);

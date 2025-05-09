@@ -1,12 +1,13 @@
 import React from "react";
 import { useSelector } from "react-redux";
 import { useFollow } from "../../hooks/useFollow";
+import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import "./UsersSection.scss";
 import UserCard from "./card/UserCard";
 import UserCardSkeleton from "./card/UserCardSkeleton";
 
 const UsersSection = ({ users, isLoading }) => {
-  const { isAuthenticated } = useSelector((state) => state.auth);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const skeletonCount = 3;
 
   return (

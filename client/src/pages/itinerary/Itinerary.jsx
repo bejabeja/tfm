@@ -140,7 +140,7 @@ const Itinerary = () => {
           <div className="itinerary__container-primary-places">
             <h1 className="itinerary__title">Places</h1>
             {itinerary.places.map((place, index) => (
-              <Place key={place.id} place={place} index={index} />
+              <Place key={index} place={place} index={index} />
             ))}
           </div>
           {isMyItinerary() && (

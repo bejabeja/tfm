@@ -6,12 +6,17 @@ import { RiUserCommunityLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { logoutUser } from "../../store/auth/authActions";
+import {
+  selectAuthLoading,
+  selectIsAuthenticated,
+} from "../../store/auth/authSelectors";
 import "./Navbar.scss";
 
 const Navbar = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { isAuthenticated, authLoading } = useSelector((state) => state.auth);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const authLoading = useSelector(selectAuthLoading);
   const { me } = useSelector((state) => state.myInfo);
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();

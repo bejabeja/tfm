@@ -6,6 +6,10 @@ import { Link, useNavigate } from "react-router-dom";
 import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { loginUser, setImageAuthLoaded } from "../../store/auth/authActions";
+import {
+  selectAuthError,
+  selectimageAuthLoaded,
+} from "../../store/auth/authSelectors";
 import { authImage } from "../../utils/constants/constants";
 import { preloadImg } from "../../utils/preloadImg";
 import { loginSchema } from "../../utils/schemasValidation";
@@ -19,7 +23,8 @@ const fields = [
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { error, imageAuthLoaded } = useSelector((state) => state.auth);
+  const imageAuthLoaded = useSelector(selectimageAuthLoaded);
+  const errorInAuth = useSelector(selectAuthError);
 
   useEffect(() => {
     if (imageAuthLoaded) return;
@@ -67,7 +72,9 @@ const Login = () => {
         ))}
 
         <div className="auth__form-error">
-          {error && Object.keys(errors).length === 0 ? error : "\u00A0"}
+          {errorInAuth && Object.keys(errors).length === 0
+            ? errorInAuth
+            : "\u00A0"}
         </div>
 
         <div className="auth__form-link">

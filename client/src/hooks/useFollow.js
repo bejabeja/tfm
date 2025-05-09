@@ -2,12 +2,13 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { followUser, unfollowUser } from "../services/followers";
+import { selectIsAuthenticated } from "../store/auth/authSelectors";
 import { setUserInfo, setUserInfoFollowing } from "../store/user/userInfoActions";
 
 export const useFollow = (targetUserId) => {
     const dispatch = useDispatch();
     const navigate = useNavigate()
-    const { isAuthenticated } = useSelector((state) => state.auth);
+    const isAuthenticated = useSelector(selectIsAuthenticated)
     const { me } = useSelector((state) => state.myInfo);
     const [isFollowing, setIsFollowing] = useState(false);
 
