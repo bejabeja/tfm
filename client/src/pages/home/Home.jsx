@@ -4,13 +4,25 @@ import { Link } from "react-router-dom";
 import Hero from "../../components/hero/Hero.jsx";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection.jsx";
 import UsersSection from "../../components/users/UsersSection.jsx";
-import { selectFeaturedItineraries } from "../../store/itineraries/itinerariesSelectors.js";
+import {
+  selectFeaturedItineraries,
+  selectFeaturedItinerariesLoading,
+} from "../../store/itineraries/itinerariesSelectors.js";
+import {
+  selectFeaturedUsers,
+  selectFeaturedUsersLoading,
+} from "../../store/users/usersSelectors.js";
 import { getImagesInfo } from "../../utils/constants/images.js";
 import "./Home.scss";
 
 const Home = () => {
-  const { featured, loading } = useSelector((state) => state.users);
   const featuredItineraries = useSelector(selectFeaturedItineraries);
+  const featuredItinerariesLoading = useSelector(
+    selectFeaturedItinerariesLoading
+  );
+
+  const featuredUsers = useSelector(selectFeaturedUsers);
+  const featuredUsersLoading = useSelector(selectFeaturedUsersLoading);
 
   return (
     <section className="home">
@@ -22,7 +34,7 @@ const Home = () => {
           <ItinerariesSection
             user={featuredItineraries?.user}
             itineraries={featuredItineraries}
-            isLoading={featuredItineraries?.loading}
+            isLoading={featuredItinerariesLoading}
           />
         </div>
         <div className="home__destinations">
@@ -43,7 +55,10 @@ const Home = () => {
         <div className="home__users">
           <h2>People You May Like</h2>
           <p>Discover fellow travelers who share your passion..</p>
-          <UsersSection users={featured} isLoading={loading} />
+          <UsersSection
+            users={featuredUsers}
+            isLoading={featuredUsersLoading}
+          />
         </div>
         <div className=" home__cta">
           <h2>Start Your Adventure</h2>
