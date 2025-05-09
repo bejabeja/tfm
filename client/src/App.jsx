@@ -91,9 +91,9 @@ const App = () => {
             <Route element={<PrivateLayout />}>
               <Route path="/my-itineraries" element={<MyItineraries />} />
               <Route
-                path="/friends"
+                path="/itineraries/saved"
                 element={
-                  <section className="section__container">Friends</section>
+                  <section className="section__container">Saved trips</section>
                 }
               />
               <Route path="/profile/:id" element={<Profile />} />

@@ -1,29 +1,23 @@
 import React, { useEffect, useState } from "react";
 import { FaBars } from "react-icons/fa";
-import {
-  GoBook,
-  GoHome,
-  GoPeople,
-  GoPerson,
-  GoSignIn,
-  GoSignOut,
-} from "react-icons/go";
-import { IoSearch } from "react-icons/io5";
+import { GoBook, GoHome, GoPerson, GoSignIn, GoSignOut } from "react-icons/go";
+import { IoSaveOutline, IoSearch } from "react-icons/io5";
 import { RiUserCommunityLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useLocation } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { logoutUser } from "../../store/auth/authActions";
 import "./Navbar.scss";
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { isAuthenticated, authLoading } = useSelector((state) => state.auth);
   const { me } = useSelector((state) => state.myInfo);
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
 
   const userInfo = me.data;
-  
+
   useEffect(() => {
     setIsOpen(false);
   }, [location]);
@@ -31,11 +25,11 @@ const Navbar = () => {
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
   };
-  const isActive = (path) => location.pathname === path;
 
   const handleLogout = () => {
     dispatch(logoutUser());
     setIsOpen(false);
+    navigate("/");
   };
 
   return (
@@ -51,34 +45,28 @@ const Navbar = () => {
 
       <nav className={`navbar ${isOpen ? "open" : ""}`}>
         <div className="nav-section">
-          <Link to="/" className="logo desktop-only">
+          <NavLink to="/" className="logo desktop-only">
             Trobeatraveller
-          </Link>
+          </NavLink>
 
           <h3>Discover</h3>
-          <Link to="/" className={`nav-item ${isActive("/") ? "active" : ""}`}>
+          <NavLink to="/" className="nav-item">
             <GoHome className="nav-icon" />
             <span>Home</span>
-          </Link>
-          <Link
-            to="/explore"
-            className={`nav-item ${isActive("/explore") ? "active" : ""}`}
-          >
+          </NavLink>
+          <NavLink to="/explore" className="nav-item">
             <IoSearch className="nav-icon" />
             <span>Explore</span>
-          </Link>
-          <Link
-            to="/community"
-            className={`nav-item ${isActive("/community") ? "active" : ""}`}
-          >
+          </NavLink>
+          <NavLink to="/community" className="nav-item">
             <RiUserCommunityLine className="nav-icon" />
             <span>Community</span>
-          </Link>
+          </NavLink>
         </div>
 
         {authLoading ? (
           <div className="loading-placeholder nav-section">
-            <h3>Private</h3>
+            <h3>Your space</h3>
             <p>
               <GoBook className="nav-icon" />
               <span>Loading...</span>
@@ -91,67 +79,47 @@ const Navbar = () => {
         ) : (
           <>
             <div className="nav-section">
-              <h3>Private</h3>
+              <h3>Your Space</h3>
               {isAuthenticated ? (
                 <>
-                  <Link
-                    to="/my-itineraries"
-                    className={`nav-item ${
-                      isActive("/my-itineraries") ? "active" : ""
-                    }`}
-                  >
+                  <NavLink to="/my-itineraries" className="nav-item">
                     <GoBook className="nav-icon" />
-                    <span>My Itineraries</span>
-                  </Link>
-                  <Link
-                    to="/friends"
-                    className={`nav-item ${
-                      isActive("/friends") ? "active" : ""
-                    }`}
-                  >
-                    <GoPeople className="nav-icon" />
-                    <span>Friends</span>
-                  </Link>
+                    <span>My trips</span>
+                  </NavLink>
+                  <NavLink to="/itineraries/saved" className="nav-item">
+                    <IoSaveOutline className="nav-icon" />
+                    <span>Saved trips</span>
+                  </NavLink>
                   {isOpen && (
                     <>
-                      <Link
+                      <NavLink
                         to={`/profile/${userInfo.id}`}
-                        className={`nav-item ${
-                          isActive("/profile") ? "active" : ""
-                        }`}
+                        className="nav-item"
                       >
                         <GoPerson className="nav-icon" />
                         <span>Profile</span>
-                      </Link>
-                      <Link
+                      </NavLink>
+                      <NavLink
                         to="/logout"
                         onClick={handleLogout}
                         className="nav-item"
                       >
                         <GoSignOut className="nav-icon" />
                         <span>Logout</span>
-                      </Link>
+                      </NavLink>
                     </>
                   )}
                 </>
               ) : (
                 <>
-                  <Link
-                    to="/login"
-                    className={`nav-item ${isActive("/login") ? "active" : ""}`}
-                  >
+                  <NavLink to="/login" className="nav-item">
                     <GoSignIn className="nav-icon" />
                     <span>Login</span>
-                  </Link>
-                  <Link
-                    to="/register"
-                    className={`nav-item ${
-                      isActive("/register") ? "active" : ""
-                    }`}
-                  >
-                    <GoSignOut className="nav-icon" />
+                  </NavLink>
+                  <NavLink to="/register" className="nav-item">
+                    <GoSignIn className="nav-icon" />
                     <span>Register</span>
-                  </Link>
+                  </NavLink>
                 </>
               )}
             </div>
