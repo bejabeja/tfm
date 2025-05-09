@@ -3,13 +3,17 @@ import { GoPerson, GoSignOut } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { logoutUser } from "../../store/auth/authActions.js";
+import {
+  selectMe,
+  selectMeLoading,
+} from "../../store/user/userInfoSelectors.js";
 import "./Topbar.scss";
 
 const Topbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const dispatch = useDispatch();
-  const { me } = useSelector((state) => state.myInfo);
-  const userInfo = me.data;
+  const userMe = useSelector(selectMe);
+  const userMeLoading = useSelector(selectMeLoading);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -37,7 +41,7 @@ const Topbar = () => {
   return (
     <section className="topbar">
       <div className="dropdown">
-        {me.loading ? (
+        {userMeLoading ? (
           <div className="topbar-skeleton">
             <div className="skeleton topbar-skeleton-avatar" />
             <div className="skeleton skeleton--text short" />
@@ -45,17 +49,19 @@ const Topbar = () => {
         ) : (
           <button className="dropbtn" onClick={toggleDropdown}>
             <img
-              src={userInfo?.avatarUrl}
+              src={userMe?.avatarUrl}
               alt="user photo avatar"
               className="avatar"
             />
-            <span>{userInfo?.username}</span>
+            <span>{userMe?.username}</span>
           </button>
         )}
-        <div className={`dropdown-content ${dropdownOpen ? "open-animation" : ""}`}>
+        <div
+          className={`dropdown-content ${dropdownOpen ? "open-animation" : ""}`}
+        >
           {" "}
           <Link
-            to={`/profile/${userInfo?.id}`}
+            to={`/profile/${userMe?.id}`}
             className="nav-item"
             onClick={toggleDropdown}
           >

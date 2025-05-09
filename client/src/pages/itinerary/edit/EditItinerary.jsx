@@ -9,6 +9,7 @@ import {
   loadMyUserInfo,
   setUserInfo,
 } from "../../../store/user/userInfoActions";
+import { selectMe } from "../../../store/user/userInfoSelectors";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sections/BasicInfoForm";
 import BudgetForm from "../sections/BudgetForm";
@@ -19,15 +20,14 @@ import TravellersForm from "../sections/TravellersForm";
 const EditItinerary = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { me } = useSelector((state) => state.myInfo);
-  const userInfo = me.data;
+  const userMe = useSelector(selectMe);
 
   const [itineraryData, setItineraryData] = useState(null);
   const navigate = useNavigate();
 
   const isMyItinerary = () => {
-    if (!userInfo || !itineraryData) return false;
-    return userInfo.id === itineraryData.userId;
+    if (!userMe || !itineraryData) return false;
+    return userMe.id === itineraryData.userId;
   };
 
   const {
@@ -119,7 +119,7 @@ const EditItinerary = () => {
   }, []);
   const editItinerary = async (data) => {
     const body = {
-      userId: userInfo.id,
+      userId: userMe.id,
       title: data.title,
       description: data.description,
       location: {
@@ -149,11 +149,11 @@ const EditItinerary = () => {
     };
 
     await updateItinerary(id, body);
-    dispatch(setUserInfo(userInfo.id));
-    dispatch(loadMyUserInfo(userInfo.id));
-    navigate(`/profile/${userInfo.id}`);
+    dispatch(setUserInfo(userMe.id));
+    dispatch(loadMyUserInfo(userMe.id));
+    navigate(`/profile/${userMe.id}`);
   };
-  
+
   return (
     <section className="create-itinerary section__container">
       <h1 className="form__title">Edit Itinerary</h1>

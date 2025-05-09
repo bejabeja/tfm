@@ -10,6 +10,7 @@ import {
   selectAuthLoading,
   selectIsAuthenticated,
 } from "../../store/auth/authSelectors";
+import { selectMe } from "../../store/user/userInfoSelectors";
 import "./Navbar.scss";
 
 const Navbar = () => {
@@ -17,11 +18,10 @@ const Navbar = () => {
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const authLoading = useSelector(selectAuthLoading);
-  const { me } = useSelector((state) => state.myInfo);
+  const userMe = useSelector(selectMe);
+
   const [isOpen, setIsOpen] = useState(false);
   const location = useLocation();
-
-  const userInfo = me.data;
 
   useEffect(() => {
     setIsOpen(false);
@@ -98,7 +98,7 @@ const Navbar = () => {
                   {isOpen && (
                     <>
                       <NavLink
-                        to={`/profile/${userInfo.id}`}
+                        to={`/profile/${userMe.id}`}
                         className="nav-item"
                       >
                         <GoPerson className="nav-icon" />

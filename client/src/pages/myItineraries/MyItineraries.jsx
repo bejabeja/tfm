@@ -2,13 +2,19 @@ import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
+import {
+  selectMe,
+  selectMeError,
+  selectMyItineraries,
+} from "../../store/user/userInfoSelectors";
 import "./MyItineraries.scss";
 
 const MyItineraries = () => {
-  const { me, myItineraries } = useSelector((state) => state.myInfo);
-  const userInfo = me.data;
+  const userMe = useSelector(selectMe);
+  const myItineraries = useSelector(selectMyItineraries);
+  const userMeError = useSelector(selectMeError);
 
-  if (me.error) {
+  if (userMeError) {
     return <div>Error: {error}</div>;
   }
 
@@ -20,8 +26,8 @@ const MyItineraries = () => {
         </Link>
       </div>
       <ItinerariesSection
-        user={userInfo}
-        itineraries={myItineraries.data}
+        user={userMe}
+        itineraries={myItineraries}
         // title="Shared Itineraries"
         isLoading={myItineraries.loading}
       />

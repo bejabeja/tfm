@@ -12,18 +12,19 @@ import {
   setUserInfo,
   setUserInfoItineraries,
 } from "../../store/user/userInfoActions.js";
+import { selectMe } from "../../store/user/userInfoSelectors.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
 
 const Itinerary = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { me } = useSelector((state) => state.myInfo);
+  const userMe = useSelector(selectMe);
+
   const [itinerary, setItinerary] = useState(null);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userItinerary, setUserItinerary] = useState(null);
-  const userInfo = me.data;
 
   useEffect(() => {
     const fetchItinerary = async () => {
@@ -68,9 +69,9 @@ const Itinerary = () => {
   };
 
   const isMyItinerary = () => {
-    if (!userInfo || !itinerary) return false;
+    if (!userMe || !itinerary) return false;
 
-    return userInfo.id === itinerary.userId;
+    return userMe.id === itinerary.userId;
   };
 
   return (
@@ -146,7 +147,7 @@ const Itinerary = () => {
           {isMyItinerary() && (
             <div className="itinerary__container-primary-actions">
               <Link
-                to={`/profile/${userInfo.id}`}
+                to={`/profile/${userMe.id}`}
                 className="btn btn__danger"
                 onClick={handleRemove}
               >

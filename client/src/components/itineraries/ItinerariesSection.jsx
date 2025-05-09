@@ -15,7 +15,7 @@ const ItinerariesSection = ({ user, itineraries, title = "", isLoading }) => {
           Array.from({ length: skeletonCount }).map((_, i) => (
             <ItineraryCardSkeleton key={i} />
           ))
-        ) : itineraries.length === 0 ? (
+        ) : itineraries?.length === 0 ? (
           <p className="itineraries-section__empty">
             No itineraries shared yet.
           </p>

@@ -1,6 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import React, { useEffect, useState } from "react";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import { IoLocationOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -9,16 +9,24 @@ import Spinner from "../../components/spinner/Spinner";
 import { updateUser } from "../../services/users";
 import { initAuthUser } from "../../store/auth/authActions";
 import { setUserInfo } from "../../store/user/userInfoActions";
+import {
+  selectMe,
+  selectMeError,
+  selectMeLoading,
+} from "../../store/user/userInfoSelectors";
+import { generateAvatar } from "../../utils/constants/constants";
 import { updateUserSchema } from "../../utils/schemasValidation";
 import "./EditProfile.scss";
 
 const EditProfile = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
-  const { me } = useSelector((state) => state.myInfo);
+  const userMe = useSelector(selectMe);
+  const userMeLoading = useSelector(selectMeLoading);
+  const userMeError = useSelector(selectMeError);
+
   const [errorSubmit, setErrorSubmit] = useState(null);
   const navigate = useNavigate();
-  const userInfo = me.data;
 
   const {
     control,
@@ -27,6 +35,14 @@ const EditProfile = () => {
     formState: { errors },
   } = useForm({
     resolver: zodResolver(updateUserSchema),
+    defaultValues: {
+      username: "",
+      name: "",
+      bio: "",
+      location: "",
+      about: "",
+      avatarUrl: "",
+    },
   });
 
   useEffect(() => {
@@ -34,16 +50,17 @@ const EditProfile = () => {
   }, [dispatch, id]);
 
   useEffect(() => {
-    if (!userInfo) return;
+    if (!userMe) return;
 
-    setValue("username", userInfo.username);
-    setValue("bio", userInfo.bio);
-    setValue("location", userInfo.location);
-    setValue("name", userInfo.name);
-    setValue("about", userInfo.about);
-  }, [userInfo, setValue]);
+    setValue("username", userMe.username);
+    setValue("bio", userMe.bio);
+    setValue("location", userMe.location);
+    setValue("name", userMe.name);
+    setValue("about", userMe.about);
+    setValue("avatarUrl", userMe.avatarUrl);
+  }, [userMe, setValue]);
 
-  if (me.loading) {
+  if (userMeLoading) {
     return <Spinner />;
   }
 
@@ -62,9 +79,9 @@ const EditProfile = () => {
   return (
     <section className="edit-profile section__container">
       <form onSubmit={handleSubmit(saveUser)} className="edit-profile__form">
-        <HeaderSection userInfo={userInfo} control={control} errors={errors} />
+        <HeaderSection userInfo={userMe} control={control} errors={errors} />
         <AboutSection control={control} errors={errors} />
-        {errorSubmit && <div className="error-message">{me.error}</div>}
+        {errorSubmit && <div className="error-message">{userMeError}</div>}
         <div className="edit-profile__header-actions">
           <button type="submit" className="btn btn__primary">
             Save Profile
@@ -77,12 +94,14 @@ const EditProfile = () => {
 
 export default EditProfile;
 
-const HeaderSection = ({ userInfo, control, errors }) => {
+const HeaderSection = ({ userMe, control, errors }) => {
+  const avatarUrl = useWatch({ control, name: "avatarUrl" });
+
   return (
     <div className="edit-profile__header">
       <img
         className="profile__header-image"
-        src={userInfo?.avatarUrl}
+        src={avatarUrl || generateAvatar(userMe?.username)}
         alt="Profile"
       />
       <div className="edit-profile__header-info">

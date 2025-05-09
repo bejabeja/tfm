@@ -22,6 +22,10 @@ export const updateUserSchema = z.object({
         .string()
         .max(160, "Max 160 characters")
         .nullable(),
+
+    avatarurl: z
+        .string()
+        .optional()
 });
 
 export const signupSchema = z.object({

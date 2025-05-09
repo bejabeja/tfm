@@ -9,6 +9,7 @@ import {
   setUserInfo,
   setUserInfoItineraries,
 } from "../../../store/user/userInfoActions";
+import { selectMe } from "../../../store/user/userInfoSelectors";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sections/BasicInfoForm";
 import BudgetForm from "../sections/BudgetForm";
@@ -19,9 +20,9 @@ import "./CreateItinerary.scss";
 
 const CreateItinerary = () => {
   const dispatch = useDispatch();
-  const { me } = useSelector((state) => state.myInfo);
   const navigate = useNavigate();
-  const userInfo = me.data;
+
+  const userMe = useSelector(selectMe);
 
   const today = new Date().toISOString().split("T")[0];
   const {
@@ -72,7 +73,7 @@ const CreateItinerary = () => {
 
   const addItinerary = async (data) => {
     const body = {
-      userId: userInfo.id,
+      userId: userMe.id,
       title: data.title,
       description: data.description,
       location: {
@@ -100,11 +101,11 @@ const CreateItinerary = () => {
       category: data.category,
     };
     await createItinerary(body);
-    dispatch(setUserInfo(userInfo.id));
-    dispatch(setUserInfoItineraries(userInfo.id));
-    navigate(`/profile/${userInfo.id}`);
+    dispatch(setUserInfo(userMe.id));
+    dispatch(setUserInfoItineraries(userMe.id));
+    navigate(`/profile/${userMe.id}`);
   };
-  
+
   return (
     <section className="create-itinerary section__container">
       <h1 className="form__title">Create Itinerary</h1>

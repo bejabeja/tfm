@@ -4,11 +4,13 @@ import { getAllFollowers, getAllFollowing } from "../services/followers";
 import { getItinerariesByUserId } from "../services/itineraries";
 import { getUserById } from "../services/users";
 import { selectIsAuthenticated } from "../store/auth/authSelectors";
+import { selectMe, selectMyFollowers, selectMyFollowing, selectMyItineraries } from "../store/user/userInfoSelectors";
 
 export const useProfileData = (profileId) => {
-    const { me, myItineraries, myFollowers, myFollowing } = useSelector(
-        (state) => state.myInfo
-    );
+    const userMe = useSelector(selectMe)
+    const myItineraries = useSelector(selectMyItineraries)
+    const myFollowers = useSelector(selectMyFollowers)
+    const myFollowing = useSelector(selectMyFollowing)
     const isAuthenticated = useSelector(selectIsAuthenticated)
 
     const [userData, setUserData] = useState(null);
@@ -23,28 +25,26 @@ export const useProfileData = (profileId) => {
     const [loadingItineraries, setLoadingItineraries] = useState(true);
     const [error, setError] = useState(null);
 
-    const [isReady, setIsReady] = useState(false);
+    const isMyProfile = userMe?.id === profileId;
 
-    const isMyProfile = me?.data?.id === profileId;
-
-    const user = isMyProfile ? me?.data : userData;
-    const followers = isMyProfile ? myFollowers?.data : followersData;
-    const following = isMyProfile ? myFollowing?.data : followingData;
-    const itineraries = isMyProfile ? myItineraries?.data : userItineraries;
+    const user = isMyProfile ? userMe : userData;
+    const followers = isMyProfile ? myFollowers : followersData;
+    const following = isMyProfile ? myFollowing : followingData;
+    const itineraries = isMyProfile ? myItineraries : userItineraries;
 
     // useEffect(() => {
 
-    //     if (me?.data) {
+    //     if (userMe) {
     //         setIsReady(true);
     //     }
 
-    // }, [me?.data]);
+    // }, [userMe]);
 
     useEffect(() => {
         // if (!isReady) return;
 
         const fetchData = async () => {
-            if (isAuthenticated && me?.data === null) return;
+            if (isAuthenticated && userMe === null) return;
             if (!isMyProfile) {
                 try {
                     const userRes = await getUserById(profileId);
@@ -77,7 +77,7 @@ export const useProfileData = (profileId) => {
         };
 
         fetchData();
-    }, [isReady, profileId, isMyProfile, me]);
+    }, [profileId, isMyProfile, userMe]);
 
 
     return {
