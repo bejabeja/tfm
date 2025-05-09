@@ -10,6 +10,10 @@ import {
   setDestination,
 } from "../../store/filters/filterActions.js";
 import {
+  selectCategory,
+  selectDestination,
+} from "../../store/filters/filterSelectors.js";
+import {
   initExploreItineraries,
   loadMoreExploreItineraries,
   setExplorePagination,
@@ -27,7 +31,8 @@ import "./Explore.scss";
 
 const Explore = () => {
   const dispatch = useDispatch();
-  const { category, destination } = useSelector((state) => state.filters);
+  const category = useSelector(selectCategory);
+  const destination = useSelector(selectDestination);
 
   const loading = useSelector(selectExploreItinerariesLoading);
   const loadingMore = useSelector(selectExploreItinerariesLoadingMore);
