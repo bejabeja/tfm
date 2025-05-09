@@ -4,14 +4,13 @@ import { Link } from "react-router-dom";
 import Hero from "../../components/hero/Hero.jsx";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection.jsx";
 import UsersSection from "../../components/users/UsersSection.jsx";
+import { selectFeaturedItineraries } from "../../store/itineraries/itinerariesSelectors.js";
 import { getImagesInfo } from "../../utils/constants/images.js";
 import "./Home.scss";
 
 const Home = () => {
   const { featured, loading } = useSelector((state) => state.users);
-  const { featuredItineraries } = useSelector((state) => state.itineraries);
-
-  const featuredItinerariesData = featuredItineraries?.data;
+  const featuredItineraries = useSelector(selectFeaturedItineraries);
 
   return (
     <section className="home">
@@ -21,8 +20,8 @@ const Home = () => {
           <h2>Featured Travel Journeys</h2>
           <p>Where will your next adventure take you?</p>
           <ItinerariesSection
-            user={featuredItinerariesData?.user}
-            itineraries={featuredItinerariesData}
+            user={featuredItineraries?.user}
+            itineraries={featuredItineraries}
             isLoading={featuredItineraries?.loading}
           />
         </div>

@@ -14,15 +14,28 @@ import {
   loadMoreExploreItineraries,
   setExplorePagination,
 } from "../../store/itineraries/itinerariesActions.js";
+import {
+  selectExploreItineraries,
+  selectExploreItinerariesError,
+  selectExploreItinerariesLoading,
+  selectExploreItinerariesLoadingMore,
+  selectExplorePage,
+  selectExploreTotalPages,
+} from "../../store/itineraries/itinerariesSelectors.js";
 import { itineraryCategories } from "../../utils/constants/constants.js";
 import "./Explore.scss";
 
 const Explore = () => {
   const dispatch = useDispatch();
   const { category, destination } = useSelector((state) => state.filters);
-  const {
-    exploreItineraries: { data, loading, loadingMore, page, totalPages, error },
-  } = useSelector((state) => state.itineraries);
+
+  const loading = useSelector(selectExploreItinerariesLoading);
+  const loadingMore = useSelector(selectExploreItinerariesLoadingMore);
+  const totalPages = useSelector(selectExploreTotalPages);
+  const page = useSelector(selectExplorePage);
+  const error = useSelector(selectExploreItinerariesError);
+  const data = useSelector(selectExploreItineraries);
+
   const [localDestination, setLocalDestination] = useState(destination);
   const loadMoreRef = useRef(null);
 
