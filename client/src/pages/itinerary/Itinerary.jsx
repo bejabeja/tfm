@@ -185,6 +185,7 @@ const Itinerary = () => {
         title="Confirm Deletion"
         description="Are you sure you want to delete this itinerary? This action cannot be undone."
         confirmText="Delete"
+        type="danger"
       />
     </section>
   );

@@ -9,8 +9,12 @@ const Modal = ({
   description,
   confirmText = "Confirm",
   cancelText = "Cancel",
+  type = "confirm",
 }) => {
   if (!isOpen) return null;
+
+  const confirmClass =
+    type === "danger" ? "btn btn__danger" : "btn btn__primary";
 
   return (
     <div className="modal__backdrop">
@@ -21,7 +25,7 @@ const Modal = ({
           <button className="btn btn__secondary" onClick={onClose}>
             {cancelText}
           </button>
-          <button className="btn btn__danger" onClick={onConfirm}>
+          <button className={confirmClass} onClick={onConfirm}>
             {confirmText}
           </button>
         </div>

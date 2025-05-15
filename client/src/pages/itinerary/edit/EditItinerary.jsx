@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import SubmitButton from "../../../components/form/SubmitButton";
+import Modal from "../../../components/modal/Modal";
 import { getItineraryById, updateItinerary } from "../../../services/itinerary";
 import {
   loadMyUserInfo,
@@ -19,11 +19,13 @@ import TravellersForm from "../sections/TravellersForm";
 
 const EditItinerary = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
   const { id } = useParams();
   const userMe = useSelector(selectMe);
 
   const [itineraryData, setItineraryData] = useState(null);
-  const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   const isMyItinerary = () => {
     if (!userMe || !itineraryData) return false;
@@ -36,6 +38,7 @@ const EditItinerary = () => {
     reset,
     formState: { errors, isLoading },
     watch,
+    trigger,
   } = useForm({
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
@@ -158,7 +161,7 @@ const EditItinerary = () => {
     <section className="create-itinerary section__container">
       <h1 className="form__title">Edit Itinerary</h1>
 
-      <form className="form__container" onSubmit={handleSubmit(editItinerary)}>
+      <form className="form__container">
         <BasicInfoForm control={control} errors={errors} disabled={true} />
         <DatesForm control={control} errors={errors} />
         <PlacesForm
@@ -180,10 +183,33 @@ const EditItinerary = () => {
             >
               Cancel
             </Link>
-            <SubmitButton label="Update itinerary" />
+            <button
+              type="button"
+              className="btn btn__primary"
+              onClick={async () => {
+                const isValid = await trigger();
+                if (isValid) {
+                  setIsModalOpen(true);
+                }
+              }}
+            >
+              Update itinerary
+            </button>
           </div>
         )}
       </form>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={handleSubmit(async (data) => {
+          await editItinerary(data);
+          setIsModalOpen(false);
+        })}
+        title="Confirm Update"
+        description="Are you sure you want to update this itinerary?"
+        confirmText="Update"
+        type="confirm"
+      />
     </section>
   );
 };
