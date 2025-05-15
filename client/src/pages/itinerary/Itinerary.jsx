@@ -3,8 +3,9 @@ import { FaCity } from "react-icons/fa";
 import { GoPeople } from "react-icons/go";
 import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getCategoryIcon } from "../../assets/icons.js";
+import Modal from "../../components/modal/Modal.jsx";
 import Spinner from "../../components/spinner/Spinner.jsx";
 import { deleteItinerary, getItineraryById } from "../../services/itinerary.js";
 import { getUserById } from "../../services/users.js";
@@ -18,6 +19,7 @@ import "./Itinerary.scss";
 
 const Itinerary = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { id } = useParams();
   const userMe = useSelector(selectMe);
 
@@ -25,6 +27,8 @@ const Itinerary = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userItinerary, setUserItinerary] = useState(null);
+
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     const fetchItinerary = async () => {
@@ -64,6 +68,7 @@ const Itinerary = () => {
 
   const handleRemove = async () => {
     await deleteItinerary(itinerary.id);
+    navigate(`/profile/${userMe.id}`);
     dispatch(setUserInfo(itinerary?.userId));
     dispatch(setUserInfoItineraries(itinerary?.userId));
   };
@@ -147,12 +152,16 @@ const Itinerary = () => {
           {isMyItinerary() && (
             <div className="itinerary__container-primary-actions">
               <Link
-                to={`/profile/${userMe.id}`}
+                to="#"
                 className="btn btn__danger"
-                onClick={handleRemove}
+                onClick={(e) => {
+                  e.preventDefault();
+                  setIsModalOpen(true);
+                }}
               >
                 Delete
               </Link>
+
               <Link
                 to={`/itinerary/edit/${itinerary.id}`}
                 className="btn btn__primary"
@@ -166,6 +175,17 @@ const Itinerary = () => {
           {/* <h1 className="itinerary__title">Trip Area</h1> */}
         </div>
       </div>
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onConfirm={async () => {
+          await handleRemove();
+          setIsModalOpen(false);
+        }}
+        title="Confirm Deletion"
+        description="Are you sure you want to delete this itinerary? This action cannot be undone."
+        confirmText="Delete"
+      />
     </section>
   );
 };
