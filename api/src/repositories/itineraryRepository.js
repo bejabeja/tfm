@@ -30,7 +30,8 @@ export class ItineraryRepository {
             category,
             budget,
             currency,
-            photoUrl
+            photoUrl,
+            photoPublicId
         } = itineraryData;
         const itineraryId = uuidv4();
         const itineraryQuery = `
@@ -38,9 +39,9 @@ export class ItineraryRepository {
                 id, user_id, title, description,
                 location_name, location_label, latitude, longitude,
                 start_date, end_date, number_of_people,
-                category, budget, currency, photo_url
+                category, budget, currency, photo_url, photo_public_id
             )
-            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15)
+            VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, $14, $15, $16)
             RETURNING *;
         `;
 
@@ -59,7 +60,8 @@ export class ItineraryRepository {
             category,
             budget,
             currency,
-            photoUrl
+            photoUrl,
+            photoPublicId
         ]);
 
         return Itinerary.fromDb(result.rows[0]);
@@ -76,7 +78,8 @@ export class ItineraryRepository {
             budget,
             currency,
             category,
-            photoUrl
+            photoUrl,
+            photoPublicId
         } = itineraryData;
 
         const updateItineraryQuery = `
@@ -95,6 +98,7 @@ export class ItineraryRepository {
                 currency = $12, 
                 category = $13,
                 photo_url = $14,
+                photo_public_id = $15,
                 updated_at = NOW()
             WHERE id = $1
             RETURNING *;
@@ -114,7 +118,8 @@ export class ItineraryRepository {
             budget,
             currency,
             category,
-            photoUrl
+            photoUrl,
+            photoPublicId
         ]);
 
         return Itinerary.fromDb(result.rows[0]);

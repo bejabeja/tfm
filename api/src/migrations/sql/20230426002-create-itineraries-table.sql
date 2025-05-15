@@ -14,6 +14,7 @@ CREATE TABLE IF NOT EXISTS itineraries (
     comments_count INT DEFAULT 0,
     category VARCHAR(50),
     photo_url VARCHAR(255),
+    photo_public_id VARCHAR(255),
     location_name TEXT,
     location_label TEXT,
     latitude DECIMAL,

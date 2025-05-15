@@ -36,6 +36,7 @@ const CreateItinerary = () => {
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
       imageUrl: "",
+      imagePublicId: "",
       title: "",
       destination: {
         name: "",
@@ -75,12 +76,12 @@ const CreateItinerary = () => {
   });
 
   const addItinerary = async (data) => {
-    console.log("data", data);
     const body = {
       userId: userMe.id,
       title: data.title,
       description: data.description,
       photoUrl: data.imageUrl,
+      photoPublicId: data.imagePublicId,
       location: {
         name: data.destination.name,
         label: data.destination.label,
@@ -117,7 +118,10 @@ const CreateItinerary = () => {
 
       <form className="form__container" onSubmit={handleSubmit(addItinerary)}>
         <ImageUpload
-          onUpload={(url) => setValue("imageUrl", url)}
+          onUpload={(url, publicId) => {
+            setValue("imageUrl", url);
+            setValue("imagePublicId", publicId);
+          }}
           imageUrl={watch("imageUrl")}
         />
         <BasicInfoForm control={control} errors={errors} />

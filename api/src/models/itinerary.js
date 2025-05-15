@@ -1,7 +1,7 @@
 import { formatDateRange } from '../utils/date.js';
 
 export class Itinerary {
-    constructor({ id, userId, title, description, location, startDate, endDate, createdAt, updatedAt, photoUrl, budget, numberOfPeople, likesCount, commentsCount, category, currency }) {
+    constructor({ id, userId, title, description, location, startDate, endDate, createdAt, updatedAt, photoUrl, photoPublicId, budget, numberOfPeople, likesCount, commentsCount, category, currency }) {
         this.id = id;
         this.userId = userId;
         this.title = title;
@@ -12,6 +12,7 @@ export class Itinerary {
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.photoUrl = photoUrl || this.getPlaceholderImage();
+        this.photoPublicId = photoPublicId;
         this.budget = budget;
         this.numberOfPeople = numberOfPeople;
         this.likesCount = likesCount;
@@ -39,6 +40,7 @@ export class Itinerary {
             createdAt: row.created_at,
             updatedAt: row.updated_at,
             photoUrl: row.photo_url,
+            photoPublicId: row.photo_public_id,
             budget: row.budget,
             numberOfPeople: row.number_of_people,
             likesCount: row.likes_count,
@@ -66,6 +68,7 @@ export class Itinerary {
             places: this.places.map(place => place.toDTO()),
             tripTotalDays: this.getTotalDays(),
             photoUrl: this.photoUrl,
+            photoPublicId: this.photoPublicId,
             budget: this.budget,
             numberOfPeople: this.numberOfPeople,
             likesCount: this.likesCount,

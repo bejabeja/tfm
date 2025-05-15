@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-
+const baseUrl = `${import.meta.env.VITE_API_URL}/cloudinary/image`;
 const ImageUpload = ({ onUpload, imageUrl: initialImageUrl }) => {
   const [loading, setLoading] = useState(false);
   const [imageUrl, setImageUrl] = useState(initialImageUrl || "");
   const [inputKey, setInputKey] = useState(Date.now());
+  const [publicId, setPublicId] = useState("");
 
   useEffect(() => {
     setImageUrl(initialImageUrl || "");
@@ -28,7 +29,8 @@ const ImageUpload = ({ onUpload, imageUrl: initialImageUrl }) => {
       );
       const data = await res.json();
       setImageUrl(data.secure_url);
-      onUpload(data.secure_url); // enviar url al formulario padre
+      setPublicId(data.public_id);
+      onUpload(data.secure_url, data.public_id); // enviar url al formulario padre
     } catch (error) {
       console.error("Error uploading image", error);
     } finally {
@@ -36,9 +38,18 @@ const ImageUpload = ({ onUpload, imageUrl: initialImageUrl }) => {
     }
   };
 
-  const handleRemove = () => {
+  const handleRemove = async () => {
+    if (publicId) {
+      await fetch(baseUrl, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ public_id: publicId }),
+      });
+    }
+
     setImageUrl("");
-    onUpload("");
+    setPublicId("");
+    onUpload("", "");
     setInputKey(Date.now());
   };
 

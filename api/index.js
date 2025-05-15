@@ -7,6 +7,7 @@ import { authenticate } from "./src/middlewares/authenticate.js";
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
 import { createAuthRouter } from './src/routes/authRouter.js';
+import { createCloudinaryRouter } from "./src/routes/cloudinaryRouter.js";
 import { createFollowRouter } from "./src/routes/followRouter.js";
 import { createItinerariesRouter } from "./src/routes/itinerariesRouter.js";
 import { createItineraryRouter } from './src/routes/itineraryRouter.js';
@@ -23,7 +24,8 @@ app.use('/itinerary', createItineraryRouter());
 app.use('/users', createUsersRouter());
 app.use('/users', authenticate, createFollowRouter());
 app.use('/auth', createAuthRouter());
-app.use('/itineraries', createItinerariesRouter())
+app.use('/itineraries', createItinerariesRouter());
+app.use('/cloudinary', createCloudinaryRouter());
 
 app.use('/api', (req, res) => {
     res.status(200).json({ message: 'API is running' });

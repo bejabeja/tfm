@@ -45,6 +45,7 @@ const EditItinerary = () => {
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
       imageUrl: "",
+      imagePublicId: "",
       title: "",
       destination: {
         name: "",
@@ -89,6 +90,7 @@ const EditItinerary = () => {
       const response = await getItineraryById(id);
       const resetValues = {
         imageUrl: response.photoUrl,
+        imagePublicId: response.photoPublicId,
         title: response.title,
         destination: {
           name: response.location.name,
@@ -119,7 +121,6 @@ const EditItinerary = () => {
           },
         })),
       };
-      console.log(resetValues);
       reset(resetValues);
       setItineraryData(response);
     };
@@ -129,6 +130,7 @@ const EditItinerary = () => {
     const body = {
       userId: userMe.id,
       photoUrl: data.imageUrl,
+      photoPublicId: data.imagePublicId,
       title: data.title,
       description: data.description,
       location: {
@@ -169,7 +171,10 @@ const EditItinerary = () => {
 
       <form className="form__container">
         <ImageUpload
-          onUpload={(url) => setValue("imageUrl", url)}
+          onUpload={(url, publicId) => {
+            setValue("imageUrl", url);
+            setValue("imagePublicId", publicId);
+          }}
           imageUrl={watch("imageUrl")}
         />
 
