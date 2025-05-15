@@ -78,13 +78,13 @@ const Itinerary = () => {
 
     return userMe.id === itinerary.userId;
   };
-
+console.log(itinerary.photoUrl)
   return (
     <section className="itinerary break-text">
       <div
         className="itinerary__hero"
         style={{
-          backgroundImage: `url(${itinerary.photoUrl || "/images/hero.jpg"})`,
+          backgroundImage: `url(${itinerary?.photoUrl || "/images/hero.jpg"})`,
         }}
       >
         <div className="itinerary__hero-overlay" />

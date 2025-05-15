@@ -14,6 +14,7 @@ import { createItinerarySchema } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sections/BasicInfoForm";
 import BudgetForm from "../sections/BudgetForm";
 import DatesForm from "../sections/DatesForm";
+import ImageUpload from "../sections/ImageUpload";
 import PlacesForm from "../sections/PlacesForm";
 import TravellersForm from "../sections/TravellersForm";
 import "./CreateItinerary.scss";
@@ -28,11 +29,13 @@ const CreateItinerary = () => {
   const {
     control,
     handleSubmit,
+    setValue,
     formState: { errors },
     watch,
   } = useForm({
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
+      imageUrl: "",
       title: "",
       destination: {
         name: "",
@@ -72,10 +75,12 @@ const CreateItinerary = () => {
   });
 
   const addItinerary = async (data) => {
+    console.log("data", data);
     const body = {
       userId: userMe.id,
       title: data.title,
       description: data.description,
+      photoUrl: data.imageUrl,
       location: {
         name: data.destination.name,
         label: data.destination.label,
@@ -111,6 +116,10 @@ const CreateItinerary = () => {
       <h1 className="form__title">Create Itinerary</h1>
 
       <form className="form__container" onSubmit={handleSubmit(addItinerary)}>
+        <ImageUpload
+          onUpload={(url) => setValue("imageUrl", url)}
+          imageUrl={watch("imageUrl")}
+        />
         <BasicInfoForm control={control} errors={errors} />
         <DatesForm control={control} errors={errors} />
         <PlacesForm
