@@ -56,7 +56,7 @@ const PlaceField = ({ control, index, errors, remove, destination }) => {
         name={`places.${index}.infoPlace`}
         label="Place name"
         control={control}
-        error={errors.infoPlace}
+        error={errors?.places?.[index]?.infoPlace.name}
         destination={destination}
       ></AutocompletePlaceInput>
 

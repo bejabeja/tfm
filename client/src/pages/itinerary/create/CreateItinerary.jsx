@@ -114,7 +114,6 @@ const CreateItinerary = () => {
     navigate(`/profile/${userMe.id}`);
   };
 
-  console.log("errors", errors);
   return (
     <section className="create-itinerary section__container">
       <h1 className="form__title">Create Itinerary</h1>

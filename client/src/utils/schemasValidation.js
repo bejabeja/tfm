@@ -102,7 +102,7 @@ export const createItinerarySchema = z
 
                     infoPlace: z
                         .object({
-                            name: z.string(),
+                            name: z.string().min(1, "Please select a valid place from the list"),
                             label: z.string(),
                             coordinates: z.object({
                                 lat: z.number(),
