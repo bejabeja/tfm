@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { FaCity } from "react-icons/fa";
+import { FaBookmark, FaCity, FaRegBookmark } from "react-icons/fa";
 import { GoPeople } from "react-icons/go";
 import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
@@ -7,6 +7,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { getCategoryIcon } from "../../assets/icons.js";
 import Modal from "../../components/modal/Modal.jsx";
 import Spinner from "../../components/spinner/Spinner.jsx";
+import { addFavorite, removeFavorite } from "../../services/favorites.js";
 import { deleteItinerary, getItineraryById } from "../../services/itinerary.js";
 import { getUserById } from "../../services/users.js";
 import {
@@ -47,7 +48,7 @@ const Itinerary = () => {
   }, [id]);
 
   useEffect(() => {
-    if (!itinerary?.userId) {
+    if (!itinerary || !itinerary?.userId) {
       return;
     }
     const fecthUser = async () => {
@@ -56,14 +57,14 @@ const Itinerary = () => {
     };
 
     fecthUser();
-  }, [itinerary?.userId]);
+  }, [itinerary]);
 
   if (loading) {
     return <Spinner />;
   }
 
   if (error) {
-    return <div>Error fetching data</div>;
+    return <div>Error loading itinerary</div>;
   }
 
   const handleRemove = async () => {
@@ -81,46 +82,14 @@ const Itinerary = () => {
 
   return (
     <section className="itinerary break-text">
-      <div
-        className="itinerary__hero"
-        style={{
-          backgroundImage: `url(${itinerary?.photoUrl || "/images/hero.jpg"})`,
-        }}
-      >
-        <div className="itinerary__hero-overlay" />
-        <div className="itinerary__hero-content">
-          <h1 className="itinerary__title">
-            {itinerary.title}
-            {"   "}
-            {itinerary.category !== "other" && (
-              <span className="itinerary__badge">{itinerary.category}</span>
-            )}
-          </h1>
-          <div className="itinerary__hero-content-stats">
-            <div className="itinerary__hero-content-stats-row">
-              <img
-                src={userItinerary?.avatarUrl}
-                alt={userItinerary?.location?.name}
-                className="itinerary__hero-image"
-              />
-              <span>@{userItinerary?.username}</span>
-            </div>
-
-            <div className="itinerary__hero-content-stats-row">
-              <MdOutlineCalendarMonth className="nav-icon" />
-              <span>{itinerary.tripDates}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
+      <Hero itinerary={itinerary} userItinerary={userItinerary} />
       <div className="itinerary__container section__container">
         <div className="itinerary__container-primary">
           <h1 className="itinerary__title">Description</h1>
           <p className="itinerary__description">{itinerary.description}</p>
           <div className="itinerary__container-primary-stats">
             <div className="itinerary__container-stats-budget">
-              {getCurrencySymbol(itinerary.currency) ?? (
+              {getCurrencySymbol(itinerary.currency) || (
                 <MdOutlineAttachMoney className="icon" />
               )}
               <strong className="itinerary__title">Budget</strong>
@@ -145,14 +114,13 @@ const Itinerary = () => {
           </div>
           <div className="itinerary__container-primary-places">
             <h1 className="itinerary__title">Places</h1>
-            {itinerary.places.map((place, index) => (
+            {itinerary.places?.map((place, index) => (
               <Place key={index} place={place} index={index} />
             ))}
           </div>
           {isMyItinerary() && (
             <div className="itinerary__container-primary-actions">
-              <Link
-                to="#"
+              <button
                 className="btn btn__danger"
                 onClick={(e) => {
                   e.preventDefault();
@@ -160,7 +128,7 @@ const Itinerary = () => {
                 }}
               >
                 Delete
-              </Link>
+              </button>
 
               <Link
                 to={`/itinerary/edit/${itinerary.id}`}
@@ -214,6 +182,56 @@ const Place = ({ place, index }) => {
           {place.address}
         </p>
       )}
+    </div>
+  );
+};
+
+const Hero = ({ itinerary, userItinerary }) => {
+  const [isSaved, setIsSaved] = useState(false);
+  const handleSave = () => {
+    setIsSaved(!isSaved);
+    if (!isSaved) {
+      addFavorite(itinerary.id);
+    } else {
+      removeFavorite(itinerary.id);
+    }
+  };
+  
+  return (
+    <div
+      className="itinerary__hero"
+      style={{
+        backgroundImage: `url(${itinerary?.photoUrl || "/images/hero.jpg"})`,
+      }}
+    >
+      <div className="itinerary__hero-overlay" />
+      <div className="itinerary__hero-content">
+        <h1 className="itinerary__title">
+          {itinerary.title}
+          {"   "}
+          {itinerary.category !== "other" && (
+            <span className="itinerary__badge">{itinerary.category}</span>
+          )}
+        </h1>
+        <div className="itinerary__hero-content-stats">
+          <div className="itinerary__hero-content-stats-row">
+            <img
+              src={userItinerary?.avatarUrl}
+              alt={userItinerary?.location?.name}
+              className="itinerary__hero-image"
+            />
+            <span>@{userItinerary?.username}</span>
+          </div>
+
+          <div className="itinerary__hero-content-stats-row">
+            <MdOutlineCalendarMonth className="nav-icon" />
+            <span>{itinerary.tripDates}</span>
+          </div>
+        </div>
+      </div>
+      <button className="save-itinerary-btn" onClick={handleSave}>
+        {isSaved ? <FaBookmark /> : <FaRegBookmark />}
+      </button>
     </div>
   );
 };
