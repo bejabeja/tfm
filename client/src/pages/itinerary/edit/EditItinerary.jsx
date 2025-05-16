@@ -37,7 +37,6 @@ const EditItinerary = () => {
   const {
     control,
     handleSubmit,
-    setValue,
     reset,
     formState: { errors, isLoading },
     watch,
@@ -46,7 +45,6 @@ const EditItinerary = () => {
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
       imageUrl: "",
-      imagePublicId: "",
       title: "",
       destination: {
         name: "",
@@ -91,7 +89,6 @@ const EditItinerary = () => {
       const response = await getItineraryById(id);
       const resetValues = {
         imageUrl: response.photoUrl,
-        imagePublicId: response.photoPublicId,
         title: response.title,
         destination: {
           name: response.location.name,
@@ -131,8 +128,6 @@ const EditItinerary = () => {
   const editItinerary = async (data) => {
     const body = {
       userId: userMe.id,
-      photoUrl: data.imageUrl,
-      photoPublicId: data.imagePublicId,
       title: data.title,
       description: data.description,
       location: {
@@ -176,7 +171,11 @@ const EditItinerary = () => {
       <h1 className="form__title">Edit Itinerary</h1>
 
       <form className="form__container">
-        <ImageUpload onUpload={(file) => setImageFile(file)} />
+        <ImageUpload
+          onUpload={(file) => setImageFile(file)}
+          imageUrl={watch("imageUrl")}
+        />
+
         <BasicInfoForm control={control} errors={errors} disabled={true} />
         <DatesForm control={control} errors={errors} />
         <PlacesForm

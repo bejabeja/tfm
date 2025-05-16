@@ -22,7 +22,7 @@ import "./CreateItinerary.scss";
 const CreateItinerary = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  
+
   const [imageFile, setImageFile] = useState(null);
   const userMe = useSelector(selectMe);
 
@@ -30,14 +30,12 @@ const CreateItinerary = () => {
   const {
     control,
     handleSubmit,
-    setValue,
     formState: { errors },
     watch,
   } = useForm({
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
       imageUrl: "",
-      imagePublicId: "",
       title: "",
       destination: {
         name: "",
@@ -81,8 +79,6 @@ const CreateItinerary = () => {
       userId: userMe.id,
       title: data.title,
       description: data.description,
-      photoUrl: data.imageUrl,
-      photoPublicId: data.imagePublicId,
       location: {
         name: data.destination.name,
         label: data.destination.label,

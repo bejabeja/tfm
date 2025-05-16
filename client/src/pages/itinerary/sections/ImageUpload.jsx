@@ -1,20 +1,17 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
-const ImageUpload = ({
-  onUpload,
-  imageUrl: initialImageUrl,
-  imagePublicId: initialImagePublicId,
-}) => {
-  const [previewUrl, setPreviewUrl] = useState("");
+const ImageUpload = ({ onUpload, imageUrl: initialImageUrl }) => {
+  const [previewUrl, setPreviewUrl] = useState(initialImageUrl || "");
+
+  useEffect(() => {
+    setPreviewUrl(initialImageUrl || "");
+  }, [initialImageUrl]);
 
   const handleSelectFile = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Mostrar preview
     setPreviewUrl(URL.createObjectURL(file));
-
-    // Pasar el archivo al formulario principal (para que lo envíe al backend)
     onUpload(file);
   };
 
@@ -39,36 +36,6 @@ const ImageUpload = ({
       )}
     </div>
   );
- 
-  // useEffect(() => {
-  //   setImageUrl(initialImageUrl || "");
-  // }, [initialImageUrl]);
-
-  // return (
-  //   <div className="image-upload-container">
-  //     <label
-  //       htmlFor="image-upload-input"
-  //       className={`btn ${imageUrl ? "btn__secondary" : "btn__primary"}`}
-  //     >
-  //       {imageUrl ? "Change Image" : "Upload Image"}
-  //     </label>
-  //     <input
-  //       id="image-upload-input"
-  //       type="file"
-  //       onChange={handleUpload}
-  //       accept="image/*"
-  //       style={{ display: "none" }}
-  //     />
-  //     {loading && <p>Uploading...</p>}
-  //     {imageUrl && (
-  //       <img
-  //         src={imageUrl}
-  //         alt="Uploaded preview"
-  //         className="image-upload-preview"
-  //       />
-  //     )}
-  //   </div>
-  // );
 };
 
 export default ImageUpload;

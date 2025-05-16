@@ -59,7 +59,6 @@ export const loginSchema = z.object({
 export const createItinerarySchema = z
     .object({
         imageUrl: z.string().optional(),
-        imagePublicId: z.string().optional(),
         title: z
             .string()
             .min(2, "Title is required")
