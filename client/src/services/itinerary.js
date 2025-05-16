@@ -15,13 +15,10 @@ export const getItineraryById = async (id) => {
     return response.json();
 }
 
-export const createItinerary = async (itinerary) => {
+export const createItinerary = async (formData) => {
     const response = await fetch(`${baseUrl}`, {
         method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(itinerary),
+        body: formData,
     });
     if (!response.ok) {
         await parseError("Failed to create itinerary");
@@ -42,13 +39,10 @@ export const deleteItinerary = async (id) => {
     return null;
 }
 
-export const updateItinerary = async (id, itinerary) => {
+export const updateItinerary = async (id, formData) => {
     const response = await fetch(`${baseUrl}/edit/${id}`, {
         method: "PATCH",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify(itinerary),
+        body: formData,
     });
     if (!response.ok) {
         await parseError("Failed to update itinerary");

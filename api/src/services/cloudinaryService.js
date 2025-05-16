@@ -7,6 +7,18 @@ cloudinary.config({
 });
 
 export class CloudinaryService {
+    async uploadImageFromBuffer(fileBuffer) {
+        return new Promise((resolve, reject) => {
+            cloudinary.uploader.upload_stream(
+                { resource_type: "image", folder: "itineraries" },
+                (error, result) => {
+                    if (error) reject(error);
+                    else resolve(result);
+                }
+            ).end(fileBuffer);
+        });
+    }
+
     async deleteImage(publicId) {
         if (!publicId) throw new Error("publicId is required to delete image");
 

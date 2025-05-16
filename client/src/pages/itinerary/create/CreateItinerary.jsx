@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React from "react";
+import React, { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -22,7 +22,8 @@ import "./CreateItinerary.scss";
 const CreateItinerary = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
+  
+  const [imageFile, setImageFile] = useState(null);
   const userMe = useSelector(selectMe);
 
   const today = new Date().toISOString().split("T")[0];
@@ -106,24 +107,24 @@ const CreateItinerary = () => {
       })),
       category: data.category,
     };
-    await createItinerary(body);
+
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("itinerary", JSON.stringify(body));
+
+    await createItinerary(formData);
     dispatch(setUserInfo(userMe.id));
     dispatch(setUserInfoItineraries(userMe.id));
     navigate(`/profile/${userMe.id}`);
   };
 
+  console.log("errors", errors);
   return (
     <section className="create-itinerary section__container">
       <h1 className="form__title">Create Itinerary</h1>
 
       <form className="form__container" onSubmit={handleSubmit(addItinerary)}>
-        <ImageUpload
-          onUpload={(url, publicId) => {
-            setValue("imageUrl", url);
-            setValue("imagePublicId", publicId);
-          }}
-          imageUrl={watch("imageUrl")}
-        />
+        <ImageUpload onUpload={(file) => setImageFile(file)} />
         <BasicInfoForm control={control} errors={errors} />
         <DatesForm control={control} errors={errors} />
         <PlacesForm

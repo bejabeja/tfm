@@ -15,8 +15,9 @@ export class ItineraryController {
 
     async createItinerary(req, res, next) {
         try {
-            const itineraryData = req.body;
-            const newItinerary = await this.itinerariesService.createItinerary(itineraryData);
+            const { file } = req;
+            const itineraryData = JSON.parse(req.body.itinerary);
+            const newItinerary = await this.itinerariesService.createItinerary(itineraryData, file);
             res.status(201).json(newItinerary);
         } catch (error) {
             next(error);
@@ -36,7 +37,9 @@ export class ItineraryController {
     async updateItinerary(req, res, next) {
         try {
             const { id } = req.params;
-            await this.itinerariesService.updateItinerary(id, req.body);
+            const { file } = req;
+            const itineraryData = JSON.parse(req.body.itinerary);
+            await this.itinerariesService.updateItinerary(id, itineraryData, file);
             res.status(200).json({ message: "Itinerary updated successfully" });
 
         } catch (error) {

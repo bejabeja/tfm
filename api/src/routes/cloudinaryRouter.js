@@ -8,6 +8,7 @@ export const createCloudinaryRouter = () => {
     const cloudinaryController = new CloudinaryController(cloudinaryService);
 
     router.delete("/image", cloudinaryController.deleteImage.bind(cloudinaryController));
+    // router.post('/image/upload', cloudinaryController.deleteImage.bind(cloudinaryController));
 
     return router;
 };

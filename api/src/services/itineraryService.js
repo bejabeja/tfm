@@ -21,7 +21,22 @@ export class ItineraryService {
         return itinerary.toDTO();
     }
 
-    async createItinerary(itineraryData) {
+    async createItinerary(data, file) {
+        let imageUrl = "";
+        let imagePublicId = "";
+
+        if (file) {
+            const result = await this.cloudinaryService.uploadImageFromBuffer(file.buffer, file.originalname);
+            imageUrl = result.secure_url;
+            imagePublicId = result.public_id;
+        }
+
+        const itineraryData = {
+            ...data,
+            photoUrl: imageUrl,
+            photoPublicId: imagePublicId,
+        };
+
         const itinerary = await this.itinerariesRepository.createItinerary(itineraryData);
         if (!itinerary) {
             throw new ConflictError("It was not possible to create the itinerary");
@@ -49,7 +64,13 @@ export class ItineraryService {
         await this.itinerariesRepository.deleteItinerary(id);
     }
 
-    async updateItinerary(id, itineraryData) {
+    async updateItinerary(id, itineraryData, file) {
+        if (file) {
+            const result = await this.cloudinaryService.uploadImageFromBuffer(file.buffer, file.originalname);
+            itineraryData.photoUrl = result.secure_url;
+            itineraryData.photoPublicId = result.public_id;
+        }
+
         const itinerary = await this.itinerariesRepository.getItineraryById(id);
         if (!itinerary) {
             throw new NotFoundError("Itinerary not found");

@@ -27,6 +27,7 @@ const EditItinerary = () => {
 
   const [itineraryData, setItineraryData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [imageFile, setImageFile] = useState(null);
 
   const isMyItinerary = () => {
     if (!userMe || !itineraryData) return false;
@@ -126,6 +127,7 @@ const EditItinerary = () => {
     };
     fetchItineraryData();
   }, []);
+
   const editItinerary = async (data) => {
     const body = {
       userId: userMe.id,
@@ -159,7 +161,11 @@ const EditItinerary = () => {
       category: data.category,
     };
 
-    await updateItinerary(id, body);
+    const formData = new FormData();
+    formData.append("file", imageFile);
+    formData.append("itinerary", JSON.stringify(body));
+
+    await updateItinerary(id, formData);
     dispatch(setUserInfo(userMe.id));
     dispatch(loadMyUserInfo(userMe.id));
     navigate(`/profile/${userMe.id}`);
@@ -170,14 +176,7 @@ const EditItinerary = () => {
       <h1 className="form__title">Edit Itinerary</h1>
 
       <form className="form__container">
-        <ImageUpload
-          onUpload={(url, publicId) => {
-            setValue("imageUrl", url);
-            setValue("imagePublicId", publicId);
-          }}
-          imageUrl={watch("imageUrl")}
-        />
-
+        <ImageUpload onUpload={(file) => setImageFile(file)} />
         <BasicInfoForm control={control} errors={errors} disabled={true} />
         <DatesForm control={control} errors={errors} />
         <PlacesForm
