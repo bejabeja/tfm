@@ -1,15 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import { getUserFavorites } from "../../services/favorites";
-import { selectMe } from "../../store/user/userInfoSelectors";
 
 const Favorites = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(true);
   const [favoritesItineraries, setFavoritesItineraries] = useState([]);
 
-  const userMe = useSelector(selectMe);
   useEffect(() => {
     const fetchFavorites = async () => {
       setLoading(true);

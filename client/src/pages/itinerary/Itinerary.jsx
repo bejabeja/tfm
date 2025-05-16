@@ -14,10 +14,12 @@ import {
 } from "../../services/favorites.js";
 import { deleteItinerary, getItineraryById } from "../../services/itinerary.js";
 import { getUserById } from "../../services/users.js";
+import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import {
   setUserInfo,
   setUserInfoItineraries,
 } from "../../store/user/userInfoActions.js";
+
 import { selectMe } from "../../store/user/userInfoSelectors.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
@@ -27,6 +29,7 @@ const Itinerary = () => {
   const navigate = useNavigate();
   const { id } = useParams();
   const userMe = useSelector(selectMe);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   const [itinerary, setItinerary] = useState(null);
   const [error, setError] = useState(null);
@@ -65,7 +68,7 @@ const Itinerary = () => {
   }, [itinerary]);
 
   useEffect(() => {
-    if (!itinerary?.id) return;
+    if (!isAuthenticated || !itinerary?.id) return;
 
     const fetchIsFavorite = async () => {
       try {
@@ -77,7 +80,7 @@ const Itinerary = () => {
     };
 
     fetchIsFavorite();
-  }, [itinerary]);
+  }, [itinerary, isAuthenticated]);
 
   if (loading) {
     return <Spinner />;
@@ -107,6 +110,8 @@ const Itinerary = () => {
         userItinerary={userItinerary}
         isFavorite={isFavorite}
         setIsFavorite={setIsFavorite}
+        isAuthenticated={isAuthenticated}
+        navigate={navigate}
       />
       <div className="itinerary__container section__container">
         <div className="itinerary__container-primary">
@@ -211,8 +216,19 @@ const Place = ({ place, index }) => {
   );
 };
 
-const Hero = ({ itinerary, userItinerary, isFavorite, setIsFavorite }) => {
+const Hero = ({
+  itinerary,
+  userItinerary,
+  isFavorite,
+  setIsFavorite,
+  isAuthenticated,
+  navigate,
+}) => {
   const handleSave = () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
     setIsFavorite((prev) => {
       const newState = !prev;
       if (newState) {
