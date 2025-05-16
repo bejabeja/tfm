@@ -41,3 +41,17 @@ export const getUserFavorites = async () => {
     }
     return response.json();
 };
+
+export const checkIsFavorite = async (itineraryId) => {
+    const response = await fetch(`${baseUrl}/${itineraryId}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: 'include',
+    });
+    if (!response.ok) {
+        await parseError("Failed to check is favorite");
+    }
+    return response.json();
+}

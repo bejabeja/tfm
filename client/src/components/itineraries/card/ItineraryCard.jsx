@@ -15,17 +15,20 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
   const user = userFromItinerary || userProp || {};
   const { username = "Anonymous", avatarUrl = "" } = user;
 
-  const [isFavorited, setIsFavorited] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
 
   return (
     <div className="itinerary-card break-text">
       <Link to={`/itinerary/${id}`} className="itinerary-card__link">
         <div className="itinerary-card__header">
-          <img
-            src={avatarUrl}
-            alt={username}
-            className="itinerary-card__avatar"
-          />
+          {avatarUrl ? (
+            <img
+              src={avatarUrl}
+              alt={username}
+              className="itinerary-card__avatar"
+            />
+          ) : null}
+
           <span className="itinerary-card__username">@{username}</span>
         </div>
         <div className="itinerary-card__image-wrapper">
@@ -44,10 +47,10 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
       {/* TODO */}
       {/* <div className="itinerary-card__actions">
         <button
-          className={`btn__itinerary-card ${isFavorited ? "active" : ""}`}
-          onClick={() => setIsFavorited(!isFavorited)}
+          className={`btn__itinerary-card ${isLiked ? "active" : ""}`}
+          onClick={() => setIsLiked(!isLiked)}
         >
-          {isFavorited ? (
+          {isLiked ? (
             <FaHeart className="icon" />
           ) : (
             <FaRegHeart className="icon" />

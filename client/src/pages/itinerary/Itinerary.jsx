@@ -7,7 +7,11 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { getCategoryIcon } from "../../assets/icons.js";
 import Modal from "../../components/modal/Modal.jsx";
 import Spinner from "../../components/spinner/Spinner.jsx";
-import { addFavorite, removeFavorite } from "../../services/favorites.js";
+import {
+  addFavorite,
+  checkIsFavorite,
+  removeFavorite,
+} from "../../services/favorites.js";
 import { deleteItinerary, getItineraryById } from "../../services/itinerary.js";
 import { getUserById } from "../../services/users.js";
 import {
@@ -28,6 +32,7 @@ const Itinerary = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userItinerary, setUserItinerary] = useState(null);
+  const [isFavorite, setIsFavorite] = useState(false);
 
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -59,6 +64,21 @@ const Itinerary = () => {
     fecthUser();
   }, [itinerary]);
 
+  useEffect(() => {
+    if (!itinerary?.id) return;
+
+    const fetchIsFavorite = async () => {
+      try {
+        const response = await checkIsFavorite(itinerary.id);
+        setIsFavorite(response);
+      } catch (error) {
+        console.error("Error checking favorite:", error);
+      }
+    };
+
+    fetchIsFavorite();
+  }, [itinerary]);
+
   if (loading) {
     return <Spinner />;
   }
@@ -82,7 +102,12 @@ const Itinerary = () => {
 
   return (
     <section className="itinerary break-text">
-      <Hero itinerary={itinerary} userItinerary={userItinerary} />
+      <Hero
+        itinerary={itinerary}
+        userItinerary={userItinerary}
+        isFavorite={isFavorite}
+        setIsFavorite={setIsFavorite}
+      />
       <div className="itinerary__container section__container">
         <div className="itinerary__container-primary">
           <h1 className="itinerary__title">Description</h1>
@@ -186,17 +211,17 @@ const Place = ({ place, index }) => {
   );
 };
 
-const Hero = ({ itinerary, userItinerary }) => {
-  const [isSaved, setIsSaved] = useState(false);
+const Hero = ({ itinerary, userItinerary, isFavorite, setIsFavorite }) => {
   const handleSave = () => {
-    setIsSaved(!isSaved);
-    if (!isSaved) {
+    const newState = !isFavorite;
+    setIsFavorite(newState);
+    if (newState) {
       addFavorite(itinerary.id);
     } else {
       removeFavorite(itinerary.id);
     }
   };
-  
+
   return (
     <div
       className="itinerary__hero"
@@ -230,7 +255,7 @@ const Hero = ({ itinerary, userItinerary }) => {
         </div>
       </div>
       <button className="save-itinerary-btn" onClick={handleSave}>
-        {isSaved ? <FaBookmark /> : <FaRegBookmark />}
+        {isFavorite ? <FaBookmark /> : <FaRegBookmark />}
       </button>
     </div>
   );
