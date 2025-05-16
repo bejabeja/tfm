@@ -3,7 +3,9 @@ import { ItineraryController } from "../controllers/itineraryController.js";
 import { PlacesRepository } from "../repositories/PlacesRepository.js";
 import { ItineraryRepository } from "../repositories/itineraryRepository.js";
 import { UserRepository } from "../repositories/userRepository.js";
+import { CloudinaryService } from "../services/cloudinaryService.js";
 import { ItineraryService } from "../services/itineraryService.js";
+
 
 export const createItineraryRouter = () => {
     const itinerariesRouter = Router();
@@ -11,7 +13,8 @@ export const createItineraryRouter = () => {
     const itinerariesRepository = new ItineraryRepository();
     const placesRepository = new PlacesRepository();
     const userRepository = new UserRepository()
-    const itinerariesService = new ItineraryService(itinerariesRepository, placesRepository, userRepository);
+    const cloudinaryService = new CloudinaryService()
+    const itinerariesService = new ItineraryService(itinerariesRepository, placesRepository, userRepository, cloudinaryService);
     const itinerariesController = new ItineraryController(itinerariesService)
 
     itinerariesRouter.post("/", itinerariesController.createItinerary.bind(itinerariesController));

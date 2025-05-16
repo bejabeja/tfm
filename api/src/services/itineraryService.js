@@ -2,10 +2,11 @@ import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 
 export class ItineraryService {
-    constructor(itinerariesRepository, placesRepository, userRepository) {
+    constructor(itinerariesRepository, placesRepository, userRepository, cloudinaryService) {
         this.itinerariesRepository = itinerariesRepository;
         this.placesRepository = placesRepository;
         this.userRepository = userRepository;
+        this.cloudinaryService = cloudinaryService;
     }
     async getItineraryById(id) {
         const itinerary = await this.itinerariesRepository.getItineraryById(id);
@@ -40,6 +41,11 @@ export class ItineraryService {
         if (!itinerary) {
             throw new NotFoundError("Itinerary not found");
         }
+
+        if (itinerary.photoPublicId) {
+            await this.cloudinaryService.deleteImage(itinerary.photoPublicId);
+        }
+
         await this.itinerariesRepository.deleteItinerary(id);
     }
 

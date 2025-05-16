@@ -68,13 +68,6 @@ const Itinerary = () => {
 
   const handleRemove = async () => {
     await deleteItinerary(itinerary.id);
-    if (itinerary.photoPublicId) {
-      await fetch(`${import.meta.env.VITE_API_URL}/cloudinary/image`, {
-        method: "DELETE",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ public_id: itinerary.photoPublicId }),
-      });
-    }
     navigate(`/profile/${userMe.id}`);
     dispatch(setUserInfo(itinerary?.userId));
     dispatch(setUserInfoItineraries(itinerary?.userId));
@@ -85,7 +78,7 @@ const Itinerary = () => {
 
     return userMe.id === itinerary.userId;
   };
-  
+
   return (
     <section className="itinerary break-text">
       <div
