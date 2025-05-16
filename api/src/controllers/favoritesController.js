@@ -35,7 +35,7 @@ export class FavoritesController {
             const userId = req.user.id;
 
             const isFav = await this.favoritesService.isFavorite(itineraryId, userId);
-            return res.status(200).json({ isFavorite: isFav });
+            return res.status(200).json(isFav);
         } catch (error) {
             next(error);
         }

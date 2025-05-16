@@ -213,13 +213,15 @@ const Place = ({ place, index }) => {
 
 const Hero = ({ itinerary, userItinerary, isFavorite, setIsFavorite }) => {
   const handleSave = () => {
-    const newState = !isFavorite;
-    setIsFavorite(newState);
-    if (newState) {
-      addFavorite(itinerary.id);
-    } else {
-      removeFavorite(itinerary.id);
-    }
+    setIsFavorite((prev) => {
+      const newState = !prev;
+      if (newState) {
+        addFavorite(itinerary.id);
+      } else {
+        removeFavorite(itinerary.id);
+      }
+      return newState;
+    });
   };
 
   return (

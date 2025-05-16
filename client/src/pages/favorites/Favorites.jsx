@@ -28,7 +28,7 @@ const Favorites = () => {
   return (
     <section className="section__container">
       <ItinerariesSection
-        user={userMe}
+        user={favoritesItineraries?.user}
         itineraries={favoritesItineraries}
         title="Saved trips"
         isLoading={loading}
