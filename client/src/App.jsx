@@ -20,6 +20,7 @@ import Profile from "./pages/profile/Profile";
 import { clearError, initAuthUser } from "./store/auth/authActions";
 import { initUsers } from "./store/users/usersActions";
 
+import Favorites from "./pages/favorites/Favorites";
 import FollowersList from "./pages/follows/FollowersList";
 import FollowingList from "./pages/follows/FollowingList";
 import {
@@ -95,12 +96,7 @@ const App = () => {
             {/* private routes */}
             <Route element={<PrivateLayout />}>
               <Route path="/my-itineraries" element={<MyItineraries />} />
-              <Route
-                path="/itineraries/saved"
-                element={
-                  <section className="section__container">Saved trips</section>
-                }
-              />
+              <Route path="/itineraries/saved" element={<Favorites />} />
               <Route path="/profile/:id" element={<Profile />} />
               <Route path="profile/edit/:id" element={<EditProfile />} />
               <Route path="/create-itinerary" element={<CreateItinerary />} />

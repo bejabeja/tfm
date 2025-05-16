@@ -27,3 +27,17 @@ export const removeFavorite = async (itineraryId) => {
     }
     return response.json();
 };
+
+export const getUserFavorites = async () => {
+    const response = await fetch(`${baseUrl}/user`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        credentials: 'include',
+    });
+    if (!response.ok) {
+        await parseError("Failed to get favorites");
+    }
+    return response.json();
+};

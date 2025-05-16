@@ -28,4 +28,27 @@ export class FavoritesController {
             next(error)
         }
     }
+
+    async isFavorite(req, res, next) {
+        try {
+            const { itineraryId } = req.params;
+            const userId = req.user.id;
+
+            const isFav = await this.favoritesService.isFavorite(itineraryId, userId);
+            return res.status(200).json({ isFavorite: isFav });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getUserFavorites(req, res, next) {
+        try {
+            const userId = req.user.id;
+            const favorites = await this.favoritesService.getUserFavorites(userId);
+            return res.status(200).json(favorites);
+        } catch (error) {
+            next(error);
+        }
+    }
+
 }

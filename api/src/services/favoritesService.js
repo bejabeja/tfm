@@ -11,4 +11,12 @@ export class FavoritesService {
         return this.favoritesRepository.removeFavorite(itineraryId, userId);
     }
 
+    async isFavorite(itineraryId, userId) {
+        return this.favoritesRepository.isFavorite(itineraryId, userId);
+    }
+
+    async getUserFavorites(userId) {
+        const itineraries = await this.favoritesRepository.getUserFavorites(userId);
+        return itineraries.map(itinerary => itinerary.toSimpleDTO());
+    }
 }
