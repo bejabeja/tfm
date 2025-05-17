@@ -117,37 +117,8 @@ const Itinerary = () => {
         <div className="itinerary__container-primary">
           <h1 className="itinerary__title">Description</h1>
           <p className="itinerary__description">{itinerary.description}</p>
-          <div className="itinerary__container-primary-stats">
-            <div className="itinerary__container-stats-budget">
-              {getCurrencySymbol(itinerary.currency) || (
-                <MdOutlineAttachMoney className="icon" />
-              )}
-              <strong className="itinerary__title">Budget</strong>
-              <p className="itinerary__description">
-                {itinerary.budget} {itinerary.currency}
-              </p>
-            </div>
-            <div className="itinerary__container-stats-days">
-              <MdOutlineCalendarMonth className="icon" />
-              <strong className="itinerary__title">Travel days</strong>
-              <p className="itinerary__description">
-                {itinerary.tripTotalDays}
-              </p>
-            </div>
-            <div className="itinerary__container-stats-people">
-              <GoPeople className="icon" />
-              <strong className="itinerary__title">People</strong>
-              <p className="itinerary__description">
-                {itinerary.numberOfPeople}
-              </p>
-            </div>
-          </div>
-          <div className="itinerary__container-primary-places">
-            <h1 className="itinerary__title">Places</h1>
-            {itinerary.places?.map((place, index) => (
-              <Place key={index} place={place} index={index} />
-            ))}
-          </div>
+          <Stats itinerary={itinerary} />
+          <Places itinerary={itinerary} />
           {isMyItinerary() && (
             <div className="itinerary__container-primary-actions">
               <button
@@ -186,6 +157,16 @@ const Itinerary = () => {
         type="danger"
       />
     </section>
+  );
+};
+const Places = ({ itinerary }) => {
+  return (
+    <div className="itinerary__container-primary-places">
+      <h1 className="itinerary__title">Places</h1>
+      {itinerary.places?.map((place, index) => (
+        <Place key={index} place={place} index={index} />
+      ))}
+    </div>
   );
 };
 
@@ -275,6 +256,32 @@ const Hero = ({
       <button className="save-itinerary-btn" onClick={handleSave}>
         {isFavorite ? <FaBookmark /> : <FaRegBookmark />}
       </button>
+    </div>
+  );
+};
+
+const Stats = ({ itinerary }) => {
+  return (
+    <div className="itinerary__container-primary-stats">
+      <div className="itinerary__container-stats-budget">
+        {getCurrencySymbol(itinerary.currency) || (
+          <MdOutlineAttachMoney className="icon" />
+        )}
+        <strong className="itinerary__title">Budget</strong>
+        <p className="itinerary__description">
+          {itinerary.budget} {itinerary.currency}
+        </p>
+      </div>
+      <div className="itinerary__container-stats-days">
+        <MdOutlineCalendarMonth className="icon" />
+        <strong className="itinerary__title">Travel days</strong>
+        <p className="itinerary__description">{itinerary.tripTotalDays}</p>
+      </div>
+      <div className="itinerary__container-stats-people">
+        <GoPeople className="icon" />
+        <strong className="itinerary__title">People</strong>
+        <p className="itinerary__description">{itinerary.numberOfPeople}</p>
+      </div>
     </div>
   );
 };
