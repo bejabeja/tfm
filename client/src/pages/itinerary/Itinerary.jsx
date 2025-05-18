@@ -20,6 +20,7 @@ import {
   setUserInfoItineraries,
 } from "../../store/user/userInfoActions.js";
 
+import Comments from "../../components/itineraries/comments/Comments.jsx";
 import { selectMe } from "../../store/user/userInfoSelectors.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
@@ -113,37 +114,48 @@ const Itinerary = () => {
         isAuthenticated={isAuthenticated}
         navigate={navigate}
       />
-      <div className="itinerary__container section__container">
-        <div className="itinerary__container-primary">
-          <h1 className="itinerary__title">Description</h1>
-          <p className="itinerary__description">{itinerary.description}</p>
-          <Stats itinerary={itinerary} />
-          <Places itinerary={itinerary} />
-          {isMyItinerary() && (
-            <div className="itinerary__container-primary-actions">
-              <button
-                className="btn btn__danger"
-                onClick={(e) => {
-                  e.preventDefault();
-                  setIsModalOpen(true);
-                }}
-              >
-                Delete
-              </button>
+      <div className="section__container">
+        <div className="itinerary__container">
+          <div className="itinerary__container-primary">
+            <h1 className="itinerary__title">Description</h1>
+            <p className="itinerary__description">{itinerary.description}</p>
+            <Stats itinerary={itinerary} />
+            <Places itinerary={itinerary} />
+            {isMyItinerary() && (
+              <div className="itinerary__container-primary-actions">
+                <button
+                  className="btn btn__danger"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    setIsModalOpen(true);
+                  }}
+                >
+                  Delete
+                </button>
 
-              <Link
-                to={`/itinerary/edit/${itinerary.id}`}
-                className="btn btn__primary"
-              >
-                Edit
-              </Link>
-            </div>
-          )}
+                <Link
+                  to={`/itinerary/edit/${itinerary.id}`}
+                  className="btn btn__primary"
+                >
+                  Edit
+                </Link>
+              </div>
+            )}
+          </div>
+          <div className="itinerary__container-secondary">
+            {/* <h1 className="itinerary__title">Trip Area</h1> */}
+          </div>
         </div>
-        <div className="itinerary__container-secondary">
-          {/* <h1 className="itinerary__title">Trip Area</h1> */}
+        <div className="itinerary__container">
+          <div className="itinerary__container-primary">
+            <Comments
+              itineraryId={itinerary.id}
+              isAuthenticated={isAuthenticated}
+            />
+          </div>
         </div>
       </div>
+
       <Modal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}

@@ -20,8 +20,7 @@ export const addComment = async (itineraryId, commentText) => {
             'Content-Type': 'application/json'
         },
         credentials: 'include',
-        body: commentText
-
+        body: JSON.stringify({ text: commentText })
     });
 
     if (!response.ok) {

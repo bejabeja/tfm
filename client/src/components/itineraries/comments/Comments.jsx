@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import {
   addComment,
   getCommentsByItineraryId,
@@ -40,12 +41,19 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
   return (
     <div className="comments">
       <h1 className="comments__title">Comments</h1>
+
       <div className="comments__list">
         {comments.length > 0 ? (
           comments.map((comment) => (
             <div key={comment.id} className="comment">
-              <strong>@{comment.user?.username}</strong>
-              <p>{comment.text}</p>
+              <div className="comment__avatar">
+                {comment.user?.username?.charAt(0).toUpperCase()}
+              </div>
+              <div className="comment__body">
+                <strong>@{comment.user?.username}</strong>
+                <p>{comment.content}</p>
+                <span className="comment__timestamp">{comment.postedAgo}</span>
+              </div>
             </div>
           ))
         ) : (
@@ -53,7 +61,7 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
         )}
       </div>
 
-      {isAuthenticated && (
+      {isAuthenticated ? (
         <div className="comments__form">
           <textarea
             value={newComment}
@@ -67,6 +75,12 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
           >
             {loading ? "Posting..." : "Post Comment"}
           </button>
+        </div>
+      ) : (
+        <div className="comments__login-message">
+          <p>
+            You must <Link to="/login">log in</Link> to post a comment.
+          </p>
         </div>
       )}
     </div>
