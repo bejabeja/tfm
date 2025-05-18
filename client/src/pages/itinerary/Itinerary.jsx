@@ -21,6 +21,7 @@ import {
 } from "../../store/user/userInfoActions.js";
 
 import Comments from "../../components/itineraries/comments/Comments.jsx";
+import Map from "../../components/itineraries/map/Map.jsx";
 import { selectMe } from "../../store/user/userInfoSelectors.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
@@ -103,7 +104,6 @@ const Itinerary = () => {
 
     return userMe.id === itinerary.userId;
   };
-
   return (
     <section className="itinerary break-text">
       <Hero
@@ -143,7 +143,8 @@ const Itinerary = () => {
             )}
           </div>
           <div className="itinerary__container-secondary">
-            {/* <h1 className="itinerary__title">Trip Area</h1> */}
+            <h1 className="itinerary__title">Trip Area</h1>
+            <Map location={itinerary?.location}></Map>
           </div>
         </div>
         <div className="itinerary__container">

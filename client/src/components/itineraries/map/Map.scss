@@ -1,0 +1,43 @@
+.map {
+  width: 100%;
+  height: 100%;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: var(--white-color);
+  height: 25vh;
+
+  &__container {
+    height: 25vh;
+    width: 100%;
+    border-radius: inherit;
+
+    .leaflet-container {
+      width: 100%;
+      height: 100%;
+      font-family: inherit;
+      border-radius: inherit;
+    }
+  }
+
+  &__error {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-secondary-color);
+    font-style: italic;
+  }
+}
+
+.leaflet-control-zoom {
+  border: none;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0.5rem;
+  overflow: hidden;
+}
+
+.leaflet-touch .leaflet-control-layers,
+.leaflet-touch .leaflet-bar {
+  //   border: none;
+  width: fit-content;
+}
