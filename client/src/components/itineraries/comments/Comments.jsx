@@ -1,15 +1,23 @@
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import {
   addComment,
+  deleteComment,
   getCommentsByItineraryId,
 } from "../../../services/comments";
+import { selectMe } from "../../../store/user/userInfoSelectors";
+import Modal from "../../modal/Modal";
 import "./Comments.scss";
 
 const Comments = ({ itineraryId, isAuthenticated }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [commentToDelete, setCommentToDelete] = useState(null);
+
+  const userMe = useSelector(selectMe);
 
   const fetchComments = async () => {
     try {
@@ -38,6 +46,15 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
     }
   };
 
+  const handleDeleteComment = async (commentId) => {
+    try {
+      await deleteComment(commentId);
+      await fetchComments();
+    } catch (error) {
+      console.error("Failed to delete comment", error);
+    }
+  };
+
   return (
     <div className="comments">
       <h1 className="comments__title">Comments</h1>
@@ -53,6 +70,20 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
                 <strong>@{comment.user?.username}</strong>
                 <p>{comment.content}</p>
                 <span className="comment__timestamp">{comment.postedAgo}</span>
+                {isAuthenticated && comment.user?.id === userMe?.id && (
+                  <div>
+                    <button
+                      className="comment__delete"
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setCommentToDelete(comment.id);
+                        setIsModalOpen(true);
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))
@@ -83,6 +114,25 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
           </p>
         </div>
       )}
+
+      <Modal
+        isOpen={isModalOpen}
+        onClose={() => {
+          setIsModalOpen(false);
+          setCommentToDelete(null);
+        }}
+        onConfirm={async () => {
+          if (commentToDelete) {
+            await handleDeleteComment(commentToDelete);
+            setIsModalOpen(false);
+            setCommentToDelete(null);
+          }
+        }}
+        title="Confirm Deletion"
+        description="Are you sure you want to delete this comment? This action cannot be undone."
+        confirmText="Delete"
+        type="danger"
+      />
     </div>
   );
 };

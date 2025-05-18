@@ -28,3 +28,15 @@ export const addComment = async (itineraryId, commentText) => {
     }
     return response.json();
 };
+
+export const deleteComment = async (commentId) => {
+    const response = await fetch(`${baseUrl}/${commentId}`, {
+        method: 'DELETE',
+        credentials: 'include',
+    });
+
+    if (!response.ok) {
+        await parseError(response, 'Failed to delete comment');
+    }
+    return null;
+}

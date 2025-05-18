@@ -15,6 +15,7 @@ export const createCommentsRouter = () => {
 
     router.get('/itinerary/:itineraryId', commentsController.getComments.bind(commentsController));
     router.post('/itinerary/:itineraryId', authenticate, commentsController.addComment.bind(commentsController));
+    router.delete('/:commentId', authenticate, commentsController.deleteComment.bind(commentsController));
 
     return router;
 }

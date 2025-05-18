@@ -33,4 +33,16 @@ export class CommentsRepository {
     const result = await client.query(query, [itineraryId]);
     return result.rows.map(row => Comment.fromDB(row));
   }
+
+  async deleteComment(commentId) {
+    const query = `DELETE FROM itinerary_comments WHERE id = $1;`;
+    await client.query(query, [commentId]);
+  }
+
+  async getCommentById(commentId) {
+    const query = `SELECT * FROM itinerary_comments WHERE id = $1;`;
+    const result = await client.query(query, [commentId]);
+    return Comment.fromDB(result.rows[0]) || null;
+  }
+
 }

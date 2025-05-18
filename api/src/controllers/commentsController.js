@@ -21,7 +21,21 @@ export class CommentsController {
             const itineraryId = req.params.itineraryId;
 
             const comments = await this.commentsService.getCommentsByItinerary(itineraryId);
+
             return res.status(200).json(comments);
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async deleteComment(req, res, next) {
+        try {
+            const commentId = req.params.commentId;
+            const userId = req.user.id;
+
+            await this.commentsService.deleteComment(commentId, userId);
+
+            return res.status(204).json({ message: "Comment deleted" });
         } catch (error) {
             next(error);
         }
