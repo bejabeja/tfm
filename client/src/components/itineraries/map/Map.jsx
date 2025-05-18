@@ -4,7 +4,7 @@ import { MapContainer, Marker, Popup, TileLayer } from "react-leaflet";
 import "./Map.scss";
 
 const Map = ({ location }) => {
-  const coordinates = null;
+  const coordinates = [location.lat, location.lon];
 
   if (!coordinates) {
     return <p className="map__error">No map available</p>;
