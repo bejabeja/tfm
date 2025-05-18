@@ -41,3 +41,15 @@
   //   border: none;
   width: fit-content;
 }
+
+.leaflet-popup-content,
+.leaflet-popup-content-wrapper {
+  width: fit-content ;
+  max-width: 200px;
+  font-size: 0.9rem;
+}
+
+.leaflet-popup.map__popup.leaflet-zoom-animated {
+  left: -62px ;
+  width: fit-content;
+}
