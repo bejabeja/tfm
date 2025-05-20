@@ -2,11 +2,12 @@ import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 
 export class ItineraryService {
-    constructor(itinerariesRepository, placesRepository, userRepository, cloudinaryService) {
+    constructor(itinerariesRepository, placesRepository, userRepository, cloudinaryService, aiService) {
         this.itinerariesRepository = itinerariesRepository;
         this.placesRepository = placesRepository;
         this.userRepository = userRepository;
         this.cloudinaryService = cloudinaryService;
+        this.aiService = aiService;
     }
     async getItineraryById(id) {
         const itinerary = await this.itinerariesRepository.getItineraryById(id);
@@ -99,5 +100,12 @@ export class ItineraryService {
         }
 
         await this.itinerariesRepository.updateItinerary(id, itineraryData);
+    }
+
+    async generateSmartItinerary(destination, totalDays) {
+        const rawText = await this.aiService.generateTextPrompt(destination, totalDays)
+        const parsedItinerary = JSON.parse(rawText)
+
+        return parsedItinerary
     }
 }

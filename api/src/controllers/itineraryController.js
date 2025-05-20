@@ -46,4 +46,14 @@ export class ItineraryController {
             next(error);
         }
     }
+
+    async generateSmartItinerary(req, res, next) {
+        try {
+            const { destination, days } = req.body;
+            const itinerary = await this.itinerariesService.generateSmartItinerary(destination, days);
+            res.status(200).json(itinerary)
+        } catch (error) {
+            next(error)
+        }
+    }
 }
