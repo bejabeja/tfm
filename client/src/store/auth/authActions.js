@@ -38,10 +38,8 @@ export const initAuthUser = () => {
     return async (dispatch) => {
         try {
             const user = await getUserForAuth();
-            console.log("✅ Usuario autenticado:", user);
             dispatch({ type: "@auth/init", payload: user });
         } catch (error) {
-            console.warn("❌ No autenticado (initAuthUser):", error);
             dispatch({ type: "@auth/init", payload: null, error: null });
         }
     };

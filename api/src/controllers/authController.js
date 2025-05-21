@@ -26,6 +26,8 @@ export class AuthController {
         if (!result.success) {
             return next(new ValidationError("Login validation failed"));
         }
+        const userAgent = req.headers['user-agent'];
+        const isMobile = /Mobi|Android/i.test(userAgent);
 
         try {
             const { username, password } = result.data;
@@ -33,8 +35,15 @@ export class AuthController {
             const accessToken = this.authService.generateAccessToken(user);
             const refreshToken = this.authService.generateRefreshToken(user);
             this.authService.setAuthCookies(res, accessToken, refreshToken)
+            if (isMobile) {
+                return res.status(200).json({
+                    user,
+                    accessToken,
+                    refreshToken
+                });
+            }
 
-            return res.status(200).json(user);
+            return res.status(200).json({ user });
 
         } catch (error) {
             console.error("Login error:", error);

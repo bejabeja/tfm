@@ -30,10 +30,7 @@ app.use('/itineraries', createItinerariesRouter());
 app.use('/cloudinary', createCloudinaryRouter());
 app.use('/favorites', authenticate, createFavoritesRouter());
 app.use('/comments', createCommentsRouter());
-app.get('/debug-cookies', (req, res) => {
-  console.log('Cookies recibidas:', req.cookies);
-  res.json(req.cookies);
-});
+
 app.use('/api', (req, res) => {
     res.status(200).json({ message: 'API is running' });
 });

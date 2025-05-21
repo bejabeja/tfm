@@ -41,8 +41,6 @@ export class AuthService {
     }
 
     async refreshAccessToken(refreshToken, res, req) {
-        console.log('NODE_ENV refress token:', config.nodeEnv);
-
         try {
             const decodedRefresh = jwt.verify(refreshToken, config.jwtRefreshSecret);
             const newAccessToken = this.generateAccessToken({ id: decodedRefresh.id, username: decodedRefresh.username });
@@ -61,8 +59,6 @@ export class AuthService {
     }
 
     setAuthCookies(res, accessToken, refreshToken) {
-        console.log('NODE_ENV authCookies:', config.nodeEnv);
-
         res.cookie('access_token', accessToken, {
             httpOnly: true,
             secure: isProduction,

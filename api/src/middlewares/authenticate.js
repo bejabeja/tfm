@@ -2,10 +2,11 @@ import { AuthError } from '../errors/AuthError.js';
 import { AuthService } from '../services/authService.js';
 const authService = new AuthService();
 export const authenticate = async (req, res, next) => {
-    const token = req.headers.authorization?.split(" ")[1] || req.cookies.access_token;
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(" ")[1] || req.cookies.access_token;
     const refreshToken = req.cookies.refresh_token;
 
-     try {
+    try {
         if (token) {
             const decoded = authService.verifyAccessToken(token);
             req.user = decoded;

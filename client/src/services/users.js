@@ -3,14 +3,23 @@ import { parseError } from "../utils/parseError";
 const baseUrl = `${import.meta.env.VITE_API_URL}/users`;
 
 export const getUserForAuth = async () => {
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    const headers = { 'Content-Type': 'application/json' };
+
+    if (isMobile) {
+        const token = localStorage.getItem('access_token');
+        if (token) {
+            headers['Authorization'] = `Bearer ${token}`;
+        }
+    }
+
     try {
         const response = await fetch(`${baseUrl}/me`, {
             method: 'GET',
-            credentials: 'include',
-            headers: {
-                'Content-Type': 'application/json'
-            }
+            credentials: isMobile ? 'omit' : 'include',
+            headers
         });
+
         if (!response.ok) {
             await parseError(response, 'Failed to get user');
             return null

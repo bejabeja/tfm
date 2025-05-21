@@ -18,20 +18,27 @@ export const createNewUser = async (user) => {
 }
 
 export const login = async (user) => {
-    const response = await fetch(`${baseUrl}/auth/login`, {
-        method: 'POST',
-        credentials: 'include',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(user)
-    });
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
 
-    if (!response.ok) {
-        await parseError(response, 'Login failed');
+    try {
+        const response = await fetch(`${baseUrl}/auth/login`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(user),
+            credentials: isMobile ? 'omit' : 'include',
+        });
+        if (!response.ok) await parseError(response, 'Login failed');
+
+        const data = await response.json();
+        if (isMobile) {
+            localStorage.setItem('access_token', data.accessToken);
+            localStorage.setItem('refresh_token', data.refreshToken);
+        }
+        return data.user;
+    } catch (error) {
+        console.error(error);
+        await parseError(error);
     }
-
-    return response.json();
 };
 
 export const logout = async () => {
@@ -46,5 +53,11 @@ export const logout = async () => {
     if (!response.ok) {
         await parseError(response, 'Logout failed');
     }
+
+    if (/Mobi|Android/i.test(navigator.userAgent)) {
+        localStorage.removeItem('access_token');
+        localStorage.removeItem('refresh_token');
+    }
+
     return response.json();
 }
