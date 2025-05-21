@@ -1,7 +1,14 @@
 import { Controller } from "react-hook-form";
 import "./InputForm.scss";
 
-export const InputForm = ({ label, name, control, error, type = "text" }) => {
+export const InputForm = ({
+  label,
+  name,
+  control,
+  error,
+  type = "text",
+  inputProps = {},
+}) => {
   return (
     <div className="input">
       <label htmlFor={name} className="input__label">
@@ -15,6 +22,7 @@ export const InputForm = ({ label, name, control, error, type = "text" }) => {
             id={name}
             type={type}
             {...field}
+            {...inputProps}
             className={`input__field ${error ? "input__field--invalid" : ""}`}
           />
         )}

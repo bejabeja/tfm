@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useState } from "react";
+import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -32,6 +32,7 @@ const CreateItinerary = () => {
     handleSubmit,
     formState: { errors },
     watch,
+    setValue,
   } = useForm({
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
@@ -121,7 +122,12 @@ const CreateItinerary = () => {
       <form className="form__container" onSubmit={handleSubmit(addItinerary)}>
         <ImageUpload onUpload={(file) => setImageFile(file)} />
         <BasicInfoForm control={control} errors={errors} />
-        <DatesForm control={control} errors={errors} />
+        <DatesForm
+          control={control}
+          errors={errors}
+          watch={watch}
+          setValue={setValue}
+        />
         <PlacesForm
           control={control}
           errors={errors}
