@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Modal from "../../../components/modal/Modal";
@@ -40,6 +41,7 @@ const EditItinerary = () => {
     reset,
     formState: { errors, isLoading },
     watch,
+    setValue,
     trigger,
   } = useForm({
     resolver: zodResolver(createItinerarySchema),
@@ -177,7 +179,12 @@ const EditItinerary = () => {
         />
 
         <BasicInfoForm control={control} errors={errors} disabled={true} />
-        <DatesForm control={control} errors={errors} />
+        <DatesForm
+          control={control}
+          errors={errors}
+          watch={watch}
+          setValue={setValue}
+        />
         <PlacesForm
           control={control}
           errors={errors}
@@ -217,6 +224,7 @@ const EditItinerary = () => {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleSubmit(async (data) => {
           await editItinerary(data);
+          toast.success("Itinerary updated successfully! 🎉");
           setIsModalOpen(false);
         })}
         title="Confirm Update"

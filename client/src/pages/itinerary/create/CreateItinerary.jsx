@@ -1,6 +1,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import SubmitButton from "../../../components/form/SubmitButton";
@@ -109,10 +110,17 @@ const CreateItinerary = () => {
     formData.append("file", imageFile);
     formData.append("itinerary", JSON.stringify(body));
 
-    await createItinerary(formData);
-    dispatch(setUserInfo(userMe.id));
-    dispatch(setUserInfoItineraries(userMe.id));
-    navigate(`/profile/${userMe.id}`);
+    try {
+      await toast.promise(createItinerary(formData), {
+        loading: "Saving itinerary...",
+        success: <b>Itinerary created successfully! 🎉</b>,
+        error: <b>Failed to create itinerary. Please try again.</b>,
+      });
+
+      dispatch(setUserInfo(userMe.id));
+      dispatch(setUserInfoItineraries(userMe.id));
+      navigate(`/profile/${userMe.id}`);
+    } catch (error) {}
   };
 
   return (

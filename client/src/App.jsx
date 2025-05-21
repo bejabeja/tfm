@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.scss";
@@ -20,6 +20,7 @@ import Profile from "./pages/profile/Profile";
 import { clearError, initAuthUser } from "./store/auth/authActions";
 import { initUsers } from "./store/users/usersActions";
 
+import CustomToaster from "./components/toast/CustomToaster";
 import Favorites from "./pages/favorites/Favorites";
 import FollowersList from "./pages/follows/FollowersList";
 import FollowingList from "./pages/follows/FollowingList";
@@ -63,6 +64,7 @@ const App = () => {
 
   return (
     <div className="App ">
+      <CustomToaster />
       <div className="side-content">
         <Navbar />
       </div>
