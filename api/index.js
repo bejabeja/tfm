@@ -1,7 +1,6 @@
 import * as Sentry from "@sentry/node";
 import cookieParser from 'cookie-parser';
 import express from 'express';
-import config from "./src/config/config.js";
 import './src/config/instrument.js';
 import { authenticate } from "./src/middlewares/authenticate.js";
 import { corsMiddleware } from './src/middlewares/cors.js';
@@ -43,6 +42,8 @@ app.use((req, res) => {
 
 app.use(errorHandler)
 
-app.listen(config.port, () => {
-    console.log(`Server running at http://localhost:${config.port}`);
-});
+// app.listen(config.port, () => {
+//     console.log(`Server running at http://localhost:${config.port}`);
+// });
+
+export default app;
