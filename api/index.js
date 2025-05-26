@@ -13,6 +13,7 @@ import { createFollowRouter } from "./src/routes/followRouter.js";
 import { createItinerariesRouter } from "./src/routes/itinerariesRouter.js";
 import { createItineraryRouter } from './src/routes/itineraryRouter.js';
 import { createUsersRouter } from './src/routes/usersRouter.js';
+import config from "./src/config/config.js";
 
 const app = express();
 
@@ -42,8 +43,8 @@ app.use((req, res) => {
 
 app.use(errorHandler)
 
-// app.listen(config.port, () => {
-//     console.log(`Server running at http://localhost:${config.port}`);
-// });
+app.listen(config.port, () => {
+    console.log(`Server running at http://localhost:${config.port}`);
+});
 
-export default app;
+// export default app;
