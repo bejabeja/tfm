@@ -1,5 +1,4 @@
 const SubmitButton = ({ label, loading = false }) => {
-  console.log("isusbmitin", loading);
   return (
     <button
       type="submit"

@@ -29,11 +29,6 @@ const Topbar = () => {
     };
   }, []);
 
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    setDropdownOpen(false);
-  };
-
   const toggleDropdown = () => {
     setDropdownOpen(!dropdownOpen);
   };
@@ -68,7 +63,7 @@ const Topbar = () => {
             <GoPerson className="nav-icon" />
             <span>Profile</span>
           </Link>
-          <Link to="/logout" onClick={handleLogout} className="nav-item">
+          <Link to="/logout" className="nav-item">
             <GoSignOut className="nav-icon" />
             <span>Logout</span>
           </Link>

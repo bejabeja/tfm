@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { FaBars } from "react-icons/fa";
 import { GoBook, GoHome, GoPerson, GoSignIn, GoSignOut } from "react-icons/go";
 import { IoSaveOutline, IoSearch } from "react-icons/io5";
@@ -29,12 +29,6 @@ const Navbar = () => {
 
   const toggleNavbar = () => {
     setIsOpen(!isOpen);
-  };
-
-  const handleLogout = () => {
-    dispatch(logoutUser());
-    setIsOpen(false);
-    navigate("/");
   };
 
   return (
@@ -104,11 +98,7 @@ const Navbar = () => {
                         <GoPerson className="nav-icon" />
                         <span>Profile</span>
                       </NavLink>
-                      <NavLink
-                        to="/logout"
-                        onClick={handleLogout}
-                        className="nav-item"
-                      >
+                      <NavLink to="/logout" className="nav-item">
                         <GoSignOut className="nav-icon" />
                         <span>Logout</span>
                       </NavLink>

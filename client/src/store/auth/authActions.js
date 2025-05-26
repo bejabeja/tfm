@@ -44,9 +44,15 @@ export const loginUser = (user, onSuccess) => {
 
 export const logoutUser = () => {
     return async (dispatch) => {
-        await logout();
-        dispatch({ type: "@auth/logout" });
-        dispatch(resetUserInfo());
+        try {
+            await logout();
+            dispatch({ type: "@auth/logout" });
+            dispatch(resetUserInfo());
+
+            toast.success("Session closed successfully");
+        } catch (error) {
+            toast.error("Failed to log out");
+        }
     };
 };
 
