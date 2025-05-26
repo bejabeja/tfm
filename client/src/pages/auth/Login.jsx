@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
@@ -25,7 +25,6 @@ const Login = () => {
   const navigate = useNavigate();
   const imageAuthLoaded = useSelector(selectimageAuthLoaded);
   const errorInAuth = useSelector(selectAuthError);
-
   useEffect(() => {
     if (imageAuthLoaded) return;
     preloadImg(authImage, () => {
@@ -36,7 +35,7 @@ const Login = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -71,14 +70,14 @@ const Login = () => {
           />
         ))}
 
-        <div className="auth__form-error">
+        <div className="auth__form-error" role="alert" aria-live="assertive">
           {errorInAuth && Object.keys(errors).length === 0
             ? errorInAuth
             : "\u00A0"}
         </div>
 
         <div className="auth__form-link">
-          <SubmitButton label="Log In" />
+          <SubmitButton label="Log In" loading={isSubmitting} />
           <Link to="/register">Don't have an account? Register!</Link>
         </div>
       </form>

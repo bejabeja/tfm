@@ -1,5 +1,5 @@
-const SubmitButton = ({ label }) => (
-  <button type="submit" className="btn btn__primary">
+const SubmitButton = ({ label, loading = false }) => (
+  <button type="submit" className="btn btn__primary" disabled={loading}>
     {label}
   </button>
 );

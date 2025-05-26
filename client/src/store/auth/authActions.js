@@ -15,7 +15,7 @@ export const createUser = (user, onSuccess) => {
                 }
             );
             const newUser = await login(user);
-            dispatch({ type: "@auth/login", payload: newUser });
+            dispatch(loginSuccess(newUser));
             if (onSuccess) onSuccess();
         } catch (error) {
             dispatch({ type: "@auth/create-user", error: error.message });
@@ -26,8 +26,15 @@ export const createUser = (user, onSuccess) => {
 export const loginUser = (user, onSuccess) => {
     return async (dispatch) => {
         try {
-            const newUser = await login(user);
-            dispatch({ type: "@auth/login", payload: newUser });
+            const newUser = await toast.promise(
+                login(user),
+                {
+                    loading: "Logging in...",
+                    success: "Welcome back!",
+                    error: (err) => err.message || "Login failed",
+                }
+            );
+            dispatch(loginSuccess(newUser));
             if (onSuccess) onSuccess();
         } catch (error) {
             dispatch({ type: "@auth/login", payload: null, error: error.message });
@@ -65,3 +72,9 @@ export const setImageHeroLoaded = () => {
 export const setImageAuthLoaded = () => {
     return { type: "@auth/setImageAuthLoaded" };
 };
+
+
+export const loginSuccess = (user) => ({
+    type: "@auth/login",
+    payload: user,
+});

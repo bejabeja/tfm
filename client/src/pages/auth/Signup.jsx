@@ -39,7 +39,7 @@ const Signup = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -50,14 +50,6 @@ const Signup = () => {
       location: "",
     },
   });
-
-  useEffect(() => {
-    const firstError = Object.keys(errors)[0];
-    if (firstError) {
-      const errorElement = document.querySelector(`[name="${firstError}"]`);
-      errorElement?.focus();
-    }
-  }, [errors]);
 
   const addUser = (data) => {
     dispatch(
@@ -98,7 +90,7 @@ const Signup = () => {
         </div>
 
         <div className="auth__form-link">
-          <SubmitButton label="Sign Up" />
+          <SubmitButton label="Sign Up" loading={isSubmitting} />
           <Link to="/login">Already have an account? Log in!</Link>
         </div>
       </form>
