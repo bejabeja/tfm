@@ -9,6 +9,8 @@ export const InputForm = ({
   type = "text",
   inputProps = {},
 }) => {
+  const errorId = `${name}-error`;
+
   return (
     <div className="input">
       <label htmlFor={name} className="input__label">
@@ -24,10 +26,19 @@ export const InputForm = ({
             {...field}
             {...inputProps}
             className={`input__field ${error ? "input__field--invalid" : ""}`}
+            aria-invalid={!!error}
+            aria-describedby={error ? errorId : undefined}
           />
         )}
       />
-      <div className="input__error">{error ? error.message : "\u00A0"}</div>
+      <div
+        className="input__error"
+        id={errorId}
+        role="alert"
+        aria-live="assertive"
+      >
+        {error ? error.message : "\u00A0"}
+      </div>
     </div>
   );
 };
@@ -39,6 +50,8 @@ export const TextAreaForm = ({
   error,
   type = "text",
 }) => {
+  const errorId = `${name}-error`;
+
   return (
     <div className="input">
       <label htmlFor={name} className="input__label">
@@ -53,15 +66,26 @@ export const TextAreaForm = ({
             type={type}
             {...field}
             className={`input__field ${error ? "input__field--invalid" : ""}`}
+            aria-invalid={!!error}
+            aria-describedby={error ? errorId : undefined}
           />
         )}
       />
-      <div className="input__error">{error ? error.message : "\u00A0"}</div>
+      <div
+        className="input__error"
+        id={errorId}
+        role="alert"
+        aria-live="assertive"
+      >
+        {error ? error.message : "\u00A0"}
+      </div>
     </div>
   );
 };
 
 export const DropdownForm = ({ label, name, control, error, options }) => {
+  const errorId = `${name}-error`;
+
   return (
     <div className="input">
       <label htmlFor={name} className="input__label">
@@ -75,6 +99,8 @@ export const DropdownForm = ({ label, name, control, error, options }) => {
             id={name}
             {...field}
             className={`input__field ${error ? "input__field--invalid" : ""}`}
+            aria-invalid={!!error}
+            aria-describedby={error ? errorId : undefined}
           >
             <option value="" disabled>
               Select an option
@@ -87,7 +113,14 @@ export const DropdownForm = ({ label, name, control, error, options }) => {
           </select>
         )}
       />
-      <div className="input__error">{error ? error.message : "\u00A0"}</div>
+      <div
+        className="input__error"
+        id={errorId}
+        role="alert"
+        aria-live="assertive"
+      >
+        {error ? error.message : "\u00A0"}
+      </div>
     </div>
   );
 };
