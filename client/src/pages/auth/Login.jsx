@@ -45,7 +45,7 @@ const Login = () => {
   });
 
   const checkUser = (data) => {
-    dispatch(
+    return dispatch(
       loginUser(data, () => {
         navigate("/");
       })

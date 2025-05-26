@@ -52,7 +52,7 @@ const Signup = () => {
   });
 
   const addUser = (data) => {
-    dispatch(
+    return dispatch(
       createUser(data, () => {
         navigate("/");
       })
