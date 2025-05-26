@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import Hero from "../../components/hero/Hero.jsx";
@@ -20,7 +19,6 @@ const Home = () => {
   const featuredItinerariesLoading = useSelector(
     selectFeaturedItinerariesLoading
   );
-
   const featuredUsers = useSelector(selectFeaturedUsers);
   const featuredUsersLoading = useSelector(selectFeaturedUsersLoading);
 

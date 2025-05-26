@@ -17,7 +17,7 @@ const UsersSection = ({ users, isLoading }) => {
           ? Array.from({ length: skeletonCount }).map((_, i) => (
               <UserCardSkeleton key={i} />
             ))
-          : users.map((user) => (
+          : users?.map((user) => (
               <UserCardWithFollow
                 key={user.id}
                 user={user}

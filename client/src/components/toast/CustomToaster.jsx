@@ -17,7 +17,7 @@ const CustomToaster = () => {
           width: "fit-content",
         },
         success: {
-          icon: "✅",
+          icon: "🚀",
           style: {
             width: "fit-content",
           },

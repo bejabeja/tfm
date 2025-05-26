@@ -1,12 +1,15 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { createUser, setImageAuthLoaded } from "../../store/auth/authActions";
-import { selectAuthError, selectimageAuthLoaded } from "../../store/auth/authSelectors";
+import {
+  selectAuthError,
+  selectimageAuthLoaded,
+} from "../../store/auth/authSelectors";
 import { authImage } from "../../utils/constants/constants";
 import { preloadImg } from "../../utils/preloadImg";
 import { signupSchema } from "../../utils/schemasValidation";
@@ -24,7 +27,7 @@ const Signup = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const imageAuthLoaded = useSelector(selectimageAuthLoaded);
-  const errorInAuth = useSelector(selectAuthError)
+  const errorInAuth = useSelector(selectAuthError);
 
   useEffect(() => {
     if (imageAuthLoaded) return;
@@ -48,10 +51,18 @@ const Signup = () => {
     },
   });
 
+  useEffect(() => {
+    const firstError = Object.keys(errors)[0];
+    if (firstError) {
+      const errorElement = document.querySelector(`[name="${firstError}"]`);
+      errorElement?.focus();
+    }
+  }, [errors]);
+
   const addUser = (data) => {
     dispatch(
       createUser(data, () => {
-        navigate("/login");
+        navigate("/");
       })
     );
   };
@@ -60,8 +71,14 @@ const Signup = () => {
     <section className="auth">
       <div className={`auth__bg ${imageAuthLoaded ? "loaded" : ""}`} />
 
-      <form onSubmit={handleSubmit(addUser)} className="auth__form">
-        <h1 className="auth__form-title">Sign up</h1>
+      <form
+        onSubmit={handleSubmit(addUser)}
+        className="auth__form"
+        aria-labelledby="signup-form-title"
+      >
+        <h1 id="signup-form-title" className="auth__form-title">
+          Sign up
+        </h1>
 
         {fields.map((field) => (
           <InputForm
@@ -75,7 +92,9 @@ const Signup = () => {
         ))}
 
         <div className="auth__form-error">
-          {errorInAuth && Object.keys(errors).length === 0 ? errorInAuth : "\u00A0"}
+          {errorInAuth && Object.keys(errors).length === 0
+            ? errorInAuth
+            : "\u00A0"}
         </div>
 
         <div className="auth__form-link">

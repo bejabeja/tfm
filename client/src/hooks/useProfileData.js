@@ -16,7 +16,6 @@ export const useProfileData = (profileId) => {
     const [userData, setUserData] = useState(null);
     const [userItineraries, setUserItineraries] = useState(null);
 
-
     const [followersData, setFollowersData] = useState(null);
     const [followingData, setFollowingData] = useState(null);
     const [loadingUser, setLoadingUser] = useState(true);
@@ -32,17 +31,7 @@ export const useProfileData = (profileId) => {
     const following = isMyProfile ? myFollowing : followingData;
     const itineraries = isMyProfile ? myItineraries : userItineraries;
 
-    // useEffect(() => {
-
-    //     if (userMe) {
-    //         setIsReady(true);
-    //     }
-
-    // }, [userMe]);
-
     useEffect(() => {
-        // if (!isReady) return;
-
         const fetchData = async () => {
             if (isAuthenticated && userMe === null) return;
             if (!isMyProfile) {
