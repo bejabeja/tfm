@@ -15,7 +15,7 @@ export const createUser = (user, onSuccess) => {
                 }
             );
             const newUser = await login(user);
-            dispatch(loginSuccess(newUser));
+            dispatch({ type: "@auth/login", payload: newUser });
             if (onSuccess) onSuccess();
         } catch (error) {
             dispatch({ type: "@auth/create-user", error: error.message });
@@ -34,7 +34,7 @@ export const loginUser = (user, onSuccess) => {
                     error: (err) => err.message || "Login failed",
                 }
             );
-            dispatch(loginSuccess(newUser));
+            dispatch({ type: "@auth/login", payload: newUser });
             if (onSuccess) onSuccess();
         } catch (error) {
             dispatch({ type: "@auth/login", payload: null, error: error.message });
@@ -72,9 +72,3 @@ export const setImageHeroLoaded = () => {
 export const setImageAuthLoaded = () => {
     return { type: "@auth/setImageAuthLoaded" };
 };
-
-
-export const loginSuccess = (user) => ({
-    type: "@auth/login",
-    payload: user,
-});
