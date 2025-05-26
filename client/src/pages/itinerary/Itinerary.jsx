@@ -1,5 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { FaBookmark, FaCity, FaRegBookmark } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import {
+  FaBookmark,
+  FaCity,
+  FaEdit,
+  FaRegBookmark,
+  FaTrashAlt,
+} from "react-icons/fa";
 import { GoPeople } from "react-icons/go";
 import { MdOutlineAttachMoney, MdOutlineCalendarMonth } from "react-icons/md";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +26,7 @@ import {
   setUserInfoItineraries,
 } from "../../store/user/userInfoActions.js";
 
+import toast from "react-hot-toast";
 import Comments from "../../components/itineraries/comments/Comments.jsx";
 import Map from "../../components/itineraries/map/Map.jsx";
 import { selectMe } from "../../store/user/userInfoSelectors.js";
@@ -93,10 +100,15 @@ const Itinerary = () => {
   }
 
   const handleRemove = async () => {
-    await deleteItinerary(itinerary.id);
-    navigate(`/profile/${userMe.id}`);
-    dispatch(setUserInfo(itinerary?.userId));
-    dispatch(setUserInfoItineraries(itinerary?.userId));
+    try {
+      await deleteItinerary(itinerary.id);
+      toast.success("Itinerary deleted successfully");
+      navigate(`/profile/${userMe?.id}`);
+      dispatch(setUserInfo(itinerary?.userId));
+      dispatch(setUserInfoItineraries(itinerary?.userId));
+    } catch (error) {
+      toast.error("Failed to delete itinerary");
+    }
   };
 
   const isMyItinerary = () => {
@@ -104,6 +116,7 @@ const Itinerary = () => {
 
     return userMe.id === itinerary.userId;
   };
+
   return (
     <section className="itinerary break-text">
       <Hero
@@ -113,6 +126,8 @@ const Itinerary = () => {
         setIsFavorite={setIsFavorite}
         isAuthenticated={isAuthenticated}
         navigate={navigate}
+        isMyItinerary={isMyItinerary}
+        setIsModalOpen={setIsModalOpen}
       />
       <div className="section__container">
         <div className="itinerary__container">
@@ -121,26 +136,6 @@ const Itinerary = () => {
             <p className="itinerary__description">{itinerary.description}</p>
             <Stats itinerary={itinerary} />
             <Places itinerary={itinerary} />
-            {isMyItinerary() && (
-              <div className="itinerary__container-primary-actions">
-                <button
-                  className="btn btn__danger"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    setIsModalOpen(true);
-                  }}
-                >
-                  Delete
-                </button>
-
-                <Link
-                  to={`/itinerary/edit/${itinerary.id}`}
-                  className="btn btn__primary"
-                >
-                  Edit
-                </Link>
-              </div>
-            )}
           </div>
           <div className="itinerary__container-secondary">
             <h1 className="itinerary__title">Trip Area</h1>
@@ -217,21 +212,26 @@ const Hero = ({
   setIsFavorite,
   isAuthenticated,
   navigate,
+  isMyItinerary,
+  setIsModalOpen,
 }) => {
-  const handleSave = () => {
+  const handleSave = async () => {
     if (!isAuthenticated) {
       navigate("/login");
       return;
     }
-    setIsFavorite((prev) => {
-      const newState = !prev;
-      if (newState) {
-        addFavorite(itinerary.id);
+    try {
+      if (!isFavorite) {
+        await addFavorite(itinerary.id);
+        toast.success("Itinerary added to favorites!");
       } else {
-        removeFavorite(itinerary.id);
+        await removeFavorite(itinerary.id);
+        toast.success("Itinerary removed from favorites!");
       }
-      return newState;
-    });
+      setIsFavorite(!isFavorite);
+    } catch (error) {
+      toast.error("Error updating favorites");
+    }
   };
 
   return (
@@ -266,9 +266,33 @@ const Hero = ({
           </div>
         </div>
       </div>
-      <button className="save-itinerary-btn" onClick={handleSave}>
-        {isFavorite ? <FaBookmark /> : <FaRegBookmark />}
-      </button>
+      {isMyItinerary() ? (
+        <div className="itinerary__hero-actions">
+          <Link
+            to={`/itinerary/edit/${itinerary.id}`}
+            className="action-icon-btn"
+            title="Edit itinerary"
+          >
+            <FaEdit />
+          </Link>
+          <button
+            className="action-icon-btn danger"
+            onClick={(e) => {
+              e.preventDefault();
+              setIsModalOpen(true);
+            }}
+            title="Delete itinerary"
+          >
+            <FaTrashAlt />
+          </button>
+        </div>
+      ) : (
+        <div className="itinerary__hero-actions">
+          <button className="action-icon-btn" onClick={handleSave}>
+            {isFavorite ? <FaBookmark /> : <FaRegBookmark />}
+          </button>
+        </div>
+      )}
     </div>
   );
 };
