@@ -99,16 +99,24 @@ const AutocompletePlaceInput = ({
                 ? "Please select a valid destination first"
                 : ""}
             </div>
-            {suggestions.length > 0 && (
+
+            {(suggestions.length > 0 ||
+              inputRef.current?.value.length >= 3) && (
               <ul className="autocomplete-dropdown">
-                {suggestions.map((place, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleSuggestionClick(place, field.onChange)}
-                  >
-                    {place.label}
-                  </li>
-                ))}
+                {suggestions.length > 0 ? (
+                  suggestions.map((place, index) => (
+                    <li
+                      key={index}
+                      onClick={() =>
+                        handleSuggestionClick(place, field.onChange)
+                      }
+                    >
+                      {place.label}
+                    </li>
+                  ))
+                ) : (
+                  <li className="no-results">No results found</li>
+                )}
               </ul>
             )}
           </>

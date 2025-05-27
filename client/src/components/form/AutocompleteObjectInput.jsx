@@ -1,5 +1,5 @@
 import { debounce } from "lodash";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useGeocodeSearch } from "../../hooks/useGeocodeSearch";
 import "./InputForm.scss";
@@ -88,16 +88,24 @@ const AutocompleteObjectInput = ({
                 ? "Please select a valid destination from the list"
                 : "\u00A0"}
             </div>
-            {suggestions.length > 0 && (
+
+            {(suggestions.length > 0 ||
+              inputRef.current?.value.length >= 3) && (
               <ul className="autocomplete-dropdown">
-                {suggestions.map((place, index) => (
-                  <li
-                    key={index}
-                    onClick={() => handleSuggestionClick(place, field.onChange)}
-                  >
-                    {place.label}
-                  </li>
-                ))}
+                {suggestions.length > 0 ? (
+                  suggestions.map((place, index) => (
+                    <li
+                      key={index}
+                      onClick={() =>
+                        handleSuggestionClick(place, field.onChange)
+                      }
+                    >
+                      {place.label}
+                    </li>
+                  ))
+                ) : (
+                  <li className="no-results">No results found</li>
+                )}
               </ul>
             )}
           </>
