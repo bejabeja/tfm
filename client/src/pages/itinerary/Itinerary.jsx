@@ -168,6 +168,16 @@ const Itinerary = () => {
   );
 };
 const Places = ({ itinerary }) => {
+  if (itinerary.places.length === 0) {
+    return (
+      <div className="itinerary__container-primary-places">
+        <h1 className="itinerary__title">Places</h1>
+        <p className="itinerary__description">
+          No places have been added to this itinerary yet.
+        </p>
+      </div>
+    );
+  }
   return (
     <div className="itinerary__container-primary-places">
       <h1 className="itinerary__title">Places</h1>
