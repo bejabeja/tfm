@@ -1,17 +1,21 @@
-import { getfeaturedUsers } from "../../services/users";
+import { getAllUsers, getfeaturedUsers } from "../../services/users";
 
-export const initUsers = () => {
-    return async (dispatch) => {
-        dispatch({ type: "@users/init/start" });
+export const initAllUsers = () => async (dispatch) => {
+    dispatch({ type: "@users/all/start" });
+    try {
+        const users = await getAllUsers();
+        dispatch({ type: "@users/all/success", payload: users });
+    } catch (err) {
+        dispatch({ type: "@users/all/fail", payload: err.message });
+    }
+};
 
-        try {
-            const featuredUsers = await getfeaturedUsers();
-            dispatch({
-                type: "@users/init/success",
-                payload: featuredUsers,
-            });
-        } catch (error) {
-            dispatch({ type: "@users/init/fail" });
-        }
-    };
+export const initFeaturedUsers = () => async (dispatch) => {
+    dispatch({ type: "@users/featured/start" });
+    try {
+        const users = await getfeaturedUsers();
+        dispatch({ type: "@users/featured/success", payload: users });
+    } catch (err) {
+        dispatch({ type: "@users/featured/fail", payload: err.message });
+    }
 };

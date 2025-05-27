@@ -18,9 +18,10 @@ import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
 import { clearError, initAuthUser } from "./store/auth/authActions";
-import { initUsers } from "./store/users/usersActions";
+import { initFeaturedUsers } from "./store/users/usersActions";
 
 import CustomToaster from "./components/toast/CustomToaster";
+import Community from "./pages/community/Community";
 import Favorites from "./pages/favorites/Favorites";
 import FollowersList from "./pages/follows/FollowersList";
 import FollowingList from "./pages/follows/FollowingList";
@@ -41,7 +42,7 @@ const App = () => {
   useEffect(() => {
     dispatch(initAuthUser());
     dispatch(initFilters());
-    dispatch(initUsers());
+    dispatch(initFeaturedUsers());
     dispatch(initFeaturedItineraries());
   }, []);
 

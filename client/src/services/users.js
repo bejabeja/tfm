@@ -43,7 +43,6 @@ export const getfeaturedUsers = async () => {
         return response.json();
     } catch (err) {
         return null;
-
     }
 }
 
@@ -79,4 +78,22 @@ export const updateUser = async (data) => {
         await parseError(response, 'Failed to update user');
     }
     return response.json();
+}
+
+export const getAllUsers = async (data) => {
+    try {
+        const response = await fetch(`${baseUrl}/all`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        if (!response.ok) {
+            await parseError(response, 'Failed to get users');
+        }
+        return response.json();
+    } catch (err) {
+        return null;
+
+    }
 }
