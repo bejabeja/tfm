@@ -110,8 +110,7 @@ export const createItinerarySchema = z
                             }),
                         }),
                 })
-            )
-            .min(1, "At least one place is required"),
+            ).optional(),
 
         budget: z
             .string()

@@ -12,12 +12,12 @@ import {
 } from "../../../store/user/userInfoActions";
 import { selectMe } from "../../../store/user/userInfoSelectors";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
+import BasicInfoForm from "../sectionsForm/BasicInfoForm";
 import BudgetForm from "../sectionsForm/BudgetForm";
 import DatesForm from "../sectionsForm/DatesForm";
 import ImageUpload from "../sectionsForm/ImageUpload";
 import PlacesForm from "../sectionsForm/PlacesForm";
 import TravellersForm from "../sectionsForm/TravellersForm";
-import BasicInfoForm from "../sectionsForm/BasicInfoForm";
 
 const EditItinerary = () => {
   const dispatch = useDispatch();
@@ -59,21 +59,7 @@ const EditItinerary = () => {
       description: "",
       startDate: "",
       endDate: "",
-      places: [
-        {
-          id: "",
-          description: "",
-          category: "",
-          infoPlace: {
-            name: "",
-            label: "",
-            coordinates: {
-              lat: 0,
-              lon: 0,
-            },
-          },
-        },
-      ],
+      places: [],
       budget: "",
       currency: "",
       numberOfTravellers: "",

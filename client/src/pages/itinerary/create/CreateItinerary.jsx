@@ -50,20 +50,7 @@ const CreateItinerary = () => {
       description: "",
       startDate: today,
       endDate: today,
-      places: [
-        {
-          description: "",
-          category: "other",
-          infoPlace: {
-            name: "",
-            label: "",
-            coordinates: {
-              lat: 0,
-              lon: 0,
-            },
-          },
-        },
-      ],
+      places: [],
       budget: "0",
       currency: "",
       numberOfTravellers: "1",
@@ -122,7 +109,7 @@ const CreateItinerary = () => {
       navigate(`/profile/${userMe.id}`);
     } catch (error) {}
   };
-
+  
   return (
     <section className="create-itinerary section__container">
       <h1 className="form__title">Create Itinerary</h1>

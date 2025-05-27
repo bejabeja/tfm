@@ -1,4 +1,3 @@
-import React from "react";
 import { Controller } from "react-hook-form";
 import { getCategoryIcon } from "../../../assets/icons";
 import AutocompletePlaceInput from "../../../components/form/AutocompletePlaceInput";
@@ -18,13 +17,6 @@ const PlacesForm = ({
   return (
     <div className="form__places">
       <h2 className="form__subtitle">Places</h2>
-      {fields.length === 0 && (
-        <div>
-          <p className="error-message">
-            Please add at least one place to your itinerary.
-          </p>
-        </div>
-      )}
       {fields.map((field, index) => (
         <PlaceField
           key={field.id}
@@ -56,7 +48,7 @@ const PlaceField = ({ control, index, errors, remove, destination }) => {
         name={`places.${index}.infoPlace`}
         label="Place name"
         control={control}
-        error={errors?.places?.[index]?.infoPlace.name}
+        error={errors?.places?.[index]?.infoPlace}
         destination={destination}
       ></AutocompletePlaceInput>
 

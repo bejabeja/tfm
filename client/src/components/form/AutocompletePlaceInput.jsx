@@ -1,5 +1,5 @@
 import { debounce } from "lodash";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Controller } from "react-hook-form";
 import { useGeocodeSearch } from "../../hooks/useGeocodeSearch";
 import "./InputForm.scss";
@@ -92,8 +92,10 @@ const AutocompletePlaceInput = ({
               {!destination?.name && !error
                 ? "Please select a valid destination first"
                 : ""}
-              {error && destination.name ? error.message : "\u00A0"}
-              {error && !destination.name
+              {error?.label && destination.name
+                ? "Please select a valid place from the list"
+                : "\u00A0"}
+              {error?.label && !destination.name
                 ? "Please select a valid destination first"
                 : ""}
             </div>
