@@ -64,6 +64,7 @@ const EditProfile = () => {
       });
     }
   }, [userMe, reset]);
+  
   if (userMeLoading || !userMe) {
     return <Spinner />;
   }

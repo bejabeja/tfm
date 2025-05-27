@@ -1,13 +1,10 @@
-import React from "react";
 import "./Spinner.scss";
 
-const Spinner = () => {
+const Spinner = ({ text = "Loading..." }) => {
   return (
-    <div className="spinner-loader-container">
-      <div className="spinner-loader">
-        <img src="/loaderSpinner.gif" alt="Loading..." />
-        <p>LOADING...</p>
-      </div>
+    <div className="spinner__container">
+      <div className="spinner" />
+      {text && <p className="spinner__text">{text}</p>}
     </div>
   );
 };
