@@ -12,12 +12,12 @@ import {
 } from "../../../store/user/userInfoActions";
 import { selectMe } from "../../../store/user/userInfoSelectors";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
-import BasicInfoForm from "../sections/BasicInfoForm";
-import BudgetForm from "../sections/BudgetForm";
-import DatesForm from "../sections/DatesForm";
-import ImageUpload from "../sections/ImageUpload";
-import PlacesForm from "../sections/PlacesForm";
-import TravellersForm from "../sections/TravellersForm";
+import BasicInfoForm from "../sectionsForm/BasicInfoForm";
+import BudgetForm from "../sectionsForm/BudgetForm";
+import DatesForm from "../sectionsForm/DatesForm";
+import ImageUpload from "../sectionsForm/ImageUpload";
+import PlacesForm from "../sectionsForm/PlacesForm";
+import TravellersForm from "../sectionsForm/TravellersForm";
 import "./CreateItinerary.scss";
 
 const CreateItinerary = () => {
