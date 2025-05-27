@@ -1,10 +1,12 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
+import toast from "react-hot-toast";
 import { IoLocationOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import { InputForm, TextAreaForm } from "../../components/form/InputForm";
+import Modal from "../../components/modal/Modal";
 import Spinner from "../../components/spinner/Spinner";
 import { updateUser } from "../../services/users";
 import { initAuthUser } from "../../store/auth/authActions";
@@ -26,13 +28,14 @@ const EditProfile = () => {
   const userMeError = useSelector(selectMeError);
 
   const [errorSubmit, setErrorSubmit] = useState(null);
+  const [showCancelModal, setShowCancelModal] = useState(false);
   const navigate = useNavigate();
 
   const {
     control,
     handleSubmit,
-    setValue,
-    formState: { errors },
+    reset,
+    formState: { errors, isSubmitting, isDirty },
   } = useForm({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
@@ -50,17 +53,18 @@ const EditProfile = () => {
   }, [dispatch, id]);
 
   useEffect(() => {
-    if (!userMe) return;
-
-    setValue("username", userMe.username);
-    setValue("bio", userMe.bio);
-    setValue("location", userMe.location);
-    setValue("name", userMe.name);
-    setValue("about", userMe.about);
-    setValue("avatarUrl", userMe.avatarUrl);
-  }, [userMe, setValue]);
-
-  if (userMeLoading) {
+    if (userMe) {
+      reset({
+        username: userMe.username,
+        name: userMe.name,
+        bio: userMe.bio,
+        location: userMe.location,
+        about: userMe.about,
+        avatarUrl: userMe.avatarUrl,
+      });
+    }
+  }, [userMe, reset]);
+  if (userMeLoading || !userMe) {
     return <Spinner />;
   }
 
@@ -69,10 +73,21 @@ const EditProfile = () => {
       await updateUser(data);
       dispatch(initAuthUser());
       dispatch(setUserInfo(id));
+      toast.success("Profile updated successfully!");
       navigate(`/profile/${id}`);
     } catch (err) {
       console.error("Error updating profile", err);
+      toast.error("Failed to update profile");
       setErrorSubmit(err.message);
+    }
+  };
+
+  const handleCancel = () => {
+    console;
+    if (isDirty) {
+      setShowCancelModal(true);
+    } else {
+      navigate(-1);
     }
   };
 
@@ -83,11 +98,32 @@ const EditProfile = () => {
         <AboutSection control={control} errors={errors} />
         {errorSubmit && <div className="error-message">{userMeError}</div>}
         <div className="edit-profile__header-actions">
-          <button type="submit" className="btn btn__primary">
-            Save Profile
+          <button
+            type="button"
+            className="btn btn__primary-outline"
+            onClick={handleCancel}
+          >
+            Cancel
+          </button>
+
+          <button
+            type="submit"
+            className="btn btn__primary"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Saving..." : "Save Profile"}
           </button>
         </div>
       </form>
+      <Modal
+        isOpen={showCancelModal}
+        onClose={() => setShowCancelModal(false)}
+        onConfirm={() => navigate(-1)}
+        title="Discard changes?"
+        description="You have unsaved changes. Are you sure you want to discard them?"
+        confirmText="Discard"
+        type="warning"
+      />
     </section>
   );
 };

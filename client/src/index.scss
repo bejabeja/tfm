@@ -87,6 +87,18 @@ body {
       background: var(--primary-color-hover);
       // transform: scale(1.01);
     }
+
+    &-outline {
+      border: 1px solid var(--primary-color);
+      background: transparent;
+      color: var(--primary-color);
+      transition: all 0.3s ease;
+
+      &:hover {
+        color: var(--white-color);
+        background-color: var(--primary-color);
+      }
+    }
   }
 
   &__secondary {

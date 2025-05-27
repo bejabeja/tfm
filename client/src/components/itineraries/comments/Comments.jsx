@@ -10,6 +10,7 @@ import { selectMe } from "../../../store/user/userInfoSelectors";
 import Modal from "../../modal/Modal";
 import "./Comments.scss";
 
+
 const Comments = ({ itineraryId, isAuthenticated }) => {
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
