@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import { getUserFavorites } from "../../services/favorites";
 
 const Favorites = () => {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(true);
+  const [error, setError] = useState(null);
   const [favoritesItineraries, setFavoritesItineraries] = useState([]);
 
   useEffect(() => {
     const fetchFavorites = async () => {
       setLoading(true);
+      setError(null);
       try {
         const response = await getUserFavorites();
         setFavoritesItineraries(response);

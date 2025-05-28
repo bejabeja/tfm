@@ -31,7 +31,7 @@ const Home = () => {
   useEffect(() => {
     dispatch(initFeaturedItineraries());
     dispatch(initFeaturedUsers());
-  }, []);
+  }, [dispatch]);
 
   return (
     <section className="home">
