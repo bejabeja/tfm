@@ -83,12 +83,7 @@ const App = () => {
             <Route path="/logout" element={<Logout />} />
             <Route path="/" element={<Home />} />
             <Route path="/explore" element={<Explore />} />
-            <Route
-              path="/community"
-              element={
-                <section className="section__container">Community</section>
-              }
-            />
+            <Route path="/community" element={<Community />} />
 
             {/* routes to decide if private or not */}
             <Route path="/friend-profile/:id" element={<Profile />} />

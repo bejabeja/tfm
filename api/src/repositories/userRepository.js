@@ -69,4 +69,28 @@ export class UserRepository {
 
         return User.fromDb(result.rows[0]);
     }
+
+    async findByFilters({ searchName, offset = 0, limit = 9 }) {
+        const searchTerm = `%${searchName}%`;
+
+        const result = await db.query(
+            `
+            SELECT * FROM users
+            WHERE username ILIKE $1
+            ORDER BY username ASC
+            LIMIT $2 OFFSET $3
+            `,
+            [searchTerm, limit, offset]
+        );
+
+        const countResult = await db.query(
+            `SELECT COUNT(*) FROM users WHERE username ILIKE $1`,
+            [searchTerm]
+        );
+
+        const total = parseInt(countResult.rows[0].count, 10);
+        const users = result.rows.map(row => User.fromDb(row));
+
+        return { users, total };
+    }
 }

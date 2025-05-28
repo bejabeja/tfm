@@ -4,6 +4,9 @@ const initialState = {
         data: [],
         loading: false,
         error: null,
+        currentPage: 1,
+        totalPages: 1,
+        loadingMore: false,
     },
     featured: {
         data: [],
@@ -18,19 +21,55 @@ export const usersReducer = (state = initialState, action) => {
         case "@users/all/start":
             return {
                 ...state,
-                all: { ...state.all, loading: true, error: null },
+                all: { ...state.all, loading: true, error: null, currentPage: 1 },
             };
 
         case "@users/all/success":
             return {
                 ...state,
-                all: { data: action.payload, loading: false, error: null },
+                all: {
+                    data: action.payload.users,
+                    loading: false,
+                    error: null,
+                    currentPage: action.payload.currentPage,
+                    totalPages: action.payload.totalPages,
+                },
             };
 
         case "@users/all/fail":
             return {
                 ...state,
                 all: { ...state.all, loading: false, error: action.payload },
+            };
+
+        case "@users/all/loadMoreStart":
+            return {
+                ...state,
+                all: {
+                    ...state.all,
+                    loadingMore: true,
+                },
+            };
+
+        case "@users/all/loadMoreSuccess":
+            return {
+                ...state,
+                all: {
+                    ...state.all,
+                    data: [...state.all.data, ...action.payload.users],
+                    currentPage: action.payload.currentPage,
+                    totalPages: action.payload.totalPages,
+                    loadingMore: false,
+                },
+            };
+
+        case "@users/all/loadMoreFail":
+            return {
+                ...state,
+                all: {
+                    ...state.all,
+                    loadingMore: false,
+                },
             };
 
         case "@users/featured/start":

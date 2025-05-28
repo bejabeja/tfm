@@ -46,6 +46,24 @@ export class UserService {
         return users.map(user => (user.toSimpleDTO()));
     }
 
+    async getFilteredAllUsers({ searchName, page, limit }) {
+        const offset = (page - 1) * limit;
+
+        const { users, total } = await this.userRepository.findByFilters({
+            searchName,
+            offset,
+            limit,
+        });
+
+        const totalPages = Math.ceil(total / limit);
+
+        return {
+            users: users.map(user => user.toSimpleDTO()),
+            totalPages,
+            currentPage: page
+        };
+    }
+
     async getUserForAuth(id) {
         const user = await this.userRepository.getUserById(id);
         if (!user) {

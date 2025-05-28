@@ -80,20 +80,21 @@ export const updateUser = async (data) => {
     return response.json();
 }
 
-export const getAllUsers = async (data) => {
-    try {
-        const response = await fetch(`${baseUrl}/all`, {
-            method: 'GET',
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        });
-        if (!response.ok) {
-            await parseError(response, 'Failed to get users');
-        }
-        return response.json();
-    } catch (err) {
-        return null;
 
+export const getAllUsers = async ({ searchName = '', page = 1, limit = 9 } = {}) => {
+    const params = new URLSearchParams();
+    if (searchName) params.append("searchName", searchName);
+    params.append('page', page)
+    params.append('limit', limit)
+
+    const response = await fetch(`${baseUrl}/all?${params.toString()}`, {
+        method: "GET",
+        headers: {
+            "Content-Type": "application/json",
+        },
+    });
+    if (!response.ok) {
+        await parseError(response, "Failed to get users");
     }
-}
+    return response.json();
+};

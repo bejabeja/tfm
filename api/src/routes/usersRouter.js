@@ -18,7 +18,7 @@ export const createUsersRouter = () => {
     router.get("/me", authenticate, userController.getUserMe.bind(userController));
     router.put("/me", authenticate, userController.updateUserMe.bind(userController));
     router.get("/featured", userController.getFeaturedUsers.bind(userController));
-    router.get("/all", userController.getAllUsers.bind(userController));
+    router.get("/all", userController.getAllUsersFiltered.bind(userController));
     router.get("/:id", userController.getUserById.bind(userController));
 
     return router;
