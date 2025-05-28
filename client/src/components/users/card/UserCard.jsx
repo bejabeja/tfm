@@ -1,5 +1,4 @@
-import React from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 const UserCard = ({
   id,
@@ -18,6 +17,14 @@ const UserCard = ({
       return;
     }
     onFollowToggle(id, isFollowing);
+  };
+
+  const handleProfile = async () => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+    navigate(`/friend-profile/${id}`);
   };
 
   return (
@@ -42,9 +49,9 @@ const UserCard = ({
           </button>
         )}
 
-        <Link to={`/friend-profile/${id}`} className="btn btn__primary">
+        <button className="btn btn__primary" onClick={handleProfile}>
           Profile
-        </Link>
+        </button>
       </div>
     </div>
   );

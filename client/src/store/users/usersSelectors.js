@@ -6,7 +6,6 @@ export const selectAllUsersCurrentPage = (state) => state.users.all.currentPage;
 export const selectAllUsersTotalPages = (state) => state.users.all.totalPages;
 export const selectAllUsersLoadingMore = (state) => state.users.all.loadingMore;
 
-
 export const selectFeaturedUsers = (state) => state.users.featured.data;
 export const selectFeaturedUsersLoading = (state) =>
     state.users.featured.loading;

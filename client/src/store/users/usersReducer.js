@@ -2,15 +2,15 @@
 const initialState = {
     all: {
         data: [],
-        loading: false,
+        loading: true,
         error: null,
         currentPage: 1,
         totalPages: 1,
-        loadingMore: false,
+        loadingMore: true,
     },
     featured: {
         data: [],
-        loading: false,
+        loading: true,
         error: null,
     },
 };
