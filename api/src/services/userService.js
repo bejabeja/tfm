@@ -56,9 +56,13 @@ export class UserService {
         });
 
         const totalPages = Math.ceil(total / limit);
+        for (const user of users) {
+            const countItineraries = await this.itinerariesRepository.getTotalItinerariesByUserId(user.id);
+            user.totalItineraries = countItineraries;
+        }
 
         return {
-            users: users.map(user => user.toSimpleDTO()),
+            users: users.map(user => user.toFeaturedDTO()),
             totalPages,
             currentPage: page
         };
