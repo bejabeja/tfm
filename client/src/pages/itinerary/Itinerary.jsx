@@ -32,6 +32,7 @@ import Map from "../../components/itineraries/map/Map.jsx";
 import { selectMe } from "../../store/user/userInfoSelectors.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
+import Error from "../error/Error.jsx";
 
 const Itinerary = () => {
   const dispatch = useDispatch();
@@ -49,32 +50,22 @@ const Itinerary = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
-    const fetchItinerary = async () => {
+    const fetchData = async () => {
       setLoading(true);
       try {
-        const response = await getItineraryById(id);
-        setItinerary(response);
-      } catch (error) {
-        setError(error.message || "An error occurred");
+        const itineraryData = await getItineraryById(id);
+        const userData = await getUserById(itineraryData.userId);
+        setItinerary(itineraryData);
+        setUserItinerary(userData);
+      } catch (err) {
+        setError(err.message || "An error occurred");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchItinerary();
+    fetchData();
   }, [id]);
-
-  useEffect(() => {
-    if (!itinerary || !itinerary?.userId) {
-      return;
-    }
-    const fecthUser = async () => {
-      const response = await getUserById(itinerary.userId);
-      setUserItinerary(response);
-    };
-
-    fecthUser();
-  }, [itinerary]);
 
   useEffect(() => {
     if (!isAuthenticated || !itinerary?.id) return;
@@ -96,7 +87,9 @@ const Itinerary = () => {
   }
 
   if (error) {
-    return <div>Error loading itinerary</div>;
+    return (
+      <Error message="We couldn't load the itinerary page. Please try again later." />
+    );
   }
 
   const handleRemove = async () => {
@@ -243,7 +236,6 @@ const Hero = ({
       toast.error("Error updating favorites");
     }
   };
-
   return (
     <div
       className="itinerary__hero"
@@ -267,7 +259,14 @@ const Hero = ({
               alt={userItinerary?.location?.name}
               className="itinerary__hero-image"
             />
-            <span>@{userItinerary?.username}</span>
+            <span>
+              <Link
+                to={`/profile/${userItinerary?.id}`}
+                className="itinerary__link "
+              >
+                @{userItinerary?.username}{" "}
+              </Link>
+            </span>
           </div>
 
           <div className="itinerary__hero-content-stats-row">
@@ -298,7 +297,11 @@ const Hero = ({
         </div>
       ) : (
         <div className="itinerary__hero-actions">
-          <button className="action-icon-btn" onClick={handleSave}>
+          <button
+            className="action-icon-btn"
+            onClick={handleSave}
+            title={isFavorite ? "Remove from favorites" : "Add to favorites"}
+          >
             {isFavorite ? <FaBookmark /> : <FaRegBookmark />}
           </button>
         </div>

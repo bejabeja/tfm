@@ -1,6 +1,7 @@
 import { Link, useParams } from "react-router-dom";
 import { useFollow } from "../../hooks/useFollow";
 import { useProfileData } from "../../hooks/useProfileData";
+import Error from "../error/Error";
 import "./Follows.scss";
 
 const FollowersList = () => {
@@ -8,8 +9,11 @@ const FollowersList = () => {
   const { loadingFollowers, error, followers } = useProfileData(id);
 
   if (loadingFollowers) return <p>Loading...</p>;
-  if (error) return <div>Error loading followers.</div>;
-
+  if (error) {
+    return (
+      <Error message="We couldn't load followers. Please try again later." />
+    );
+  }
   return (
     <section className="follow-list section__container">
       <h2 className="follow-list__title">Followers</h2>

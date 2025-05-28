@@ -1,4 +1,3 @@
-import React from "react";
 import { IoLocationOutline } from "react-icons/io5";
 import { MdOutlineCalendarMonth } from "react-icons/md";
 import { Link, useParams } from "react-router-dom";
@@ -6,6 +5,7 @@ import ItinerariesSection from "../../components/itineraries/ItinerariesSection"
 import Spinner from "../../components/spinner/Spinner";
 import { useFollow } from "../../hooks/useFollow";
 import { useProfileData } from "../../hooks/useProfileData";
+import Error from "../error/Error";
 import "./Profile.scss";
 
 const Profile = () => {
@@ -22,8 +22,12 @@ const Profile = () => {
   const { isFollowing, toggleFollow } = useFollow(id);
 
   if (loadingUser) return <Spinner />;
-  if (error) return <div>Error fetching data</div>;
-
+  if (error) {
+    return (
+      <Error message="We couldn't load the profile info. Please try again later." />
+    );
+  }
+  
   return (
     <section className="profile section__container">
       <HeaderSection

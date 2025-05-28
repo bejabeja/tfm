@@ -1,12 +1,16 @@
-import { useSelector } from "react-redux";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+
 import { Link } from "react-router-dom";
 import Hero from "../../components/hero/Hero.jsx";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection.jsx";
 import UsersSection from "../../components/users/UsersSection.jsx";
+import { initFeaturedItineraries } from "../../store/itineraries/itinerariesActions.js";
 import {
   selectFeaturedItineraries,
   selectFeaturedItinerariesLoading,
 } from "../../store/itineraries/itinerariesSelectors.js";
+import { initFeaturedUsers } from "../../store/users/usersActions.js";
 import {
   selectFeaturedUsers,
   selectFeaturedUsersLoading,
@@ -15,12 +19,19 @@ import { getImagesInfo } from "../../utils/constants/images.js";
 import "./Home.scss";
 
 const Home = () => {
+  const dispatch = useDispatch();
+
   const featuredItineraries = useSelector(selectFeaturedItineraries);
   const featuredItinerariesLoading = useSelector(
     selectFeaturedItinerariesLoading
   );
   const featuredUsers = useSelector(selectFeaturedUsers);
   const featuredUsersLoading = useSelector(selectFeaturedUsersLoading);
+
+  useEffect(() => {
+    dispatch(initFeaturedItineraries());
+    dispatch(initFeaturedUsers());
+  }, []);
 
   return (
     <section className="home">

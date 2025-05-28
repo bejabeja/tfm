@@ -18,7 +18,6 @@ import MyItineraries from "./pages/myItineraries/MyItineraries";
 import EditProfile from "./pages/profile/EditProfile";
 import Profile from "./pages/profile/Profile";
 import { clearError, initAuthUser } from "./store/auth/authActions";
-import { initFeaturedUsers } from "./store/users/usersActions";
 
 import CustomToaster from "./components/toast/CustomToaster";
 import Community from "./pages/community/Community";
@@ -30,7 +29,6 @@ import {
   selectIsAuthenticated,
 } from "./store/auth/authSelectors";
 import { initFilters } from "./store/filters/filterActions";
-import { initFeaturedItineraries } from "./store/itineraries/itinerariesActions";
 import { loadMyUserInfo } from "./store/user/userInfoActions";
 
 const App = () => {
@@ -42,8 +40,6 @@ const App = () => {
   useEffect(() => {
     dispatch(initAuthUser());
     dispatch(initFilters());
-    dispatch(initFeaturedUsers());
-    dispatch(initFeaturedItineraries());
   }, []);
 
   useEffect(() => {

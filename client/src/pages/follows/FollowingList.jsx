@@ -2,13 +2,18 @@ import { Link, useParams } from "react-router-dom";
 import { useFollow } from "../../hooks/useFollow";
 import { useProfileData } from "../../hooks/useProfileData";
 import "./Follows.scss";
+import Error from "../error/Error";
 
 const FollowingList = () => {
   const { id } = useParams();
   const { following, loadingFollowing, error } = useProfileData(id);
 
   if (loadingFollowing) return <p>Loading...</p>;
-  if (error) return <div>Error loading followings.</div>;
+  if (error) {
+    return (
+      <Error message="We couldn't load followings. Please try again later." />
+    );
+  }
 
   return (
     <section className="follow-list section__container">

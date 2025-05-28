@@ -212,6 +212,18 @@
   }
 }
 
+.itinerary__link {
+  color: var(--white-color);
+  font-weight: 600;
+  text-decoration: none;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    color: #ffb703;
+    text-decoration: underline;
+  }
+}
+
 @media (min-width: 768px) {
   .itinerary__container {
     flex-direction: row;

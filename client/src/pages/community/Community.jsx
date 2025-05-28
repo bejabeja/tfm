@@ -14,6 +14,7 @@ import {
   selectAllUsersLoadingMore,
   selectAllUsersTotalPages,
 } from "../../store/users/usersSelectors";
+import Error from "../error/Error.jsx";
 
 const Community = () => {
   const dispatch = useDispatch();
@@ -76,6 +77,12 @@ const Community = () => {
     );
   }
 
+  if (error) {
+    return (
+      <Error message="We couldn't load the community page. Please try again later." />
+    );
+  }
+  
   return (
     <section className="explore section__container">
       <Filters
