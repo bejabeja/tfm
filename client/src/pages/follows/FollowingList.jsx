@@ -1,14 +1,15 @@
 import { Link, useParams } from "react-router-dom";
+import Spinner from "../../components/spinner/Spinner";
 import { useFollow } from "../../hooks/useFollow";
 import { useProfileData } from "../../hooks/useProfileData";
-import "./Follows.scss";
 import Error from "../error/Error";
+import "./Follows.scss";
 
 const FollowingList = () => {
   const { id } = useParams();
   const { following, loadingFollowing, error } = useProfileData(id);
 
-  if (loadingFollowing) return <p>Loading...</p>;
+  if (loadingFollowing) return <Spinner />;
   if (error) {
     return (
       <Error message="We couldn't load followings. Please try again later." />
