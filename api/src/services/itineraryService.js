@@ -66,15 +66,18 @@ export class ItineraryService {
     }
 
     async updateItinerary(id, itineraryData, file) {
+        const itinerary = await this.itinerariesRepository.getItineraryById(id);
+        if (!itinerary) {
+            throw new NotFoundError("Itinerary not found");
+        }
+
         if (file) {
             const result = await this.cloudinaryService.uploadImageFromBuffer(file.buffer, file.originalname);
             itineraryData.photoUrl = result.secure_url;
             itineraryData.photoPublicId = result.public_id;
-        }
-
-        const itinerary = await this.itinerariesRepository.getItineraryById(id);
-        if (!itinerary) {
-            throw new NotFoundError("Itinerary not found");
+        } else {
+            itineraryData.photoUrl = itinerary.photoUrl;
+            itineraryData.photoPublicId = itinerary.photoPublicId;
         }
         const itineraryPlaces = await this.placesRepository.getPlacesByItineraryId(itinerary.id);
 
