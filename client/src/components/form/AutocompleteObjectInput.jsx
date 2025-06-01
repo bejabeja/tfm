@@ -12,6 +12,7 @@ const AutocompleteObjectInput = ({
   disabled = false,
 }) => {
   const [suggestions, setSuggestions] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
   const { searchPlaces } = useGeocodeSearch();
   const inputRef = useRef(null);
   const dropdownRef = useRef(null);
@@ -19,10 +20,13 @@ const AutocompleteObjectInput = ({
   const debouncedSearch = useRef(
     debounce(async (val) => {
       if (val.length >= 3) {
+        setIsLoading(true);
         const results = await searchPlaces(val);
         setSuggestions(results);
+        setIsLoading(false);
       } else {
         setSuggestions([]);
+        setIsLoading(false);
       }
     }, 600)
   ).current;
@@ -55,9 +59,14 @@ const AutocompleteObjectInput = ({
   );
 
   const handleSuggestionClick = useCallback((place, onChange) => {
+    debouncedSearch.cancel();
     onChange(place);
     setSuggestions([]);
   }, []);
+
+  const shouldShowDropdown =
+    inputRef.current?.value.length >= 3 &&
+    (isLoading || suggestions.length > 0);
 
   return (
     <div className="autocomplete-input" ref={dropdownRef}>
@@ -83,16 +92,16 @@ const AutocompleteObjectInput = ({
               disabled={disabled}
             />
             <div className="input__error">
-              {error && !error?.label ? error.message : "\u00A0"}
               {error?.label
                 ? "Please select a valid destination from the list"
-                : "\u00A0"}
+                : error?.message || "\u00A0"}
             </div>
 
-            {(suggestions.length > 0 ||
-              inputRef.current?.value.length >= 3) && (
+            {shouldShowDropdown && (
               <ul className="autocomplete-dropdown">
-                {suggestions.length > 0 ? (
+                {isLoading ? (
+                  <li className="loading">Loading...</li>
+                ) : suggestions.length > 0 ? (
                   suggestions.map((place, index) => (
                     <li
                       key={index}
