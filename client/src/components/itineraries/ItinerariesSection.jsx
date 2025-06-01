@@ -1,4 +1,3 @@
-import React from "react";
 import "./ItinerariesSection.scss";
 import ItineraryCard from "./card/ItineraryCard.jsx";
 import ItineraryCardSkeleton from "./card/ItineraryCardSkeleton.jsx";

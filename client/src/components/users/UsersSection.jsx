@@ -1,4 +1,3 @@
-import React from "react";
 import { useSelector } from "react-redux";
 import { useFollow } from "../../hooks/useFollow";
 import { selectIsAuthenticated } from "../../store/auth/authSelectors";

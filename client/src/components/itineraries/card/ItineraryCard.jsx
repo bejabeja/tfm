@@ -1,4 +1,3 @@
-import React, { useState } from "react";
 import { Link } from "react-router-dom";
 
 const ItineraryCard = ({ itinerary, user: userProp }) => {
@@ -7,15 +6,11 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
     photoUrl,
     location,
     tripTotalDays,
-    commentsCount,
-    likesCount,
     user: userFromItinerary,
   } = itinerary;
 
   const user = userFromItinerary || userProp || {};
   const { username = "Anonymous", avatarUrl = "" } = user;
-
-  const [isLiked, setIsLiked] = useState(false);
 
   return (
     <div className="itinerary-card break-text">
@@ -43,25 +38,6 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
           <p className="itinerary-card__days">{tripTotalDays} trip days</p>
         </div>
       </Link>
-
-      {/* TODO */}
-      {/* <div className="itinerary-card__actions">
-        <button
-          className={`btn__itinerary-card ${isLiked ? "active" : ""}`}
-          onClick={() => setIsLiked(!isLiked)}
-        >
-          {isLiked ? (
-            <FaHeart className="icon" />
-          ) : (
-            <FaRegHeart className="icon" />
-          )}
-          <span>{likesCount}</span>
-        </button>
-        <Link to={`/friend-profile/${user.id}`} className="btn__itinerary-card">
-          <FaRegComment className="icon" />
-          <span>{commentsCount}</span>
-        </Link>
-      </div> */}
     </div>
   );
 };
