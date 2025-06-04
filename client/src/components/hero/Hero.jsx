@@ -34,7 +34,7 @@ const Hero = () => {
         {!isAuthenticated && (
           <div className="hero__content__buttons">
             <Link to="/register" className="btn btn__secondary">
-              Join Now
+              Join Noww
             </Link>
           </div>
         )}
