@@ -14,11 +14,22 @@ const initialState = {
 
 const Filters = ({ onChange }) => {
   const [filters, setFilters] = useState(initialState);
+  const [debouncedFilters, setDebouncedFilters] = useState(initialState);
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    onChange(filters);
-  }, [filters, onChange]);
+    const handler = setTimeout(() => {
+      setDebouncedFilters(filters);
+    }, 400);
+
+    return () => {
+      clearTimeout(handler);
+    };
+  }, [filters]);
+
+  useEffect(() => {
+    onChange(debouncedFilters);
+  }, [debouncedFilters, onChange]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;

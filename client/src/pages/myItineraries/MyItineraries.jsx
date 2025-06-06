@@ -25,7 +25,7 @@ const MyItineraries = () => {
   }
 
   const handleRetry = () => {
-    dispatch(setFilters({}));
+    setFilters({});
   };
 
   const filteredItineraries = useMemo(() => {
