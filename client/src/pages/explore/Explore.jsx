@@ -181,7 +181,7 @@ const Filters = ({
         />
       </label>
 
-      <button onClick={handleReset} className="btn btn__primary">
+      <button onClick={handleReset} className="btn btn__reset">
         Reset Filters
       </button>
     </div>
