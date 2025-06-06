@@ -1,30 +1,28 @@
-import 'dotenv/config'
-import pkg from 'pg'
-import config from '../config/config.js'
+import pkg from 'pg';
+import config from '../config/config.js';
 
-const { Client } = pkg
-
-const DEFAULT_DB = {
-    host: config.dbHost,
-    user: config.dbUser,
-    password: config.dbPassword,
-    database: config.dbName,
-    port: config.dbPort,
-}
+const { Pool } = pkg;
 
 const client = config.databaseUrl
-    ? new Client({ connectionString: config.databaseUrl, ssl: { rejectUnauthorized: false } })
-    : new Client(DEFAULT_DB)
+    ? new Pool({
+        connectionString: config.databaseUrl,
+        ssl: { rejectUnauthorized: false },
+    })
+    : new Pool({
+        host: config.dbHost,
+        user: config.dbUser,
+        password: config.dbPassword,
+        database: config.dbName,
+        port: config.dbPort,
+    });
 
-export async function connectToDatabase() {
+export async function testConnection() {
     try {
-        await client.connect()
-        console.log('✅ Successfully connected to PostgreSQL')
-    } catch (err) {
-        console.error('❌ PostgreSQL error:', err.stack)
+        await client.query('SELECT 1');
+        console.log('✅ Successfully connected to PostgreSQL database');
+    } catch (error) {
+        console.error('❌ Error connecting to PostgreSQL database:', error.stack);
     }
 }
 
-connectToDatabase()
-
-export default client
+export default client;
