@@ -1,7 +1,9 @@
 import * as Sentry from "@sentry/node";
 import cookieParser from 'cookie-parser';
 import express from 'express';
+import config from "./src/config/config.js";
 import './src/config/instrument.js';
+import { testConnection } from "./src/db/clientPostgres.js";
 import { authenticate } from "./src/middlewares/authenticate.js";
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
@@ -10,10 +12,10 @@ import { createCloudinaryRouter } from "./src/routes/cloudinaryRouter.js";
 import { createCommentsRouter } from "./src/routes/commentsRouter.js";
 import { createFavoritesRouter } from "./src/routes/favoritesRouter.js";
 import { createFollowRouter } from "./src/routes/followRouter.js";
+import { healthCheckRouter } from './src/routes/healthCheckRouter.js';
 import { createItinerariesRouter } from "./src/routes/itinerariesRouter.js";
 import { createItineraryRouter } from './src/routes/itineraryRouter.js';
 import { createUsersRouter } from './src/routes/usersRouter.js';
-import config from "./src/config/config.js";
 
 const app = express();
 
@@ -31,9 +33,7 @@ app.use('/cloudinary', createCloudinaryRouter());
 app.use('/favorites', authenticate, createFavoritesRouter());
 app.use('/comments', createCommentsRouter());
 
-app.use('/api', (req, res) => {
-    res.status(200).json({ message: 'API is running' });
-});
+app.use('/api', healthCheckRouter());
 
 Sentry.setupExpressErrorHandler(app);
 
@@ -43,8 +43,9 @@ app.use((req, res) => {
 
 app.use(errorHandler)
 
-app.listen(config.port, () => {
-    console.log(`Server running at http://localhost:${config.port}`);
+app.listen(config.port, async () => {
+    console.log(`Server running on port ${config.port}`);
+    await testConnection();
 });
 
 // export default app;
