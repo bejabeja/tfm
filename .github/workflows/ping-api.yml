@@ -9,4 +9,4 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Curl health-check endpoint
-        run: curl -fsS --retry 3 https://tfm-tobeatraveller.vercel.app/api/health-check
+        run: curl -fsS --retry 3 https://tfm-eta.vercel.app/api/health-check
