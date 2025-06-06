@@ -31,7 +31,7 @@ const MyItineraries = () => {
   const filteredItineraries = useMemo(() => {
     return filterItineraries(myItineraries, filters);
   }, [myItineraries, filters]);
-  console.log(filters);
+
   return (
     <section className="my-itineraries section__container">
       <div className="my-itineraries__section-ctas">

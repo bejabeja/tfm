@@ -5,7 +5,7 @@ const initialState = {
   category: "",
   budgetMin: "",
   budgetMax: "",
-  locationName: "",
+  destination: "",
   durationMin: "",
   durationMax: "",
   startDateMin: "",
@@ -34,9 +34,9 @@ const Filters = ({ onChange }) => {
       <div className="filters__main">
         <input
           type="text"
-          name="locationName"
+          name="destination"
           placeholder="Filter by location"
-          value={filters.locationName}
+          value={filters.destination}
           onChange={handleChange}
         />
 
