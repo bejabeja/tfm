@@ -6,24 +6,25 @@ export class ItinerariesService {
         this.placesRepository = placesRepository;
     }
 
-    async getFilteredItineraries({ category, destination, page, limit }) {
-        const totalItems = await this.itinerariesRepository.countByFilters({ category, destination });
-
-        const itineraries = await this.itinerariesRepository.findByFilters({ category, destination, page, limit });
+    async getFilteredItineraries(filters) {
+        const totalItems = await this.itinerariesRepository.countByFilters(filters);
+        const itineraries = await this.itinerariesRepository.findByFilters(filters);
         if (!itineraries.length) {
             return { itineraries: [], totalPages: 0, totalItems: 0, page: 1 }
         }
 
-        for (const itinerary of itineraries) {
-            const user = await this.userRepository.getUserById(itinerary.userId);
-            if (user) {
-                itinerary.addUser(user.toSimpleDTO());
-            }
-        }
+        await Promise.all(
+            itineraries.map(async (itinerary) => {
+                const user = await this.userRepository.getUserById(itinerary.userId);
+                if (user) {
+                    itinerary.addUser(user.toSimpleDTO());
+                }
+            })
+        );
 
-        const totalPages = Math.ceil(totalItems / limit);
+        const totalPages = Math.ceil(totalItems / filters.limit);
 
-        return { itineraries: itineraries.map(it => (it.toSimpleDTO())), totalItems, totalPages, page };
+        return { itineraries: itineraries.map(it => (it.toSimpleDTO())), totalItems, totalPages, page: filters.page };
     }
 
 

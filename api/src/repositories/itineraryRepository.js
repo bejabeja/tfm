@@ -181,7 +181,7 @@ export class ItineraryRepository {
         return parseInt(result.rows[0].total, 10);
     }
 
-    async findByFilters({ category, destination, page = 1, limit = 10 }) {
+    async findByFilters({ category, destination, budgetMin, budgetMax, durationMin, durationMax, startDateMin, startDateMax, page = 1, limit = 10 }) {
         const offset = (page - 1) * limit;
         const filters = [];
         const values = [];
@@ -197,24 +197,53 @@ export class ItineraryRepository {
             values.push(`%${destination}%`);
         }
 
+        if (budgetMin !== undefined) {
+            filters.push(`budget >= $${index++}`);
+            values.push(budgetMin);
+        }
+
+        if (budgetMax !== undefined) {
+            filters.push(`budget <= $${index++}`);
+            values.push(budgetMax);
+        }
+
+        if (durationMin !== undefined) {
+            filters.push(`(FLOOR(EXTRACT(EPOCH FROM (end_date - start_date)) / 86400) + 1) >= $${index++}`);
+            values.push(durationMin);
+        }
+
+        if (durationMax !== undefined) {
+            filters.push(`(FLOOR(EXTRACT(EPOCH FROM (end_date - start_date)) / 86400) + 1) <= $${index++}`);
+            values.push(durationMax);
+        }
+
+        if (startDateMin !== undefined) {
+            filters.push(`start_date::date >= $${index++}::date`);
+            values.push(startDateMin);
+        }
+
+        if (startDateMax !== undefined) {
+            filters.push(`start_date::date <= $${index++}::date`);
+            values.push(startDateMax);
+        }
+
         const whereClause = filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "";
 
         const query = `
-            SELECT *
-            FROM itineraries
-            ${whereClause}
-            ORDER BY start_date DESC
-            LIMIT $${index++} OFFSET $${index}
-        `;
+        SELECT *
+        FROM itineraries
+        ${whereClause}
+        ORDER BY start_date DESC
+        LIMIT $${index++} OFFSET $${index++}
+    `;
 
-        values.push(limit);
-        values.push(offset);
+        values.push(limit, offset);
 
         const result = await client.query(query, values);
         return result.rows.map(row => Itinerary.fromDb(row));
     }
 
-    async countByFilters({ category, destination }) {
+    async countByFilters({ category, destination, budgetMin, budgetMax, durationMin, durationMax, startDateMin, startDateMax }) {
         const filters = [];
         const values = [];
         let index = 1;
@@ -229,13 +258,44 @@ export class ItineraryRepository {
             values.push(`%${destination}%`);
         }
 
+        if (budgetMin !== undefined) {
+            filters.push(`budget >= $${index++}`);
+            values.push(budgetMin);
+        }
+
+        if (budgetMax !== undefined) {
+            filters.push(`budget <= $${index++}`);
+            values.push(budgetMax);
+        }
+
+        //TODO: think about add totaldays in ddbb itineraries
+        if (durationMin !== undefined) {
+            filters.push(`(FLOOR(EXTRACT(EPOCH FROM (end_date - start_date)) / 86400) + 1) >= $${index++}`);
+            values.push(durationMin);
+        }
+
+        if (durationMax !== undefined) {
+            filters.push(`(FLOOR(EXTRACT(EPOCH FROM (end_date - start_date)) / 86400) + 1) <= $${index++}`);
+            values.push(durationMax);
+        }
+
+        if (startDateMin !== undefined) {
+            filters.push(`start_date::date >= $${index++}::date`);
+            values.push(startDateMin);
+        }
+
+        if (startDateMax !== undefined) {
+            filters.push(`start_date::date <= $${index++}::date`);
+            values.push(startDateMax);
+        }
+
         const whereClause = filters.length > 0 ? `WHERE ${filters.join(" AND ")}` : "";
 
         const query = `
-            SELECT COUNT(*) AS total
-            FROM itineraries
-            ${whereClause}
-        `;
+        SELECT COUNT(*) AS total
+        FROM itineraries
+        ${whereClause}
+    `;
 
         const result = await client.query(query, values);
         return parseInt(result.rows[0].total, 10);
