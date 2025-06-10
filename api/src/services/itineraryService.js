@@ -42,12 +42,18 @@ export class ItineraryService {
         if (!itinerary) {
             throw new ConflictError("It was not possible to create the itinerary");
         }
-        if (itineraryData.places?.length) {
-            for (const placeData of itineraryData.places) {
-                const place = await this.placesRepository.insertPlace(placeData);
-                await this.itinerariesRepository.linkPlaceToItinerary(itinerary.id, place.id, placeData.orderIndex);
-                itinerary.addPlace(place);
+
+        for (const placeData of itineraryData.places) {
+            let place = await this.placesRepository.findByPlaceAttributes(
+                placeData.infoPlace.lat,
+                placeData.infoPlace.lon,
+                placeData.orderIndex
+            );
+            if (!place) {
+                place = await this.placesRepository.insertPlace(placeData);
             }
+            await this.itinerariesRepository.linkPlaceToItinerary(itinerary.id, place.id, placeData.orderIndex);
+            itinerary.addPlace(place);
         }
         return itinerary.toDTO();
     }

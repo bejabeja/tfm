@@ -27,7 +27,7 @@ const Profile = () => {
       <Error message="We couldn't load the profile info. Please try again later." />
     );
   }
-  console.log(user);
+
   return (
     <section className="profile section__container">
       <HeaderSection
