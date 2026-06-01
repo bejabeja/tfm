@@ -210,36 +210,38 @@ const Navbar = () => {
         )}
       </nav>
 
-      {/* Create sheet — same pattern as mobile */}
+      {/* Create sheet */}
       {createOpen && (
         <div className="create-sheet__backdrop" onClick={() => setCreateOpen(false)}>
           <div className="create-sheet" onClick={e => e.stopPropagation()}>
             <div className="create-sheet__handle" />
-            <p className="create-sheet__title">What do you want to create?</p>
+            <p className="create-sheet__title">{t("nav.createSheetTitle")}</p>
 
             <button className="create-sheet__option create-sheet__option--itinerary" onClick={() => handleCreate("/create-itinerary")}>
               <div className="create-sheet__option-icon">
-                <IoListOutline />
+                <IoListOutline size={24} />
               </div>
               <div className="create-sheet__option-text">
-                <strong>Itinerary</strong>
-                <span>Plan day by day — places, budget, and details.</span>
+                <strong>{t("nav.createSheetItinerary")}</strong>
+                <span>{t("nav.createSheetItineraryDesc")}</span>
               </div>
-              <IoChevronForwardOutline className="create-sheet__option-arrow" />
+              <IoChevronForwardOutline size={16} className="create-sheet__option-arrow" />
             </button>
 
             <button className="create-sheet__option create-sheet__option--experience" onClick={() => handleCreate("/create-experience")}>
               <div className="create-sheet__option-icon">
-                <IoFlashOutline />
+                <IoFlashOutline size={24} />
               </div>
               <div className="create-sheet__option-text">
-                <strong>Experience</strong>
-                <span>Tell AI where you're going — it plans the journey.</span>
+                <strong>{t("nav.createSheetExperience")}</strong>
+                <span>{t("nav.createSheetExperienceDesc")}</span>
               </div>
-              <IoChevronForwardOutline className="create-sheet__option-arrow" />
+              <IoChevronForwardOutline size={16} className="create-sheet__option-arrow" />
             </button>
 
-            <button className="create-sheet__cancel" onClick={() => setCreateOpen(false)}>Cancel</button>
+            <button className="create-sheet__cancel" onClick={() => setCreateOpen(false)}>
+              {t("nav.createSheetCancel")}
+            </button>
           </div>
         </div>
       )}

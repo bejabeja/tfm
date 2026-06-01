@@ -49,12 +49,12 @@ export const getfeaturedItineraries = async () => {
     return response.json();
 }
 
-export const generateSmartItinerary = async ({ destination, days, category, numberOfTravellers, budget, currency }) => {
+export const generateSmartItinerary = async ({ destination, days, category, numberOfTravellers, budget, currency, intention, language }) => {
     const itineraryBase = `${getApiUrl()}/itinerary`;
     const response = await authFetch(`${itineraryBase}/generate-smart`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ destination, days, category, numberOfTravellers, budget, currency }),
+        body: JSON.stringify({ destination, days, category, numberOfTravellers, budget, currency, intention, language }),
     });
     if (!response.ok) throw new Error('Failed to generate itinerary');
     return response.json();

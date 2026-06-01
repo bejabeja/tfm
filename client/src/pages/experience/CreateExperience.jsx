@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import toast from "react-hot-toast";
+import { useTranslation } from "react-i18next";
 import {
   IoAddCircleOutline,
   IoAirplaneOutline,
@@ -70,11 +71,21 @@ const CATEGORY_EMOJI = {
   gastronomic:"🍽", party:"🎉", sport:"⚽",
 };
 
+const MOOD_DEFS = [
+  { key: "peaceful",  emoji: "🌅" },
+  { key: "thrilling", emoji: "⚡" },
+  { key: "social",    emoji: "🤝" },
+  { key: "curious",   emoji: "🔍" },
+  { key: "grounding", emoji: "🌿" },
+  { key: "indulgent", emoji: "🍷" },
+];
+
 const getStepCfg = (cat) => STEP_CONFIG[cat] ?? STEP_CONFIG.other;
 
-// ─── EditableStep (view mode only — edit opens modal) ─────────────────────────
+// ─── EditableStep ─────────────────────────────────────────────────────────────
 const EditableStep = ({ step, isLast, onEdit }) => {
-  const cfg = getStepCfg(step.category);
+  const cfg  = getStepCfg(step.category);
+  const mood = MOOD_DEFS.find(m => m.key === step.mood);
   return (
     <div className="cexp-step">
       <div className="cexp-step__track">
@@ -84,13 +95,23 @@ const EditableStep = ({ step, isLast, onEdit }) => {
         {!isLast && <div className="cexp-step__line" />}
       </div>
       <button type="button" className="cexp-step__body" onClick={onEdit}>
-        <span className="cexp-step__badge" style={{ background: cfg.color + "22", color: cfg.color }}>
-          {cfg.label.toUpperCase()}
-        </span>
+        <div className="cexp-step__meta">
+          <span className="cexp-step__badge" style={{ background: cfg.color + "22", color: cfg.color }}>
+            {cfg.label.toUpperCase()}
+          </span>
+          {mood && (
+            <span className="cexp-step__mood-tag">
+              {mood.emoji}
+            </span>
+          )}
+        </div>
         <span className="cexp-step__name">
-          {step.name || <em className="cexp-step__placeholder">Tap to add name…</em>}
+          {step.name || <em className="cexp-step__placeholder">…</em>}
         </span>
         {step.description && <span className="cexp-step__desc">{step.description}</span>}
+        {step.personalNote && (
+          <span className="cexp-step__personal-note">✍️ {step.personalNote}</span>
+        )}
         <span className="cexp-step__edit-hint"><IoPencilOutline size={11} /> Edit</span>
       </button>
     </div>
@@ -99,6 +120,7 @@ const EditableStep = ({ step, isLast, onEdit }) => {
 
 // ─── Main component ───────────────────────────────────────────────────────────
 const CreateExperience = () => {
+  const { t, i18n } = useTranslation();
   const dispatch  = useDispatch();
   const navigate  = useNavigate();
   const userMe    = useSelector(selectMe);
@@ -112,6 +134,7 @@ const CreateExperience = () => {
   const [days, setDays]                 = useState(7);
   const [category, setCategory]         = useState("adventure");
   const [travelers, setTravelers]       = useState(1);
+  const [intention, setIntention]       = useState("");
   const [generating, setGenerating]     = useState(false);
   const [title, setTitle]               = useState("");
   const [steps, setSteps]               = useState([]);
@@ -120,6 +143,8 @@ const CreateExperience = () => {
   const [saving, setSaving]             = useState(false);
 
   const searchTimer = useRef(null);
+
+  const ce = (key, vars) => t(`createExperience.${key}`, vars);
 
   // ─── Destination search ──────────────────────────────────────────────────
   const handleDestInput = (value) => {
@@ -145,6 +170,8 @@ const CreateExperience = () => {
       const data = await generateSmartItinerary({
         destination: destination.name, days, category,
         numberOfTravellers: travelers, budget: null, currency: "EUR",
+        intention: intention.trim() || undefined,
+        language: i18n.language,
       });
       const generated = (data.places ?? []).map((p, i) => ({
         _key: `ai-${i}`,
@@ -154,12 +181,14 @@ const CreateExperience = () => {
         dayNumber: p.dayNumber ?? 1,
         lat: parseFloat(p.latitude ?? p.lat ?? 0),
         lon: parseFloat(p.longitude ?? p.lng ?? 0),
+        mood: null,
+        personalNote: "",
       }));
       setSteps(generated);
       setTitle(`My trip to ${destination.name}`);
       setPhase("review");
     } catch {
-      toast.error("Could not generate the experience. Try again.");
+      toast.error(ce("generateError"));
     } finally {
       setGenerating(false);
     }
@@ -176,14 +205,17 @@ const CreateExperience = () => {
   const removeStep = (key) => { setSteps(prev => prev.filter(s => s._key !== key)); closeEdit(); };
   const addStep = () => {
     const lastDay = steps.length > 0 ? Math.max(...steps.map(s => s.dayNumber)) : 1;
-    const fresh = { _key: `new-${Date.now()}`, name: "", description: "", category: "other", dayNumber: lastDay, lat: 0, lon: 0 };
+    const fresh = {
+      _key: `new-${Date.now()}`, name: "", description: "", category: "other",
+      dayNumber: lastDay, lat: 0, lon: 0, mood: null, personalNote: "",
+    };
     setSteps(prev => [...prev, fresh]);
     openEdit(fresh);
   };
 
   // ─── Save ────────────────────────────────────────────────────────────────
   const handleSave = async () => {
-    if (!title.trim()) { toast.error("Add a title before saving."); return; }
+    if (!title.trim()) { toast.error(ce("addTitleError")); return; }
     setSaving(true);
     const today  = new Date().toISOString().split("T")[0];
     const endObj = new Date(today);
@@ -195,7 +227,10 @@ const CreateExperience = () => {
         startDate: today, endDate: endObj.toISOString().split("T")[0],
         budget: 0, currency: "EUR", numberOfPeople: travelers, category, isPublic: false,
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
-          description: s.description, category: s.category || "other",
+          description: s.personalNote?.trim()
+            ? `${s.description}\n\n✍️ ${s.personalNote.trim()}`
+            : s.description,
+          category: s.category || "other",
           orderIndex: i, dayNumber: s.dayNumber,
           infoPlace: { name: s.name, label: s.name, lat: s.lat || 0, lon: s.lon || 0 },
         })),
@@ -203,12 +238,12 @@ const CreateExperience = () => {
       const formData = new FormData();
       formData.append("itinerary", JSON.stringify(body));
       await createItinerary(formData);
-      toast.success("Trip saved!");
+      toast.success(ce("savedSuccess"));
       dispatch(setUserInfo(userMe.id));
       dispatch(setUserInfoItineraries());
       navigate("/my-itineraries");
     } catch {
-      toast.error("Could not save the trip. Try again.");
+      toast.error(ce("saveError"));
     } finally {
       setSaving(false);
     }
@@ -220,23 +255,25 @@ const CreateExperience = () => {
   const dayNumbers = Object.keys(dayMap).map(Number).sort((a, b) => a - b);
   const isMultiDay = dayNumbers.length > 1;
 
+  const dayUnit = days === 1 ? ce("day") : ce("days");
+
   return (
     <div className="cexp section__container">
 
       {/* ── Hero header ─────────────────────────────────────────────────── */}
       <header className="cexp__hero">
-        <div className="cexp__hero-icon"><IoFlashOutline /></div>
+        <div className="cexp__hero-icon"><IoFlashOutline size={20} /></div>
         <div className="cexp__hero-text">
-          <h1>{phase === "input" ? "Plan an Experience" : "Review your trip"}</h1>
+          <h1>{phase === "input" ? ce("heroInput") : ce("heroReview")}</h1>
           <p>
             {phase === "input"
-              ? "Tell AI where you're going — it maps the full journey"
-              : `${steps.length} steps · ${days} ${days === 1 ? "day" : "days"} · ${destination?.name}`}
+              ? ce("heroSubInput")
+              : `${steps.length} ${ce("moments")} · ${days} ${dayUnit} · ${destination?.name}`}
           </p>
         </div>
         {phase === "review" && (
           <button className="cexp__hero-edit" onClick={() => setPhase("input")} type="button">
-            <IoRefreshOutline size={14} /> Edit
+            <IoRefreshOutline size={14} /> {ce("editBtn")}
           </button>
         )}
       </header>
@@ -247,18 +284,18 @@ const CreateExperience = () => {
 
           {/* Destination */}
           <div className="cexp__section">
-            <label className="cexp__label">Where to?</label>
+            <label className="cexp__label">{ce("whereGoing")}</label>
             <div className={`cexp__search-box ${destination ? "cexp__search-box--ok" : ""}`}>
-              <IoLocationOutline className="cexp__search-icon" />
+              <IoLocationOutline size={18} className="cexp__search-icon" />
               <input
                 className="cexp__search-input"
                 value={destQuery}
                 onChange={e => handleDestInput(e.target.value)}
-                placeholder="e.g. Helsinki, Kyoto, Patagonia…"
+                placeholder={ce("destPlaceholder")}
                 autoFocus
               />
               {destSearching && <span className="cexp__spinner" />}
-              {destination && <IoCheckmarkCircle className="cexp__search-check" />}
+              {destination && <IoCheckmarkCircle size={16} className="cexp__search-check" />}
             </div>
             {destResults.length > 0 && (
               <ul className="cexp__search-results">
@@ -280,46 +317,63 @@ const CreateExperience = () => {
           {/* Days + Travelers — side by side */}
           <div className="cexp__counters">
             <div className="cexp__section">
-              <label className="cexp__label">How many days?</label>
+              <label className="cexp__label">{ce("howManyDays")}</label>
               <div className="cexp__stepper-box">
                 <button type="button" className="cexp__stepper-btn" onClick={() => setDays(d => Math.max(1, d - 1))} disabled={days <= 1}>−</button>
                 <div className="cexp__stepper-mid">
                   <strong>{days}</strong>
-                  <span>{days === 1 ? "day" : "days"}</span>
+                  <span>{days === 1 ? ce("day") : ce("days")}</span>
                 </div>
                 <button type="button" className="cexp__stepper-btn" onClick={() => setDays(d => Math.min(30, d + 1))} disabled={days >= 30}>+</button>
               </div>
             </div>
 
             <div className="cexp__section">
-              <label className="cexp__label">Travelers</label>
+              <label className="cexp__label">{ce("travelers")}</label>
               <div className="cexp__stepper-box">
                 <button type="button" className="cexp__stepper-btn" onClick={() => setTravelers(t => Math.max(1, t - 1))} disabled={travelers <= 1}>−</button>
                 <div className="cexp__stepper-mid">
                   <strong>{travelers}</strong>
-                  <span>{travelers === 1 ? "person" : "people"}</span>
+                  <span>{travelers === 1 ? ce("person") : ce("people")}</span>
                 </div>
                 <button type="button" className="cexp__stepper-btn" onClick={() => setTravelers(t => Math.min(20, t + 1))} disabled={travelers >= 20}>+</button>
               </div>
             </div>
           </div>
 
-          {/* Category — horizontal scroll chips, matching mobile */}
+          {/* Category — visual grid */}
           <div className="cexp__section">
-            <label className="cexp__label">What kind of trip?</label>
-            <div className="cexp__cat-row">
+            <label className="cexp__label">{ce("soulOfTrip")}</label>
+            <div className="cexp__cat-grid">
               {itineraryCategories.filter(c => c.value !== "other").map(cat => (
                 <button
                   key={cat.value}
                   type="button"
-                  className={`cexp__cat-chip ${category === cat.value ? "cexp__cat-chip--active" : ""}`}
+                  className={`cexp__cat-card ${category === cat.value ? "cexp__cat-card--active" : ""}`}
                   onClick={() => setCategory(cat.value)}
                 >
-                  <span>{CATEGORY_EMOJI[cat.value]}</span>
-                  {cat.label}
+                  <span className="cexp__cat-card-emoji">{CATEGORY_EMOJI[cat.value]}</span>
+                  <span className="cexp__cat-card-name">{cat.label}</span>
+                  <span className="cexp__cat-card-desc">{ce(`catDetails.${cat.value}`)}</span>
                 </button>
               ))}
             </div>
+          </div>
+
+          {/* Intention */}
+          <div className="cexp__section">
+            <label className="cexp__label cexp__label--intention">
+              <IoBulbOutline size={13} /> {ce("lookingFor")}
+            </label>
+            <textarea
+              className="cexp__intention"
+              value={intention}
+              onChange={e => setIntention(e.target.value)}
+              placeholder={ce("intentionPlaceholder", { destination: destination?.name ?? "…" })}
+              rows={3}
+              maxLength={400}
+            />
+            <span className="cexp__intention-hint">{ce("intentionHint")}</span>
           </div>
 
           {/* Generate */}
@@ -330,26 +384,26 @@ const CreateExperience = () => {
             type="button"
           >
             {generating ? (
-              <><span className="cexp__plane">✈</span> Planning your trip to <em>{destination?.name}</em>…</>
+              <><span className="cexp__plane">✈</span> {ce("building", { destination: destination?.name })}</>
             ) : (
-              <><IoFlashOutline size={18} /> Let AI plan it</>
+              <><IoFlashOutline size={18} /> {ce("buildExperience")}</>
             )}
           </button>
-          {!destination && <p className="cexp__generate-hint">Enter a destination to get started</p>}
+          {!destination && <p className="cexp__generate-hint">{ce("enterDest")}</p>}
         </div>
 
       ) : (
         /* ── REVIEW PHASE ────────────────────────────────────────────── */
         <div className="cexp__review">
 
-          {/* Title card — matching mobile structure */}
+          {/* Title card */}
           <div className="cexp__card">
-            <span className="cexp__card-label">Trip name</span>
+            <span className="cexp__card-label">{ce("experienceName")}</span>
             <input
               className="cexp__title-input"
               value={title}
               onChange={e => setTitle(e.target.value)}
-              placeholder="Give your trip a name…"
+              placeholder={ce("namePlaceholder")}
               maxLength={50}
             />
           </div>
@@ -357,9 +411,9 @@ const CreateExperience = () => {
           {/* Timeline card */}
           <div className="cexp__card">
             <div className="cexp__timeline-top">
-              <span className="cexp__timeline-count">{steps.length} steps · {days} {days === 1 ? "day" : "days"}</span>
+              <span className="cexp__timeline-count">{steps.length} {ce("moments")} · {days} {dayUnit}</span>
               <button type="button" className="cexp__regen-btn" onClick={() => setPhase("input")}>
-                <IoRefreshOutline size={13} /> Regenerate
+                <IoRefreshOutline size={13} /> {ce("regenerate")}
               </button>
             </div>
 
@@ -369,7 +423,7 @@ const CreateExperience = () => {
                   {isMultiDay && (
                     <div className="cexp__day-sep">
                       <span className="cexp__day-dot" />
-                      <span className="cexp__day-label">Day {day}</span>
+                      <span className="cexp__day-label">{t("itinerary.dayHeader", { n: day })}</span>
                       <span className="cexp__day-line" />
                     </div>
                   )}
@@ -388,35 +442,36 @@ const CreateExperience = () => {
                 </div>
               ))}
               <button type="button" className="cexp__add-step" onClick={addStep}>
-                <IoAddCircleOutline size={16} /> Add step
+                <IoAddCircleOutline size={16} /> {ce("addMoment")}
               </button>
             </div>
           </div>
 
           <button type="button" className="cexp__save" onClick={handleSave} disabled={saving}>
-            {saving ? "Saving…" : "Save trip"}
+            {saving ? ce("saving") : ce("saveExperience")}
           </button>
         </div>
       )}
 
-      {/* ── Edit step modal (bottom sheet, matching mobile) ──────────── */}
+      {/* ── Edit step modal ──────────────────────────────────────────── */}
       {editingKey !== null && (
         <div className="cexp__modal-backdrop" onClick={closeEdit}>
           <div className="cexp__modal-sheet" onClick={e => e.stopPropagation()}>
             <div className="cexp__modal-handle" />
-            <h3 className="cexp__modal-title">Edit step</h3>
+            <h3 className="cexp__modal-title">{ce("editMoment")}</h3>
 
-            {/* Type chips — horizontal scroll */}
+            {/* Type */}
+            <div className="cexp__modal-section-label">{ce("typeLabel")}</div>
             <div className="cexp__modal-types">
-              {ALL_STEP_TYPES.map(t => {
-                const tc = getStepCfg(t);
-                const on = editDraft?.category === t;
+              {ALL_STEP_TYPES.map(type => {
+                const tc = getStepCfg(type);
+                const on = editDraft?.category === type;
                 return (
                   <button
-                    key={t} type="button"
+                    key={type} type="button"
                     className={`cexp__type-chip ${on ? "cexp__type-chip--on" : ""}`}
                     style={on ? { background: tc.color, borderColor: tc.color } : { borderColor: tc.color + "55" }}
-                    onClick={() => setEditDraft(d => ({ ...d, category: t }))}
+                    onClick={() => setEditDraft(d => ({ ...d, category: type }))}
                   >
                     <tc.Icon size={12} color={on ? "#fff" : tc.color} />
                     <span style={{ color: on ? "#fff" : tc.color }}>{tc.label}</span>
@@ -429,7 +484,7 @@ const CreateExperience = () => {
               className="cexp__modal-input"
               value={editDraft?.name ?? ""}
               onChange={e => setEditDraft(d => ({ ...d, name: e.target.value }))}
-              placeholder={STEP_NAME_HINT[editDraft?.category] ?? "Step name…"}
+              placeholder={STEP_NAME_HINT[editDraft?.category] ?? ce("nameMomentHint")}
               maxLength={100}
               autoFocus
             />
@@ -437,16 +492,46 @@ const CreateExperience = () => {
               className="cexp__modal-textarea"
               value={editDraft?.description ?? ""}
               onChange={e => setEditDraft(d => ({ ...d, description: e.target.value }))}
-              placeholder="Add details, tips, or narrative…"
-              rows={3}
+              placeholder={ce("detailsHint")}
+              rows={2}
               maxLength={500}
             />
+
+            {/* Mood */}
+            <div className="cexp__modal-section-label">{ce("theFeeling")}</div>
+            <div className="cexp__mood-row">
+              {MOOD_DEFS.map(m => {
+                const on = editDraft?.mood === m.key;
+                return (
+                  <button
+                    key={m.key} type="button"
+                    className={`cexp__mood-chip ${on ? "cexp__mood-chip--on" : ""}`}
+                    onClick={() => setEditDraft(d => ({ ...d, mood: d.mood === m.key ? null : m.key }))}
+                  >
+                    <span>{m.emoji}</span>
+                    <span>{ce(`moods.${m.key}`)}</span>
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Personal note */}
+            <div className="cexp__modal-section-label">{ce("yourStory")}</div>
+            <textarea
+              className="cexp__modal-textarea cexp__modal-textarea--note"
+              value={editDraft?.personalNote ?? ""}
+              onChange={e => setEditDraft(d => ({ ...d, personalNote: e.target.value }))}
+              placeholder={ce("whyPlaceHint")}
+              rows={2}
+              maxLength={300}
+            />
+
             <div className="cexp__modal-actions">
               <button type="button" className="cexp__modal-remove" onClick={() => removeStep(editingKey)}>
-                <IoTrashOutline size={14} /> Remove
+                <IoTrashOutline size={14} /> {ce("remove")}
               </button>
               <button type="button" className="cexp__modal-done" onClick={saveEdit}>
-                <IoCheckmarkOutline size={14} /> Done
+                <IoCheckmarkOutline size={14} /> {ce("done")}
               </button>
             </div>
           </div>

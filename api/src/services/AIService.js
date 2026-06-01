@@ -6,17 +6,26 @@ export class AIService {
   }
 
   async generateTextPrompt(destination, totalDays, context = {}) {
-    const { category, numberOfTravellers, budget, currency } = context;
+    const { category, numberOfTravellers, budget, currency, intention, language } = context;
 
     const contextLines = [
       category && category !== 'other' ? `- Trip style: ${category}` : null,
       numberOfTravellers ? `- Number of travellers: ${numberOfTravellers}` : null,
       budget && currency ? `- Budget: ${budget} ${currency} total` : null,
+      intention?.trim() ? `- What the traveler is personally looking for: "${intention.trim()}"` : null,
     ].filter(Boolean).join('\n');
+
+    const intentionNote = intention?.trim()
+      ? `\nThe traveler has expressed a personal intention above. Prioritize authentic, lesser-known places that match it — avoid purely tourist-trap recommendations.\n`
+      : '';
+
+    const languageInstruction = language === 'es'
+      ? '\nIMPORTANT: Generate ALL text fields (title, description, label) entirely in Spanish.'
+      : '';
 
     const prompt = `Create a JSON travel itinerary for a ${totalDays}-day trip to ${destination}.
 Include exactly 3 places per day (${totalDays * 3} total), spread evenly across all ${totalDays} days.
-${contextLines ? `\nTrip context:\n${contextLines}\nTailor the place suggestions to this context.\n` : ''}
+${contextLines ? `\nTrip context:\n${contextLines}\nTailor the place suggestions to this context.${intentionNote}` : ''}${languageInstruction}
 Each place must have:
 - title (string): name of the place
 - description (string): 1-2 engaging sentences about it

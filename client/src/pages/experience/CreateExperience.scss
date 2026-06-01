@@ -5,6 +5,11 @@
   width: 100%;
   max-width: 640px;
   padding: 0; // padding comes from section__container
+
+  // Global CSS reset sets * { width: 100% } which breaks icons, chips, and pill buttons.
+  // Restore natural sizing for inline/interactive elements; specific rules override below.
+  svg, span, em, strong, i { width: auto; height: auto; }
+  svg { flex-shrink: 0; }
 }
 
 // ── Hero ─────────────────────────────────────────────────────────────────────
@@ -32,24 +37,29 @@
 }
 
 .cexp__hero-icon {
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
   background: rgba(255,255,255,0.15);
-  border-radius: 12px;
+  border-radius: 10px;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 1.4rem;
   color: #fff;
   flex-shrink: 0;
 }
 
-.cexp__hero-text { flex: 1; min-width: 0; }
+.cexp__hero-text {
+  flex: 1;
+  min-width: 0;
+
+  h1 { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
 
 .cexp__hero-edit {
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  width: fit-content;
   font-size: 0.78rem;
   font-weight: 600;
   color: #fff;
@@ -109,12 +119,13 @@
 
 .cexp__search-icon {
   color: #1A535C;
-  font-size: 1.1rem;
   flex-shrink: 0;
 }
 
 .cexp__search-input {
-  flex: 1;
+  flex: 1 1 auto;
+  min-width: 0;
+  width: 0; // overridden by flex: 1, forces proper flex sizing
   border: none;
   background: transparent;
   font-size: 0.95rem;
@@ -139,7 +150,6 @@
 
 .cexp__search-check {
   color: #16a34a;
-  font-size: 1.1rem;
   flex-shrink: 0;
 }
 
@@ -240,41 +250,89 @@
   }
 }
 
-// Category chips — horizontal scroll like mobile
-.cexp__cat-row {
-  display: flex;
+// Category — 3-column visual grid
+.cexp__cat-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
   gap: 0.5rem;
-  overflow-x: auto;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-
-  &::-webkit-scrollbar { display: none; }
 }
 
-.cexp__cat-chip {
+.cexp__cat-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.35rem;
-  padding: 0.5rem 0.9rem;
-  border-radius: 999px;
+  text-align: center;
+  gap: 3px;
+  width: 100%; // grid controls width, this fills the cell
+  padding: 0.75rem 0.4rem;
+  border-radius: 12px;
   border: 1.5px solid var(--border-color, #e8ecf0);
   background: #fff;
-  font-size: 0.82rem;
-  color: #6b7280;
-  font-weight: 500;
   cursor: pointer;
-  white-space: nowrap;
   font-family: inherit;
   transition: all 0.15s;
 
-  &:hover { border-color: #1A535C; color: #1A535C; background: #e8f4f2; }
+  &:hover { border-color: #1A535C80; background: #f8fffe; }
 
   &--active {
     border-color: #1A535C;
     background: #e8f4f2;
-    color: #1A535C;
-    font-weight: 700;
   }
+}
+
+.cexp__cat-card-emoji { font-size: 1.3rem; line-height: 1; }
+
+.cexp__cat-card-name {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #111827;
+  line-height: 1.2;
+
+  .cexp__cat-card--active & { color: #1A535C; }
+}
+
+.cexp__cat-card-desc {
+  font-size: 0.65rem;
+  color: #9ca3af;
+  line-height: 1.3;
+
+  .cexp__cat-card--active & { color: #1A535C; opacity: 0.75; }
+}
+
+// Intention field
+.cexp__label--intention {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  color: #374151;
+}
+
+.cexp__intention {
+  width: 100%;
+  border: 1.5px solid var(--border-color, #e8ecf0);
+  border-radius: 14px;
+  background: #fff;
+  padding: 0.85rem 1rem;
+  font-size: 0.9rem;
+  color: var(--text-color, #333);
+  font-family: inherit;
+  line-height: 1.55;
+  resize: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+
+  &:focus {
+    outline: none;
+    border-color: #1A535C;
+    box-shadow: 0 0 0 3px rgba(26,83,92,0.08);
+  }
+
+  &::placeholder { color: #b0b8c4; font-style: italic; }
+}
+
+.cexp__intention-hint {
+  font-size: 0.73rem;
+  color: #9ca3af;
+  padding: 0 0.1rem;
 }
 
 // Generate button
@@ -301,11 +359,12 @@
   &:disabled { opacity: 0.45; cursor: default; transform: none; }
   &--loading { background: #1A535C; box-shadow: 0 4px 16px rgba(26,83,92,0.35); cursor: wait; }
 
-  svg { flex-shrink: 0; vertical-align: middle; }
+  svg { flex-shrink: 0; width: 18px; height: 18px; vertical-align: middle; }
 }
 
 .cexp__plane {
   display: inline-block;
+  width: fit-content;
   animation: fly 1.2s ease-in-out infinite alternate;
 }
 
@@ -380,6 +439,7 @@
   display: flex;
   align-items: center;
   gap: 0.3rem;
+  width: fit-content;
   font-size: 0.75rem;
   font-weight: 600;
   color: #E8743B;
@@ -425,6 +485,57 @@
   flex: 1;
   height: 1px;
   background: #e5e7eb;
+}
+
+// Mood section label in modal
+.cexp__modal-section-label {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: #9ca3af;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-top: 0.25rem;
+}
+
+// Mood chips row
+.cexp__mood-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+}
+
+.cexp__mood-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  width: fit-content;
+  padding: 5px 11px;
+  border-radius: 999px;
+  border: 1.5px solid #e5e7eb;
+  background: #f9fafb;
+  font-size: 0.78rem;
+  color: #374151;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+  transition: all 0.12s;
+
+  &:hover { border-color: #1A535C80; background: #f0faf9; }
+
+  &--on {
+    border-color: #1A535C;
+    background: #e8f4f2;
+    color: #1A535C;
+    font-weight: 700;
+  }
+}
+
+// Personal note textarea variant
+.cexp__modal-textarea--note {
+  background: #fdfcf9;
+  border-color: #e9e4d8;
+
+  &:focus { border-color: #D97706; box-shadow: 0 0 0 2px rgba(217,119,6,0.08); }
 }
 
 // Timeline step — matching mobile's EditableStep
@@ -480,6 +591,36 @@
   &:hover .cexp-step__edit-hint { opacity: 1; }
 }
 
+// Meta row: badge + mood tag
+.cexp-step__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+// Mood tag on step card
+.cexp-step__mood-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.67rem;
+  font-weight: 600;
+  color: #1A535C;
+  background: #e8f4f2;
+  border-radius: 999px;
+  padding: 2px 7px;
+}
+
+// Personal note on step card
+.cexp-step__personal-note {
+  font-size: 0.78rem;
+  color: #92613a;
+  font-style: italic;
+  line-height: 1.45;
+}
+
 // Badge — text only, matching mobile exactly
 .cexp-step__badge {
   display: inline-block;
@@ -488,7 +629,6 @@
   letter-spacing: 0.5px;
   border-radius: 6px;
   padding: 2px 7px;
-  margin-bottom: 2px;
   width: fit-content;
 }
 
@@ -628,6 +768,7 @@
   display: inline-flex;
   align-items: center;
   gap: 4px;
+  width: fit-content;
   padding: 4px 10px;
   border-radius: 999px;
   border: 1.5px solid;
