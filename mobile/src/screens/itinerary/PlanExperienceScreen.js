@@ -53,7 +53,7 @@ const PlanExperienceScreen = ({ navigation }) => {
   const [destResults, setDestResults]     = useState([]);
   const [destSearching, setDestSearching] = useState(false);
   const [days, setDays]                   = useState(7);
-  const [category, setCategory]           = useState('adventure');
+  const [category, setCategory]           = useState(['adventure']);
   const [travelers, setTravelers]         = useState(1);
   const [intention, setIntention]         = useState('');
   const [generating, setGenerating]       = useState(false);
@@ -66,6 +66,12 @@ const PlanExperienceScreen = ({ navigation }) => {
   const [saving, setSaving]       = useState(false);
 
   const destTimer = useRef(null);
+  const locTimer  = useRef(null);
+
+  // Location search (modal)
+  const [locQuery, setLocQuery]         = useState('');
+  const [locResults, setLocResults]     = useState([]);
+  const [locSearching, setLocSearching] = useState(false);
 
   // ─── Destination search ───────────────────────────────────────────────────
   const searchDestination = (text) => {
@@ -105,7 +111,7 @@ const PlanExperienceScreen = ({ navigation }) => {
     setGenerating(true);
     try {
       const data = await generateSmartItinerary({
-        destination: destination.name, days, category,
+        destination: destination.name, days, category: category.join(', '),
         numberOfTravellers: travelers, budget: null, currency: 'EUR',
         intention: intention.trim() || undefined,
         language: i18n.language,
@@ -131,22 +137,54 @@ const PlanExperienceScreen = ({ navigation }) => {
     }
   };
 
+  // ─── Location search (modal) ──────────────────────────────────────────────
+  const searchLocation = (text) => {
+    setLocQuery(text);
+    if (!text || text.length < 2) { setLocResults([]); return; }
+    clearTimeout(locTimer.current);
+    locTimer.current = setTimeout(async () => {
+      if (!GEOAPIFY_KEY) return;
+      setLocSearching(true);
+      try {
+        const params = new URLSearchParams({ text, apiKey: GEOAPIFY_KEY, limit: 5, lang: 'en' });
+        const res = await fetch(`https://api.geoapify.com/v1/geocode/autocomplete?${params}`);
+        const data = await res.json();
+        setLocResults((data.features ?? []).map(f => {
+          const p = f.properties;
+          return { name: p.city ?? p.county ?? p.state ?? p.country ?? p.name, label: p.formatted, coordinates: { lat: p.lat, lon: p.lon } };
+        }));
+      } catch { setLocResults([]); }
+      finally { setLocSearching(false); }
+    }, 400);
+  };
+
+  const selectLocation = (result) => {
+    setEditDraft(d => ({
+      ...d,
+      name: d.name?.trim() || result.name,
+      lat: result.coordinates?.lat ?? 0,
+      lon: result.coordinates?.lon ?? 0,
+    }));
+    setLocQuery(result.name);
+    setLocResults([]);
+  };
+
   // ─── Step editing ─────────────────────────────────────────────────────────
   const openEdit = (step) => {
     setEditDraft({ ...step });
     setEditingKey(step._key);
+    setLocQuery(step.lat || step.lon ? step.name : '');
+    setLocResults([]);
   };
 
   const saveEdit = () => {
     setSteps(prev => prev.map(s => s._key === editingKey ? { ...editDraft } : s));
-    setEditingKey(null);
-    setEditDraft(null);
+    setEditingKey(null); setEditDraft(null); setLocQuery(''); setLocResults([]);
   };
 
   const removeStep = (key) => {
     setSteps(prev => prev.filter(s => s._key !== key));
-    setEditingKey(null);
-    setEditDraft(null);
+    setEditingKey(null); setEditDraft(null); setLocQuery(''); setLocResults([]);
   };
 
   const addStep = () => {
@@ -181,7 +219,7 @@ const PlanExperienceScreen = ({ navigation }) => {
         startDate: today, endDate,
         budget: 0, currency: 'EUR',
         numberOfPeople: travelers,
-        category, isPublic: false, source: 'experience',
+        category: category.join(','), isPublic: false, source: 'experience',
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
           description: s.personalNote?.trim()
             ? `${s.description}\n\n✍️ ${s.personalNote.trim()}`
@@ -351,12 +389,16 @@ const PlanExperienceScreen = ({ navigation }) => {
                 {itineraryCategories.filter(c => c.value !== 'other').map(cat => (
                   <TouchableOpacity
                     key={cat.value}
-                    style={[ls.catCard, category === cat.value && ls.catCardOn]}
-                    onPress={() => setCategory(cat.value)}
+                    style={[ls.catCard, category.includes(cat.value) && ls.catCardOn]}
+                    onPress={() => setCategory(prev =>
+                      prev.includes(cat.value)
+                        ? prev.length > 1 ? prev.filter(c => c !== cat.value) : prev
+                        : [...prev, cat.value]
+                    )}
                     activeOpacity={0.75}
                   >
                     <Text style={ls.catCardEmoji}>{CATEGORY_EMOJI[cat.value]}</Text>
-                    <Text style={[ls.catCardName, category === cat.value && ls.catCardNameOn]}>
+                    <Text style={[ls.catCardName, category.includes(cat.value) && ls.catCardNameOn]}>
                       {cat.label}
                     </Text>
                     <Text style={ls.catCardDesc} numberOfLines={2}>
@@ -369,23 +411,19 @@ const PlanExperienceScreen = ({ navigation }) => {
 
             {/* Intention */}
             <View style={ls.section}>
-              <Text style={ls.sectionLabel}>
-                💡 What are you really looking for?
-              </Text>
+              <Text style={ls.sectionLabel}>💡 {ce('lookingFor')}</Text>
               <TextInput
                 style={ls.intentionInput}
                 value={intention}
                 onChangeText={setIntention}
-                placeholder={`e.g. Hidden spots, food I can't pronounce, at least one moment that genuinely surprises me…`}
+                placeholder={ce('intentionPlaceholder', { destination: destination?.name ?? '…' })}
                 placeholderTextColor="#b0b8c4"
                 multiline
                 numberOfLines={3}
                 maxLength={400}
                 textAlignVertical="top"
               />
-              <Text style={ls.intentionHint}>
-                Optional · AI will use this to make your trip truly yours
-              </Text>
+              <Text style={ls.intentionHint}>{ce('intentionHint')}</Text>
             </View>
 
             {/* Generate CTA */}
@@ -521,6 +559,42 @@ const PlanExperienceScreen = ({ navigation }) => {
               placeholderTextColor="#9ca3af"
               maxLength={100}
             />
+
+            {/* Location search */}
+            <Text style={ls.modalSectionLabel}>
+              <Ionicons name="location-outline" size={11} color="#9CA3AF" /> {ce('locationLabel')}
+            </Text>
+            <View style={[ls.locBox, (editDraft?.lat || editDraft?.lon) && !locResults.length && ls.locBoxOk]}>
+              <Ionicons name="location-outline" size={16} color={COLORS.accent} />
+              <TextInput
+                style={ls.locInput}
+                value={locQuery}
+                onChangeText={searchLocation}
+                placeholder={ce('locationPlaceholder')}
+                placeholderTextColor="#9ca3af"
+              />
+              {locSearching
+                ? <ActivityIndicator size="small" color={COLORS.accent} />
+                : (editDraft?.lat || editDraft?.lon) && !locResults.length
+                  ? <Ionicons name="checkmark-circle" size={16} color="#16a34a" />
+                  : null
+              }
+            </View>
+            {locResults.length > 0 && (
+              <View style={ls.locResults}>
+                {locResults.map((r, i) => (
+                  <TouchableOpacity
+                    key={i}
+                    style={[ls.locResult, i < locResults.length - 1 && ls.locResultBorder]}
+                    onPress={() => selectLocation(r)}
+                  >
+                    <Text style={ls.locResultName}>{r.name}</Text>
+                    <Text style={ls.locResultLabel} numberOfLines={1}>{r.label}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+
             <TextInput
               style={[ls.editInput, ls.editTextarea]}
               value={editDraft?.description ?? ''}
@@ -777,6 +851,23 @@ const ls = StyleSheet.create({
     textTransform: 'uppercase', letterSpacing: 0.5,
     marginBottom: 8, marginTop: 4,
   },
+  locBox: {
+    flexDirection: 'row', alignItems: 'center', gap: 8,
+    borderWidth: 1.5, borderColor: '#DDE3EC', borderRadius: 10,
+    backgroundColor: '#F7F9FC', paddingHorizontal: 12, paddingVertical: 10,
+    marginBottom: 6,
+  },
+  locBoxOk: { borderColor: '#16a34a' },
+  locInput: { flex: 1, fontSize: 14, color: '#111827' },
+  locResults: {
+    backgroundColor: '#fff', borderRadius: 10, marginBottom: 8,
+    borderWidth: 1, borderColor: '#E5E7EB',
+  },
+  locResult: { padding: 11 },
+  locResultBorder: { borderBottomWidth: 1, borderBottomColor: '#F3F4F6' },
+  locResultName: { fontSize: 13, fontWeight: '600', color: '#111827' },
+  locResultLabel: { fontSize: 11, color: '#6b7280', marginTop: 1 },
+
   editTypeRow: { gap: 6, paddingBottom: 12 },
   typeChip: {
     flexDirection: 'row', alignItems: 'center', gap: 5,
