@@ -18,7 +18,6 @@ import { createLikesRouter } from "./src/routes/likesRouter.js";
 import { createFollowRouter } from "./src/routes/followRouter.js";
 import { healthCheckRouter } from './src/routes/healthCheckRouter.js';
 import { createItinerariesRouter } from "./src/routes/itinerariesRouter.js";
-import { createItineraryRouter } from './src/routes/itineraryRouter.js';
 import { createUsersRouter } from './src/routes/usersRouter.js';
 import { createOgRouter } from './src/routes/ogRouter.js';
 
@@ -29,7 +28,6 @@ app.use(express.json());
 app.disable('x-powered-by');
 app.use(cookieParser())
 
-app.use('/itinerary', createItineraryRouter());
 app.use('/users', createUsersRouter());
 app.use('/users', authenticate, createFollowRouter());
 app.use('/auth', createAuthRouter());

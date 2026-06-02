@@ -2,7 +2,7 @@ import { parseError } from "../utils/parseError";
 import { getApiUrl } from "../utils/apiConfig";
 import { authFetch } from "../utils/authFetch";
 
-const baseUrl = () => `${getApiUrl()}/itinerary`;
+const baseUrl = () => `${getApiUrl()}/itineraries`;
 
 export const getItineraryById = async (id) => {
     const response = await fetch(`${baseUrl()}/${id}`, {
@@ -38,7 +38,7 @@ export const deleteItinerary = async (id) => {
 };
 
 export const updateItinerary = async (id, formData) => {
-    const response = await authFetch(`${baseUrl()}/edit/${id}`, {
+    const response = await authFetch(`${baseUrl()}/${id}`, {
         method: "PATCH",
         body: formData,
     });

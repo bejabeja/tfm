@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { sendContact } from "@tobeatraveller/shared";
 import "./Legal.scss";
 import "./Contact.scss";
-
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:3000";
 const CONTACT_EMAIL = "tobeatravellercompany@gmail.com";
 
 const Contact = () => {
@@ -42,17 +41,9 @@ const Contact = () => {
     if (!validate()) return;
     setStatus("sending");
     try {
-      const res = await fetch(`${API_URL}/contact`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(fields),
-      });
-      if (res.ok) {
-        setStatus("success");
-        setFields({ name: "", email: "", subject: "", message: "" });
-      } else {
-        setStatus("error");
-      }
+      await sendContact(fields);
+      setStatus("success");
+      setFields({ name: "", email: "", subject: "", message: "" });
     } catch {
       setStatus("error");
     }

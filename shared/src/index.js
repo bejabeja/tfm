@@ -1,5 +1,6 @@
 // Services
 export * from './services/auth.js';
+export { sendContact } from './services/contact.js';
 export * from './services/itineraries.js';
 export * from './services/itinerary.js';
 export * from './services/comments.js';

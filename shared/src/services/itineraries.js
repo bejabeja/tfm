@@ -50,8 +50,7 @@ export const getfeaturedItineraries = async () => {
 }
 
 export const generateSmartItinerary = async ({ destination, days, category, numberOfTravellers, budget, currency, intention, language }) => {
-    const itineraryBase = `${getApiUrl()}/itinerary`;
-    const response = await authFetch(`${itineraryBase}/generate-smart`, {
+    const response = await authFetch(`${baseUrl()}/generate-smart`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ destination, days, category, numberOfTravellers, budget, currency, intention, language }),
@@ -79,13 +78,10 @@ export const getMyItineraries = async () => {
 };
 
 export const getItinerariesByUserId = async (id) => {
-    const response = await fetch(`${baseUrl()}/${id}`, {
+    const response = await fetch(`${baseUrl()}/user/${id}`, {
         method: 'GET',
-        headers: {
-            'Content-Type': 'application/json'
-        }
+        headers: { 'Content-Type': 'application/json' },
     });
-
     if (!response.ok) {
         await parseError(response, 'Failed to get my itineraries');
     }
