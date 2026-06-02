@@ -67,7 +67,8 @@ body {
 
   svg {
     margin-right: 0.4rem;
-    font-size: 1.1rem;
+    width: 1.1rem !important;
+    height: 1.1rem !important;
     flex-shrink: 0;
   }
 
@@ -103,6 +104,17 @@ body {
 
     &:hover {
       background: var(--error-color-dark);
+    }
+  }
+
+  &--danger-outline {
+    background: transparent;
+    color: var(--error-color, #e53e3e);
+    border: 1.5px solid var(--error-color, #e53e3e);
+
+    &:hover {
+      background: var(--error-color, #e53e3e);
+      color: var(--white-color);
     }
   }
 

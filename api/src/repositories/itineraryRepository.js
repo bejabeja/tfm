@@ -88,22 +88,22 @@ export class ItineraryRepository {
     await client.query(`DELETE FROM itineraries WHERE id = $1`, [itineraryId]);
   }
 
-  async linkPlace(itineraryId, placeId, orderIndex, dayNumber = 1) {
+  async linkPlace(itineraryId, placeId, orderIndex, dayNumber = 1, description = null) {
     const id = uuidv4();
     await client.query(
-      `INSERT INTO itinerary_places (id, itinerary_id, place_id, order_index, day_number) VALUES ($1, $2, $3, $4, $5)`,
-      [id, itineraryId, placeId, orderIndex, dayNumber]
+      `INSERT INTO itinerary_places (id, itinerary_id, place_id, order_index, day_number, description) VALUES ($1, $2, $3, $4, $5, $6)`,
+      [id, itineraryId, placeId, orderIndex, dayNumber, description]
     );
   }
 
-  async updatePlaceOrder(itineraryId, { id: placeId, orderIndex, dayNumber = 1 }) {
+  async updatePlaceOrder(itineraryId, { id: placeId, orderIndex, dayNumber = 1, description = null }) {
     const query = `
             UPDATE itinerary_places
-            SET order_index = $2, day_number = $4
+            SET order_index = $2, day_number = $4, description = $5
             WHERE itinerary_id = $1 AND place_id = $3
             RETURNING *;
         `;
-    const result = await client.query(query, [itineraryId, orderIndex, placeId, dayNumber]);
+    const result = await client.query(query, [itineraryId, orderIndex, placeId, dayNumber, description]);
     return result.rows[0];
   }
 

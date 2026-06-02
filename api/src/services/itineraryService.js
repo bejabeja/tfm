@@ -46,7 +46,7 @@ export class ItineraryService {
 
         for (const placeData of itineraryData.places) {
             const place = await this.placesRepository.insertPlace(placeData);
-            await this.itinerariesRepository.linkPlace(itinerary.id, place.id, placeData.orderIndex, placeData.dayNumber ?? 1);
+            await this.itinerariesRepository.linkPlace(itinerary.id, place.id, placeData.orderIndex, placeData.dayNumber ?? 1, placeData.description ?? null);
             itinerary.addPlace(place);
         }
         return itinerary.toDTO();
@@ -98,10 +98,10 @@ export class ItineraryService {
         for (const placeData of incomingPlaces) {
             if (currentPlaceIds.has(placeData.id)) {
                 await this.placesRepository.updatePlace(placeData);
-                await this.itinerariesRepository.updatePlaceOrder(itinerary.id, placeData);
+                await this.itinerariesRepository.updatePlaceOrder(itinerary.id, { ...placeData, description: placeData.description ?? null });
             } else {
                 const newPlace = await this.placesRepository.insertPlace(placeData);
-                await this.itinerariesRepository.linkPlace(itinerary.id, newPlace.id, placeData.orderIndex, placeData.dayNumber ?? 1);
+                await this.itinerariesRepository.linkPlace(itinerary.id, newPlace.id, placeData.orderIndex, placeData.dayNumber ?? 1, placeData.description ?? null);
             }
         }
 

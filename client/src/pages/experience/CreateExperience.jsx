@@ -141,8 +141,12 @@ const CreateExperience = () => {
   const [editingKey, setEditingKey]     = useState(null);
   const [editDraft, setEditDraft]       = useState(null);
   const [saving, setSaving]             = useState(false);
+  const [locQuery, setLocQuery]         = useState("");
+  const [locResults, setLocResults]     = useState([]);
+  const [locSearching, setLocSearching] = useState(false);
 
   const searchTimer = useRef(null);
+  const locTimer    = useRef(null);
 
   const ce = (key, vars) => t(`createExperience.${key}`, vars);
 
@@ -195,8 +199,36 @@ const CreateExperience = () => {
   };
 
   // ─── Step editing ────────────────────────────────────────────────────────
-  const openEdit  = (step) => { setEditDraft({ ...step }); setEditingKey(step._key); };
-  const closeEdit = () => { setEditingKey(null); setEditDraft(null); };
+  const handleLocInput = (value) => {
+    setLocQuery(value);
+    clearTimeout(locTimer.current);
+    if (!value || value.length < 2) { setLocResults([]); return; }
+    locTimer.current = setTimeout(async () => {
+      setLocSearching(true);
+      try { setLocResults(await searchDestinations(value)); }
+      catch { setLocResults([]); }
+      finally { setLocSearching(false); }
+    }, 350);
+  };
+
+  const selectLoc = (result) => {
+    setEditDraft(d => ({
+      ...d,
+      name: d.name?.trim() || result.name,
+      lat: result.coordinates?.lat ?? 0,
+      lon: result.coordinates?.lon ?? 0,
+    }));
+    setLocQuery(result.name);
+    setLocResults([]);
+  };
+
+  const openEdit  = (step) => {
+    setEditDraft({ ...step });
+    setEditingKey(step._key);
+    setLocQuery(step.lat || step.lon ? step.name : "");
+    setLocResults([]);
+  };
+  const closeEdit = () => { setEditingKey(null); setEditDraft(null); setLocQuery(""); setLocResults([]); };
   const saveEdit  = () => {
     if (!editDraft) return;
     setSteps(prev => prev.map(s => s._key === editingKey ? { ...editDraft } : s));
@@ -388,9 +420,9 @@ const CreateExperience = () => {
             type="button"
           >
             {generating ? (
-              <><span className="cexp__plane">✈</span> {ce("building", { destination: destination?.name })}</>
+              <><span className="cexp__plane">✈</span>{ce("building", { destination: destination?.name })}</>
             ) : (
-              <><IoFlashOutline size={18} /> {ce("buildExperience")}</>
+              <><IoFlashOutline />{ce("buildExperience")}</>
             )}
           </button>
           {!destination && <p className="cexp__generate-hint">{ce("enterDest")}</p>}
@@ -492,6 +524,34 @@ const CreateExperience = () => {
               maxLength={100}
               autoFocus
             />
+
+            <div className="cexp__modal-section-label"><IoLocationOutline size={11} /> {ce("locationLabel")}</div>
+            <div className="cexp__modal-loc">
+              <div className={`cexp__search-box cexp__search-box--modal ${(editDraft?.lat || editDraft?.lon) && !locResults.length ? "cexp__search-box--ok" : ""}`}>
+                <IoLocationOutline size={15} className="cexp__search-icon" />
+                <input
+                  className="cexp__search-input"
+                  value={locQuery}
+                  onChange={e => handleLocInput(e.target.value)}
+                  placeholder={ce("locationPlaceholder")}
+                />
+                {locSearching && <span className="cexp__spinner" />}
+                {(editDraft?.lat || editDraft?.lon) && !locResults.length && (
+                  <IoCheckmarkCircle size={14} className="cexp__search-check" />
+                )}
+              </div>
+              {locResults.length > 0 && (
+                <ul className="cexp__search-results">
+                  {locResults.map((r, i) => (
+                    <li key={i} onClick={() => selectLoc(r)}>
+                      <strong>{r.name}</strong>
+                      <small>{r.label}</small>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
             <textarea
               className="cexp__modal-textarea"
               value={editDraft?.description ?? ""}

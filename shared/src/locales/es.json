@@ -583,6 +583,8 @@
     "editMoment": "Editar momento",
     "typeLabel": "Tipo",
     "nameMomentHint": "Nombre de este momento…",
+    "locationLabel": "Ubicación",
+    "locationPlaceholder": "Busca un lugar…",
     "detailsHint": "Añade detalles, contexto, qué hay que saber…",
     "theFeeling": "La sensación",
     "yourStory": "Tu historia",

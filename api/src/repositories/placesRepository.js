@@ -12,13 +12,14 @@ export class PlacesRepository {
         const lon = this.round6(placeData.infoPlace.lon ?? 0);
 
         const result = await client.query(
-            `INSERT INTO places (id, title, description, label, latitude, longitude, category)
-             VALUES ($1, $2, $3, $4, $5, $6, $7)
+            `INSERT INTO places (id, title, label, latitude, longitude, category)
+             VALUES ($1, $2, $3, $4, $5, $6)
+             ON CONFLICT (latitude, longitude) WHERE (latitude != 0 OR longitude != 0)
+             DO UPDATE SET title = EXCLUDED.title, label = EXCLUDED.label, category = EXCLUDED.category
              RETURNING *;`,
             [
                 uuidv4(),
                 placeData.infoPlace.name,
-                placeData.description,
                 placeData.infoPlace.label ?? placeData.infoPlace.name,
                 lat,
                 lon,
@@ -26,12 +27,14 @@ export class PlacesRepository {
             ]
         );
 
-        return Place.fromDb(result.rows[0], placeData.orderIndex);
+        const place = Place.fromDb(result.rows[0], placeData.orderIndex);
+        place.description = placeData.description;
+        return place;
     }
 
     async getPlacesByItineraryId(itineraryId) {
         const result = await client.query(
-            `SELECT p.*, ip.order_index, ip.day_number
+            `SELECT p.*, ip.order_index, ip.day_number, ip.description
              FROM places p
              JOIN itinerary_places ip ON p.id = ip.place_id
              WHERE ip.itinerary_id = $1
@@ -47,13 +50,12 @@ export class PlacesRepository {
 
         const result = await client.query(
             `UPDATE places
-             SET title = $2, description = $3, label = $4, latitude = $5, longitude = $6, category = $7
+             SET title = $2, label = $3, latitude = $4, longitude = $5, category = $6
              WHERE id = $1
              RETURNING *;`,
             [
                 placeData.id,
                 placeData.infoPlace.name,
-                placeData.description,
                 placeData.infoPlace.label ?? placeData.infoPlace.name,
                 lat,
                 lon,
@@ -61,6 +63,8 @@ export class PlacesRepository {
             ]
         );
 
-        return Place.fromDb(result.rows[0], placeData.orderIndex);
+        const place = Place.fromDb(result.rows[0], placeData.orderIndex);
+        place.description = placeData.description;
+        return place;
     }
 }

@@ -155,7 +155,7 @@ describe('ItineraryService', () => {
       await service.createItinerary(dataWithPlaces, null);
 
       expect(placesRepository.insertPlace).toHaveBeenCalledTimes(1);
-      expect(itinerariesRepository.linkPlace).toHaveBeenCalledWith('itin-1', 'place-1', 0, 1);
+      expect(itinerariesRepository.linkPlace).toHaveBeenCalledWith('itin-1', 'place-1', 0, 1, null);
     });
 
     it('throws ConflictError when repository fails to create', async () => {
@@ -291,7 +291,7 @@ describe('ItineraryService', () => {
       await service.updateItinerary('itin-1', updateData, null);
 
       expect(placesRepository.updatePlace).toHaveBeenCalledWith(placeUpdate);
-      expect(itinerariesRepository.updatePlaceOrder).toHaveBeenCalledWith('itin-1', placeUpdate);
+      expect(itinerariesRepository.updatePlaceOrder).toHaveBeenCalledWith('itin-1', { ...placeUpdate, description: null });
     });
 
     it('inserts and links new places not previously in the itinerary', async () => {
@@ -305,7 +305,7 @@ describe('ItineraryService', () => {
       await service.updateItinerary('itin-1', updateData, null);
 
       expect(placesRepository.insertPlace).toHaveBeenCalledWith(newPlace);
-      expect(itinerariesRepository.linkPlace).toHaveBeenCalledWith('itin-1', 'new-place', 0, 1);
+      expect(itinerariesRepository.linkPlace).toHaveBeenCalledWith('itin-1', 'new-place', 0, 1, null);
     });
   });
 

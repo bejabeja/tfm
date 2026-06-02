@@ -63,7 +63,7 @@ const ImageUpload = ({ onUpload, imageUrl: initialImageUrl, isComplete }) => {
             <label htmlFor="image-upload-input" className="btn btn--secondary">
               Change
             </label>
-            <button type="button" className="image-upload-clear" onClick={handleClear}>
+            <button type="button" className="btn btn--danger-outline image-upload-clear" onClick={handleClear}>
               Remove
             </button>
           </div>

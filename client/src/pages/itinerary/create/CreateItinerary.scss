@@ -282,22 +282,6 @@
   }
 }
 
-// #7 — image clear button
-.image-upload-clear {
-  background: none;
-  border: 1px solid var(--border-color);
-  border-radius: 8px;
-  color: var(--text-secondary-color);
-  cursor: pointer;
-  font-size: 0.85rem;
-  padding: 0.4rem 0.75rem;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: var(--danger-color, #e53e3e);
-    color: var(--danger-color, #e53e3e);
-  }
-}
 
 .form__place-card {
   background: var(--surface-color);
@@ -458,6 +442,7 @@
   border-radius: 10px;
   overflow: hidden;
   width: fit-content;
+  flex-shrink: 0;
 
   &-btn {
     width: 44px;
@@ -482,6 +467,7 @@
   }
 
   &-value {
+    width: auto;
     min-width: 3rem;
     text-align: center;
     font-size: 1rem;
@@ -745,6 +731,7 @@
 .form__travellers-label {
   font-size: 0.9rem;
   color: var(--text-secondary-color);
+  width: auto;
 }
 
 // Date quick-duration presets

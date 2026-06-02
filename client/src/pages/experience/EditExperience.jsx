@@ -430,9 +430,9 @@ const EditExperience = () => {
             type="button"
           >
             {generating ? (
-              <><span className="cexp__plane">✈</span> {ce("building", { destination: destination?.name })}</>
+              <><span className="cexp__plane">✈</span>{ce("building", { destination: destination?.name })}</>
             ) : (
-              <><IoFlashOutline size={18} /> {ce("buildExperience")}</>
+              <><IoFlashOutline />{ce("buildExperience")}</>
             )}
           </button>
           {!destination && <p className="cexp__generate-hint">{ce("enterDest")}</p>}

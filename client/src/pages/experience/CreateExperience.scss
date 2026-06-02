@@ -355,11 +355,19 @@
   transition: opacity 0.15s, transform 0.1s;
   margin-top: 0.25rem;
 
+  white-space: nowrap;
+  overflow: hidden;
+
   &:hover:not(:disabled) { opacity: 0.92; transform: translateY(-1px); }
   &:disabled { opacity: 0.45; cursor: default; transform: none; }
   &--loading { background: #1A535C; box-shadow: 0 4px 16px rgba(26,83,92,0.35); cursor: wait; }
 
-  svg { flex-shrink: 0; width: 18px; height: 18px; vertical-align: middle; }
+}
+
+.cexp__generate svg {
+  width: 18px !important;
+  height: 18px !important;
+  flex-shrink: 0;
 }
 
 .cexp__plane {
@@ -780,6 +788,29 @@
   transition: all 0.12s;
 
   &--on { font-weight: 700; }
+}
+
+.cexp__modal-loc {
+  position: relative;
+
+  .cexp__search-box--modal {
+    padding: 0.55rem 0.85rem;
+    border-radius: 10px;
+    border-color: #dde3ec;
+    background: #f7f9fc;
+
+    &:focus-within { border-color: #1A535C; background: #fff; }
+  }
+
+  .cexp__search-results {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 10;
+  }
+
+  .cexp__search-input { font-size: 0.88rem; }
 }
 
 .cexp__modal-input {
