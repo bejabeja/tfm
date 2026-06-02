@@ -159,7 +159,8 @@
     "solo": "🧍 Solo",
     "couple": "👫 Pareja",
     "group": "👥 Grupo",
-    "large": "🏕️ Grande (6+)"
+    "large": "🏕️ Grande (6+)",
+    "all":"Todos"
   },
   "community": {
     "title": "Comunidad",
@@ -585,6 +586,11 @@
     "nameMomentHint": "Nombre de este momento…",
     "locationLabel": "Ubicación",
     "locationPlaceholder": "Busca un lugar…",
+    "visibilityLabel": "Visibilidad",
+    "visibilityPublic": "Pública",
+    "visibilityPublicDesc": "Cualquiera puede descubrirla",
+    "visibilityPrivate": "Privada",
+    "visibilityPrivateDesc": "Solo tú puedes verla",
     "detailsHint": "Añade detalles, contexto, qué hay que saber…",
     "theFeeling": "La sensación",
     "yourStory": "Tu historia",

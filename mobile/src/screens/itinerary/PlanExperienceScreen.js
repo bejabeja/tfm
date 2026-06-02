@@ -57,6 +57,7 @@ const PlanExperienceScreen = ({ navigation }) => {
   const [travelers, setTravelers]         = useState(1);
   const [intention, setIntention]         = useState('');
   const [generating, setGenerating]       = useState(false);
+  const [isPublic, setIsPublic]           = useState(false);
 
   // Review state
   const [title, setTitle]         = useState('');
@@ -219,7 +220,7 @@ const PlanExperienceScreen = ({ navigation }) => {
         startDate: today, endDate,
         budget: 0, currency: 'EUR',
         numberOfPeople: travelers,
-        category: category.join(','), isPublic: false, source: 'experience',
+        category: category.join(','), isPublic, source: 'experience',
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
           description: s.personalNote?.trim()
             ? `${s.description}\n\n✍️ ${s.personalNote.trim()}`
@@ -424,6 +425,31 @@ const PlanExperienceScreen = ({ navigation }) => {
                 textAlignVertical="top"
               />
               <Text style={ls.intentionHint}>{ce('intentionHint')}</Text>
+            </View>
+
+            {/* Visibility */}
+            <View style={ls.section}>
+              <Text style={ls.sectionLabel}>{ce('visibilityLabel')}</Text>
+              <View style={ls.visibilityRow}>
+                <TouchableOpacity
+                  style={[ls.visibilityOpt, isPublic && ls.visibilityOptOn]}
+                  onPress={() => setIsPublic(true)}
+                  activeOpacity={0.75}
+                >
+                  <Text style={ls.visibilityEmoji}>🌍</Text>
+                  <Text style={[ls.visibilityOptName, isPublic && ls.visibilityOptNameOn]}>{ce('visibilityPublic')}</Text>
+                  <Text style={ls.visibilityOptDesc}>{ce('visibilityPublicDesc')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[ls.visibilityOpt, !isPublic && ls.visibilityOptOn]}
+                  onPress={() => setIsPublic(false)}
+                  activeOpacity={0.75}
+                >
+                  <Text style={ls.visibilityEmoji}>🔒</Text>
+                  <Text style={[ls.visibilityOptName, !isPublic && ls.visibilityOptNameOn]}>{ce('visibilityPrivate')}</Text>
+                  <Text style={ls.visibilityOptDesc}>{ce('visibilityPrivateDesc')}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
 
             {/* Generate CTA */}
@@ -767,6 +793,19 @@ const ls = StyleSheet.create({
   stepperMid: { flex: 1, alignItems: 'center' },
   stepperNum: { fontSize: 22, fontWeight: '800', color: COLORS.text },
   stepperUnit: { fontSize: 11, color: '#9CA3AF', marginTop: -2 },
+
+  // Visibility toggle
+  visibilityRow: { flexDirection: 'row', gap: 10 },
+  visibilityOpt: {
+    flex: 1, alignItems: 'center', gap: 3,
+    paddingVertical: 12, paddingHorizontal: 8,
+    borderRadius: 12, borderWidth: 1.5, borderColor: '#E5E7EB', backgroundColor: '#fff',
+  },
+  visibilityOptOn: { borderColor: COLORS.accent, backgroundColor: '#E8F4F2' },
+  visibilityEmoji: { fontSize: 18 },
+  visibilityOptName: { fontSize: 13, fontWeight: '700', color: '#111827', textAlign: 'center' },
+  visibilityOptNameOn: { color: COLORS.accent },
+  visibilityOptDesc: { fontSize: 10, color: '#9ca3af', textAlign: 'center', lineHeight: 14 },
 
   // Category grid
   catGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },

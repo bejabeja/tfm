@@ -139,6 +139,7 @@ const EditExperience = () => {
   const [travelers, setTravelers]       = useState(1);
   const [intention, setIntention]       = useState("");
   const [generating, setGenerating]     = useState(false);
+  const [isPublic, setIsPublic]         = useState(false);
   const [title, setTitle]               = useState("");
   const [steps, setSteps]               = useState([]);
   const [editingKey, setEditingKey]     = useState(null);
@@ -153,8 +154,9 @@ const EditExperience = () => {
     getItineraryById(id).then((data) => {
       setTitle(data.title ?? "");
       setDays(data.tripTotalDays ?? 7);
-      setCategory(data.category ?? "adventure");
+      setCategory(data.category ? data.category.split(",") : ["adventure"]);
       setTravelers(data.numberOfPeople ?? 1);
+      setIsPublic(data.isPublic ?? false);
 
       const dest = {
         name: data.location?.name ?? "",
@@ -275,7 +277,7 @@ const EditExperience = () => {
           lon: destination.coordinates?.lon ?? 0,
         },
         startDate: today, endDate: endObj.toISOString().split("T")[0],
-        budget: 0, currency: "EUR", numberOfPeople: travelers, category, isPublic: false,
+        budget: 0, currency: "EUR", numberOfPeople: travelers, category: Array.isArray(category) ? category.join(",") : category, isPublic,
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
           id: s._id,
           description: s.personalNote?.trim()
@@ -423,6 +425,31 @@ const EditExperience = () => {
             <span className="cexp__intention-hint">{ce("intentionHint")}</span>
           </div>
 
+          {/* Visibility */}
+          <div className="cexp__section">
+            <label className="cexp__label">{ce("visibilityLabel")}</label>
+            <div className="cexp__visibility-row">
+              <button
+                type="button"
+                className={`cexp__visibility-opt ${isPublic ? "cexp__visibility-opt--on" : ""}`}
+                onClick={() => setIsPublic(true)}
+              >
+                <span>🌍</span>
+                <span className="cexp__visibility-opt-name">{ce("visibilityPublic")}</span>
+                <span className="cexp__visibility-opt-desc">{ce("visibilityPublicDesc")}</span>
+              </button>
+              <button
+                type="button"
+                className={`cexp__visibility-opt ${!isPublic ? "cexp__visibility-opt--on" : ""}`}
+                onClick={() => setIsPublic(false)}
+              >
+                <span>🔒</span>
+                <span className="cexp__visibility-opt-name">{ce("visibilityPrivate")}</span>
+                <span className="cexp__visibility-opt-desc">{ce("visibilityPrivateDesc")}</span>
+              </button>
+            </div>
+          </div>
+
           <button
             className={`cexp__generate ${generating ? "cexp__generate--loading" : ""}`}
             onClick={handleGenerate}
@@ -486,6 +513,31 @@ const EditExperience = () => {
               ))}
               <button type="button" className="cexp__add-step" onClick={addStep}>
                 <IoAddCircleOutline size={16} /> {ce("addMoment")}
+              </button>
+            </div>
+          </div>
+
+          {/* Visibility */}
+          <div className="cexp__section">
+            <label className="cexp__label">{ce("visibilityLabel")}</label>
+            <div className="cexp__visibility-row">
+              <button
+                type="button"
+                className={`cexp__visibility-opt ${isPublic ? "cexp__visibility-opt--on" : ""}`}
+                onClick={() => setIsPublic(true)}
+              >
+                <span>🌍</span>
+                <span className="cexp__visibility-opt-name">{ce("visibilityPublic")}</span>
+                <span className="cexp__visibility-opt-desc">{ce("visibilityPublicDesc")}</span>
+              </button>
+              <button
+                type="button"
+                className={`cexp__visibility-opt ${!isPublic ? "cexp__visibility-opt--on" : ""}`}
+                onClick={() => setIsPublic(false)}
+              >
+                <span>🔒</span>
+                <span className="cexp__visibility-opt-name">{ce("visibilityPrivate")}</span>
+                <span className="cexp__visibility-opt-desc">{ce("visibilityPrivateDesc")}</span>
               </button>
             </div>
           </div>
