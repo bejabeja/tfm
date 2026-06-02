@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+import { useTranslation } from "react-i18next";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import Modal from "../../../components/modal/Modal";
 import { getItineraryById, updateItinerary } from "../../../services/itinerary";
@@ -21,6 +22,7 @@ import TravellersForm from "../sectionsForm/TravellersForm";
 import VisibilityForm from "../sectionsForm/VisibilityForm";
 
 const EditItinerary = () => {
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -137,7 +139,7 @@ const EditItinerary = () => {
       );
       if (emptyDays.length > 0) {
         toast.error(
-          `Day ${emptyDays.join(", ")} ${emptyDays.length === 1 ? "has" : "have"} no places. Add places or switch to private.`
+          t("createItinerary.emptyDaysDesc", { days: emptyDays.join(", ") })
         );
         return;
       }
@@ -188,14 +190,14 @@ const EditItinerary = () => {
   if (!itineraryData) {
     return (
       <section className="create-itinerary section__container">
-        <p style={{ color: "var(--text-secondary-color)", padding: "2rem 0" }}>Loading itinerary...</p>
+        <p style={{ color: "var(--text-secondary-color)", padding: "2rem 0" }}>{t("common.loading")}</p>
       </section>
     );
   }
 
   return (
     <section className="create-itinerary section__container">
-      <h1 className="form__title">Edit Itinerary</h1>
+      <h1 className="form__title">{t("itinerary.editItinerary")}</h1>
 
       <form className="form__container" onSubmit={(e) => e.preventDefault()}>
         <BasicInfoForm control={control} errors={errors} disabled={true} />
@@ -233,7 +235,7 @@ const EditItinerary = () => {
               type="button"
               className="btn btn--ghost"
             >
-              Cancel
+              {t("common.cancel")}
             </Link>
             <button
               type="button"
@@ -245,7 +247,7 @@ const EditItinerary = () => {
                 }
               }}
             >
-              Update itinerary
+              {t("itinerary.updateItineraryBtn")}
             </button>
           </div>
         )}
@@ -255,12 +257,12 @@ const EditItinerary = () => {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleSubmit(async (data) => {
           await editItinerary(data);
-          toast.success("Itinerary updated successfully! 🎉");
+          toast.success(t("itinerary.updatedSuccess"));
           setIsModalOpen(false);
         })}
-        title="Confirm Update"
-        description="Are you sure you want to update this itinerary?"
-        confirmText="Update"
+        title={t("itinerary.confirmUpdateTitle")}
+        description={t("itinerary.confirmUpdateDesc")}
+        confirmText={t("itinerary.confirmUpdate")}
         type="confirm"
       />
     </section>

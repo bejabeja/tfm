@@ -1,9 +1,88 @@
 .create-itinerary {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.25rem;
   width: 100%;
-  max-width: 640px; // keep form readable on wide screens
+  max-width: 640px;
+}
+
+// ── Wizard chrome ─────────────────────────────────────────────────────────────
+
+.ci-wizard__indicator {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.ci-wizard__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--border-color, #e2e8f0);
+  transition: background 0.2s, transform 0.2s;
+  flex-shrink: 0;
+
+  &--active {
+    background: var(--primary-color);
+    transform: scale(1.35);
+  }
+
+  &--done {
+    background: #16a34a;
+  }
+}
+
+.ci-wizard__step-label {
+  font-size: 0.78rem;
+  color: var(--text-secondary-color);
+  margin-left: 0.25rem;
+  width: auto;
+}
+
+.ci-wizard__header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: linear-gradient(135deg, var(--primary-color), #1A535C);
+  border-radius: 14px;
+  color: #fff;
+}
+
+.ci-wizard__emoji {
+  font-size: 2.2rem;
+  line-height: 1;
+  flex-shrink: 0;
+  width: auto;
+}
+
+.ci-wizard__title {
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: #fff;
+  margin: 0 0 3px;
+}
+
+.ci-wizard__hint {
+  font-size: 0.82rem;
+  color: rgba(255,255,255,0.75);
+  margin: 0;
+}
+
+.ci-wizard__nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding-top: 0.5rem;
+}
+
+.ci-wizard__next {
+  margin-left: auto;
+}
+
+.ci-wizard__back {
+  width: fit-content;
 }
 
 .form {
@@ -36,14 +115,14 @@
   }
 }
 
-.form__container > div {
+.form__container > div:not(.ci-wizard__nav) {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
   justify-content: flex-start;
 }
 
-.form__container > div:not(.form__cta) {
+.form__container > div:not(.form__cta):not(.ci-wizard__nav) {
   background: var(--white-color, #fff);
   border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 12px;

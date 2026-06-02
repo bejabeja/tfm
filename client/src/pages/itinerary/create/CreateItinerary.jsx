@@ -7,10 +7,7 @@ import { useTranslation } from "react-i18next";
 import { Link, useNavigate } from "react-router-dom";
 import SubmitButton from "../../../components/form/SubmitButton";
 import { createItinerary } from "../../../services/itinerary";
-import {
-  setUserInfo,
-  setUserInfoItineraries,
-} from "../../../store/user/userInfoActions";
+import { setUserInfo, setUserInfoItineraries } from "../../../store/user/userInfoActions";
 import { selectMe } from "../../../store/user/userInfoSelectors";
 import { createItinerarySchema } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sectionsForm/BasicInfoForm";
@@ -22,33 +19,33 @@ import TravellersForm from "../sectionsForm/TravellersForm";
 import VisibilityForm from "../sectionsForm/VisibilityForm";
 import "./CreateItinerary.scss";
 
+const TOTAL_STEPS = 5;
+
+const STEP_META = [
+  { emoji: "📍", titleKey: "step0Title", hintKey: "step0Hint" },
+  { emoji: "📅", titleKey: "step1Title", hintKey: "step1Hint" },
+  { emoji: "👥", titleKey: "step2Title", hintKey: "step2Hint" },
+  { emoji: "🗺️", titleKey: "step3Title", hintKey: "step3Hint" },
+  { emoji: "✨", titleKey: "step4Title", hintKey: "step4Hint" },
+];
+
 const CreateItinerary = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
+  const [step, setStep] = useState(0);
   const [imageFile, setImageFile] = useState(null);
   const [days, setDays] = useState([1]);
   const userMe = useSelector(selectMe);
 
   const today = new Date().toISOString().split("T")[0];
-  const {
-    control,
-    handleSubmit,
-    setFocus,
-    formState: { errors },
-    watch,
-    setValue,
-  } = useForm({
+  const { control, handleSubmit, setFocus, formState: { errors }, watch, setValue } = useForm({
     resolver: zodResolver(createItinerarySchema),
     defaultValues: {
       imageUrl: "",
       title: "",
-      destination: {
-        name: "",
-        label: "",
-        coordinates: { lat: 0, lon: 0 },
-      },
+      destination: { name: "", label: "", coordinates: { lat: 0, lon: 0 } },
       description: "",
       startDate: today,
       endDate: today,
@@ -56,52 +53,49 @@ const CreateItinerary = () => {
       budget: "",
       currency: "",
       numberOfTravellers: "1",
-      category: "other",
+      category: "adventure",
       isPublic: false,
     },
   });
 
   const startDate = watch("startDate");
   const endDate = watch("endDate");
-  const tripDays =
-    startDate && endDate
-      ? Math.max(1, Math.round((new Date(endDate) - new Date(startDate)) / 86400000) + 1)
-      : 1;
+  const tripDays = startDate && endDate
+    ? Math.max(1, Math.round((new Date(endDate) - new Date(startDate)) / 86400000) + 1)
+    : 1;
 
-  const onError = (errs) => {
-    const firstKey = Object.keys(errs)[0];
-    try {
-      setFocus(firstKey);
-    } catch {
-      document.querySelector(`[name="${firstKey}"]`)
-        ?.scrollIntoView({ behavior: "smooth", block: "center" });
-    }
-  };
-
-  const { fields, append, remove, replace, move } = useFieldArray({
-    control,
-    name: "places",
-  });
+  const { fields, append, remove, replace, move } = useFieldArray({ control, name: "places" });
 
   const titleVal = watch("title");
-  const destVal = watch("destination");
-  const budgetVal = watch("budget");
+  const destVal  = watch("destination");
+  const budgetVal   = watch("budget");
   const currencyVal = watch("currency");
 
   const isBasicInfoComplete = (titleVal?.length ?? 0) >= 2 && !!destVal?.name;
-  const isDatesComplete = !!(startDate && endDate);
-  const isPlacesComplete = fields.length > 0 && fields.every((f) => !!f.infoPlace?.name);
-  const isBudgetComplete = !!(parseFloat(budgetVal) > 0 && currencyVal);
+  const isDatesComplete     = !!(startDate && endDate);
+  const isPlacesComplete    = fields.length > 0 && fields.every((f) => !!f.infoPlace?.name);
+  const isBudgetComplete    = !!(parseFloat(budgetVal) > 0 && currencyVal);
+
+  // Per-step validation gate for "Next"
+  const canAdvance = [
+    isBasicInfoComplete,
+    isDatesComplete,
+    true,
+    true,
+    true,
+  ][step];
+
+  const onError = (errs) => {
+    const firstKey = Object.keys(errs)[0];
+    try { setFocus(firstKey); }
+    catch { document.querySelector(`[name="${firstKey}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  };
 
   const addItinerary = async (data) => {
     if (data.isPublic) {
-      const emptyDays = days.filter(
-        (d) => !data.places.some((p) => (p.dayNumber ?? 1) === d)
-      );
+      const emptyDays = days.filter((d) => !data.places.some((p) => (p.dayNumber ?? 1) === d));
       if (emptyDays.length > 0) {
-        toast.error(
-          t("createItinerary.emptyDaysDesc", { days: emptyDays.join(", ") })
-        );
+        toast.error(t("createItinerary.emptyDaysDesc", { days: emptyDays.join(", ") }));
         return;
       }
     }
@@ -147,93 +141,100 @@ const CreateItinerary = () => {
         success: <b>{t("itinerary.createItinerary")} 🎉</b>,
         error: <b>{t("errors.somethingWrong")}</b>,
       });
-
       dispatch(setUserInfo(userMe.id));
       dispatch(setUserInfoItineraries());
       navigate(`/profile/${userMe.id}`);
-    } catch (error) {}
+    } catch {}
   };
 
-  const sectionsDone = [isBasicInfoComplete, isDatesComplete, !!imageFile, isPlacesComplete, isBudgetComplete].filter(Boolean).length;
-  const progress = Math.round((sectionsDone / 5) * 100);
+  const meta = STEP_META[step];
 
   return (
     <section className="create-itinerary section__container">
-      <h1 className="form__title">{t("itinerary.createItinerary")}</h1>
-      {destVal?.name ? (
-        <p className="form__hero-subtitle"
-          dangerouslySetInnerHTML={{
-            __html: t("itinerary.planningTo", { destination: destVal.label || destVal.name })
-          }}
-        />
-      ) : (
-        <p className="form__hero-subtitle">{t("itinerary.shareJourney")}</p>
-      )}
 
-      <div className="form__progress">
-        <div className="form__progress-bar">
-          <div className="form__progress-fill" style={{ width: `${progress}%` }} />
-        </div>
-        <span className="form__progress-label">{progress}{t("itinerary.complete")}</span>
+      {/* ── Step indicator ───────────────────────────────────────────── */}
+      <div className="ci-wizard__indicator">
+        {STEP_META.map((_, i) => (
+          <div
+            key={i}
+            className={`ci-wizard__dot ${i === step ? "ci-wizard__dot--active" : ""} ${i < step ? "ci-wizard__dot--done" : ""}`}
+          />
+        ))}
+        <span className="ci-wizard__step-label">
+          {t("itinerary.stepOf", { current: step + 1, total: TOTAL_STEPS })}
+        </span>
       </div>
 
-      <form className="form__container" onSubmit={handleSubmit(addItinerary, onError)}>
-        <BasicInfoForm control={control} errors={errors} isComplete={isBasicInfoComplete} />
-        <DatesForm
-          control={control}
-          errors={errors}
-          watch={watch}
-          setValue={setValue}
-          isComplete={isDatesComplete}
-        />
-        <ImageUpload
-          onUpload={(file) => setImageFile(file)}
-          isComplete={!!imageFile}
-        />
-        <PlacesForm
-          control={control}
-          errors={errors}
-          fields={fields}
-          append={append}
-          remove={remove}
-          replace={replace}
-          move={move}
-          destination={watch("destination")}
-          days={days}
-          setDays={setDays}
-          isPublic={watch("isPublic")}
-          tripDays={tripDays}
-          isComplete={isPlacesComplete}
-          category={watch("category")}
-          numberOfTravellers={watch("numberOfTravellers")}
-          budget={watch("budget")}
-          currency={watch("currency")}
-        />
-        <BudgetForm control={control} errors={errors} isComplete={isBudgetComplete} tripDays={tripDays} setValue={setValue} />
-        <TravellersForm control={control} errors={errors} />
-        <VisibilityForm control={control} />
-        <div className="form__cta">
-          <Link to="/my-itineraries" type="button" className="btn btn--ghost">
-            {t("common.cancel")}
-          </Link>
-          <div className="form__cta-submit">
-            {sectionsDone < 5 && (
-              <span className="form__cta-hint">
-                {(() => {
-                  const missing = [
-                    !isBasicInfoComplete && t("itinerary.basicInfo"),
-                    !isDatesComplete && t("itinerary.dates"),
-                    !imageFile && t("itinerary.coverPhoto"),
-                    !isPlacesComplete && t("itinerary.placesLabel"),
-                    !isBudgetComplete && t("itinerary.budgetLabel"),
-                  ].filter(Boolean);
-                  return t("itinerary.stillNeeded", { missing: missing.join(", ") });
-                })()}
-              </span>
-            )}
-            <SubmitButton label={t("itinerary.createItineraryBtn")} />
-          </div>
+      {/* ── Step header ──────────────────────────────────────────────── */}
+      <div className="ci-wizard__header">
+        <span className="ci-wizard__emoji">{meta.emoji}</span>
+        <div>
+          <h1 className="ci-wizard__title">{t(`itinerary.${meta.titleKey}`)}</h1>
+          <p className="ci-wizard__hint">{t(`itinerary.${meta.hintKey}`)}</p>
         </div>
+      </div>
+
+      {/* ── Form ─────────────────────────────────────────────────────── */}
+      <form className="form__container" onSubmit={handleSubmit(addItinerary, onError)}>
+
+        {step === 0 && (
+          <BasicInfoForm control={control} errors={errors} isComplete={isBasicInfoComplete} />
+        )}
+        {step === 1 && (
+          <DatesForm control={control} errors={errors} watch={watch} setValue={setValue} isComplete={isDatesComplete} />
+        )}
+        {step === 2 && (
+          <>
+            <TravellersForm control={control} errors={errors} />
+            <BudgetForm control={control} errors={errors} isComplete={isBudgetComplete} tripDays={tripDays} setValue={setValue} />
+          </>
+        )}
+        {step === 3 && (
+          <PlacesForm
+            control={control} errors={errors}
+            fields={fields} append={append} remove={remove} replace={replace} move={move}
+            destination={watch("destination")}
+            days={days} setDays={setDays}
+            isPublic={watch("isPublic")}
+            tripDays={tripDays} isComplete={isPlacesComplete}
+            category={watch("category")}
+            numberOfTravellers={watch("numberOfTravellers")}
+            budget={watch("budget")} currency={watch("currency")}
+          />
+        )}
+        {step === 4 && (
+          <>
+            <ImageUpload onUpload={(file) => setImageFile(file)} isComplete={!!imageFile} imageUrl="" />
+            <VisibilityForm control={control} />
+          </>
+        )}
+
+        {/* ── Navigation ───────────────────────────────────────────── */}
+        <div className="ci-wizard__nav">
+          {step > 0 ? (
+            <button type="button" className="btn btn--ghost ci-wizard__back" onClick={() => setStep(s => s - 1)}>
+              ← {t("itinerary.backStep")}
+            </button>
+          ) : (
+            <Link to="/my-itineraries" className="btn btn--ghost">
+              {t("common.cancel")}
+            </Link>
+          )}
+
+          {step < TOTAL_STEPS - 1 ? (
+            <button
+              type="button"
+              className="btn btn--primary ci-wizard__next"
+              onClick={() => { if (canAdvance) setStep(s => s + 1); }}
+              disabled={!canAdvance}
+            >
+              {t("itinerary.nextStep")} →
+            </button>
+          ) : (
+            <SubmitButton label={t("itinerary.createItineraryBtn")} />
+          )}
+        </div>
+
       </form>
     </section>
   );

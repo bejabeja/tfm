@@ -1,35 +1,41 @@
 import { Controller } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 
-const VisibilityForm = ({ control }) => (
-  <div className="form__visibility">
-    <h2 className="form__subtitle">Visibility</h2>
-    <Controller
-      name="isPublic"
-      control={control}
-      render={({ field }) => (
-        <div className="form__visibility-toggle">
-          <button
-            type="button"
-            className={`form__visibility-option ${field.value ? "selected" : ""}`}
-            onClick={() => field.onChange(true)}
-          >
-            <span className="form__visibility-icon">🌍</span>
-            <span className="form__visibility-label">Public</span>
-            <span className="form__visibility-desc">Anyone can see this itinerary</span>
-          </button>
-          <button
-            type="button"
-            className={`form__visibility-option ${!field.value ? "selected" : ""}`}
-            onClick={() => field.onChange(false)}
-          >
-            <span className="form__visibility-icon">🔒</span>
-            <span className="form__visibility-label">Private</span>
-            <span className="form__visibility-desc">Only you can see this itinerary</span>
-          </button>
-        </div>
-      )}
-    />
-  </div>
-);
+const VisibilityForm = ({ control }) => {
+  const { t } = useTranslation();
+  const f = (key) => t(`itineraryForm.${key}`);
+
+  return (
+    <div className="form__visibility">
+      <h2 className="form__subtitle">{f("visibility")}</h2>
+      <Controller
+        name="isPublic"
+        control={control}
+        render={({ field }) => (
+          <div className="form__visibility-toggle">
+            <button
+              type="button"
+              className={`form__visibility-option ${field.value ? "selected" : ""}`}
+              onClick={() => field.onChange(true)}
+            >
+              <span className="form__visibility-icon">🌍</span>
+              <span className="form__visibility-label">{f("visibilityPublic")}</span>
+              <span className="form__visibility-desc">{f("visibilityPublicDesc")}</span>
+            </button>
+            <button
+              type="button"
+              className={`form__visibility-option ${!field.value ? "selected" : ""}`}
+              onClick={() => field.onChange(false)}
+            >
+              <span className="form__visibility-icon">🔒</span>
+              <span className="form__visibility-label">{f("visibilityPrivate")}</span>
+              <span className="form__visibility-desc">{f("visibilityPrivateDesc")}</span>
+            </button>
+          </div>
+        )}
+      />
+    </div>
+  );
+};
 
 export default VisibilityForm;

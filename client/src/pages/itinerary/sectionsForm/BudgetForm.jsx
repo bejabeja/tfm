@@ -1,18 +1,22 @@
 import { useWatch } from "react-hook-form";
+import { useTranslation } from "react-i18next";
 import { DropdownForm, InputForm } from "../../../components/form/InputForm";
 import { currencyOptions, getCurrencySymbol } from "../../../utils/constants/currencies";
 
 const PRESETS = [
-  { label: "Backpacker", dailyRate: 50 },
-  { label: "Mid-range", dailyRate: 150 },
-  { label: "Luxury", dailyRate: 400 },
+  { key: "backpackerPreset", dailyRate: 50  },
+  { key: "midRangePreset",   dailyRate: 150 },
+  { key: "luxuryPreset",     dailyRate: 400 },
 ];
 
 const BudgetForm = ({ control, errors, isComplete, tripDays, setValue }) => {
-  const currency = useWatch({ control, name: "currency" });
-  const budget = useWatch({ control, name: "budget" });
+  const { t } = useTranslation();
+  const f = (key, vars) => t(`itineraryForm.${key}`, vars);
+
+  const currency         = useWatch({ control, name: "currency" });
+  const budget           = useWatch({ control, name: "budget" });
   const numberOfTravellers = useWatch({ control, name: "numberOfTravellers" });
-  const symbol = getCurrencySymbol(currency);
+  const symbol           = getCurrencySymbol(currency);
 
   const perPerson = (() => {
     const b = parseFloat(budget);
@@ -31,21 +35,20 @@ const BudgetForm = ({ control, errors, isComplete, tripDays, setValue }) => {
   return (
     <div className="form__budget">
       <h2 className="form__subtitle">
-        Budget
+        {f("budget")}
         {isComplete && <span className="form__section-check">✓</span>}
       </h2>
 
       {setValue && (
         <div className="form__budget-presets">
-          {PRESETS.map((preset) => (
+          {PRESETS.map(({ key, dailyRate }) => (
             <button
-              key={preset.label}
+              key={key}
               type="button"
               className="form__budget-preset-chip"
-              onClick={() => handlePreset(preset.dailyRate)}
-              title={`~${preset.label} budget — €${preset.dailyRate}/day × ${tripDays || 1} days`}
+              onClick={() => handlePreset(dailyRate)}
             >
-              {preset.label}
+              {f(key)}
             </button>
           ))}
         </div>
@@ -54,7 +57,7 @@ const BudgetForm = ({ control, errors, isComplete, tripDays, setValue }) => {
       <div className="form__row-group">
         <InputForm
           name="budget"
-          label="Budget"
+          label={f("budget")}
           type="number"
           control={control}
           error={errors.budget}
@@ -62,7 +65,7 @@ const BudgetForm = ({ control, errors, isComplete, tripDays, setValue }) => {
         />
         <DropdownForm
           name="currency"
-          label="Currency"
+          label={f("currency")}
           type="select"
           options={currencyOptions}
           control={control}
@@ -71,7 +74,7 @@ const BudgetForm = ({ control, errors, isComplete, tripDays, setValue }) => {
       </div>
       {perPerson && (
         <p className="form__budget-per-person">
-          {symbol}{perPerson} per person
+          {f("perPerson", { amount: `${symbol}${perPerson}` })}
         </p>
       )}
     </div>

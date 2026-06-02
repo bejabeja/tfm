@@ -1,15 +1,19 @@
 import { useEffect, useMemo } from "react";
+import { useTranslation } from "react-i18next";
 import { InputForm } from "../../../components/form/InputForm";
 
-const QUICK_DURATIONS = [
-  { label: "Weekend", days: 2 },
-  { label: "1 week", days: 7 },
-  { label: "2 weeks", days: 14 },
-];
-
 const DatesForm = ({ control, errors, watch, setValue, isComplete }) => {
+  const { t } = useTranslation();
+  const f = (key, vars) => t(`itineraryForm.${key}`, vars);
+
+  const QUICK_DURATIONS = [
+    { key: "weekend",  days: 2  },
+    { key: "oneWeek",  days: 7  },
+    { key: "twoWeeks", days: 14 },
+  ];
+
   const startDateWatch = watch("startDate");
-  const endDateWatch = watch("endDate");
+  const endDateWatch   = watch("endDate");
 
   useEffect(() => {
     if (endDateWatch < startDateWatch) {
@@ -34,25 +38,25 @@ const DatesForm = ({ control, errors, watch, setValue, isComplete }) => {
   return (
     <div className="form__dates">
       <h2 className="form__subtitle">
-        Dates
+        {f("dates")}
         {isComplete && <span className="form__section-check">✓</span>}
       </h2>
       <div className="form__date-presets">
-        {QUICK_DURATIONS.map(({ label, days }) => (
+        {QUICK_DURATIONS.map(({ key, days }) => (
           <button
-            key={label}
+            key={key}
             type="button"
             className="form__budget-preset-chip"
             onClick={() => handleDurationPreset(days)}
           >
-            {label}
+            {f(key)}
           </button>
         ))}
       </div>
       <div className="form__row-group">
         <InputForm
           name="startDate"
-          label="Start Date"
+          label={f("startDate")}
           type="date"
           control={control}
           error={errors.startDate}
@@ -60,7 +64,7 @@ const DatesForm = ({ control, errors, watch, setValue, isComplete }) => {
         />
         <InputForm
           name="endDate"
-          label="End Date"
+          label={f("endDate")}
           type="date"
           control={control}
           error={errors.endDate}
@@ -69,7 +73,7 @@ const DatesForm = ({ control, errors, watch, setValue, isComplete }) => {
         />
       </div>
       <span className="form__trip-duration">
-        {tripDays} {tripDays === 1 ? "day" : "days"}
+        {f("dayCount", { count: tripDays })}
       </span>
     </div>
   );

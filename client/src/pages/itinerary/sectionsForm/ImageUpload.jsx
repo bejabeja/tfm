@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { MdOutlineCameraAlt } from "react-icons/md";
 
 const ImageUpload = ({ onUpload, imageUrl: initialImageUrl, isComplete }) => {
+  const { t } = useTranslation();
+  const f = (key) => t(`itineraryForm.${key}`);
+
   const [previewUrl, setPreviewUrl] = useState(initialImageUrl || "");
-  const [fileName, setFileName] = useState("");
+  const [fileName, setFileName]     = useState("");
   const [isDragging, setIsDragging] = useState(false);
   const inputRef = useRef(null);
 
@@ -19,8 +23,7 @@ const ImageUpload = ({ onUpload, imageUrl: initialImageUrl, isComplete }) => {
   };
 
   const handleSelectFile = (e) => handleFile(e.target.files[0]);
-
-  const handleDragOver = (e) => { e.preventDefault(); setIsDragging(true); };
+  const handleDragOver  = (e) => { e.preventDefault(); setIsDragging(true); };
   const handleDragLeave = () => setIsDragging(false);
   const handleDrop = (e) => {
     e.preventDefault();
@@ -38,7 +41,7 @@ const ImageUpload = ({ onUpload, imageUrl: initialImageUrl, isComplete }) => {
   return (
     <div className="image-upload-container">
       <h2 className="form__subtitle">
-        Cover Photo
+        {f("coverPhotoTitle")}
         {isComplete && <span className="form__section-check">✓</span>}
       </h2>
 
@@ -51,20 +54,20 @@ const ImageUpload = ({ onUpload, imageUrl: initialImageUrl, isComplete }) => {
           onDrop={handleDrop}
         >
           <MdOutlineCameraAlt className="form__dropzone-icon" />
-          <span className="form__dropzone-text">Drop your cover photo here</span>
+          <span className="form__dropzone-text">{f("dropPhotoHere")}</span>
           <span className="form__dropzone-hint">
-            or <span className="form__dropzone-link">browse files</span>
+            {f("orBrowse")} <span className="form__dropzone-link">{f("browseFiles")}</span>
           </span>
         </label>
       ) : (
         <div className="form__dropzone-preview">
-          <img src={previewUrl} alt="Cover preview" className="image-upload-preview" />
+          <img src={previewUrl} alt={f("coverPhotoTitle")} className="image-upload-preview" />
           <div className="form__dropzone-actions">
             <label htmlFor="image-upload-input" className="btn btn--secondary">
-              Change
+              {f("changePhoto")}
             </label>
             <button type="button" className="btn btn--danger-outline image-upload-clear" onClick={handleClear}>
-              Remove
+              {f("removePhoto")}
             </button>
           </div>
           {fileName && (
