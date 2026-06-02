@@ -1,16 +1,7 @@
-import { z } from 'zod';
 import { AuthError } from '../errors/AuthError.js';
 import { ValidationError } from '../errors/ValidationError.js';
-import { loginSchema, signupSchema } from '../utils/schemasValidation.js';
-
-const forgotPasswordSchema = z.object({
-    email: z.string().email(),
-});
-
-const resetPasswordSchema = z.object({
-    token: z.string().min(64),
-    newPassword: z.string().min(6),
-});
+import { loginSchema, signupSchema, forgotPasswordSchema, resetPasswordSchema } from '../utils/schemasValidation.js';
+import { logger } from '../utils/logger.js';
 
 export class AuthController {
     constructor(userService, authService) {
@@ -45,9 +36,8 @@ export class AuthController {
             const refreshToken = this.authService.generateRefreshToken(user);
             this.authService.setAuthCookies(res, accessToken, refreshToken);
             return res.status(200).json({ user, accessToken, refreshToken });
-
         } catch (error) {
-            console.error("Login error:", error);
+            logger.error("Login error:", error);
             next(new AuthError("Invalid credentials"));
         }
     }

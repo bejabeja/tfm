@@ -3,6 +3,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 import config from '../config/config.js';
 import { AuthError } from '../errors/AuthError.js';
+import { logger } from '../utils/logger.js';
 import { NotFoundError } from '../errors/NotFoundError.js';
 
 const isProduction = config.nodeEnv === 'production';
@@ -102,7 +103,7 @@ export class AuthService {
         await this.passwordResetRepository.save({ userId: user.id, tokenHash, expiresAt });
 
         this.emailService?.sendPasswordReset({ username: user.username, email: user.email, token })
-            .catch(err => console.error('[email] password reset failed:', err));
+            .catch(err => logger.error('[email] password reset failed:', err));
     }
 
     async resetPassword(token, newPassword) {

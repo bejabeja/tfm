@@ -26,8 +26,7 @@ export class CloudinaryService {
             const result = await cloudinary.uploader.destroy(publicId);
             return result;
         } catch (error) {
-            console.error("Cloudinary delete error:", error);
-            throw error;
+            throw error; // propagates to errorHandler + Sentry
         }
     }
 }

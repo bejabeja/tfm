@@ -1,5 +1,6 @@
 import { Router } from "express";
 import client from '../db/clientPostgres.js';
+import { logger } from '../utils/logger.js';
 
 export const healthCheckRouter = () => {
     const router = Router();
@@ -8,7 +9,7 @@ export const healthCheckRouter = () => {
             await client.query('SELECT 1');
             res.status(200).json({ status: 'ok', message: 'DB connection is healthy' });
         } catch (error) {
-            console.error('Health check failed:', error);
+            logger.error('Health check failed:', error);
             res.status(500).json({ status: 'error', message: 'DB connection failed' });
         }
     });

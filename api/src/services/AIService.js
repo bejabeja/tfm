@@ -71,7 +71,7 @@ Output ONLY this JSON structure:
       if (!jsonMatch) throw new Error('No valid JSON found in response');
       return jsonMatch[0];
     } catch (error) {
-      console.error('Error generating itinerary:', error);
+      // error propagates to errorHandler — no need to log here
       throw error;
     }
   }
