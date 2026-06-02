@@ -50,11 +50,15 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
+  width: fit-content !important;
   border-radius: 8px !important;
   border: none !important;
   box-shadow: 0 3px 12px rgba(0, 0, 0, 0.15) !important;
   padding: 0.4rem 0.65rem !important;
   pointer-events: none;
+  white-space: nowrap;
+
+  strong, span { width: auto !important; }
 
   strong {
     font-size: 0.85rem;

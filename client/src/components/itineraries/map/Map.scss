@@ -110,6 +110,8 @@
   width: fit-content !important;
   white-space: nowrap;
   margin: 0.35rem 0.6rem !important;
+
+  strong, span, p, div { width: auto !important; }
 }
 
 .leaflet-popup-tip {
