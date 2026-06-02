@@ -275,7 +275,11 @@ const Hero = ({
         </button>
         {isMyItinerary ? (
           <>
-            <Link to={`/itinerary/edit/${itinerary.id}`} className="action-icon-btn" title={t("common.edit")}>
+            <Link
+              to={itinerary.source === 'experience' ? `/experience/edit/${itinerary.id}` : `/itinerary/edit/${itinerary.id}`}
+              className="action-icon-btn"
+              title={t("common.edit")}
+            >
               <FaEdit />
             </Link>
             <button

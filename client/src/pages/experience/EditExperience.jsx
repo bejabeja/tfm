@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import {
@@ -24,16 +24,15 @@ import {
   IoWineOutline,
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { generateSmartItinerary } from "../../services/itineraries";
-import { createItinerary } from "../../services/itinerary";
+import { getItineraryById, updateItinerary } from "../../services/itinerary";
 import { setUserInfo, setUserInfoItineraries } from "../../store/user/userInfoActions";
 import { selectMe } from "../../store/user/userInfoSelectors";
 import { itineraryCategories } from "../../utils/constants/constants";
 import { useGeocodeSearch } from "../../hooks/useGeocodeSearch";
-import "./CreateExperience.scss";
+import "./CreateExperience.scss"; // reuse same styles
 
-// ─── Step config (icons + colors) ────────────────────────────────────────────
 const STEP_CONFIG = {
   transport:     { Icon: IoTrainOutline,    color: "#1A535C", label: "Transport"  },
   flight:        { Icon: IoAirplaneOutline, color: "#1A535C", label: "Flight"     },
@@ -58,11 +57,11 @@ const ALL_STEP_TYPES = [
 ];
 
 const STEP_NAME_HINT = {
-  transport:     "e.g. Santa Claus Express — Platform 6, 17:28",
-  flight:        "e.g. Finnair AY 123 — Helsinki → Rovaniemi",
+  transport: "e.g. Santa Claus Express — Platform 6, 17:28",
+  flight:    "e.g. Finnair AY 123 — Helsinki → Rovaniemi",
   accommodation: "e.g. Arctic TreeHouse Hotel",
-  activity:      "e.g. Husky Safari (2 h, outdoor)",
-  local_tip:     "e.g. Send a postcard from Santa's Post Office",
+  activity:  "e.g. Husky Safari (2 h, outdoor)",
+  local_tip: "e.g. Send a postcard from Santa's Post Office",
 };
 
 const CATEGORY_EMOJI = {
@@ -82,6 +81,14 @@ const MOOD_DEFS = [
 
 const getStepCfg = (cat) => STEP_CONFIG[cat] ?? STEP_CONFIG.other;
 
+// ─── Extract personalNote from description if it was saved with ✍️ separator
+const splitDescription = (raw = "") => {
+  const sep = "\n\n✍️ ";
+  const idx = raw.indexOf(sep);
+  if (idx === -1) return { description: raw, personalNote: "" };
+  return { description: raw.slice(0, idx), personalNote: raw.slice(idx + sep.length) };
+};
+
 // ─── EditableStep ─────────────────────────────────────────────────────────────
 const EditableStep = ({ step, isLast, onEdit }) => {
   const cfg  = getStepCfg(step.category);
@@ -99,19 +106,13 @@ const EditableStep = ({ step, isLast, onEdit }) => {
           <span className="cexp-step__badge" style={{ background: cfg.color + "22", color: cfg.color }}>
             {cfg.label.toUpperCase()}
           </span>
-          {mood && (
-            <span className="cexp-step__mood-tag">
-              {mood.emoji}
-            </span>
-          )}
+          {mood && <span className="cexp-step__mood-tag">{mood.emoji}</span>}
         </div>
         <span className="cexp-step__name">
           {step.name || <em className="cexp-step__placeholder">…</em>}
         </span>
         {step.description && <span className="cexp-step__desc">{step.description}</span>}
-        {step.personalNote && (
-          <span className="cexp-step__personal-note">✍️ {step.personalNote}</span>
-        )}
+        {step.personalNote && <span className="cexp-step__personal-note">✍️ {step.personalNote}</span>}
         <span className="cexp-step__edit-hint"><IoPencilOutline size={11} /> Edit</span>
       </button>
     </div>
@@ -119,20 +120,22 @@ const EditableStep = ({ step, isLast, onEdit }) => {
 };
 
 // ─── Main component ───────────────────────────────────────────────────────────
-const CreateExperience = () => {
+const EditExperience = () => {
   const { t, i18n } = useTranslation();
-  const dispatch  = useDispatch();
-  const navigate  = useNavigate();
-  const userMe    = useSelector(selectMe);
+  const { id }     = useParams();
+  const dispatch   = useDispatch();
+  const navigate   = useNavigate();
+  const userMe     = useSelector(selectMe);
   const { searchDestinations } = useGeocodeSearch();
 
-  const [phase, setPhase]               = useState("input");
+  const [loading, setLoading]           = useState(true);
+  const [phase, setPhase]               = useState("review");
   const [destQuery, setDestQuery]       = useState("");
   const [destination, setDestination]   = useState(null);
   const [destResults, setDestResults]   = useState([]);
   const [destSearching, setDestSearching] = useState(false);
   const [days, setDays]                 = useState(7);
-  const [category, setCategory]         = useState(["adventure"]);
+  const [category, setCategory]         = useState("adventure");
   const [travelers, setTravelers]       = useState(1);
   const [intention, setIntention]       = useState("");
   const [generating, setGenerating]     = useState(false);
@@ -143,8 +146,51 @@ const CreateExperience = () => {
   const [saving, setSaving]             = useState(false);
 
   const searchTimer = useRef(null);
-
   const ce = (key, vars) => t(`createExperience.${key}`, vars);
+
+  // ─── Load existing itinerary ───────────────────────────────────────────────
+  useEffect(() => {
+    getItineraryById(id).then((data) => {
+      setTitle(data.title ?? "");
+      setDays(data.tripTotalDays ?? 7);
+      setCategory(data.category ?? "adventure");
+      setTravelers(data.numberOfPeople ?? 1);
+
+      const dest = {
+        name: data.location?.name ?? "",
+        label: data.location?.label ?? data.location?.name ?? "",
+        coordinates: {
+          lat: data.location?.lat ?? 0,
+          lon: data.location?.lon ?? 0,
+        },
+      };
+      setDestination(dest);
+      setDestQuery(dest.name);
+
+      const loadedSteps = (data.places ?? [])
+        .sort((a, b) => (a.dayNumber ?? 1) - (b.dayNumber ?? 1) || (a.orderIndex ?? 0) - (b.orderIndex ?? 0))
+        .map((p) => {
+          const { description, personalNote } = splitDescription(p.description ?? "");
+          return {
+            _key: `loaded-${p.id}`,
+            _id: p.id,
+            name: p.name ?? "",
+            description,
+            personalNote,
+            category: p.category ?? "other",
+            dayNumber: p.dayNumber ?? 1,
+            lat: p.latitude ?? 0,
+            lon: p.longitude ?? 0,
+            mood: null,
+          };
+        });
+      setSteps(loadedSteps);
+      setLoading(false);
+    }).catch(() => {
+      toast.error("Could not load the experience.");
+      navigate("/my-itineraries");
+    });
+  }, [id]);
 
   // ─── Destination search ──────────────────────────────────────────────────
   const handleDestInput = (value) => {
@@ -162,13 +208,13 @@ const CreateExperience = () => {
 
   const selectDest = (dest) => { setDestination(dest); setDestQuery(dest.name); setDestResults([]); };
 
-  // ─── AI generation ───────────────────────────────────────────────────────
+  // ─── Regenerate ─────────────────────────────────────────────────────────
   const handleGenerate = async () => {
     if (!destination?.name) return;
     setGenerating(true);
     try {
       const data = await generateSmartItinerary({
-        destination: destination.name, days, category: category.join(", "),
+        destination: destination.name, days, category,
         numberOfTravellers: travelers, budget: null, currency: "EUR",
         intention: intention.trim() || undefined,
         language: i18n.language,
@@ -185,7 +231,6 @@ const CreateExperience = () => {
         personalNote: "",
       }));
       setSteps(generated);
-      setTitle(`My trip to ${destination.name}`);
       setPhase("review");
     } catch {
       toast.error(ce("generateError"));
@@ -222,11 +267,17 @@ const CreateExperience = () => {
     endObj.setDate(endObj.getDate() + days - 1);
     try {
       const body = {
-        userId: userMe?.id, title: title.trim(), description: "",
-        location: { name: destination.name, label: destination.label ?? destination.name, lat: destination.coordinates?.lat ?? 0, lon: destination.coordinates?.lon ?? 0 },
+        title: title.trim(), description: "",
+        location: {
+          name: destination.name,
+          label: destination.label ?? destination.name,
+          lat: destination.coordinates?.lat ?? 0,
+          lon: destination.coordinates?.lon ?? 0,
+        },
         startDate: today, endDate: endObj.toISOString().split("T")[0],
-        budget: 0, currency: "EUR", numberOfPeople: travelers, category: category.join(","), isPublic: false, source: "experience",
+        budget: 0, currency: "EUR", numberOfPeople: travelers, category, isPublic: false,
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
+          id: s._id,
           description: s.personalNote?.trim()
             ? `${s.description}\n\n✍️ ${s.personalNote.trim()}`
             : s.description,
@@ -237,11 +288,11 @@ const CreateExperience = () => {
       };
       const formData = new FormData();
       formData.append("itinerary", JSON.stringify(body));
-      await createItinerary(formData);
+      await updateItinerary(id, formData);
       toast.success(ce("savedSuccess"));
       dispatch(setUserInfo(userMe.id));
       dispatch(setUserInfoItineraries());
-      navigate("/my-itineraries");
+      navigate(`/itinerary/${id}`);
     } catch {
       toast.error(ce("saveError"));
     } finally {
@@ -254,13 +305,22 @@ const CreateExperience = () => {
   steps.forEach(s => { const d = s.dayNumber ?? 1; if (!dayMap[d]) dayMap[d] = []; dayMap[d].push(s); });
   const dayNumbers = Object.keys(dayMap).map(Number).sort((a, b) => a - b);
   const isMultiDay = dayNumbers.length > 1;
+  const dayUnit    = days === 1 ? ce("day") : ce("days");
 
-  const dayUnit = days === 1 ? ce("day") : ce("days");
+  if (loading) {
+    return (
+      <div className="cexp section__container">
+        <div className="cexp__hero" style={{ justifyContent: "center", opacity: 0.6 }}>
+          <span style={{ color: "#fff", fontSize: "0.9rem" }}>Loading…</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="cexp section__container">
 
-      {/* ── Hero header ─────────────────────────────────────────────────── */}
+      {/* ── Hero header ───────────────────────────────────────────────── */}
       <header className="cexp__hero">
         <div className="cexp__hero-icon"><IoFlashOutline size={20} /></div>
         <div className="cexp__hero-text">
@@ -279,10 +339,9 @@ const CreateExperience = () => {
       </header>
 
       {phase === "input" ? (
-        /* ── INPUT PHASE ─────────────────────────────────────────────── */
+        /* ── INPUT PHASE (regenerate with new settings) ─────────────── */
         <div className="cexp__form">
 
-          {/* Destination */}
           <div className="cexp__section">
             <label className="cexp__label">{ce("whereGoing")}</label>
             <div className={`cexp__search-box ${destination ? "cexp__search-box--ok" : ""}`}>
@@ -301,8 +360,7 @@ const CreateExperience = () => {
               <ul className="cexp__search-results">
                 {destResults.map((r, i) => (
                   <li key={i} onClick={() => selectDest(r)}>
-                    <strong>{r.name}</strong>
-                    <small>{r.label}</small>
+                    <strong>{r.name}</strong><small>{r.label}</small>
                   </li>
                 ))}
               </ul>
@@ -314,47 +372,33 @@ const CreateExperience = () => {
             )}
           </div>
 
-          {/* Days + Travelers — side by side */}
           <div className="cexp__counters">
             <div className="cexp__section">
               <label className="cexp__label">{ce("howManyDays")}</label>
               <div className="cexp__stepper-box">
                 <button type="button" className="cexp__stepper-btn" onClick={() => setDays(d => Math.max(1, d - 1))} disabled={days <= 1}>−</button>
-                <div className="cexp__stepper-mid">
-                  <strong>{days}</strong>
-                  <span>{days === 1 ? ce("day") : ce("days")}</span>
-                </div>
+                <div className="cexp__stepper-mid"><strong>{days}</strong><span>{dayUnit}</span></div>
                 <button type="button" className="cexp__stepper-btn" onClick={() => setDays(d => Math.min(30, d + 1))} disabled={days >= 30}>+</button>
               </div>
             </div>
-
             <div className="cexp__section">
               <label className="cexp__label">{ce("travelers")}</label>
               <div className="cexp__stepper-box">
                 <button type="button" className="cexp__stepper-btn" onClick={() => setTravelers(t => Math.max(1, t - 1))} disabled={travelers <= 1}>−</button>
-                <div className="cexp__stepper-mid">
-                  <strong>{travelers}</strong>
-                  <span>{travelers === 1 ? ce("person") : ce("people")}</span>
-                </div>
+                <div className="cexp__stepper-mid"><strong>{travelers}</strong><span>{travelers === 1 ? ce("person") : ce("people")}</span></div>
                 <button type="button" className="cexp__stepper-btn" onClick={() => setTravelers(t => Math.min(20, t + 1))} disabled={travelers >= 20}>+</button>
               </div>
             </div>
           </div>
 
-          {/* Category — visual grid */}
           <div className="cexp__section">
             <label className="cexp__label">{ce("soulOfTrip")}</label>
             <div className="cexp__cat-grid">
               {itineraryCategories.filter(c => c.value !== "other").map(cat => (
                 <button
-                  key={cat.value}
-                  type="button"
-                  className={`cexp__cat-card ${category.includes(cat.value) ? "cexp__cat-card--active" : ""}`}
-                  onClick={() => setCategory(prev =>
-                    prev.includes(cat.value)
-                      ? prev.length > 1 ? prev.filter(c => c !== cat.value) : prev
-                      : [...prev, cat.value]
-                  )}
+                  key={cat.value} type="button"
+                  className={`cexp__cat-card ${category === cat.value ? "cexp__cat-card--active" : ""}`}
+                  onClick={() => setCategory(cat.value)}
                 >
                   <span className="cexp__cat-card-emoji">{CATEGORY_EMOJI[cat.value]}</span>
                   <span className="cexp__cat-card-name">{cat.label}</span>
@@ -364,7 +408,6 @@ const CreateExperience = () => {
             </div>
           </div>
 
-          {/* Intention */}
           <div className="cexp__section">
             <label className="cexp__label cexp__label--intention">
               <IoBulbOutline size={13} /> {ce("lookingFor")}
@@ -380,7 +423,6 @@ const CreateExperience = () => {
             <span className="cexp__intention-hint">{ce("intentionHint")}</span>
           </div>
 
-          {/* Generate */}
           <button
             className={`cexp__generate ${generating ? "cexp__generate--loading" : ""}`}
             onClick={handleGenerate}
@@ -400,7 +442,6 @@ const CreateExperience = () => {
         /* ── REVIEW PHASE ────────────────────────────────────────────── */
         <div className="cexp__review">
 
-          {/* Title card */}
           <div className="cexp__card">
             <span className="cexp__card-label">{ce("experienceName")}</span>
             <input
@@ -412,7 +453,6 @@ const CreateExperience = () => {
             />
           </div>
 
-          {/* Timeline card */}
           <div className="cexp__card">
             <div className="cexp__timeline-top">
               <span className="cexp__timeline-count">{steps.length} {ce("moments")} · {days} {dayUnit}</span>
@@ -432,13 +472,12 @@ const CreateExperience = () => {
                     </div>
                   )}
                   {(day !== null ? dayMap[day] : steps).map((step, idx) => {
-                    const list   = day !== null ? dayMap[day] : steps;
-                    const isLast = idx === list.length - 1;
+                    const list = day !== null ? dayMap[day] : steps;
                     return (
                       <EditableStep
                         key={step._key}
                         step={step}
-                        isLast={isLast}
+                        isLast={idx === list.length - 1}
                         onEdit={() => openEdit(step)}
                       />
                     );
@@ -464,7 +503,6 @@ const CreateExperience = () => {
             <div className="cexp__modal-handle" />
             <h3 className="cexp__modal-title">{ce("editMoment")}</h3>
 
-            {/* Type */}
             <div className="cexp__modal-section-label">{ce("typeLabel")}</div>
             <div className="cexp__modal-types">
               {ALL_STEP_TYPES.map(type => {
@@ -501,7 +539,6 @@ const CreateExperience = () => {
               maxLength={500}
             />
 
-            {/* Mood */}
             <div className="cexp__modal-section-label">{ce("theFeeling")}</div>
             <div className="cexp__mood-row">
               {MOOD_DEFS.map(m => {
@@ -519,7 +556,6 @@ const CreateExperience = () => {
               })}
             </div>
 
-            {/* Personal note */}
             <div className="cexp__modal-section-label">{ce("yourStory")}</div>
             <textarea
               className="cexp__modal-textarea cexp__modal-textarea--note"
@@ -545,4 +581,4 @@ const CreateExperience = () => {
   );
 };
 
-export default CreateExperience;
+export default EditExperience;

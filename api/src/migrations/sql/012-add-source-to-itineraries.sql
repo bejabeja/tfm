@@ -1,0 +1,1 @@
+ALTER TABLE itineraries ADD COLUMN IF NOT EXISTS source VARCHAR(50) DEFAULT 'itinerary';

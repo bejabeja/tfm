@@ -10,55 +10,60 @@ export class AIService {
 
     const contextLines = [
       category && category !== 'other' ? `- Trip style: ${category}` : null,
-      numberOfTravellers ? `- Number of travellers: ${numberOfTravellers}` : null,
+      numberOfTravellers ? `- Travelers: ${numberOfTravellers}` : null,
       budget && currency ? `- Budget: ${budget} ${currency} total` : null,
-      intention?.trim() ? `- What the traveler is personally looking for: "${intention.trim()}"` : null,
     ].filter(Boolean).join('\n');
 
-    const intentionNote = intention?.trim()
-      ? `\nThe traveler has expressed a personal intention above. Prioritize authentic, lesser-known places that match it — avoid purely tourist-trap recommendations.\n`
-      : '';
+    const intentionBlock = intention?.trim() ? `
+TRAVELER'S SPECIFIC WISHES — THIS IS YOUR PRIMARY DIRECTIVE:
+"${intention.trim()}"
+
+You MUST:
+1. If the traveler mentioned specific places, landmarks, or activities — include them EXACTLY (e.g. "Santa Claus Village" → include it; "snowmobile" → include a snowmobile activity; "fly to Helsinki" → include a flight/airport step).
+2. Build the remaining places around those specific requests.
+3. Never substitute or ignore what the traveler explicitly asked for.
+` : '';
 
     const languageInstruction = language === 'es'
-      ? '\nIMPORTANT: Generate ALL text fields (title, description, label) entirely in Spanish.'
+      ? '\nGenerate ALL text fields (title, description, label) in Spanish.'
       : '';
 
-    const prompt = `Create a JSON travel itinerary for a ${totalDays}-day trip to ${destination}.
-Include exactly 3 places per day (${totalDays * 3} total), spread evenly across all ${totalDays} days.
-${contextLines ? `\nTrip context:\n${contextLines}\nTailor the place suggestions to this context.${intentionNote}` : ''}${languageInstruction}
-Each place must have:
-- title (string): name of the place
-- description (string): 1-2 engaging sentences about it
-- label (string): very short label, max 3 words
-- latitude (number): real decimal latitude
-- longitude (number): real decimal longitude
-- category (exactly one from: nature, beach, city, park, monument, camping, island, sport, vineyard, other)
-- dayNumber (number): which day (1 to ${totalDays})
+    const systemPrompt = `You are an expert travel planner creating highly personalized itineraries.
+Your most important job is to read the traveler's specific wishes and satisfy them directly.
+Output ONLY valid raw JSON. No markdown, no explanation, no extra text.`;
 
-Output ONLY raw valid JSON, no markdown, no explanation:
+    const userPrompt = `Create a ${totalDays}-day itinerary for ${destination}.
+${intentionBlock}
+${contextLines ? `Trip context:\n${contextLines}` : ''}
+${languageInstruction}
 
+Generate exactly ${totalDays * 3} places total — 3 per day, days 1 to ${totalDays}.
+
+Each place must be a JSON object with:
+- title: name of the place or activity (string)
+- description: 1-2 engaging sentences (string)
+- label: very short label, max 3 words (string)
+- latitude: real decimal coordinate (number)
+- longitude: real decimal coordinate (number)
+- category: exactly one of [nature, beach, city, park, monument, camping, island, sport, vineyard, other]
+- dayNumber: which day, 1 to ${totalDays} (number)
+
+Output ONLY this JSON structure:
 {
   "destination": "${destination}",
   "totalDays": ${totalDays},
-  "places": [
-    {
-      "title": "Place Name",
-      "description": "Short engaging description.",
-      "label": "Short label",
-      "latitude": 41.4036,
-      "longitude": 2.1744,
-      "category": "monument",
-      "dayNumber": 1
-    }
-  ]
+  "places": [ ... ]
 }`;
 
     try {
       const response = await this.client.chat.completions.create({
-        model: 'llama-3.1-8b-instant',
-        messages: [{ role: 'user', content: prompt }],
-        temperature: 0.7,
-        max_tokens: 2000,
+        model: 'llama-3.3-70b-versatile',
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user',   content: userPrompt },
+        ],
+        temperature: 0.4,
+        max_tokens: 4000,
       });
 
       const text = response.choices[0]?.message?.content;

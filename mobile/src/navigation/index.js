@@ -22,6 +22,7 @@ import EditProfileScreen from '../screens/profile/EditProfileScreen';
 import SettingsScreen from '../screens/settings/SettingsScreen';
 import ItineraryScreen from '../screens/itinerary/ItineraryScreen';
 import EditItineraryScreen from '../screens/itinerary/EditItineraryScreen';
+import EditExperienceScreen from '../screens/itinerary/EditExperienceScreen';
 import CreateItineraryScreen from '../screens/itinerary/CreateItineraryScreen';
 import PlanExperienceScreen from '../screens/itinerary/PlanExperienceScreen';
 import MyItinerariesScreen from '../screens/myItineraries/MyItinerariesScreen';
@@ -200,6 +201,7 @@ const Navigation = () => {
         <Stack.Screen name="EditProfile" component={EditProfileScreen} />
         <Stack.Screen name="Settings" component={SettingsScreen} />
         <Stack.Screen name="EditItinerary" component={EditItineraryScreen} />
+        <Stack.Screen name="EditExperience" component={EditExperienceScreen} />
         <Stack.Screen name="CreateItinerary" component={CreateItineraryScreen} />
         <Stack.Screen name="PlanExperience" component={PlanExperienceScreen} />
         <Stack.Screen name="Community" component={CommunityScreen} />

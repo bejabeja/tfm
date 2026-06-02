@@ -165,7 +165,10 @@ const ItineraryScreen = ({ route, navigation }) => {
             <>
               <TouchableOpacity
                 style={styles.actionBtn}
-                onPress={() => navigation.navigate('EditItinerary', { id: itinerary.id })}
+                onPress={() => navigation.navigate(
+                  itinerary.source === 'experience' ? 'EditExperience' : 'EditItinerary',
+                  { id: itinerary.id }
+                )}
               >
                 <Text style={styles.actionIcon}>✏️</Text>
               </TouchableOpacity>

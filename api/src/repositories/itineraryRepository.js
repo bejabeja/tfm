@@ -28,7 +28,8 @@ export class ItineraryRepository {
   async create(itineraryData) {
     const {
       userId, title, description, location, startDate, endDate,
-      numberOfPeople, category, budget, currency, photoUrl, photoPublicId, isPublic
+      numberOfPeople, category, budget, currency, photoUrl, photoPublicId, isPublic,
+      source
     } = itineraryData;
     const id = uuidv4();
 
@@ -37,9 +38,9 @@ export class ItineraryRepository {
                 id, user_id, title, description,
                 location_name, location_label, latitude, longitude,
                 start_date, end_date, number_of_people,
-                category, budget, currency, photo_url, photo_public_id, is_public
+                category, budget, currency, photo_url, photo_public_id, is_public, source
             )
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18)
             RETURNING *;
         `;
 
@@ -47,7 +48,7 @@ export class ItineraryRepository {
       id, userId, title, description,
       location.name, location.label, location.lat, location.lon,
       startDate, endDate, numberOfPeople, category, budget, currency, photoUrl, photoPublicId,
-      isPublic ?? true
+      isPublic ?? true, source ?? 'itinerary'
     ]);
 
     return Itinerary.fromDb(result.rows[0]);

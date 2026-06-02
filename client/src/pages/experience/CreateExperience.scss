@@ -4,7 +4,7 @@
   gap: 1.25rem;
   width: 100%;
   max-width: 640px;
-  padding: 0; // padding comes from section__container
+  // No padding override — section__container handles it (1rem mobile, 2rem 600px+)
 
   // Global CSS reset sets * { width: 100% } which breaks icons, chips, and pill buttons.
   // Restore natural sizing for inline/interactive elements; specific rules override below.
@@ -855,4 +855,45 @@
   transition: opacity 0.1s;
 
   &:hover { opacity: 0.88; }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────────
+
+// Very small screens (< 380px): 2-col category grid
+@media (max-width: 380px) {
+  .cexp__cat-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .cexp__counters {
+    flex-direction: column;
+  }
+
+  .cexp__hero h1 {
+    font-size: 1.1rem;
+  }
+}
+
+// Tablet / desktop (≥ 640px): cexp is already max-width 640px, but modal gets centered
+@media (min-width: 640px) {
+  .cexp__modal-backdrop {
+    align-items: center;
+    padding: 2rem;
+  }
+
+  .cexp__modal-sheet {
+    border-radius: 20px;
+    max-width: 520px;
+    width: 100%;
+    margin: 0 auto;
+    max-height: 80vh;
+  }
+
+  .cexp__hero {
+    padding: 1.75rem;
+  }
+
+  .cexp__card {
+    padding: 1.5rem;
+  }
 }
