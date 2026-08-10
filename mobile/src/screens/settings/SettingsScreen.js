@@ -14,6 +14,7 @@ import {
   deleteMyAccount, exportMyData, logoutUser, selectAuthUser, selectMe,
 } from '@tobeatraveller/shared';
 import { shadow } from '../../utils/styles';
+import { BoldText } from '../../components/BoldText';
 
 const SettingsScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -126,9 +127,11 @@ const SettingsScreen = ({ navigation }) => {
               </TouchableOpacity>
             ) : (
               <View style={styles.deleteConfirm}>
-                <Text style={styles.deleteConfirmLabel}>
-                  {t('editProfile.deleteAccountDesc', { username: user?.username })}
-                </Text>
+                <BoldText
+                  text={t('editProfile.deleteAccountDesc', { username: user?.username })}
+                  style={styles.deleteConfirmLabel}
+                  boldStyle={styles.deleteConfirmLabelBold}
+                />
                 <TextInput
                   style={[styles.input, { marginTop: 6 }]}
                   value={deleteInput}
@@ -233,6 +236,7 @@ const styles = StyleSheet.create({
 
   deleteConfirm: { gap: 8 },
   deleteConfirmLabel: { fontSize: 13, color: '#374151' },
+  deleteConfirmLabelBold: { fontWeight: '700' },
   deleteConfirmActions: { flexDirection: 'row', gap: 8, marginTop: 4 },
   cancelBtn: {
     flex: 1, borderWidth: 1.5, borderColor: '#e5e7eb',

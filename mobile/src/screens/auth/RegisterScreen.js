@@ -11,6 +11,7 @@ import { useTranslation } from 'react-i18next';
 import { checkUsernameAvailable, registerUser, selectAuthError } from '@tobeatraveller/shared';
 import { shadow, textShadow } from '../../utils/styles';
 import { WEB_URL } from '../../utils/config';
+import { BoldText } from '../../components/BoldText';
 
 const AUTH_BG = require('../../../assets/auth.webp');
 const { height: SCREEN_H } = Dimensions.get('window');
@@ -185,9 +186,11 @@ const RegisterScreen = ({ navigation }) => {
                   <View style={[styles.checkbox, ageConfirmed && styles.checkboxChecked, errors.ageConfirmed && styles.checkboxError]}>
                     {ageConfirmed && <Text style={styles.checkmark}>✓</Text>}
                   </View>
-                  <Text style={[styles.consentText, errors.ageConfirmed && styles.consentTextError]}>
-                    {t('auth.ageConfirm', { strong: (chunks) => chunks })}
-                  </Text>
+                  <BoldText
+                    text={t('auth.ageConfirm')}
+                    style={[styles.consentText, errors.ageConfirmed && styles.consentTextError]}
+                    boldStyle={[styles.consentTextBold, errors.ageConfirmed && styles.consentTextError]}
+                  />
                 </TouchableOpacity>
                 {errors.ageConfirmed ? <Text style={styles.consentError}>{errors.ageConfirmed}</Text> : null}
 
@@ -303,6 +306,7 @@ const styles = StyleSheet.create({
   consentTextError: { color: '#dc2626' },
   checkmark: { color: '#fff', fontSize: 11, fontWeight: '700' },
   consentText: { fontSize: 12, color: '#6b7280', lineHeight: 18, flex: 1 },
+  consentTextBold: { fontWeight: '700', color: '#111827' },
   consentBold: { fontWeight: '600', color: '#374151' },
   consentLink: { color: '#E8743B', fontWeight: '500' },
   required: { color: '#dc2626', fontWeight: '700' },

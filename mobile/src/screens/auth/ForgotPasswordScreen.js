@@ -6,6 +6,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { forgotPassword } from '@tobeatraveller/shared';
+import { BoldText } from '../../components/BoldText';
 
 const ForgotPasswordScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -50,9 +51,12 @@ const ForgotPasswordScreen = ({ navigation }) => {
           <View style={styles.successBox}>
             <Text style={styles.successIcon}>✉️</Text>
             <Text style={styles.title}>{t('auth.checkInbox')}</Text>
-            <Text style={styles.subtitle}>
-              {t('auth.resetLinkSent', { email })}{'\n'}
-            </Text>
+            <BoldText
+              text={t('auth.resetLinkSent', { email }) + '\n'}
+              style={styles.subtitle}
+              boldStyle={styles.subtitleBold}
+            />
+            <Text style={styles.browserNote}>{t('auth.resetOpensInBrowser')}</Text>
             <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Login')}>
               <Text style={styles.btnText}>{t('auth.backToSignIn')}</Text>
             </TouchableOpacity>
@@ -107,6 +111,11 @@ const styles = StyleSheet.create({
 
   title: { fontSize: 24, fontWeight: '800', color: '#111827', marginBottom: 8, letterSpacing: -0.3 },
   subtitle: { fontSize: 14, color: '#6b7280', lineHeight: 21, marginBottom: 28 },
+  subtitleBold: { fontWeight: '700', color: '#111827' },
+  browserNote: {
+    fontSize: 13, color: '#6b7280', lineHeight: 19, textAlign: 'center',
+    backgroundColor: '#f7f9fc', borderRadius: 10, padding: 12, marginBottom: 20,
+  },
 
   fieldWrapper: { marginBottom: 16 },
   label: { fontSize: 13, fontWeight: '600', color: '#374151', marginBottom: 5 },

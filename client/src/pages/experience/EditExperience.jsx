@@ -250,7 +250,7 @@ const EditExperience = () => {
       setSteps(generated);
       setPhase("review");
     } catch (error) {
-      toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? ce("generateTimeout") : ce("generateError"));
+      toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? ce("generateTimeout") : (error.message || ce("generateError")));
     } finally {
       setGenerating(false);
     }

@@ -477,7 +477,7 @@ export const PlacesSection = ({
     } catch (error) {
       Alert.alert(
         t('errors.somethingWrong'),
-        error.message === GENERATE_TIMEOUT_MESSAGE ? t('itineraryForm.generateTimeout') : t('itineraryForm.errorGenerate')
+        error.message === GENERATE_TIMEOUT_MESSAGE ? t('itineraryForm.generateTimeout') : (error.message || t('itineraryForm.errorGenerate'))
       );
     } finally {
       setGenerating(false);

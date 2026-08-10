@@ -29,6 +29,7 @@ const MyItinerariesScreen = ({ navigation }) => {
 
   const [search, setSearch] = useState('');
   const [category, setCategory] = useState('');
+  const [visibility, setVisibility] = useState('all');
   const searchTimer = useRef(null);
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
@@ -41,9 +42,10 @@ const MyItinerariesScreen = ({ navigation }) => {
   const filtered = useMemo(() => filterItineraries(itineraries ?? [], {
     destination: debouncedSearch,
     category,
-  }), [itineraries, debouncedSearch, category]);
+    visibility: visibility === 'all' ? '' : visibility,
+  }), [itineraries, debouncedSearch, category, visibility]);
 
-  const hasFilters = !!(search || category);
+  const hasFilters = !!(search || category || visibility !== 'all');
 
   return (
     <View style={[styles.container, { paddingTop: insets.top }]}>
@@ -80,6 +82,25 @@ const MyItinerariesScreen = ({ navigation }) => {
           )}
         </View>
 
+        {/* Visibility toggle */}
+        <View style={styles.visibilityRow}>
+          {[
+            { val: 'all',     label: t('myItineraries.all') },
+            { val: 'public',  label: '🌍 ' + t('myItineraries.public') },
+            { val: 'private', label: '🔒 ' + t('myItineraries.private') },
+          ].map(opt => (
+            <TouchableOpacity
+              key={opt.val}
+              style={[styles.visibilityBtn, visibility === opt.val && styles.visibilityBtnActive]}
+              onPress={() => setVisibility(opt.val)}
+            >
+              <Text style={[styles.visibilityBtnText, visibility === opt.val && styles.visibilityBtnTextActive]}>
+                {opt.label}
+              </Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
         {/* Category chips */}
         <ScrollView
           horizontal
@@ -106,7 +127,7 @@ const MyItinerariesScreen = ({ navigation }) => {
             {loading ? t('myItineraries.loadingCount') : t('myItineraries.tripCount', { filtered: filtered.length, total: (itineraries ?? []).length })}
           </Text>
           {hasFilters && (
-            <TouchableOpacity onPress={() => { setSearch(''); setDebouncedSearch(''); setCategory(''); }}>
+            <TouchableOpacity onPress={() => { setSearch(''); setDebouncedSearch(''); setCategory(''); setVisibility('all'); }}>
               <Text style={styles.clearFilters}>{t('myItineraries.clearFilters')}</Text>
             </TouchableOpacity>
           )}
@@ -131,7 +152,7 @@ const MyItinerariesScreen = ({ navigation }) => {
                 <>
                   <Text style={styles.emptyEmoji}>🔍</Text>
                   <Text style={styles.emptyTitle}>{t('myItineraries.noFiltersMatch')}</Text>
-                  <TouchableOpacity onPress={() => { setSearch(''); setDebouncedSearch(''); setCategory(''); }}>
+                  <TouchableOpacity onPress={() => { setSearch(''); setDebouncedSearch(''); setCategory(''); setVisibility('all'); }}>
                     <Text style={styles.emptyLink}>{t('myItineraries.clearFiltersLink')}</Text>
                   </TouchableOpacity>
                 </>
@@ -195,6 +216,19 @@ const styles = StyleSheet.create({
   searchIcon: { fontSize: 14 },
   searchInput: { flex: 1, paddingVertical: 10, fontSize: 14, color: '#111827' },
   clearText: { color: '#9ca3af', fontSize: 13, padding: 4 },
+
+  visibilityRow: {
+    flexDirection: 'row', gap: 8,
+    paddingHorizontal: 16, paddingBottom: 10,
+  },
+  visibilityBtn: {
+    paddingVertical: 6, paddingHorizontal: 12,
+    borderRadius: 999, borderWidth: 1.5, borderColor: '#e5e7eb',
+    backgroundColor: '#f9fafb',
+  },
+  visibilityBtnActive: { borderColor: '#E8743B', backgroundColor: '#FFF0E8' },
+  visibilityBtnText: { fontSize: 12, color: '#6b7280', fontWeight: '600' },
+  visibilityBtnTextActive: { color: '#E8743B' },
 
   chips: { paddingHorizontal: 16, gap: 8, paddingBottom: 8 },
   chip: {

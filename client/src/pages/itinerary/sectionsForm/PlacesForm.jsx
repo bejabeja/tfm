@@ -111,7 +111,7 @@ const PlacesForm = ({
       setDays(uniqueDays);
       toast.success(f("generated"));
     } catch (error) {
-      toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? f("generateTimeout") : f("errorGenerate"));
+      toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? f("generateTimeout") : (error.message || f("errorGenerate")));
     } finally {
       setIsGenerating(false);
     }

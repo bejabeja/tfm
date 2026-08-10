@@ -47,6 +47,7 @@ const Settings = () => {
     try {
       await deleteMyAccount();
       dispatch(logoutUser());
+      toast.success(t("editProfile.accountDeleted"));
       navigate("/");
     } catch {
       toast.error(t("errors.deleteAccountFailed"));

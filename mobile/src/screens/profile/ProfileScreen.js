@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useState } from 'react';
 import {
-  Image, ScrollView,
+  Alert, Image, ScrollView,
   Share, StyleSheet, Text, TouchableOpacity, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -324,7 +324,14 @@ const ProfileScreen = ({ route, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.logoutBtn}
-              onPress={() => dispatch(logoutUser())}
+              onPress={() => Alert.alert(
+                t('auth.confirmLogoutTitle'),
+                t('auth.confirmLogoutDesc'),
+                [
+                  { text: t('common.cancel'), style: 'cancel' },
+                  { text: t('auth.logout'), style: 'destructive', onPress: () => dispatch(logoutUser()) },
+                ]
+              )}
             >
               <Text style={styles.logoutText}>{t('profile.signOut')}</Text>
             </TouchableOpacity>

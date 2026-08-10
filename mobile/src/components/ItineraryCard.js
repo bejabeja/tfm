@@ -3,10 +3,12 @@ import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { checkIsLiked, toggleLike, selectIsAuthenticated } from '@tobeatraveller/shared';
 import { COLORS, shadow } from '../utils/styles';
 
 const ItineraryCard = ({ itinerary, onPress, onRequestLogin }) => {
+  const { t } = useTranslation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isLiked, setIsLiked]       = useState(false);
   const [likesCount, setLikesCount] = useState(itinerary.likesCount ?? 0);
@@ -46,6 +48,14 @@ const ItineraryCard = ({ itinerary, onPress, onRequestLogin }) => {
         start={{ x: 0, y: 0.3 }}
         end={{ x: 0, y: 1 }}
       />
+
+      {/* Visibility badge: top left */}
+      {itinerary.isPublic === false && (
+        <View style={styles.visibilityBadge}>
+          <Ionicons name="lock-closed" size={10} color="#fff" />
+          <Text style={styles.visibilityText}>{t('myItineraries.private')}</Text>
+        </View>
+      )}
 
       {/* Like button: top right */}
       <TouchableOpacity
@@ -110,6 +120,13 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.38)',
     borderRadius: 999, paddingVertical: 4, paddingHorizontal: 8,
   },
+  visibilityBadge: {
+    position: 'absolute', top: 10, left: 10,
+    flexDirection: 'row', alignItems: 'center', gap: 3,
+    backgroundColor: 'rgba(0,0,0,0.38)',
+    borderRadius: 999, paddingVertical: 4, paddingHorizontal: 8,
+  },
+  visibilityText: { fontSize: 11, color: '#fff', fontWeight: '600' },
   likeCount: { fontSize: 11, color: '#fff', fontWeight: '600' },
   likeCountActive: { color: COLORS.primary },
   overlay: {

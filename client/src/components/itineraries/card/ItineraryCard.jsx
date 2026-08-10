@@ -2,10 +2,12 @@ import { useEffect, useRef } from "react";
 import { FaHeart, FaRegHeart } from "react-icons/fa";
 import { FaRegComment } from "react-icons/fa6";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 import { useLike } from "../../../hooks/useLike";
 import OfficialBadge from "../../users/OfficialBadge";
 
 const ItineraryCard = ({ itinerary, user: userProp }) => {
+  const { t } = useTranslation();
   const {
     id,
     title,
@@ -15,6 +17,7 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
     tripTotalDays,
     commentsCount,
     likesCount: initialLikesCount,
+    isPublic,
     user: userFromItinerary,
   } = itinerary;
 
@@ -44,6 +47,9 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
     <div className="itinerary-card" ref={cardRef}>
       <Link to={`/itinerary/${id}`} className="itinerary-card__link">
         <div className="itinerary-card__image-wrapper">
+          {isPublic === false && (
+            <span className="itinerary-card__visibility">🔒 {t("myItineraries.private")}</span>
+          )}
           {category && (
             <span className="itinerary-card__category">{category}</span>
           )}

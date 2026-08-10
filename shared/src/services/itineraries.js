@@ -62,7 +62,7 @@ export const generateSmartItinerary = async ({ destination, days, category, numb
             body: JSON.stringify({ destination, days, category, numberOfTravellers, budget, currency, intention, language }),
             signal: controller.signal,
         });
-        if (!response.ok) throw new Error('Failed to generate itinerary');
+        if (!response.ok) await parseError(response, 'Failed to generate itinerary');
         return response.json();
     } catch (error) {
         if (error.name === 'AbortError') throw new Error(GENERATE_TIMEOUT_MESSAGE);
