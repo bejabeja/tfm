@@ -4,7 +4,7 @@ import { useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../../components/modal/Modal";
 import { getItineraryById, updateItinerary } from "../../../services/itinerary";
 import {
@@ -31,6 +31,7 @@ const EditItinerary = () => {
 
   const [itineraryData, setItineraryData] = useState(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [imageFile, setImageFile] = useState(null);
   const [days, setDays] = useState([1]);
 
@@ -43,7 +44,7 @@ const EditItinerary = () => {
     control,
     handleSubmit,
     reset,
-    formState: { errors },
+    formState: { errors, isDirty },
     watch,
     setValue,
     trigger,
@@ -198,6 +199,11 @@ const EditItinerary = () => {
     navigate(`/profile/${userMe.id}`);
   };
 
+  const handleCancel = () => {
+    if (isDirty || imageFile) setShowExitConfirm(true);
+    else navigate("/my-itineraries");
+  };
+
   if (!itineraryData) {
     return (
       <section className="create-itinerary section__container">
@@ -241,13 +247,9 @@ const EditItinerary = () => {
         <VisibilityForm control={control} />
         {isMyItinerary() && (
           <div className="form__cta">
-            <Link
-              to={`/my-itineraries`}
-              type="button"
-              className="btn btn--ghost"
-            >
+            <button type="button" className="btn btn--ghost" onClick={handleCancel}>
               {t("common.cancel")}
-            </Link>
+            </button>
             <button
               type="button"
               className="btn btn--primary"
@@ -278,6 +280,15 @@ const EditItinerary = () => {
         description={t("itinerary.confirmUpdateDesc")}
         confirmText={t("itinerary.confirmUpdate")}
         type="confirm"
+      />
+      <Modal
+        isOpen={showExitConfirm}
+        onClose={() => setShowExitConfirm(false)}
+        onConfirm={() => navigate("/my-itineraries")}
+        title={t("editProfile.discardChanges")}
+        description={t("editProfile.discardChangesDesc")}
+        confirmText={t("common.discard")}
+        type="danger"
       />
     </section>
   );

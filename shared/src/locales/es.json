@@ -487,6 +487,7 @@
     "midRangePreset": "Estándar",
     "luxuryPreset": "Lujo",
     "errorGenerate": "No se pudo generar el itinerario. Por favor, inténtalo de nuevo.",
+    "generateTimeout": "Esto está tardando demasiado. Prueba con un viaje más corto o menos días.",
     "coverPhotoTitle": "Foto de portada",
     "dropPhotoHere": "Suelta tu foto de portada aquí",
     "browseFiles": "explorar archivos",
@@ -539,6 +540,7 @@
   "errors": {
     "profileLoad": "No pudimos cargar el perfil. Por favor, inténtalo más tarde.",
     "itineraryLoad": "No pudimos cargar el itinerario. Por favor, inténtalo más tarde.",
+    "itineraryNotFoundOrPrivate": "Este itinerario no existe o no tienes acceso a él.",
     "followersLoad": "No pudimos cargar los seguidores. Por favor, inténtalo más tarde.",
     "somethingWrong": "Algo salió mal. Por favor, inténtalo más tarde.",
     "networkError": "Error de red. Por favor, comprueba tu conexión e inténtalo de nuevo.",
@@ -616,6 +618,7 @@
     "savedSuccess": "¡Experiencia guardada!",
     "saveError": "No se pudo guardar la experiencia. Inténtalo de nuevo.",
     "generateError": "No se pudo generar la experiencia. Inténtalo de nuevo.",
+    "generateTimeout": "Esto está tardando demasiado. Prueba con menos días o una petición más simple.",
     "addTitleError": "Añade un título antes de guardar.",
     "editMoment": "Editar momento",
     "typeLabel": "Tipo",

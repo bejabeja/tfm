@@ -23,6 +23,7 @@ module.exports = ({ config }) => ({
     permissions: ['READ_MEDIA_IMAGES', 'READ_EXTERNAL_STORAGE'],
   },
   web: { favicon: './assets/favicon.png' },
+  plugins: ['expo-sharing'],
   extra: {
     eas: { projectId: '21b2c26e-ca30-4c39-8bf7-ad3bf5c4b408' },
     apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000',

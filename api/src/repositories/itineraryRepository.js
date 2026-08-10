@@ -203,12 +203,12 @@ export class ItineraryRepository {
     }
 
     if (filters.durationMin !== undefined) {
-      conditions.push(`(FLOOR(EXTRACT(EPOCH FROM (end_date - start_date))/86400)+1) >= $${i++}`);
+      conditions.push(`(end_date - start_date + 1) >= $${i++}`);
       values.push(filters.durationMin);
     }
 
     if (filters.durationMax !== undefined) {
-      conditions.push(`(FLOOR(EXTRACT(EPOCH FROM (end_date - start_date))/86400)+1) <= $${i++}`);
+      conditions.push(`(end_date - start_date + 1) <= $${i++}`);
       values.push(filters.durationMax);
     }
 

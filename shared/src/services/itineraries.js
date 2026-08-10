@@ -3,6 +3,8 @@ import { authFetch } from "../utils/authFetch";
 import { parseError } from "../utils/parseError";
 
 const baseUrl = () => `${getApiUrl()}/itineraries`;
+const GENERATE_TIMEOUT_MS = 60_000;
+export const GENERATE_TIMEOUT_MESSAGE = 'AI generation timed out';
 
 export const getStats = async () => {
     const response = await fetch(`${baseUrl()}/stats`);
@@ -51,13 +53,23 @@ export const getfeaturedItineraries = async () => {
 }
 
 export const generateSmartItinerary = async ({ destination, days, category, numberOfTravellers, budget, currency, intention, language }) => {
-    const response = await authFetch(`${baseUrl()}/generate-smart`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ destination, days, category, numberOfTravellers, budget, currency, intention, language }),
-    });
-    if (!response.ok) throw new Error('Failed to generate itinerary');
-    return response.json();
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), GENERATE_TIMEOUT_MS);
+    try {
+        const response = await authFetch(`${baseUrl()}/generate-smart`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ destination, days, category, numberOfTravellers, budget, currency, intention, language }),
+            signal: controller.signal,
+        });
+        if (!response.ok) throw new Error('Failed to generate itinerary');
+        return response.json();
+    } catch (error) {
+        if (error.name === 'AbortError') throw new Error(GENERATE_TIMEOUT_MESSAGE);
+        throw error;
+    } finally {
+        clearTimeout(timeout);
+    }
 };
 
 export const getDestinations = async () => {

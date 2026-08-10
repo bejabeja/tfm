@@ -9,7 +9,7 @@ import AutocompletePlaceInput from "../../../components/form/AutocompletePlaceIn
 import Modal from "../../../components/modal/Modal";
 import { TextAreaForm } from "../../../components/form/InputForm";
 import { placeCategories } from "../../../utils/constants/constants";
-import { generateSmartItinerary } from "../../../services/itineraries";
+import { GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary } from "../../../services/itineraries";
 
 const PlacesForm = ({
   control, errors, fields, append, remove, replace, move,
@@ -110,8 +110,8 @@ const PlacesForm = ({
       const uniqueDays = [...new Set(generatedPlaces.map((p) => p.dayNumber))].sort((a, b) => a - b);
       setDays(uniqueDays);
       toast.success(f("generated"));
-    } catch {
-      toast.error(f("errorGenerate"));
+    } catch (error) {
+      toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? f("generateTimeout") : f("errorGenerate"));
     } finally {
       setIsGenerating(false);
     }

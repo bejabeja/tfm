@@ -5,7 +5,7 @@ import { parseError } from "../utils/parseError";
 const baseUrl = () => `${getApiUrl()}/comments`;
 
 export const getCommentsByItineraryId = async (itineraryId) => {
-    const response = await fetch(`${baseUrl()}/itinerary/${itineraryId}`, {
+    const response = await authFetch(`${baseUrl()}/itinerary/${itineraryId}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });

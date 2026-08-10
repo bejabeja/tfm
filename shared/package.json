@@ -3,9 +3,16 @@
   "version": "1.0.0",
   "private": true,
   "main": "src/index.js",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
   "dependencies": {
     "@reduxjs/toolkit": "^2.6.1",
     "react-redux": "^9.2.0",
     "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "vitest": "^4.0.18"
   }
 }

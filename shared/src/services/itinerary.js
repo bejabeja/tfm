@@ -5,7 +5,7 @@ import { authFetch } from "../utils/authFetch";
 const baseUrl = () => `${getApiUrl()}/itineraries`;
 
 export const getItineraryById = async (id) => {
-    const response = await fetch(`${baseUrl()}/${id}`, {
+    const response = await authFetch(`${baseUrl()}/${id}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });

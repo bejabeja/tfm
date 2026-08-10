@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  createItinerary, generateSmartItinerary,
+  createItinerary, GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary,
   itineraryCategories, NEW_ITINERARY_DEFAULT_VISIBILITY, placeCategories,
   selectAuthUser, selectMe,
   setUserInfo, setUserInfoItineraries,
@@ -142,8 +142,8 @@ const PlanExperienceScreen = ({ navigation }) => {
       setSteps(generated);
       setTitle(`My trip to ${destination.name}`);
       setPhase('review');
-    } catch {
-      Alert.alert('Oops', ce('generateError'));
+    } catch (error) {
+      Alert.alert('Oops', error.message === GENERATE_TIMEOUT_MESSAGE ? ce('generateTimeout') : ce('generateError'));
     } finally {
       setGenerating(false);
     }

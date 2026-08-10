@@ -187,11 +187,20 @@ const CreateItineraryScreen = ({ navigation }) => {
     if (!result.canceled && result.assets?.[0]) setPhotoUri(result.assets[0].uri);
   };
 
+  const handleBack = () => {
+    const hasProgress = !!(title.trim() || destination?.name || places.length > 0);
+    if (!hasProgress) { navigation.goBack(); return; }
+    Alert.alert(t('editProfile.discardChanges'), t('editProfile.discardChangesDesc'), [
+      { text: t('common.cancel'), style: 'cancel' },
+      { text: t('common.discard'), style: 'destructive', onPress: () => navigation.goBack() },
+    ]);
+  };
+
   return (
     <View style={ls.root}>
       {/* Header */}
       <View style={[ls.header, { paddingTop: insets.top + 4 }]}>
-        <TouchableOpacity style={ls.headerBack} onPress={() => navigation.goBack()}>
+        <TouchableOpacity style={ls.headerBack} onPress={handleBack}>
           <Text style={ls.headerBackText}>←</Text>
         </TouchableOpacity>
         <View style={ls.headerCenter}>

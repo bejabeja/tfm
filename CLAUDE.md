@@ -34,7 +34,7 @@ Capas estrictas, no saltarse ninguna ni mezclar responsabilidades:
 - IDs: `uuidv4()` (paquete `uuid`), no autoincrementales.
 - Nombres de archivo: `xxxController.js`, `xxxService.js`, `xxxRepository.js`, `xxxRouter.js` (camelCase, sin guiones).
 - Columnas SQL en `snake_case`, mapeadas a `camelCase` en el objeto que devuelve el repository.
-- Linter: `standard` (sin punto y coma, sin config de reglas manual). Ejecuta `npm run test` en `api/` antes de dar por cerrado un cambio de lógica de negocio.
+- `standard` está en `devDependencies` pero no refleja el estilo real: el código existente usa punto y coma e indentación de 4 espacios en todo `api/src`, mientras que `standard` exige sin punto y coma y 2 espacios (`npx standard` reporta cientos de errores en archivos ya existentes sin tocar). No ejecutes `standard --fix`: reescribiría casi todo el código. Sigue el estilo real (punto y coma, 4 espacios), no el que sugiere el nombre del paquete. Ejecuta `npm run test` en `api/` antes de dar por cerrado un cambio de lógica de negocio.
 
 ## Testing (`api/src/__tests__`)
 
@@ -42,6 +42,13 @@ Capas estrictas, no saltarse ninguna ni mezclar responsabilidades:
 - Testea `services` con repositorios mockeados a mano (objetos planos con `vi.fn()` por método usado), no mocks automáticos de módulo salvo que ya sea el patrón en ese archivo.
 - Los tests de repository que sí existen (p. ej. `itineraryRepository.buildFilters.test.js`) prueban construcción de queries/lógica pura, no contra una DB real.
 - No añadas tests de integración contra Postgres real a menos que el usuario lo pida explícitamente; no es el patrón actual.
+- Añade test siempre que tenga sentido, no solo en `api/`: lógica de negocio nueva o modificada, un bug que se acaba de arreglar (regresión), o una función en `shared/` cuyo comportamiento es fácil de romper en silencio (p. ej. que dependa de `authFetch` en vez de `fetch`). Si `shared/` u otro paquete no tiene infraestructura de test todavía, es válido añadirla cuando el fix concreto lo justifique, no como preparación especulativa.
+- Sigue las prácticas habituales del oficio (en la línea de Kent Beck/Martin Fowler), adaptadas al estilo ya existente en este repo:
+  - **Comportamiento, no implementación**: testea lo que la función devuelve o el efecto que produce (la query que construye, el error que lanza, el header que manda), no sus detalles internos. Si refactorizas sin cambiar el comportamiento, los tests no deberían necesitar tocarse.
+  - **Arrange-Act-Assert**: cada test prepara el estado, ejecuta una única acción y verifica el resultado; nombres de test que describan el comportamiento esperado ("arroja NotFoundError si el itinerario no existe"), no el nombre del método.
+  - **Al arreglar un bug, el test es el que documenta el bug**: escribe el caso que reproduce el fallo (falla con el código viejo, pasa con el fix) en vez de solo un test genérico de la función; ese test es la prueba de que no vuelve a pasar.
+  - **TDD cuando la lógica es no trivial**: para reglas de negocio o parsing/validación con casos borde, escribir el test antes de la implementación ayuda a acotar el comportamiento esperado; no es obligatorio para cambios triviales.
+  - **Pirámide de tests**: prioriza unitarios rápidos con dependencias mockeadas (el patrón ya usado en `api/`); evita tests de integración lentos o frágiles salvo que aporten algo que el unitario no puede cubrir.
 
 ## Frontend (`client/src`)
 

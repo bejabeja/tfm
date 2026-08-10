@@ -4,7 +4,8 @@ import { useFieldArray, useForm } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import Modal from "../../../components/modal/Modal";
 import SubmitButton from "../../../components/form/SubmitButton";
 import { createItinerary } from "../../../services/itinerary";
 import { setUserInfo, setUserInfoItineraries } from "../../../store/user/userInfoActions";
@@ -37,6 +38,7 @@ const CreateItinerary = () => {
   const [step, setStep] = useState(0);
   const [imageFile, setImageFile] = useState(null);
   const [days, setDays] = useState([1]);
+  const [showExitConfirm, setShowExitConfirm] = useState(false);
   const userMe = useSelector(selectMe);
 
   const today = new Date().toISOString().split("T")[0];
@@ -89,6 +91,12 @@ const CreateItinerary = () => {
     const firstKey = Object.keys(errs)[0];
     try { setFocus(firstKey); }
     catch { document.querySelector(`[name="${firstKey}"]`)?.scrollIntoView({ behavior: "smooth", block: "center" }); }
+  };
+
+  const hasProgress = !!(titleVal || destVal?.name || fields.length > 0);
+  const handleCancel = () => {
+    if (hasProgress) setShowExitConfirm(true);
+    else navigate("/my-itineraries");
   };
 
   const addItinerary = async (data) => {
@@ -216,9 +224,9 @@ const CreateItinerary = () => {
               ← {t("itinerary.backStep")}
             </button>
           ) : (
-            <Link to="/my-itineraries" className="btn btn--ghost">
+            <button type="button" className="btn btn--ghost" onClick={handleCancel}>
               {t("common.cancel")}
-            </Link>
+            </button>
           )}
 
           {step < TOTAL_STEPS - 1 ? (
@@ -236,6 +244,16 @@ const CreateItinerary = () => {
         </div>
 
       </form>
+
+      <Modal
+        isOpen={showExitConfirm}
+        onClose={() => setShowExitConfirm(false)}
+        onConfirm={() => navigate("/my-itineraries")}
+        title={t("editProfile.discardChanges")}
+        description={t("editProfile.discardChangesDesc")}
+        confirmText={t("common.discard")}
+        type="danger"
+      />
     </section>
   );
 };

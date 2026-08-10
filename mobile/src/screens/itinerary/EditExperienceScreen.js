@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   EXISTING_ITINERARY_VISIBILITY_FALLBACK,
-  generateSmartItinerary, getItineraryById, updateItinerary,
+  GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary, getItineraryById, updateItinerary,
   itineraryCategories, placeCategories,
   selectAuthUser, selectMe,
   setUserInfo, setUserInfoItineraries,
@@ -170,8 +170,8 @@ const EditExperienceScreen = ({ navigation, route }) => {
       }));
       setSteps(generated);
       setPhase('review');
-    } catch {
-      Alert.alert('Oops', ce('generateError'));
+    } catch (error) {
+      Alert.alert('Oops', error.message === GENERATE_TIMEOUT_MESSAGE ? ce('generateTimeout') : ce('generateError'));
     } finally {
       setGenerating(false);
     }

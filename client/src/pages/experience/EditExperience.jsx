@@ -26,7 +26,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
-import { generateSmartItinerary } from "../../services/itineraries";
+import { GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary } from "../../services/itineraries";
 import { getItineraryById, updateItinerary } from "../../services/itinerary";
 import { setUserInfo, setUserInfoItineraries } from "../../store/user/userInfoActions";
 import { selectMe } from "../../store/user/userInfoSelectors";
@@ -249,8 +249,8 @@ const EditExperience = () => {
       }));
       setSteps(generated);
       setPhase("review");
-    } catch {
-      toast.error(ce("generateError"));
+    } catch (error) {
+      toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? ce("generateTimeout") : ce("generateError"));
     } finally {
       setGenerating(false);
     }

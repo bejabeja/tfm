@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import {
   Alert, KeyboardAvoidingView, Platform,
-  ScrollView, Share, StyleSheet, Text, TextInput,
+  ScrollView, StyleSheet, Text, TextInput,
   TouchableOpacity, View,
 } from 'react-native';
+import { File, Paths } from 'expo-file-system';
+import * as Sharing from 'expo-sharing';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
@@ -44,7 +46,14 @@ const SettingsScreen = ({ navigation }) => {
     setExporting(true);
     try {
       const data = await exportMyData();
-      await Share.share({ message: JSON.stringify(data, null, 2) });
+      const file = new File(Paths.cache, 'tobeatraveller-my-data.json');
+      file.write(JSON.stringify(data, null, 2));
+
+      if (await Sharing.isAvailableAsync()) {
+        await Sharing.shareAsync(file.uri, { mimeType: 'application/json', dialogTitle: t('editProfile.downloadData') });
+      } else {
+        Alert.alert(t('errors.somethingWrong'));
+      }
     } catch {
       Alert.alert(t('errors.somethingWrong'));
     } finally {

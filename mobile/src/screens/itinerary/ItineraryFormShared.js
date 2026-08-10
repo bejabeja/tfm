@@ -6,7 +6,7 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import {
-  currencyOptions, generateSmartItinerary, getCurrencySymbol,
+  currencyOptions, GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary, getCurrencySymbol,
   itineraryCategories, placeCategories,
 } from '@tobeatraveller/shared';
 import { COLORS, shadow } from '../../utils/styles';
@@ -432,8 +432,23 @@ export const PlacesSection = ({
     );
   };
 
-  const handleGenerateAI = async () => {
+  const handleGenerateAI = () => {
     if (!destination?.name && !destination) return;
+    if (places.length > 0) {
+      Alert.alert(
+        t('itineraryForm.confirmRegenerateTitle'),
+        t('itineraryForm.confirmRegenerateDesc'),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('itineraryForm.generateWithAI'), style: 'destructive', onPress: runGenerateAI },
+        ]
+      );
+      return;
+    }
+    runGenerateAI();
+  };
+
+  const runGenerateAI = async () => {
     const destName = destination?.name ?? destination;
     setGenerating(true);
     try {
@@ -459,8 +474,11 @@ export const PlacesSection = ({
       setPlaces(generated);
       const uniqueDays = [...new Set(generated.map(p => p.dayNumber))].sort((a, b) => a - b);
       setDays(uniqueDays.length > 0 ? uniqueDays : [1]);
-    } catch {
-      Alert.alert(t('errors.somethingWrong'), t('itineraryForm.errorGenerate'));
+    } catch (error) {
+      Alert.alert(
+        t('errors.somethingWrong'),
+        error.message === GENERATE_TIMEOUT_MESSAGE ? t('itineraryForm.generateTimeout') : t('itineraryForm.errorGenerate')
+      );
     } finally {
       setGenerating(false);
     }

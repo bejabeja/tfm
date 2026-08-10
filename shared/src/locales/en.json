@@ -510,6 +510,7 @@
     "midRangePreset": "Mid-range",
     "luxuryPreset": "Luxury",
     "errorGenerate": "Could not generate itinerary. Please try again.",
+    "generateTimeout": "This is taking too long. Try a shorter trip or fewer days.",
     "coverPhotoTitle": "Cover Photo",
     "dropPhotoHere": "Drop your cover photo here",
     "browseFiles": "browse files",
@@ -539,6 +540,7 @@
   "errors": {
     "profileLoad": "We couldn't load the profile info. Please try again later.",
     "itineraryLoad": "We couldn't load the itinerary page. Please try again later.",
+    "itineraryNotFoundOrPrivate": "This itinerary doesn't exist or you don't have access to it.",
     "followersLoad": "We couldn't load followers. Please try again later.",
     "somethingWrong": "Something went wrong. Please try again.",
     "networkError": "Network error. Please check your connection and try again.",
@@ -616,6 +618,7 @@
     "savedSuccess": "Experience saved!",
     "saveError": "Could not save the experience. Try again.",
     "generateError": "Could not generate the experience. Try again.",
+    "generateTimeout": "This is taking too long. Try fewer days or a simpler request.",
     "addTitleError": "Add a title before saving.",
     "editMoment": "Edit moment",
     "typeLabel": "Type",

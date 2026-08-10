@@ -124,7 +124,12 @@ const Itinerary = () => {
   }, [itinerary]);
 
   if (loading) return <Spinner />;
-  if (error) return <Error message={t("errors.itineraryLoad")} />;
+  if (error) {
+    const message = error === "Itinerary not found"
+      ? t("errors.itineraryNotFoundOrPrivate")
+      : t("errors.itineraryLoad");
+    return <Error message={message} />;
+  }
 
   const isMyItinerary = userMe?.id === itinerary?.userId;
 

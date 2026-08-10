@@ -2,13 +2,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
-import { Link, Navigate, useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
+import { resetPassword } from "@tobeatraveller/shared";
 import { PasswordInputForm } from "../../components/form/PasswordInputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { resetPasswordSchema } from "../../utils/schemasValidation";
 import "./Auth.scss";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 const ResetPassword = () => {
   const { t } = useTranslation();
@@ -26,26 +25,30 @@ const ResetPassword = () => {
     defaultValues: { newPassword: "", confirmPassword: "" },
   });
 
-  // No token in URL, redirect to login
   if (!token) {
-    return <Navigate to="/login" replace />;
+    return (
+      <section className="auth">
+        <div className="auth__panel" style={{ width: "100%" }}>
+          <div className="auth__form" style={{ textAlign: "center" }}>
+            <p style={{ fontSize: "0.9rem", color: "var(--text-color)", marginBottom: "1rem" }}>
+              {t("errors.invalidLink")}
+            </p>
+            <Link to="/forgot-password">
+              <strong>{t("auth.requestNewLink")} →</strong>
+            </Link>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   const onSubmit = async ({ newPassword }) => {
     setServerError(null);
     try {
-      const response = await fetch(`${API_URL}/auth/reset-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword }),
-      });
-      if (!response.ok) {
-        setServerError(t("errors.invalidLink"));
-        return;
-      }
+      await resetPassword(token, newPassword);
       setSuccess(true);
-    } catch {
-      setServerError(t("errors.networkError"));
+    } catch (error) {
+      setServerError(error.message || t("errors.somethingWrong"));
     }
   };
 
