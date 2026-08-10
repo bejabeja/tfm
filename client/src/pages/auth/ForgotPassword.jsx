@@ -3,12 +3,11 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { forgotPassword } from "@tobeatraveller/shared";
 import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { forgotPasswordSchema } from "../../utils/schemasValidation";
 import "./Auth.scss";
-
-const API_URL = import.meta.env.VITE_API_URL;
 
 const ForgotPassword = () => {
   const { t } = useTranslation();
@@ -27,19 +26,10 @@ const ForgotPassword = () => {
   const onSubmit = async ({ email }) => {
     setServerError(null);
     try {
-      const response = await fetch(`${API_URL}/auth/forgot-password`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email }),
-      });
-      if (!response.ok) {
-        const data = await response.json().catch(() => ({}));
-        setServerError(data.message || t("errors.somethingWrong"));
-        return;
-      }
+      await forgotPassword(email);
       setSuccessEmail(email);
-    } catch {
-      setServerError(t("errors.networkError"));
+    } catch (error) {
+      setServerError(error.message || t("errors.somethingWrong"));
     }
   };
 

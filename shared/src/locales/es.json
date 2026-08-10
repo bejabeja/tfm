@@ -461,6 +461,8 @@
     "visibilityPrivateDesc": "Solo tú puedes verlo",
     "placesCount": "Lugares ({{count}})",
     "generateWithAI": "✨ Generar con IA",
+    "confirmRegenerateTitle": "¿Generar con IA?",
+    "confirmRegenerateDesc": "Esto reemplazará los lugares que ya has añadido, incluidas las notas o ediciones que hayas hecho. No se puede deshacer.",
     "setDestinationFirst": "Primero elige un destino",
     "tripIsDays": "Tu viaje es de {{tripDays}} días, tienes {{configuredDays}} configurados.",
     "setToDays": "Ajustar a {{count}} días",

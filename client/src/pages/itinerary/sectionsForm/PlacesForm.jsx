@@ -6,6 +6,7 @@ import { RiSparklingLine } from "react-icons/ri";
 import toast from "react-hot-toast";
 import { getCategoryIcon } from "../../../assets/icons";
 import AutocompletePlaceInput from "../../../components/form/AutocompletePlaceInput";
+import Modal from "../../../components/modal/Modal";
 import { TextAreaForm } from "../../../components/form/InputForm";
 import { placeCategories } from "../../../utils/constants/constants";
 import { generateSmartItinerary } from "../../../services/itineraries";
@@ -23,6 +24,7 @@ const PlacesForm = ({
   const justAddedRef = useRef(false);
   const [confirmRemoveDay, setConfirmRemoveDay] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showRegenConfirm, setShowRegenConfirm] = useState(false);
 
   useEffect(() => {
     if (isPublic && !prevIsPublic.current) {
@@ -73,8 +75,17 @@ const PlacesForm = ({
     setDays(Array.from({ length: tripDays }, (_, i) => i + 1));
   };
 
-  const handleGenerateWithAI = async () => {
+  const handleGenerateWithAI = () => {
     if (!destination?.name) return;
+    if (fields.length > 0) {
+      setShowRegenConfirm(true);
+      return;
+    }
+    runGenerateWithAI();
+  };
+
+  const runGenerateWithAI = async () => {
+    setShowRegenConfirm(false);
     const totalDays = tripDays || days.length || 1;
     setIsGenerating(true);
     try {
@@ -224,6 +235,16 @@ const PlacesForm = ({
           </button>
         </div>
       )}
+
+      <Modal
+        isOpen={showRegenConfirm}
+        onClose={() => setShowRegenConfirm(false)}
+        onConfirm={runGenerateWithAI}
+        title={f("confirmRegenerateTitle")}
+        description={f("confirmRegenerateDesc")}
+        confirmText={f("generateWithAI")}
+        type="danger"
+      />
     </div>
   );
 };

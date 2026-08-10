@@ -484,6 +484,8 @@
     "visibilityPrivateDesc": "Only you can see",
     "placesCount": "Places ({{count}})",
     "generateWithAI": "✨ Generate with AI",
+    "confirmRegenerateTitle": "Generate with AI?",
+    "confirmRegenerateDesc": "This will replace the places you've already added, including any notes or edits you've made. This can't be undone.",
     "setDestinationFirst": "Set a destination first",
     "tripIsDays": "Your trip is {{tripDays}} days, you have {{configuredDays}} configured.",
     "setToDays": "Set to {{count}} days",

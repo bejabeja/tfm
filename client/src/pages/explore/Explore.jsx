@@ -107,7 +107,6 @@ const Explore = () => {
           key={filterResetKey}
           onChange={setFilters}
           defaultValues={defaultDestination ? { destination: defaultDestination } : {}}
-          hideDates
         />
       </div>
 
@@ -143,6 +142,27 @@ const Explore = () => {
                 <span className="explore__filter-tag explore__filter-tag--category">
                   {filters.category}
                 </span>
+              )}
+              {(filters.budgetMin || filters.budgetMax) && (
+                <span className="explore__filter-tag">
+                  💰 {filters.budgetMin && filters.budgetMax
+                    ? `${filters.budgetMin}–${filters.budgetMax}`
+                    : filters.budgetMin
+                      ? `${filters.budgetMin}+`
+                      : `≤${filters.budgetMax}`}
+                </span>
+              )}
+              {(filters.durationMin || filters.durationMax) && (
+                <span className="explore__filter-tag">
+                  🗓 {filters.durationMin && filters.durationMax
+                    ? `${filters.durationMin}–${filters.durationMax}`
+                    : filters.durationMin
+                      ? `${filters.durationMin}+`
+                      : `≤${filters.durationMax}`} {t("itinerary.days")}
+                </span>
+              )}
+              {filters.travelersCount && (
+                <span className="explore__filter-tag">{t(`explore.${filters.travelersCount}`)}</span>
               )}
               <button className="explore__clear-all" onClick={clearAllFilters}>
                 {t("explore.clearAll")}

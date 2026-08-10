@@ -43,7 +43,7 @@ const EditItinerary = () => {
     control,
     handleSubmit,
     reset,
-    formState: { errors, isLoading },
+    formState: { errors },
     watch,
     setValue,
     trigger,
@@ -188,7 +188,11 @@ const EditItinerary = () => {
     formData.append("file", imageFile);
     formData.append("itinerary", JSON.stringify(body));
 
-    await updateItinerary(id, formData);
+    await toast.promise(updateItinerary(id, formData), {
+      loading: t("itinerary.updateItineraryBtn") + "...",
+      success: t("itinerary.updatedSuccess"),
+      error: t("errors.somethingWrong"),
+    });
     dispatch(setUserInfo(userMe.id));
     dispatch(loadMyUserInfo(userMe.id));
     navigate(`/profile/${userMe.id}`);
@@ -263,8 +267,11 @@ const EditItinerary = () => {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleSubmit(async (data) => {
-          await editItinerary(data);
-          toast.success(t("itinerary.updatedSuccess"));
+          try {
+            await editItinerary(data);
+          } catch {
+            return;
+          }
           setIsModalOpen(false);
         })}
         title={t("itinerary.confirmUpdateTitle")}

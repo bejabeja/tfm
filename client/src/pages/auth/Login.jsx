@@ -97,7 +97,7 @@ const Login = () => {
 
           <div className="auth__form-link">
             <SubmitButton label={t("auth.signIn")} loading={isSubmitting} />
-            {import.meta.env.VITE_ENV === 'development' && (
+            {import.meta.env.DEV && (
               <button type="button" className="auth__form-guest" onClick={loginAsGuest}>
                 {t("auth.continueAsGuest")}
               </button>
