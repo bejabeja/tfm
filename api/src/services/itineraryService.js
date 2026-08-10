@@ -1,3 +1,4 @@
+import { AuthError } from "../errors/AuthError.js";
 import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 
@@ -9,9 +10,9 @@ export class ItineraryService {
         this.cloudinaryService = cloudinaryService;
         this.aiService = aiService;
     }
-    async getItineraryById(id) {
+    async getItineraryById(id, requestingUserId) {
         const itinerary = await this.itinerariesRepository.findById(id);
-        if (!itinerary) {
+        if (!itinerary || (!itinerary.isPublic && itinerary.userId !== requestingUserId)) {
             throw new NotFoundError("Itinerary not found");
         }
         const places = await this.placesRepository.getPlacesByItineraryId(itinerary.id);
@@ -22,7 +23,7 @@ export class ItineraryService {
         return itinerary.toDTO();
     }
 
-    async createItinerary(data, file) {
+    async createItinerary(data, file, userId) {
         let imageUrl = "";
         let imagePublicId = "";
 
@@ -34,6 +35,7 @@ export class ItineraryService {
 
         const itineraryData = {
             ...data,
+            userId,
             photoUrl: imageUrl,
             photoPublicId: imagePublicId,
             isPublic: data.isPublic ?? true,
@@ -52,10 +54,13 @@ export class ItineraryService {
         return itinerary.toDTO();
     }
 
-    async deleteItinerary(id) {
+    async deleteItinerary(id, userId) {
         const itinerary = await this.itinerariesRepository.findById(id);
         if (!itinerary) {
             throw new NotFoundError("Itinerary not found");
+        }
+        if (itinerary.userId !== userId) {
+            throw new AuthError();
         }
 
         if (itinerary.photoPublicId) {
@@ -65,10 +70,13 @@ export class ItineraryService {
         await this.itinerariesRepository.delete(id);
     }
 
-    async updateItinerary(id, itineraryData, file) {
+    async updateItinerary(id, itineraryData, file, userId) {
         const itinerary = await this.itinerariesRepository.findById(id);
         if (!itinerary) {
             throw new NotFoundError("Itinerary not found");
+        }
+        if (itinerary.userId !== userId) {
+            throw new AuthError();
         }
 
         if (file) {

@@ -2,7 +2,7 @@ import { Router } from "express";
 import { ItinerariesController } from "../controllers/itinerariesController.js";
 import { ItineraryController } from "../controllers/itineraryController.js";
 import { upload } from "../middlewares/uploadImage.js";
-import { authenticate } from "../middlewares/authenticate.js";
+import { authenticate, optionalAuthenticate } from "../middlewares/authenticate.js";
 import { PlacesRepository } from "../repositories/placesRepository.js";
 import { ItineraryRepository } from "../repositories/itineraryRepository.js";
 import { UserRepository } from "../repositories/userRepository.js";
@@ -36,11 +36,11 @@ export const createItinerariesRouter = () => {
     router.get("/",             itinerariesController.filterItinerariesBy.bind(itinerariesController));
 
     // ── Single itinerary CRUD ─────────────────────────────────────────────────
-    router.get("/:id",          itineraryController.getItineraryById.bind(itineraryController));
-    router.post("/",            upload.single("file"), itineraryController.createItinerary.bind(itineraryController));
-    router.post("/generate-smart", itineraryController.generateSmartItinerary.bind(itineraryController));
-    router.patch("/:id",        upload.single("file"), itineraryController.updateItinerary.bind(itineraryController));
-    router.delete("/:id",       itineraryController.deleteItinerary.bind(itineraryController));
+    router.get("/:id",          optionalAuthenticate, itineraryController.getItineraryById.bind(itineraryController));
+    router.post("/",            authenticate, upload.single("file"), itineraryController.createItinerary.bind(itineraryController));
+    router.post("/generate-smart", authenticate, itineraryController.generateSmartItinerary.bind(itineraryController));
+    router.patch("/:id",        authenticate, upload.single("file"), itineraryController.updateItinerary.bind(itineraryController));
+    router.delete("/:id",       authenticate, itineraryController.deleteItinerary.bind(itineraryController));
 
     return router;
 }

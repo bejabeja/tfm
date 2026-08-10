@@ -62,6 +62,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
   const [travelers, setTravelers]       = useState(1);
   const [intention, setIntention]       = useState('');
   const [generating, setGenerating]     = useState(false);
+  const [isPublic, setIsPublic]         = useState(true);
   const [title, setTitle]               = useState('');
   const [steps, setSteps]               = useState([]);
   const [editingKey, setEditingKey]     = useState(null);
@@ -78,6 +79,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
         setDays(data.tripTotalDays ?? 7);
         setCategory(data.category ?? 'adventure');
         setTravelers(data.numberOfPeople ?? 1);
+        setIsPublic(data.isPublic ?? true);
 
         const dest = {
           name: data.location?.name ?? '',
@@ -192,7 +194,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
         title: title.trim(), description: '',
         location: { name: destination.name, label: destination.label ?? destination.name, lat: destination.coordinates?.lat ?? 0, lon: destination.coordinates?.lon ?? 0 },
         startDate: today, endDate: endObj.toISOString().split('T')[0],
-        budget: 0, currency: 'EUR', numberOfPeople: travelers, category, isPublic: false,
+        budget: 0, currency: 'EUR', numberOfPeople: travelers, category, isPublic,
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
           id: s._id,
           description: s.personalNote?.trim() ? `${s.description}\n\n✍️ ${s.personalNote.trim()}` : s.description,
@@ -385,6 +387,23 @@ const EditExperienceScreen = ({ navigation, route }) => {
             </TouchableOpacity>
           </View>
 
+          {/* Visibility */}
+          <View style={ls.section}>
+            <Text style={ls.sectionLabel}>{ce('visibilityLabel')}</Text>
+            <View style={ls.visibilityRow}>
+              <TouchableOpacity style={[ls.visibilityOpt, isPublic && ls.visibilityOptOn]} onPress={() => setIsPublic(true)}>
+                <Text style={ls.visibilityOptIcon}>🌍</Text>
+                <Text style={ls.visibilityOptName}>{ce('visibilityPublic')}</Text>
+                <Text style={ls.visibilityOptDesc}>{ce('visibilityPublicDesc')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={[ls.visibilityOpt, !isPublic && ls.visibilityOptOn]} onPress={() => setIsPublic(false)}>
+                <Text style={ls.visibilityOptIcon}>🔒</Text>
+                <Text style={ls.visibilityOptName}>{ce('visibilityPrivate')}</Text>
+                <Text style={ls.visibilityOptDesc}>{ce('visibilityPrivateDesc')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+
           <TouchableOpacity style={[ls.saveFullBtn, saving && ls.disabled]} onPress={handleSave} disabled={saving}>
             <Text style={ls.saveFullBtnText}>{saving ? ce('saving') : ce('saveExperience')}</Text>
           </TouchableOpacity>
@@ -558,6 +577,12 @@ const ls = StyleSheet.create({
   addStepText: { color: COLORS.primary, fontSize: 14, fontWeight: '600' },
   saveFullBtn: { backgroundColor: COLORS.accent, borderRadius: 16, paddingVertical: 18, alignItems: 'center', ...shadow(4, 0.18, 12, 4) },
   saveFullBtnText: { color: '#fff', fontSize: 17, fontWeight: '800' },
+  visibilityRow: { flexDirection: 'row', gap: 10 },
+  visibilityOpt: { flex: 1, padding: 12, borderRadius: 14, borderWidth: 1.5, borderColor: '#E5E7EB', backgroundColor: '#fff', alignItems: 'center', gap: 3 },
+  visibilityOptOn: { borderColor: COLORS.accent, backgroundColor: '#E8F4F2' },
+  visibilityOptIcon: { fontSize: 18 },
+  visibilityOptName: { fontSize: 12, fontWeight: '700', color: '#111827' },
+  visibilityOptDesc: { fontSize: 10, color: '#9ca3af', textAlign: 'center' },
   modalBackdrop: { flex: 1, backgroundColor: 'rgba(0,0,0,0.45)', justifyContent: 'flex-end' },
   modalSheet: { backgroundColor: '#fff', borderTopLeftRadius: 24, borderTopRightRadius: 24, padding: 20, paddingBottom: 32, ...shadow(-4, 0.15, 20, 16), maxHeight: '90%' },
   modalHandle: { width: 36, height: 4, borderRadius: 2, backgroundColor: '#E5E7EB', alignSelf: 'center', marginBottom: 16 },

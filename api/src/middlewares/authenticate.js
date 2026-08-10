@@ -33,3 +33,17 @@ export const authenticate = async (req, res, next) => {
         return next(new AuthError('Unauthorized'));
     }
 }
+
+export const optionalAuthenticate = async (req, res, next) => {
+    const authHeader = req.headers.authorization;
+    const token = authHeader?.split(" ")[1] || req.cookies.access_token;
+
+    if (!token) return next();
+
+    try {
+        req.user = authService.verifyAccessToken(token);
+    } catch {
+        // invalid or expired token on an optional route: treat as anonymous
+    }
+    return next();
+}

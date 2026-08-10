@@ -1,5 +1,6 @@
 import { getApiUrl } from "../utils/apiConfig";
 import { authFetch } from "../utils/authFetch";
+import { parseError } from "../utils/parseError";
 
 const baseUrl = () => `${getApiUrl()}/itineraries`;
 

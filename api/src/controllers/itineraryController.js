@@ -6,7 +6,7 @@ export class ItineraryController {
     async getItineraryById(req, res, next) {
         try {
             const { id } = req.params;
-            const itinerary = await this.itineraryService.getItineraryById(id);
+            const itinerary = await this.itineraryService.getItineraryById(id, req.user?.id);
             res.status(200).json(itinerary);
         } catch (error) {
             next(error);
@@ -17,7 +17,7 @@ export class ItineraryController {
         try {
             const { file } = req;
             const itineraryData = JSON.parse(req.body.itinerary);
-            const newItinerary = await this.itineraryService.createItinerary(itineraryData, file);
+            const newItinerary = await this.itineraryService.createItinerary(itineraryData, file, req.user.id);
             res.status(201).json(newItinerary);
         } catch (error) {
             next(error);
@@ -27,7 +27,7 @@ export class ItineraryController {
     async deleteItinerary(req, res, next) {
         try {
             const { id } = req.params;
-            await this.itineraryService.deleteItinerary(id);
+            await this.itineraryService.deleteItinerary(id, req.user.id);
             res.status(204).send();
         } catch (error) {
             next(error);
@@ -39,7 +39,7 @@ export class ItineraryController {
             const { id } = req.params;
             const { file } = req;
             const itineraryData = JSON.parse(req.body.itinerary);
-            await this.itineraryService.updateItinerary(id, itineraryData, file);
+            await this.itineraryService.updateItinerary(id, itineraryData, file, req.user.id);
             res.status(200).json({ message: "Itinerary updated successfully" });
 
         } catch (error) {

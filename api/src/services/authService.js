@@ -40,6 +40,11 @@ export class AuthService {
         try {
             return jwt.verify(token, config.jwtSecret);
         } catch (error) {
+            if (error.name === 'TokenExpiredError') {
+                const expiredError = new AuthError('Unauthorized: Token expired');
+                expiredError.name = 'TokenExpiredError';
+                throw expiredError;
+            }
             throw new AuthError('Unauthorized: Invalid token');
         }
     }

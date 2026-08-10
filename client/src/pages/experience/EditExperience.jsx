@@ -145,13 +145,16 @@ const EditExperience = () => {
   const [editingKey, setEditingKey]     = useState(null);
   const [editDraft, setEditDraft]       = useState(null);
   const [saving, setSaving]             = useState(false);
+  const [ownerId, setOwnerId]           = useState(null);
 
   const searchTimer = useRef(null);
   const ce = (key, vars) => t(`createExperience.${key}`, vars);
+  const isMyItinerary = () => !!userMe && !!ownerId && userMe.id === ownerId;
 
   // ─── Load existing itinerary ───────────────────────────────────────────────
   useEffect(() => {
     getItineraryById(id).then((data) => {
+      setOwnerId(data.userId ?? null);
       setTitle(data.title ?? "");
       setDays(data.tripTotalDays ?? 7);
       setCategory(data.category ? data.category.split(",") : ["adventure"]);
@@ -542,9 +545,11 @@ const EditExperience = () => {
             </div>
           </div>
 
-          <button type="button" className="cexp__save" onClick={handleSave} disabled={saving}>
-            {saving ? ce("saving") : ce("saveExperience")}
-          </button>
+          {isMyItinerary() && (
+            <button type="button" className="cexp__save" onClick={handleSave} disabled={saving}>
+              {saving ? ce("saving") : ce("saveExperience")}
+            </button>
+          )}
         </div>
       )}
 

@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { AuthError } from '../../errors/AuthError.js';
 import { ConflictError } from '../../errors/ConflictError.js';
 import { NotFoundError } from '../../errors/NotFoundError.js';
 import { ItineraryService } from '../../services/itineraryService.js';
@@ -13,6 +14,7 @@ const makePlace = (id, orderIndex = 0) => ({
 const makeItinerary = (overrides = {}) => ({
   id: 'itin-1',
   userId: 'user-1',
+  isPublic: true,
   title: 'My trip',
   photoUrl: 'https://example.com/photo.jpg',
   photoPublicId: 'public-id-123',
@@ -71,7 +73,7 @@ describe('ItineraryService', () => {
       itinerariesRepository.findById.mockResolvedValue(itinerary);
       placesRepository.getPlacesByItineraryId.mockResolvedValue([place]);
 
-      const result = await service.getItineraryById('itin-1');
+      const result = await service.getItineraryById('itin-1', 'user-1');
 
       expect(itinerariesRepository.findById).toHaveBeenCalledWith('itin-1');
       expect(placesRepository.getPlacesByItineraryId).toHaveBeenCalledWith('itin-1');
@@ -83,8 +85,32 @@ describe('ItineraryService', () => {
     it('throws NotFoundError when itinerary does not exist', async () => {
       itinerariesRepository.findById.mockResolvedValue(null);
 
-      await expect(service.getItineraryById('nonexistent'))
+      await expect(service.getItineraryById('nonexistent', 'user-1'))
         .rejects.toThrow(NotFoundError);
+    });
+
+    it('returns a public itinerary to an anonymous requester', async () => {
+      const itinerary = makeItinerary({ isPublic: true });
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+      placesRepository.getPlacesByItineraryId.mockResolvedValue([]);
+
+      await expect(service.getItineraryById('itin-1', undefined)).resolves.toBeDefined();
+    });
+
+    it('throws NotFoundError for a private itinerary requested by a non-owner', async () => {
+      const itinerary = makeItinerary({ isPublic: false });
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+
+      await expect(service.getItineraryById('itin-1', 'someone-else'))
+        .rejects.toThrow(NotFoundError);
+    });
+
+    it('returns a private itinerary to its owner', async () => {
+      const itinerary = makeItinerary({ isPublic: false });
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+      placesRepository.getPlacesByItineraryId.mockResolvedValue([]);
+
+      await expect(service.getItineraryById('itin-1', 'user-1')).resolves.toBeDefined();
     });
   });
 
@@ -99,11 +125,22 @@ describe('ItineraryService', () => {
       const itinerary = makeItinerary();
       itinerariesRepository.create.mockResolvedValue(itinerary);
 
-      await service.createItinerary(baseData, null);
+      await service.createItinerary(baseData, null, 'user-1');
 
       expect(cloudinaryService.uploadImageFromBuffer).not.toHaveBeenCalled();
       expect(itinerariesRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({ photoUrl: '', photoPublicId: '' })
+      );
+    });
+
+    it('ignores a client-supplied userId and uses the authenticated user instead', async () => {
+      const itinerary = makeItinerary();
+      itinerariesRepository.create.mockResolvedValue(itinerary);
+
+      await service.createItinerary({ ...baseData, userId: 'attacker-id' }, null, 'user-1');
+
+      expect(itinerariesRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ userId: 'user-1' })
       );
     });
 
@@ -116,7 +153,7 @@ describe('ItineraryService', () => {
       itinerariesRepository.create.mockResolvedValue(itinerary);
 
       const file = { buffer: Buffer.from('img'), originalname: 'photo.jpg' };
-      await service.createItinerary(baseData, file);
+      await service.createItinerary(baseData, file, 'user-1');
 
       expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalledWith(file.buffer, file.originalname);
       expect(itinerariesRepository.create).toHaveBeenCalledWith(
@@ -138,7 +175,7 @@ describe('ItineraryService', () => {
       placesRepository.insertPlace.mockResolvedValueOnce({ id: 'place-1', toDTO: () => ({}) })
         .mockResolvedValueOnce({ id: 'place-2', toDTO: () => ({}) });
 
-      await service.createItinerary(dataWithPlaces, null);
+      await service.createItinerary(dataWithPlaces, null, 'user-1');
 
       expect(placesRepository.insertPlace).toHaveBeenCalledTimes(2);
       expect(itinerariesRepository.linkPlace).toHaveBeenCalledTimes(2);
@@ -152,7 +189,7 @@ describe('ItineraryService', () => {
       itinerariesRepository.create.mockResolvedValue(itinerary);
       placesRepository.insertPlace.mockResolvedValue({ id: 'place-1', toDTO: () => ({}) });
 
-      await service.createItinerary(dataWithPlaces, null);
+      await service.createItinerary(dataWithPlaces, null, 'user-1');
 
       expect(placesRepository.insertPlace).toHaveBeenCalledTimes(1);
       expect(itinerariesRepository.linkPlace).toHaveBeenCalledWith('itin-1', 'place-1', 0, 1, null);
@@ -161,7 +198,7 @@ describe('ItineraryService', () => {
     it('throws ConflictError when repository fails to create', async () => {
       itinerariesRepository.create.mockResolvedValue(null);
 
-      await expect(service.createItinerary(baseData, null))
+      await expect(service.createItinerary(baseData, null, 'user-1'))
         .rejects.toThrow(ConflictError);
     });
   });
@@ -170,15 +207,24 @@ describe('ItineraryService', () => {
     it('throws NotFoundError when itinerary does not exist', async () => {
       itinerariesRepository.findById.mockResolvedValue(null);
 
-      await expect(service.deleteItinerary('nonexistent'))
+      await expect(service.deleteItinerary('nonexistent', 'user-1'))
         .rejects.toThrow(NotFoundError);
+    });
+
+    it('throws AuthError when the requester does not own the itinerary', async () => {
+      const itinerary = makeItinerary();
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+
+      await expect(service.deleteItinerary('itin-1', 'someone-else'))
+        .rejects.toThrow(AuthError);
+      expect(itinerariesRepository.delete).not.toHaveBeenCalled();
     });
 
     it('deletes cloudinary image when photoPublicId exists', async () => {
       const itinerary = makeItinerary({ photoPublicId: 'some-public-id' });
       itinerariesRepository.findById.mockResolvedValue(itinerary);
 
-      await service.deleteItinerary('itin-1');
+      await service.deleteItinerary('itin-1', 'user-1');
 
       expect(cloudinaryService.deleteImage).toHaveBeenCalledWith('some-public-id');
       expect(itinerariesRepository.delete).toHaveBeenCalledWith('itin-1');
@@ -188,7 +234,7 @@ describe('ItineraryService', () => {
       const itinerary = makeItinerary({ photoPublicId: null });
       itinerariesRepository.findById.mockResolvedValue(itinerary);
 
-      await service.deleteItinerary('itin-1');
+      await service.deleteItinerary('itin-1', 'user-1');
 
       expect(cloudinaryService.deleteImage).not.toHaveBeenCalled();
       expect(itinerariesRepository.delete).toHaveBeenCalledWith('itin-1');
@@ -204,8 +250,17 @@ describe('ItineraryService', () => {
     it('throws NotFoundError when itinerary does not exist', async () => {
       itinerariesRepository.findById.mockResolvedValue(null);
 
-      await expect(service.updateItinerary('nonexistent', baseUpdateData, null))
+      await expect(service.updateItinerary('nonexistent', baseUpdateData, null, 'user-1'))
         .rejects.toThrow(NotFoundError);
+    });
+
+    it('throws AuthError when the requester does not own the itinerary', async () => {
+      const itinerary = makeItinerary();
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+
+      await expect(service.updateItinerary('itin-1', { ...baseUpdateData }, null, 'someone-else'))
+        .rejects.toThrow(AuthError);
+      expect(itinerariesRepository.update).not.toHaveBeenCalled();
     });
 
     it('preserves existing image when no new file is provided', async () => {
@@ -213,7 +268,7 @@ describe('ItineraryService', () => {
       itinerariesRepository.findById.mockResolvedValue(itinerary);
       placesRepository.getPlacesByItineraryId.mockResolvedValue([]);
 
-      await service.updateItinerary('itin-1', { ...baseUpdateData }, null);
+      await service.updateItinerary('itin-1', { ...baseUpdateData }, null, 'user-1');
 
       expect(cloudinaryService.uploadImageFromBuffer).not.toHaveBeenCalled();
       expect(cloudinaryService.deleteImage).not.toHaveBeenCalled();
@@ -236,7 +291,7 @@ describe('ItineraryService', () => {
       });
 
       const file = { buffer: Buffer.from('img'), originalname: 'new.jpg' };
-      await service.updateItinerary('itin-1', { ...baseUpdateData }, file);
+      await service.updateItinerary('itin-1', { ...baseUpdateData }, file, 'user-1');
 
       expect(cloudinaryService.deleteImage).toHaveBeenCalledWith('old-public-id');
       expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalledWith(file.buffer, file.originalname);
@@ -259,7 +314,7 @@ describe('ItineraryService', () => {
       });
 
       const file = { buffer: Buffer.from('img'), originalname: 'first.jpg' };
-      await service.updateItinerary('itin-1', { ...baseUpdateData }, file);
+      await service.updateItinerary('itin-1', { ...baseUpdateData }, file, 'user-1');
 
       expect(cloudinaryService.deleteImage).not.toHaveBeenCalled();
       expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalled();
@@ -274,7 +329,7 @@ describe('ItineraryService', () => {
 
       // Only place-1 remains in the update
       const updateData = { ...baseUpdateData, places: [{ id: 'place-1', orderIndex: 0 }] };
-      await service.updateItinerary('itin-1', updateData, null);
+      await service.updateItinerary('itin-1', updateData, null, 'user-1');
 
       expect(itinerariesRepository.unlinkPlace).toHaveBeenCalledWith('itin-1', 'place-2');
       expect(itinerariesRepository.unlinkPlace).not.toHaveBeenCalledWith('itin-1', 'place-1');
@@ -288,7 +343,7 @@ describe('ItineraryService', () => {
 
       const placeUpdate = { id: 'place-1', orderIndex: 2 };
       const updateData = { ...baseUpdateData, places: [placeUpdate] };
-      await service.updateItinerary('itin-1', updateData, null);
+      await service.updateItinerary('itin-1', updateData, null, 'user-1');
 
       expect(placesRepository.updatePlace).toHaveBeenCalledWith(placeUpdate);
       expect(itinerariesRepository.updatePlaceOrder).toHaveBeenCalledWith('itin-1', { ...placeUpdate, description: null });
@@ -302,7 +357,7 @@ describe('ItineraryService', () => {
 
       const newPlace = { id: undefined, orderIndex: 0, infoPlace: { lat: 1, lon: 2 } };
       const updateData = { ...baseUpdateData, places: [newPlace] };
-      await service.updateItinerary('itin-1', updateData, null);
+      await service.updateItinerary('itin-1', updateData, null, 'user-1');
 
       expect(placesRepository.insertPlace).toHaveBeenCalledWith(newPlace);
       expect(itinerariesRepository.linkPlace).toHaveBeenCalledWith('itin-1', 'new-place', 0, 1, null);

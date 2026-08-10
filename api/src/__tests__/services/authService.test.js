@@ -122,5 +122,19 @@ describe('AuthService', () => {
             expect(() => authService.verifyAccessToken('bad-token'))
                 .toThrow(AuthError);
         });
+
+        it('throws an error named TokenExpiredError when the token expired, so authenticate.js can detect it', () => {
+            const expired = new Error('jwt expired');
+            expired.name = 'TokenExpiredError';
+            jwt.verify.mockImplementation(() => { throw expired; });
+
+            try {
+                authService.verifyAccessToken('expired-token');
+                throw new Error('expected verifyAccessToken to throw');
+            } catch (error) {
+                expect(error).toBeInstanceOf(AuthError);
+                expect(error.name).toBe('TokenExpiredError');
+            }
+        });
     });
 });

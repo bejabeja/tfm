@@ -1,5 +1,6 @@
 import { getApiUrl } from "../utils/apiConfig";
 import { authFetch } from "../utils/authFetch";
+import { parseError } from "../utils/parseError";
 
 const baseUrl = () => `${getApiUrl()}/favorites`;
 
@@ -9,7 +10,7 @@ export const addFavorite = async (itineraryId) => {
         headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) {
-        await parseError("Failed to add favorite");
+        await parseError(response, "Failed to add favorite");
     }
     return response.json();
 };
@@ -20,7 +21,7 @@ export const removeFavorite = async (itineraryId) => {
         headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) {
-        await parseError("Failed to remove favorite");
+        await parseError(response, "Failed to remove favorite");
     }
     return response.json();
 };
@@ -31,7 +32,7 @@ export const getUserFavorites = async () => {
         headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) {
-        await parseError("Failed to get favorites");
+        await parseError(response, "Failed to get favorites");
     }
     return response.json();
 };
@@ -42,7 +43,7 @@ export const checkIsFavorite = async (itineraryId) => {
         headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) {
-        await parseError("Failed to check is favorite");
+        await parseError(response, "Failed to check is favorite");
     }
     return response.json();
 }

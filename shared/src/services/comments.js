@@ -1,5 +1,6 @@
 import { getApiUrl } from "../utils/apiConfig";
 import { authFetch } from "../utils/authFetch";
+import { parseError } from "../utils/parseError";
 
 const baseUrl = () => `${getApiUrl()}/comments`;
 
@@ -9,7 +10,7 @@ export const getCommentsByItineraryId = async (itineraryId) => {
         headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) {
-        await parseError("Failed to fetch comments");
+        await parseError(response, "Failed to fetch comments");
     }
     return response.json();
 };

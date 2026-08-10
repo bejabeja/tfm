@@ -10,7 +10,7 @@ export const getItineraryById = async (id) => {
         headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) {
-        await parseError("Failed to fetch itinerary");
+        await parseError(response, "Failed to fetch itinerary");
     }
     return response.json();
 };
@@ -21,7 +21,7 @@ export const createItinerary = async (formData) => {
         body: formData,
     });
     if (!response.ok) {
-        await parseError("Failed to create itinerary");
+        await parseError(response, "Failed to create itinerary");
     }
     return response.json();
 };
@@ -32,7 +32,7 @@ export const deleteItinerary = async (id) => {
         headers: { "Content-Type": "application/json" },
     });
     if (!response.ok) {
-        await parseError("Failed to delete itinerary");
+        await parseError(response, "Failed to delete itinerary");
     }
     return null;
 };
@@ -43,7 +43,7 @@ export const updateItinerary = async (id, formData) => {
         body: formData,
     });
     if (!response.ok) {
-        await parseError("Failed to update itinerary");
+        await parseError(response, "Failed to update itinerary");
     }
     return response.json();
 };

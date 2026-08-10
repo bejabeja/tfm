@@ -51,7 +51,7 @@ export class CommentsRepository {
   async getCommentById(commentId) {
     const query = `SELECT * FROM itinerary_comments WHERE id = $1;`;
     const result = await client.query(query, [commentId]);
-    return Comment.fromDB(result.rows[0]) || null;
+    return result.rows[0] ? Comment.fromDB(result.rows[0]) : null;
   }
 
 }
