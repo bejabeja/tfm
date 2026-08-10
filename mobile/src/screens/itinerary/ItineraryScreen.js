@@ -15,10 +15,11 @@ const Marker  = Platform.OS !== 'web' ? require('react-native-maps').Marker  : n
 import { ItineraryDetailSkeleton } from '../../components/Skeleton';
 import { COLORS, shadow, textShadow } from '../../utils/styles';
 import { getStepConfig } from '../../utils/stepConfig';
+import { WEB_URL } from '../../utils/config';
 import {
-  addComment, addFavorite, checkIsFavorite, deleteComment,
+  addComment, addFavorite, checkIsFavorite, checkIsLiked, deleteComment,
   deleteItinerary, getCommentsByItineraryId, getCurrencySymbol,
-  getItineraryById, getUserById, removeFavorite,
+  getItineraryById, getUserById, removeFavorite, toggleLike,
   selectIsAuthenticated, selectMe,
 } from '@tobeatraveller/shared';
 
@@ -40,6 +41,8 @@ const ItineraryScreen = ({ route, navigation }) => {
   const [author, setAuthor] = useState(null);
   const [loading, setLoading] = useState(true);
   const [isFavorite, setIsFavorite] = useState(false);
+  const [isLiked, setIsLiked] = useState(false);
+  const [likesCount, setLikesCount] = useState(0);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -49,6 +52,7 @@ const ItineraryScreen = ({ route, navigation }) => {
       try {
         const data = await getItineraryById(id);
         setItinerary(data);
+        setLikesCount(data?.likesCount ?? 0);
         if (data?.userId) {
           const user = await getUserById(data.userId);
           setAuthor(user);
@@ -63,6 +67,7 @@ const ItineraryScreen = ({ route, navigation }) => {
     getCommentsByItineraryId(itinerary.id).then(setComments).catch(() => {});
     if (isAuthenticated) {
       checkIsFavorite(itinerary.id).then(setIsFavorite).catch(() => {});
+      checkIsLiked(itinerary.id).then(d => { setIsLiked(d.isLiked); setLikesCount(d.likesCount); }).catch(() => {});
     }
   }, [itinerary?.id, isAuthenticated]);
 
@@ -77,8 +82,9 @@ const ItineraryScreen = ({ route, navigation }) => {
     : null;
 
   const handleShare = async () => {
+    const url = `${WEB_URL}/itinerary/${itinerary.id}`;
     try {
-      await Share.share({ message: itinerary.title, title: itinerary.title });
+      await Share.share({ message: `${itinerary.title} - ${url}`, url, title: itinerary.title });
     } catch {}
   };
 
@@ -90,6 +96,22 @@ const ItineraryScreen = ({ route, navigation }) => {
       setIsFavorite(f => !f);
     } catch {
       Alert.alert(t('errors.somethingWrong'), t('itinerary.errorFavorite'));
+    }
+  };
+
+  const handleLike = async () => {
+    if (!isAuthenticated) { navigation.navigate('Tabs', { screen: 'Profile' }); return; }
+    const prev = isLiked;
+    setIsLiked(!prev);
+    setLikesCount(c => prev ? c - 1 : c + 1);
+    try {
+      const data = await toggleLike(itinerary.id);
+      setIsLiked(data.isLiked);
+      setLikesCount(data.likesCount);
+    } catch {
+      setIsLiked(prev);
+      setLikesCount(c => prev ? c + 1 : c - 1);
+      Alert.alert(t('errors.somethingWrong'), t('itinerary.errorLike'));
     }
   };
 
@@ -158,6 +180,10 @@ const ItineraryScreen = ({ route, navigation }) => {
         </TouchableOpacity>
 
         <View style={[styles.heroActions, { top: insets.top + 12 }]}>
+          <TouchableOpacity style={[styles.actionBtn, styles.likeBtn, isLiked && styles.actionBtnLiked]} onPress={handleLike}>
+            <Ionicons name={isLiked ? 'heart' : 'heart-outline'} size={17} color="#fff" />
+            <Text style={styles.likeCountText}>{likesCount}</Text>
+          </TouchableOpacity>
           <TouchableOpacity style={styles.actionBtn} onPress={handleShare}>
             <Text style={styles.actionIcon}>⤴</Text>
           </TouchableOpacity>
@@ -535,6 +561,17 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,119,182,0.75)',
     borderColor: 'rgba(100,200,255,0.3)',
   },
+  actionBtnLiked: {
+    backgroundColor: 'rgba(230,57,70,0.85)',
+    borderColor: 'rgba(255,150,160,0.3)',
+  },
+  likeBtn: {
+    width: 'auto',
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    gap: 5,
+  },
+  likeCountText: { fontSize: 13, fontWeight: '700', color: '#fff' },
   actionIcon: { fontSize: 17 },
   heroContent: {
     position: 'absolute', bottom: 0, left: 0, right: 0,

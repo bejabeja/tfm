@@ -25,6 +25,7 @@ import {
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import Modal from "../../components/modal/Modal";
 import { generateSmartItinerary } from "../../services/itineraries";
 import { createItinerary } from "../../services/itinerary";
 import { setUserInfo, setUserInfoItineraries } from "../../store/user/userInfoActions";
@@ -143,6 +144,7 @@ const CreateExperience = () => {
   const [editingKey, setEditingKey]     = useState(null);
   const [editDraft, setEditDraft]       = useState(null);
   const [saving, setSaving]             = useState(false);
+  const [showRegenConfirm, setShowRegenConfirm] = useState(false);
   const [locQuery, setLocQuery]         = useState("");
   const [locResults, setLocResults]     = useState([]);
   const [locSearching, setLocSearching] = useState(false);
@@ -169,8 +171,17 @@ const CreateExperience = () => {
   const selectDest = (dest) => { setDestination(dest); setDestQuery(dest.name); setDestResults([]); };
 
   // ─── AI generation ───────────────────────────────────────────────────────
-  const handleGenerate = async () => {
+  const handleGenerate = () => {
     if (!destination?.name) return;
+    if (steps.length > 0) {
+      setShowRegenConfirm(true);
+      return;
+    }
+    runGenerate();
+  };
+
+  const runGenerate = async () => {
+    setShowRegenConfirm(false);
     setGenerating(true);
     try {
       const data = await generateSmartItinerary({
@@ -628,6 +639,16 @@ const CreateExperience = () => {
           </div>
         </div>
       )}
+
+      <Modal
+        isOpen={showRegenConfirm}
+        onClose={() => setShowRegenConfirm(false)}
+        onConfirm={runGenerate}
+        title={ce("confirmRegenerateTitle")}
+        description={ce("confirmRegenerateDesc")}
+        confirmText={ce("regenerate")}
+        type="danger"
+      />
     </div>
   );
 };

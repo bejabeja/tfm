@@ -280,6 +280,8 @@
     "addedToFavorites": "Added to favourites!",
     "removedFromFavorites": "Removed from favourites!",
     "errorFavorites": "Error updating favourites",
+    "like": "Like",
+    "unlike": "Unlike",
     "linkCopied": "Link copied!",
     "couldntCopyLink": "Couldn't copy link",
     "confirmDeletion": "Confirm Deletion",
@@ -327,7 +329,8 @@
     "deleteCommentDesc": "Delete this comment?",
     "errorDelete": "Could not delete itinerary. Please try again.",
     "errorDeleteComment": "Could not delete comment. Please try again.",
-    "errorFavorite": "Could not update saved status. Please try again."
+    "errorFavorite": "Could not update saved status. Please try again.",
+    "errorLike": "Could not update like. Please try again."
   },
   "myItineraries": {
     "planTrip": "Plan a trip",
@@ -365,6 +368,7 @@
     "title": "Notifications",
     "noNotifications": "No notifications yet",
     "noNotificationsDesc": "When someone follows you, likes or comments on your trips, you'll see it here.",
+    "errorMsg": "Oops! Something went wrong while loading your notifications.",
     "startedFollowing": " started following you",
     "liked": " liked your trip ",
     "commented": " commented on "
@@ -599,6 +603,8 @@
     "namePlaceholder": "Give your experience a name…",
     "moments": "moments",
     "regenerate": "Regenerate",
+    "confirmRegenerateTitle": "Regenerate experience?",
+    "confirmRegenerateDesc": "This will replace your current moments, including any notes or edits you've made. This can't be undone.",
     "addMoment": "Add moment",
     "saveExperience": "Save experience",
     "saving": "Saving…",

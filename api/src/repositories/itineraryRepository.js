@@ -172,7 +172,7 @@ export class ItineraryRepository {
 
   async getTotalByUserId(userId) {
     const result = await client.query(
-      `SELECT COUNT(*) AS total FROM itineraries WHERE user_id = $1`, [userId]
+      `SELECT COUNT(*) AS total FROM itineraries WHERE user_id = $1 AND is_public = true`, [userId]
     );
     return parseInt(result.rows[0].total, 10);
   }

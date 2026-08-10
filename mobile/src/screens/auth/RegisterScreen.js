@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { checkUsernameAvailable, registerUser, selectAuthError } from '@tobeatraveller/shared';
 import { shadow, textShadow } from '../../utils/styles';
+import { WEB_URL } from '../../utils/config';
 
 const AUTH_BG = require('../../../assets/auth.webp');
 const { height: SCREEN_H } = Dimensions.get('window');
@@ -200,9 +201,9 @@ const RegisterScreen = ({ navigation }) => {
                   </View>
                   <Text style={[styles.consentText, errors.termsAccepted && styles.consentTextError]}>
                     {termsPrefix}
-                    <Text style={styles.consentLink} onPress={() => Linking.openURL('https://tobeatraveller.com/terms')}>{t('auth.termsOfService')}</Text>
+                    <Text style={styles.consentLink} onPress={() => Linking.openURL(`${WEB_URL}/terms`)}>{t('auth.termsOfService')}</Text>
                     {termsMiddle}
-                    <Text style={styles.consentLink} onPress={() => Linking.openURL('https://tobeatraveller.com/privacy-policy')}>{t('auth.privacyPolicy')}</Text>
+                    <Text style={styles.consentLink} onPress={() => Linking.openURL(`${WEB_URL}/privacy-policy`)}>{t('auth.privacyPolicy')}</Text>
                     {termsSuffix}
                   </Text>
                 </TouchableOpacity>

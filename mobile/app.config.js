@@ -26,6 +26,7 @@ module.exports = ({ config }) => ({
   extra: {
     eas: { projectId: '21b2c26e-ca30-4c39-8bf7-ad3bf5c4b408' },
     apiUrl: process.env.EXPO_PUBLIC_API_URL || 'http://localhost:3000',
+    webUrl: process.env.EXPO_PUBLIC_WEB_URL || 'http://localhost:5173',
     geoapifyKey: process.env.EXPO_PUBLIC_GEOAPIFY_KEY || '',
   },
   owner: 'mirabaix',

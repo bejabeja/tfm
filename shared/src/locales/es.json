@@ -280,6 +280,8 @@
     "addedToFavorites": "¡Añadido a favoritos!",
     "removedFromFavorites": "Eliminado de favoritos",
     "errorFavorites": "Error al actualizar favoritos",
+    "like": "Me gusta",
+    "unlike": "Ya no me gusta",
     "linkCopied": "¡Enlace copiado!",
     "couldntCopyLink": "No se pudo copiar el enlace",
     "confirmDeletion": "Confirmar eliminación",
@@ -327,7 +329,8 @@
     "deleteCommentDesc": "¿Eliminar este comentario?",
     "errorDelete": "No se pudo eliminar el itinerario. Por favor, inténtalo más tarde.",
     "errorDeleteComment": "No se pudo eliminar el comentario. Por favor, inténtalo más tarde.",
-    "errorFavorite": "No se pudo actualizar el estado guardado. Por favor, inténtalo más tarde."
+    "errorFavorite": "No se pudo actualizar el estado guardado. Por favor, inténtalo más tarde.",
+    "errorLike": "No se pudo actualizar el me gusta. Por favor, inténtalo más tarde."
   },
   "favorites": {
     "title": "Viajes guardados",
@@ -342,6 +345,7 @@
     "title": "Notificaciones",
     "noNotifications": "Todavía no tienes notificaciones",
     "noNotificationsDesc": "Cuando alguien te siga, le guste o comente tus viajes, lo verás aquí.",
+    "errorMsg": "¡Vaya! Algo salió mal al cargar tus notificaciones.",
     "startedFollowing": " empezó a seguirte",
     "liked": " le gustó tu viaje ",
     "commented": " comentó en "
@@ -599,6 +603,8 @@
     "namePlaceholder": "Dale un nombre a tu experiencia…",
     "moments": "momentos",
     "regenerate": "Regenerar",
+    "confirmRegenerateTitle": "¿Regenerar experiencia?",
+    "confirmRegenerateDesc": "Esto reemplazará tus momentos actuales, incluidas las notas o ediciones que hayas hecho. No se puede deshacer.",
     "addMoment": "Añadir momento",
     "saveExperience": "Guardar experiencia",
     "saving": "Guardando…",

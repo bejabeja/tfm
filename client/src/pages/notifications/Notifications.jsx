@@ -5,9 +5,14 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import {
   initNotifications,
+  loadMoreNotifications,
   markAllNotificationsRead,
   selectNotifications,
+  selectNotificationsError,
   selectNotificationsLoading,
+  selectNotificationsLoadingMore,
+  selectNotificationsPage,
+  selectNotificationsTotalPages,
   selectUnreadCount,
 } from "@tobeatraveller/shared";
 import "./Notifications.scss";
@@ -17,11 +22,19 @@ const Notifications = () => {
   const dispatch = useDispatch();
   const notifications = useSelector(selectNotifications);
   const loading = useSelector(selectNotificationsLoading);
+  const loadingMore = useSelector(selectNotificationsLoadingMore);
+  const error = useSelector(selectNotificationsError);
+  const page = useSelector(selectNotificationsPage);
+  const totalPages = useSelector(selectNotificationsTotalPages);
   const unreadCount = useSelector(selectUnreadCount);
 
   useEffect(() => {
     dispatch(initNotifications());
   }, [dispatch]);
+
+  const handleLoadMore = () => {
+    dispatch(loadMoreNotifications(page + 1));
+  };
 
   useEffect(() => {
     if (unreadCount > 0) dispatch(markAllNotificationsRead());
@@ -48,6 +61,13 @@ const Notifications = () => {
             <div key={i} className="notif-skeleton" />
           ))}
         </div>
+      ) : error ? (
+        <div className="notifications__error">
+          <p className="error-message">{t("notifications.errorMsg")}</p>
+          <button className="btn btn--ghost" onClick={() => dispatch(initNotifications())}>
+            {t("common.retry")}
+          </button>
+        </div>
       ) : notifications.length === 0 ? (
         <div className="notifications__empty">
           <IoNotificationsOutline className="notifications__empty-icon" />
@@ -55,11 +75,22 @@ const Notifications = () => {
           <span>{t("notifications.noNotificationsDesc")}</span>
         </div>
       ) : (
-        <div className="notifications__list">
-          {notifications.map((n) => (
-            <NotificationItem key={n.id} notification={n} typeLabels={TYPE_LABELS} />
-          ))}
-        </div>
+        <>
+          <div className="notifications__list">
+            {notifications.map((n) => (
+              <NotificationItem key={n.id} notification={n} typeLabels={TYPE_LABELS} />
+            ))}
+          </div>
+          {page < totalPages && (
+            <button
+              className="btn btn--ghost notifications__load-more"
+              onClick={handleLoadMore}
+              disabled={loadingMore}
+            >
+              {loadingMore ? t("common.loading") : t("community.loadMore")}
+            </button>
+          )}
+        </>
       )}
     </div>
   );

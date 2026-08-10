@@ -3,7 +3,9 @@ import {
   FaBookmark,
   FaCity,
   FaEdit,
+  FaHeart,
   FaRegBookmark,
+  FaRegHeart,
   FaTrashAlt,
 } from "react-icons/fa";
 import { GoPeople } from "react-icons/go";
@@ -14,6 +16,7 @@ import { Link, useNavigate, useParams } from "react-router-dom";
 import { getCategoryIcon } from "../../assets/icons.js";
 import Modal from "../../components/modal/Modal.jsx";
 import Spinner from "../../components/spinner/Spinner.jsx";
+import { useLike } from "../../hooks/useLike.js";
 import {
   addFavorite,
   checkIsFavorite,
@@ -205,10 +208,17 @@ const Hero = ({
   setIsModalOpen,
   t,
 }) => {
+  const { isLiked, likesCount, handleToggleLike } = useLike(itinerary.id, itinerary.likesCount);
+
   const handleShare = async () => {
     const url = window.location.href;
     if (navigator.share) {
-      try { await navigator.share({ title: itinerary.title, url }); } catch {}
+      try { await navigator.share({ title: itinerary.title, url }); } catch (err) {
+        if (err?.name !== "AbortError") {
+          await navigator.clipboard.writeText(url);
+          toast.success(t("itinerary.linkCopied"));
+        }
+      }
     } else {
       await navigator.clipboard.writeText(url);
       toast.success(t("itinerary.linkCopied"));
@@ -270,6 +280,14 @@ const Hero = ({
       </div>
 
       <div className="itinerary__hero-actions">
+        <button
+          className={`action-icon-btn itinerary__like-btn ${isLiked ? "active" : ""}`}
+          onClick={handleToggleLike}
+          title={isLiked ? t("itinerary.unlike") : t("itinerary.like")}
+        >
+          {isLiked ? <FaHeart /> : <FaRegHeart />}
+          <span className="itinerary__like-count">{likesCount}</span>
+        </button>
         <button className="action-icon-btn" onClick={handleShare} title={t("common.send")}>
           <MdOutlineShare />
         </button>

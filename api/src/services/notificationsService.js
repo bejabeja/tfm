@@ -10,8 +10,16 @@ export class NotificationsService {
 
     async getNotifications(userId, page = 1, limit = 20) {
         const offset = (page - 1) * limit;
-        const notifications = await this.notificationsRepository.getByUserId(userId, limit, offset);
-        return { notifications, currentPage: page };
+        const [notifications, totalCount] = await Promise.all([
+            this.notificationsRepository.getByUserId(userId, limit, offset),
+            this.notificationsRepository.getTotalCount(userId),
+        ]);
+        return {
+            notifications,
+            currentPage: page,
+            totalCount,
+            totalPages: Math.max(1, Math.ceil(totalCount / limit)),
+        };
     }
 
     async markAllAsRead(userId) {

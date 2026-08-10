@@ -107,8 +107,19 @@ const PlanExperienceScreen = ({ navigation }) => {
   };
 
   // ─── AI generation ────────────────────────────────────────────────────────
-  const handleGenerate = async () => {
+  const handleGenerate = () => {
     if (!destination?.name) return;
+    if (steps.length > 0) {
+      Alert.alert(ce('confirmRegenerateTitle'), ce('confirmRegenerateDesc'), [
+        { text: t('common.cancel'), style: 'cancel' },
+        { text: ce('regenerate'), style: 'destructive', onPress: runGenerate },
+      ]);
+      return;
+    }
+    runGenerate();
+  };
+
+  const runGenerate = async () => {
     setGenerating(true);
     try {
       const data = await generateSmartItinerary({

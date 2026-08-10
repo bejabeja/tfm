@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
 import {
-  FlatList, Image, StyleSheet, Text,
+  ActivityIndicator, FlatList, Image, StyleSheet, Text,
   TouchableOpacity, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
-  initNotifications, markAllNotificationsRead,
-  selectNotifications, selectNotificationsLoading, selectUnreadCount,
+  initNotifications, loadMoreNotifications, markAllNotificationsRead,
+  selectNotifications, selectNotificationsError, selectNotificationsLoading,
+  selectNotificationsLoadingMore, selectNotificationsPage, selectNotificationsTotalPages, selectUnreadCount,
 } from '@tobeatraveller/shared';
 import { UserRowSkeleton } from '../../components/Skeleton';
 import { shadow } from '../../utils/styles';
@@ -21,6 +22,10 @@ const NotificationsScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const notifications = useSelector(selectNotifications);
   const loading = useSelector(selectNotificationsLoading);
+  const loadingMore = useSelector(selectNotificationsLoadingMore);
+  const error = useSelector(selectNotificationsError);
+  const page = useSelector(selectNotificationsPage);
+  const totalPages = useSelector(selectNotificationsTotalPages);
   const unreadCount = useSelector(selectUnreadCount);
 
   useEffect(() => {
@@ -30,6 +35,11 @@ const NotificationsScreen = ({ navigation }) => {
   useEffect(() => {
     if (unreadCount > 0) dispatch(markAllNotificationsRead());
   }, [unreadCount, dispatch]);
+
+  const handleLoadMore = () => {
+    if (loadingMore || page >= totalPages) return;
+    dispatch(loadMoreNotifications(page + 1));
+  };
 
   const handlePress = (n) => {
     if (n.type === 'follow') navigation.navigate('UserProfile', { id: n.actor?.id });
@@ -50,6 +60,14 @@ const NotificationsScreen = ({ navigation }) => {
         <View style={{ paddingHorizontal: 16, paddingTop: 8 }}>
           {Array.from({ length: 8 }, (_, i) => <UserRowSkeleton key={i} />)}
         </View>
+      ) : error ? (
+        <View style={styles.empty}>
+          <Text style={styles.emptyIcon}>⚠️</Text>
+          <Text style={styles.emptyTitle}>{t('notifications.errorMsg')}</Text>
+          <TouchableOpacity style={styles.retryBtn} onPress={() => dispatch(initNotifications())}>
+            <Text style={styles.retryBtnText}>{t('common.retry')}</Text>
+          </TouchableOpacity>
+        </View>
       ) : notifications.length === 0 ? (
         <View style={styles.empty}>
           <Text style={styles.emptyIcon}>🔔</Text>
@@ -64,6 +82,11 @@ const NotificationsScreen = ({ navigation }) => {
           keyExtractor={item => item.id}
           contentContainerStyle={styles.list}
           showsVerticalScrollIndicator={false}
+          onEndReached={handleLoadMore}
+          onEndReachedThreshold={0.4}
+          ListFooterComponent={loadingMore ? (
+            <ActivityIndicator style={{ marginVertical: 16 }} color="#E8743B" />
+          ) : null}
           renderItem={({ item: n }) => (
             <TouchableOpacity
               style={[styles.item, !n.isRead && styles.itemUnread]}
@@ -143,8 +166,14 @@ const styles = StyleSheet.create({
 
   empty: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: 32, gap: 8 },
   emptyIcon: { fontSize: 48, marginBottom: 8 },
-  emptyTitle: { fontSize: 17, fontWeight: '700', color: '#111827' },
+  emptyTitle: { fontSize: 17, fontWeight: '700', color: '#111827', textAlign: 'center' },
   emptySub: { fontSize: 13, color: '#6b7280', textAlign: 'center', lineHeight: 20 },
+
+  retryBtn: {
+    marginTop: 8, paddingVertical: 10, paddingHorizontal: 20,
+    borderRadius: 999, borderWidth: 1, borderColor: '#E8743B',
+  },
+  retryBtnText: { color: '#E8743B', fontWeight: '700', fontSize: 14 },
 });
 
 export default NotificationsScreen;

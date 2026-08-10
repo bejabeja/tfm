@@ -1,7 +1,7 @@
 import cors from 'cors';
 import config from '../config/config.js';
 
-const getAcceptedOrigins = () => [config.originOne, config.originTwo].filter(Boolean);
+const getAcceptedOrigins = () => [config.appUrl, config.originTwo].filter(Boolean);
 
 export const corsMiddleware = ({ acceptedOrigins } = {}) =>
     cors({

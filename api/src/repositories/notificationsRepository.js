@@ -69,4 +69,12 @@ export class NotificationsRepository {
         );
         return parseInt(result.rows[0].count, 10);
     }
+
+    async getTotalCount(userId) {
+        const result = await client.query(
+            `SELECT COUNT(*) AS count FROM notifications WHERE user_id = $1`,
+            [userId]
+        );
+        return parseInt(result.rows[0].count, 10);
+    }
 }

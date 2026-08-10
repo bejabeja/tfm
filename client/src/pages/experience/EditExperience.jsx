@@ -25,6 +25,7 @@ import {
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
+import Modal from "../../components/modal/Modal";
 import { generateSmartItinerary } from "../../services/itineraries";
 import { getItineraryById, updateItinerary } from "../../services/itinerary";
 import { setUserInfo, setUserInfoItineraries } from "../../store/user/userInfoActions";
@@ -147,6 +148,7 @@ const EditExperience = () => {
   const [editDraft, setEditDraft]       = useState(null);
   const [saving, setSaving]             = useState(false);
   const [ownerId, setOwnerId]           = useState(null);
+  const [showRegenConfirm, setShowRegenConfirm] = useState(false);
 
   const searchTimer = useRef(null);
   const ce = (key, vars) => t(`createExperience.${key}`, vars);
@@ -215,8 +217,17 @@ const EditExperience = () => {
   const selectDest = (dest) => { setDestination(dest); setDestQuery(dest.name); setDestResults([]); };
 
   // ─── Regenerate ─────────────────────────────────────────────────────────
-  const handleGenerate = async () => {
+  const handleGenerate = () => {
     if (!destination?.name) return;
+    if (steps.length > 0) {
+      setShowRegenConfirm(true);
+      return;
+    }
+    runGenerate();
+  };
+
+  const runGenerate = async () => {
+    setShowRegenConfirm(false);
     setGenerating(true);
     try {
       const data = await generateSmartItinerary({
@@ -639,6 +650,16 @@ const EditExperience = () => {
           </div>
         </div>
       )}
+
+      <Modal
+        isOpen={showRegenConfirm}
+        onClose={() => setShowRegenConfirm(false)}
+        onConfirm={runGenerate}
+        title={ce("confirmRegenerateTitle")}
+        description={ce("confirmRegenerateDesc")}
+        confirmText={ce("regenerate")}
+        type="danger"
+      />
     </div>
   );
 };

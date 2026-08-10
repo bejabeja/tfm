@@ -5,6 +5,9 @@ export const SET_NOTIFICATIONS = '@notifications/set';
 export const SET_NOTIFICATIONS_ERROR = '@notifications/error';
 export const SET_UNREAD_COUNT = '@notifications/setUnreadCount';
 export const MARK_ALL_READ = '@notifications/markAllRead';
+export const START_LOADING_MORE_NOTIFICATIONS = '@notifications/startLoadingMore';
+export const APPEND_NOTIFICATIONS = '@notifications/append';
+export const APPEND_NOTIFICATIONS_ERROR = '@notifications/appendError';
 
 export const initNotifications = () => async (dispatch) => {
     dispatch({ type: START_LOADING_NOTIFICATIONS });
@@ -17,6 +20,16 @@ export const initNotifications = () => async (dispatch) => {
         dispatch({ type: SET_UNREAD_COUNT, payload: count });
     } catch {
         dispatch({ type: SET_NOTIFICATIONS_ERROR });
+    }
+};
+
+export const loadMoreNotifications = (nextPage) => async (dispatch) => {
+    dispatch({ type: START_LOADING_MORE_NOTIFICATIONS });
+    try {
+        const { notifications, totalPages, currentPage } = await fetchNotifications(nextPage);
+        dispatch({ type: APPEND_NOTIFICATIONS, payload: { notifications, totalPages, page: currentPage } });
+    } catch {
+        dispatch({ type: APPEND_NOTIFICATIONS_ERROR });
     }
 };
 
