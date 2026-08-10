@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
 import i18n from "../../i18n";
-import { deleteMyAccount } from "../../services/users";
+import { deleteMyAccount, exportMyData } from "../../services/users";
 import { logoutUser } from "../../store/auth/authActions";
 import { selectMe } from "../../store/user/userInfoSelectors";
 import "../profile/EditProfile.scss";
@@ -20,8 +20,26 @@ const Settings = () => {
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmInput, setDeleteConfirmInput] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
 
   const currentLang = i18n.language?.startsWith("en") ? "en" : "es";
+
+  const handleExportData = async () => {
+    setIsExporting(true);
+    try {
+      const blob = await exportMyData();
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "tobeatraveller-my-data.json";
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch {
+      toast.error(t("errors.exportDataFailed"));
+    } finally {
+      setIsExporting(false);
+    }
+  };
 
   const handleDeleteAccount = async () => {
     if (deleteConfirmInput !== userMe?.username) return;
@@ -73,9 +91,14 @@ const Settings = () => {
         <section className="ep__section">
           <p className="ep__section-label">{t("settings.yourData").toUpperCase()}</p>
           <p className="ep__section-desc">{t("editProfile.yourDataDesc")}</p>
-          <a href={`${import.meta.env.VITE_API_URL}/users/me/export`} className="ep__link-btn" download>
-            {t("editProfile.downloadData")} →
-          </a>
+          <button
+            type="button"
+            className="ep__link-btn"
+            onClick={handleExportData}
+            disabled={isExporting}
+          >
+            {isExporting ? t("common.loading") : `${t("editProfile.downloadData")} →`}
+          </button>
         </section>
 
         {/* Danger zone */}

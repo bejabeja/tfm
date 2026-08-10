@@ -221,7 +221,7 @@ const PlanExperienceScreen = ({ navigation }) => {
       const body = {
         userId: me?.id,
         title: title.trim(),
-        description: '',
+        description: ce('autoDescription', { count: days, destination: destination.name }),
         location: {
           name: destination.name,
           label: destination.label ?? destination.name,

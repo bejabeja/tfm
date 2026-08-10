@@ -87,6 +87,25 @@ export const updateUser = async (data) => {
 }
 
 
+export const exportMyData = async () => {
+    const isMobile = /Mobi|Android/i.test(navigator.userAgent);
+    const headers = {};
+    if (isMobile) {
+        const token = localStorage.getItem('access_token');
+        if (token) headers['Authorization'] = `Bearer ${token}`;
+    }
+
+    const response = await fetch(`${baseUrl}/me/export`, {
+        method: 'GET',
+        credentials: isMobile ? 'omit' : 'include',
+        headers,
+    });
+    if (!response.ok) {
+        await parseError(response, 'Failed to export data');
+    }
+    return response.blob();
+};
+
 export const deleteMyAccount = async () => {
     const response = await fetch(`${baseUrl}/me`, {
         method: 'DELETE',

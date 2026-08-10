@@ -143,7 +143,9 @@ const ItineraryScreen = ({ route, navigation }) => {
       const created = await addComment(itinerary.id, commentText.trim());
       setComments(prev => [...prev, created]);
       setCommentText('');
-    } catch {} finally { setSubmitting(false); }
+    } catch {
+      Alert.alert(t('errors.somethingWrong'), t('comments.couldNotPost'));
+    } finally { setSubmitting(false); }
   };
 
   const handleDeleteComment = (commentId) => {
@@ -155,7 +157,9 @@ const ItineraryScreen = ({ route, navigation }) => {
           try {
             await deleteComment(commentId);
             setComments(prev => prev.filter(c => c.id !== commentId));
-          } catch {}
+          } catch {
+            Alert.alert(t('errors.somethingWrong'), t('comments.couldNotDelete'));
+          }
         },
       },
     ]);

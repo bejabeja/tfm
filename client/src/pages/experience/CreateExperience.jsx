@@ -267,7 +267,8 @@ const CreateExperience = () => {
     endObj.setDate(endObj.getDate() + days - 1);
     try {
       const body = {
-        userId: userMe?.id, title: title.trim(), description: "",
+        userId: userMe?.id, title: title.trim(),
+        description: ce("autoDescription", { count: days, destination: destination.name }),
         location: { name: destination.name, label: destination.label ?? destination.name, lat: destination.coordinates?.lat ?? 0, lon: destination.coordinates?.lon ?? 0 },
         startDate: today, endDate: endObj.toISOString().split("T")[0],
         budget: 0, currency: "EUR", numberOfPeople: travelers, category: category.join(","), isPublic, source: "experience",

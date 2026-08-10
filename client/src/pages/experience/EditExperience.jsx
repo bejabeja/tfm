@@ -284,7 +284,8 @@ const EditExperience = () => {
     endObj.setDate(endObj.getDate() + days - 1);
     try {
       const body = {
-        title: title.trim(), description: "",
+        title: title.trim(),
+        description: ce("autoDescription", { count: days, destination: destination.name }),
         location: {
           name: destination.name,
           label: destination.label ?? destination.name,
