@@ -112,6 +112,7 @@ const OnboardingScreen = ({ navigation }) => {
           style={[styles.ctaBtn, !canContinue && styles.ctaBtnLocked]}
           onPress={handleFinish}
           activeOpacity={0.85}
+          disabled={!canContinue}
         >
           <Text style={[styles.ctaBtnText, !canContinue && styles.ctaBtnTextLocked]}>
             {canContinue ? t('onboarding.continue') : t('onboarding.followPromptBtn')}

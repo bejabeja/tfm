@@ -1,6 +1,5 @@
 import { parseError } from "../utils/parseError";
 import { getApiUrl } from "../utils/apiConfig";
-import { tokenStorage } from "../utils/tokenStorage";
 import { authFetch } from "../utils/authFetch";
 
 const baseUrl = () => `${getApiUrl()}/users`;
@@ -13,15 +12,9 @@ export const checkUsernameAvailable = async (username) => {
 };
 
 export const getUserForAuth = async () => {
-    const token = await tokenStorage.getItem('access_token');
-    const headers = { 'Content-Type': 'application/json' };
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-
     try {
-        const response = await fetch(`${baseUrl()}/me`, {
-            method: 'GET',
-            credentials: 'omit',
-            headers,
+        const response = await authFetch(`${baseUrl()}/me`, {
+            headers: { 'Content-Type': 'application/json' },
         });
         if (!response.ok) return null;
         return response.json();

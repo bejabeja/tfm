@@ -28,6 +28,8 @@ import PlanExperienceScreen from '../screens/itinerary/PlanExperienceScreen';
 import MyItinerariesScreen from '../screens/myItineraries/MyItinerariesScreen';
 import FollowsScreen from '../screens/follows/FollowsScreen';
 import OnboardingScreen from '../screens/auth/OnboardingScreen';
+import TermsScreen from '../screens/legal/TermsScreen';
+import PrivacyPolicyScreen from '../screens/legal/PrivacyPolicyScreen';
 
 const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -211,6 +213,8 @@ const Navigation = () => {
         <Stack.Screen name="Contact" component={ContactScreen} />
         <Stack.Screen name="Notifications" component={NotificationsScreen} />
         <Stack.Screen name="Onboarding" component={OnboardingScreen} options={{ gestureEnabled: false }} />
+        <Stack.Screen name="Terms" component={TermsScreen} />
+        <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicyScreen} />
         {!isAuthenticated && (
           <>
             <Stack.Screen name="Login" component={LoginScreen} />

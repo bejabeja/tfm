@@ -26,6 +26,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
+import ImageUpload from "../itinerary/sectionsForm/ImageUpload";
 import { GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary } from "../../services/itineraries";
 import { getItineraryById, updateItinerary } from "../../services/itinerary";
 import { setUserInfo, setUserInfoItineraries } from "../../store/user/userInfoActions";
@@ -143,6 +144,8 @@ const EditExperience = () => {
   const [generating, setGenerating]     = useState(false);
   const [isPublic, setIsPublic]         = useState(EXISTING_ITINERARY_VISIBILITY_FALLBACK);
   const [title, setTitle]               = useState("");
+  const [photoUrl, setPhotoUrl]         = useState("");
+  const [imageFile, setImageFile]       = useState(null);
   const [steps, setSteps]               = useState([]);
   const [editingKey, setEditingKey]     = useState(null);
   const [editDraft, setEditDraft]       = useState(null);
@@ -159,6 +162,7 @@ const EditExperience = () => {
     getItineraryById(id).then((data) => {
       setOwnerId(data.userId ?? null);
       setTitle(data.title ?? "");
+      setPhotoUrl(data.photoUrl ?? "");
       setDays(data.tripTotalDays ?? 7);
       setCategory(data.category ? data.category.split(",") : ["adventure"]);
       setTravelers(data.numberOfPeople ?? 1);
@@ -305,6 +309,7 @@ const EditExperience = () => {
         })),
       };
       const formData = new FormData();
+      if (imageFile) formData.append("file", imageFile);
       formData.append("itinerary", JSON.stringify(body));
       await updateItinerary(id, formData);
       toast.success(ce("savedSuccess"));
@@ -498,6 +503,10 @@ const EditExperience = () => {
               placeholder={ce("namePlaceholder")}
               maxLength={50}
             />
+          </div>
+
+          <div className="cexp__card">
+            <ImageUpload onUpload={setImageFile} imageUrl={photoUrl} />
           </div>
 
           <div className="cexp__card">

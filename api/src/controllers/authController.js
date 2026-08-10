@@ -42,6 +42,19 @@ export class AuthController {
         }
     }
 
+    async refresh(req, res, next) {
+        const { refreshToken } = req.body;
+        if (!refreshToken) {
+            return next(new ValidationError("Refresh token is required"));
+        }
+        try {
+            const accessToken = this.authService.refreshAccessTokenFromToken(refreshToken);
+            return res.status(200).json({ accessToken });
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async logout(req, res, next) {
         try {
             this.authService.clearAuthCookies(res)

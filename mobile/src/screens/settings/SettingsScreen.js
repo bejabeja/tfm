@@ -14,7 +14,7 @@ import {
   deleteMyAccount, exportMyData, logoutUser, selectAuthUser, selectMe,
 } from '@tobeatraveller/shared';
 import { shadow } from '../../utils/styles';
-import { BoldText } from '../../components/BoldText';
+import { RichText } from '../../components/RichText';
 
 const SettingsScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -114,6 +114,17 @@ const SettingsScreen = ({ navigation }) => {
             </TouchableOpacity>
           </View>
 
+          {/* Legal */}
+          <View style={styles.card}>
+            <Text style={styles.cardTitle}>{t('settings.legal').toUpperCase()}</Text>
+            <TouchableOpacity style={styles.linkBtn} onPress={() => navigation.navigate('Terms')}>
+              <Text style={styles.linkBtnText}>{t('legalTerms.documentTitle')} →</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={[styles.linkBtn, { marginTop: 10 }]} onPress={() => navigation.navigate('PrivacyPolicy')}>
+              <Text style={styles.linkBtnText}>{t('legalPrivacy.documentTitle')} →</Text>
+            </TouchableOpacity>
+          </View>
+
           {/* Danger zone */}
           <View style={styles.dangerCard}>
             <Text style={styles.dangerTitle}>{t('settings.dangerZone')}</Text>
@@ -127,7 +138,7 @@ const SettingsScreen = ({ navigation }) => {
               </TouchableOpacity>
             ) : (
               <View style={styles.deleteConfirm}>
-                <BoldText
+                <RichText
                   text={t('editProfile.deleteAccountDesc', { username: user?.username })}
                   style={styles.deleteConfirmLabel}
                   boldStyle={styles.deleteConfirmLabelBold}

@@ -49,6 +49,15 @@ export class AuthService {
         }
     }
 
+    refreshAccessTokenFromToken(refreshToken) {
+        try {
+            const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret);
+            return this.generateAccessToken({ id: decoded.id, username: decoded.username });
+        } catch {
+            throw new AuthError('Unauthorized: Invalid refresh token');
+        }
+    }
+
     async refreshAccessToken(refreshToken, res, req) {
         try {
             const decodedRefresh = jwt.verify(refreshToken, config.jwtRefreshSecret);

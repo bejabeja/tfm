@@ -19,6 +19,7 @@ import {
 import { COLORS, shadow } from '../../utils/styles';
 import { getStepConfig, STEP_NAME_HINT } from '../../utils/stepConfig';
 import { GEOAPIFY_KEY } from '../../utils/config';
+import { PhotoPickerCard } from '../../components/PhotoPickerCard';
 
 const CATEGORY_EMOJI = {
   adventure:'🧗', relax:'🧘', culture:'🏛', romantic:'💕',
@@ -65,6 +66,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
   const [generating, setGenerating]     = useState(false);
   const [isPublic, setIsPublic]         = useState(EXISTING_ITINERARY_VISIBILITY_FALLBACK);
   const [title, setTitle]               = useState('');
+  const [photoUri, setPhotoUri]         = useState(null);
   const [steps, setSteps]               = useState([]);
   const [editingKey, setEditingKey]     = useState(null);
   const [editDraft, setEditDraft]       = useState(null);
@@ -77,6 +79,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
     getItineraryById(id)
       .then((data) => {
         setTitle(data.title ?? '');
+        setPhotoUri(data.photoUrl || null);
         setDays(data.tripTotalDays ?? 7);
         setCategory(data.category ? data.category.split(',') : ['adventure']);
         setTravelers(data.numberOfPeople ?? 1);
@@ -216,6 +219,11 @@ const EditExperienceScreen = ({ navigation, route }) => {
         })),
       };
       const formData = new FormData();
+      if (photoUri && !photoUri.startsWith('http')) {
+        const filename = photoUri.split('/').pop();
+        const ext = filename.split('.').pop().toLowerCase();
+        formData.append('file', { uri: photoUri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' });
+      }
       formData.append('itinerary', JSON.stringify(body));
       await updateItinerary(id, formData);
       if (me?.id) { dispatch(setUserInfo(me.id)); dispatch(setUserInfoItineraries()); }
@@ -375,6 +383,12 @@ const EditExperienceScreen = ({ navigation, route }) => {
           <View style={ls.card}>
             <Text style={ls.cardLabel}>{ce('experienceName')}</Text>
             <TextInput style={ls.titleInput} value={title} onChangeText={setTitle} placeholder={ce('namePlaceholder')} placeholderTextColor="#9ca3af" maxLength={50} />
+          </View>
+
+          {/* Cover photo */}
+          <View style={ls.card}>
+            <Text style={ls.cardLabel}>{t('createItinerary.addCoverPhoto')}</Text>
+            <PhotoPickerCard photoUri={photoUri} onChange={setPhotoUri} />
           </View>
 
           {/* Timeline */}

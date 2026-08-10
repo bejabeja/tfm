@@ -106,6 +106,7 @@ const Onboarding = () => {
           <button
             className={`onboarding__cta btn${canContinue ? " btn--primary" : " onboarding__cta--locked"}`}
             onClick={handleFinish}
+            disabled={!canContinue}
           >
             {canContinue ? t("onboarding.continue") : t("onboarding.followPromptBtn")}
           </button>

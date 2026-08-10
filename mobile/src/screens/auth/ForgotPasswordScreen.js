@@ -6,7 +6,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import { forgotPassword } from '@tobeatraveller/shared';
-import { BoldText } from '../../components/BoldText';
+import { RichText } from '../../components/RichText';
 
 const ForgotPasswordScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -51,7 +51,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
           <View style={styles.successBox}>
             <Text style={styles.successIcon}>✉️</Text>
             <Text style={styles.title}>{t('auth.checkInbox')}</Text>
-            <BoldText
+            <RichText
               text={t('auth.resetLinkSent', { email }) + '\n'}
               style={styles.subtitle}
               boldStyle={styles.subtitleBold}

@@ -137,4 +137,28 @@ describe('AuthService', () => {
             }
         });
     });
+
+    describe('refreshAccessTokenFromToken()', () => {
+        it('mints a new access token from a valid refresh token', () => {
+            jwt.verify.mockReturnValue({ id: 'user-1', username: 'johndoe' });
+            jwt.sign.mockReturnValue('new-access-token');
+
+            const token = authService.refreshAccessTokenFromToken('valid-refresh-token');
+
+            expect(jwt.verify).toHaveBeenCalledWith('valid-refresh-token', 'test-refresh-secret');
+            expect(jwt.sign).toHaveBeenCalledWith(
+                { id: 'user-1', username: 'johndoe' },
+                'test-secret',
+                { expiresIn: '1h' }
+            );
+            expect(token).toBe('new-access-token');
+        });
+
+        it('throws AuthError when the refresh token is invalid or expired', () => {
+            jwt.verify.mockImplementation(() => { throw new Error('jwt expired'); });
+
+            expect(() => authService.refreshAccessTokenFromToken('bad-refresh-token'))
+                .toThrow(AuthError);
+        });
+    });
 });

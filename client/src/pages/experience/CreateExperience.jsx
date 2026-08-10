@@ -26,6 +26,7 @@ import {
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/modal/Modal";
+import ImageUpload from "../itinerary/sectionsForm/ImageUpload";
 import { GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary } from "../../services/itineraries";
 import { createItinerary } from "../../services/itinerary";
 import { setUserInfo, setUserInfoItineraries } from "../../store/user/userInfoActions";
@@ -144,6 +145,7 @@ const CreateExperience = () => {
   const [editingKey, setEditingKey]     = useState(null);
   const [editDraft, setEditDraft]       = useState(null);
   const [saving, setSaving]             = useState(false);
+  const [imageFile, setImageFile]       = useState(null);
   const [showRegenConfirm, setShowRegenConfirm] = useState(false);
   const [locQuery, setLocQuery]         = useState("");
   const [locResults, setLocResults]     = useState([]);
@@ -282,6 +284,7 @@ const CreateExperience = () => {
         })),
       };
       const formData = new FormData();
+      if (imageFile) formData.append("file", imageFile);
       formData.append("itinerary", JSON.stringify(body));
       await createItinerary(formData);
       toast.success(ce("savedSuccess"));
@@ -481,6 +484,11 @@ const CreateExperience = () => {
               placeholder={ce("namePlaceholder")}
               maxLength={50}
             />
+          </div>
+
+          {/* Cover photo card */}
+          <div className="cexp__card">
+            <ImageUpload onUpload={setImageFile} imageUrl="" />
           </div>
 
           {/* Timeline card */}

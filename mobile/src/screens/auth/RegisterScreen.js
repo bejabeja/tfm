@@ -1,7 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient';
 import { useEffect, useRef, useState } from 'react';
 import {
-  Dimensions, ImageBackground, KeyboardAvoidingView, Linking,
+  Dimensions, ImageBackground, KeyboardAvoidingView,
   Platform, ScrollView, StyleSheet, Text, TextInput,
   TouchableOpacity, View,
 } from 'react-native';
@@ -10,8 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { checkUsernameAvailable, registerUser, selectAuthError } from '@tobeatraveller/shared';
 import { shadow, textShadow } from '../../utils/styles';
-import { WEB_URL } from '../../utils/config';
-import { BoldText } from '../../components/BoldText';
+import { RichText } from '../../components/RichText';
 
 const AUTH_BG = require('../../../assets/auth.webp');
 const { height: SCREEN_H } = Dimensions.get('window');
@@ -186,7 +185,7 @@ const RegisterScreen = ({ navigation }) => {
                   <View style={[styles.checkbox, ageConfirmed && styles.checkboxChecked, errors.ageConfirmed && styles.checkboxError]}>
                     {ageConfirmed && <Text style={styles.checkmark}>✓</Text>}
                   </View>
-                  <BoldText
+                  <RichText
                     text={t('auth.ageConfirm')}
                     style={[styles.consentText, errors.ageConfirmed && styles.consentTextError]}
                     boldStyle={[styles.consentTextBold, errors.ageConfirmed && styles.consentTextError]}
@@ -204,9 +203,9 @@ const RegisterScreen = ({ navigation }) => {
                   </View>
                   <Text style={[styles.consentText, errors.termsAccepted && styles.consentTextError]}>
                     {termsPrefix}
-                    <Text style={styles.consentLink} onPress={() => Linking.openURL(`${WEB_URL}/terms`)}>{t('auth.termsOfService')}</Text>
+                    <Text style={styles.consentLink} onPress={() => navigation.navigate('Terms')}>{t('auth.termsOfService')}</Text>
                     {termsMiddle}
-                    <Text style={styles.consentLink} onPress={() => Linking.openURL(`${WEB_URL}/privacy-policy`)}>{t('auth.privacyPolicy')}</Text>
+                    <Text style={styles.consentLink} onPress={() => navigation.navigate('PrivacyPolicy')}>{t('auth.privacyPolicy')}</Text>
                     {termsSuffix}
                   </Text>
                 </TouchableOpacity>

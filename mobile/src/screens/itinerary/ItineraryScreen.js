@@ -72,7 +72,17 @@ const ItineraryScreen = ({ route, navigation }) => {
   }, [itinerary?.id, isAuthenticated]);
 
   if (loading) return <ScrollView style={styles.container}><ItineraryDetailSkeleton /></ScrollView>;
-  if (!itinerary) return <Text style={styles.errorText}>{t('itinerary.itineraryNotFound')}</Text>;
+  if (!itinerary) return (
+    <View style={styles.errorScreen}>
+      <TouchableOpacity
+        style={[styles.errorBackBtn, { top: insets.top + 12 }]}
+        onPress={() => navigation.goBack()}
+      >
+        <Text style={styles.errorBackBtnText}>←</Text>
+      </TouchableOpacity>
+      <Text style={styles.errorText}>{t('itinerary.itineraryNotFound')}</Text>
+    </View>
+  );
 
   const isMyItinerary = me?.id === itinerary.userId;
   const currencySymbol = getCurrencySymbol(itinerary.currency);
@@ -534,6 +544,9 @@ const StatCard = ({ icon, label, value, subvalue }) => (
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#fff' },
+  errorScreen: { flex: 1, backgroundColor: '#fff' },
+  errorBackBtn: { position: 'absolute', left: 16, width: 40, padding: 4 },
+  errorBackBtnText: { fontSize: 20, color: '#374151' },
   errorText: { textAlign: 'center', marginTop: 60, color: '#6b7280', fontSize: 15 },
 
   // Hero

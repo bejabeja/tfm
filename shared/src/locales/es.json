@@ -539,6 +539,7 @@
     "title": "Ajustes",
     "language": "Idioma",
     "yourData": "Tus datos",
+    "legal": "Legal",
     "dangerZone": "⚠️ Zona de peligro"
   },
   "errors": {
@@ -661,5 +662,142 @@
       "grounding": "Arraigado",
       "indulgent": "Placentero"
     }
+  },
+  "legalTerms": {
+    "documentTitle": "Términos de Servicio",
+    "lastUpdated": "Última actualización: {{date}}",
+    "s1Title": "1. Aceptación de los términos",
+    "s1Body": [
+      "Al crear una cuenta o usar ToBeATraveller (\"el Servicio\"), aceptas estos Términos de Servicio. Si no estás de acuerdo, no uses el Servicio.",
+      "Estos términos se aplican tanto a la aplicación web como a la aplicación móvil."
+    ],
+    "s2Title": "2. Descripción del servicio",
+    "s2Body": [
+      "ToBeATraveller es una plataforma para crear, compartir y descubrir itinerarios de viaje. Los usuarios registrados pueden publicar planes de viaje, seguir a otros viajeros, comentar itinerarios y guardar viajes que les inspiren.",
+      "Los usuarios invitados (sin sesión iniciada) pueden explorar itinerarios públicos y perfiles de la comunidad, pero no pueden crear contenido ni interactuar socialmente."
+    ],
+    "s3Title": "3. Cuentas",
+    "s3Items": [
+      "Debes proporcionar un correo electrónico válido y elegir un nombre de usuario único.",
+      "Eres responsable de mantener seguras las credenciales de tu cuenta.",
+      "No puedes crear cuentas para otras personas ni compartir tu cuenta.",
+      "Debes tener al menos 16 años para registrarte.",
+      "Nos reservamos el derecho de suspender o eliminar cuentas que incumplan estos términos, sin previo aviso."
+    ],
+    "s4Title": "4. Contenido generado por el usuario",
+    "s4Body": [
+      "Conservas la propiedad del contenido que creas en ToBeATraveller (itinerarios, comentarios, información de perfil, fotos).",
+      "Al publicar contenido, concedes a ToBeATraveller una licencia no exclusiva, libre de regalías y de alcance mundial para mostrar, almacenar y distribuir ese contenido como parte del funcionamiento del Servicio. Esta licencia termina cuando eliminas el contenido o tu cuenta."
+    ],
+    "s4Warrant": "Eres el único responsable del contenido que publicas. Garantizas que:",
+    "s4Items": [
+      "Eres propietario o tienes los derechos de cualquier foto o texto que subas.",
+      "Tu contenido no infringe ninguna propiedad intelectual de terceros.",
+      "Tu contenido cumple con las leyes aplicables."
+    ],
+    "s5Title": "5. Conducta prohibida",
+    "s5Intro": "No puedes usar el Servicio para:",
+    "s5Items": [
+      "Publicar itinerarios falsos, engañosos o fraudulentos.",
+      "Acosar, amenazar o abusar de otros usuarios.",
+      "Subir contenido ilegal, difamatorio o que infrinja derechos de terceros.",
+      "Enviar spam a otros usuarios o publicar contenido comercial no solicitado.",
+      "Intentar acceder a las cuentas de otros usuarios o comprometer la seguridad de la plataforma.",
+      "Extraer o recopilar datos del Servicio mediante medios automatizados.",
+      "Suplantar a otra persona u organización."
+    ],
+    "s6Title": "6. Privacidad",
+    "s6Body": "El uso que hagas del Servicio también se rige por nuestra <a href=\"/privacy-policy\">Política de Privacidad</a>, que queda incorporada a estos términos por referencia.",
+    "s7Title": "7. Visibilidad del itinerario",
+    "s7Body": "Los itinerarios marcados como <strong>Públicos</strong> son visibles para cualquiera, incluidos usuarios sin sesión iniciada. Los itinerarios marcados como <strong>Privados</strong> solo son visibles para ti. Puedes cambiar la visibilidad de cualquier itinerario en cualquier momento desde la pantalla de edición.",
+    "s8Title": "8. Propiedad intelectual",
+    "s8Body": [
+      "El nombre, logotipo y diseño de ToBeATraveller son propiedad intelectual nuestra. No puedes usarlos sin permiso previo por escrito.",
+      "El código y el diseño de la plataforma no están licenciados para su reutilización sin nuestro consentimiento explícito por escrito."
+    ],
+    "s9Title": "9. Exclusión de garantías",
+    "s9Body": [
+      "El Servicio se proporciona \"tal cual\" y \"según disponibilidad\", sin garantías de ningún tipo. No garantizamos que el Servicio esté libre de interrupciones o errores, ni que el contenido de los itinerarios compartidos por los usuarios sea preciso, completo o seguro de seguir.",
+      "Viajar conlleva riesgos inherentes. Verifica siempre la información de forma independiente antes de planificar un viaje basándote en contenido encontrado en esta plataforma."
+    ],
+    "s10Title": "10. Limitación de responsabilidad",
+    "s10Body": [
+      "En la máxima medida permitida por la ley, ToBeATraveller no será responsable de daños indirectos, incidentales, especiales o consecuentes derivados del uso del Servicio o de cualquier contenido encontrado en él.",
+      "Nuestra responsabilidad total por cualquier reclamación relacionada con el Servicio no excederá los 100 €."
+    ],
+    "s11Title": "11. Terminación",
+    "s11Body": [
+      "Puedes eliminar tu cuenta en cualquier momento desde los ajustes de tu perfil. La eliminación es permanente y elimina todo tu contenido de la plataforma.",
+      "Podemos suspender o cancelar tu cuenta si incumples estos términos, con o sin previo aviso según la gravedad de la infracción."
+    ],
+    "s12Title": "12. Cambios en estos términos",
+    "s12Body": "Podemos actualizar estos términos ocasionalmente. Notificaremos a los usuarios de cambios significativos actualizando la fecha de \"Última actualización\". El uso continuado del Servicio tras los cambios constituye la aceptación de los términos actualizados.",
+    "s13Title": "13. Ley aplicable",
+    "s13Body": "Estos términos se rigen por las leyes de España. Cualquier disputa estará sujeta a la jurisdicción exclusiva de los tribunales de España, sin perjuicio de tus derechos como consumidor según la legislación aplicable de la UE.",
+    "s14Title": "14. Contacto",
+    "s14Body": "Para cualquier pregunta sobre estos términos, contáctanos en <a href=\"mailto:tobeatravellercompany@gmail.com\">tobeatravellercompany@gmail.com</a>.",
+    "footerPrivacyLink": "Política de Privacidad",
+    "footerBackHome": "Volver al inicio"
+  },
+  "legalPrivacy": {
+    "documentTitle": "Política de Privacidad",
+    "lastUpdated": "Última actualización: {{date}}",
+    "s1Title": "1. Quiénes somos",
+    "s1Body": "ToBeATraveller (\"nosotros\") es una plataforma para compartir itinerarios de viaje. Somos el responsable del tratamiento de los datos personales recogidos a través de este servicio. Puedes contactarnos en <a href=\"mailto:tobeatravellercompany@gmail.com\">tobeatravellercompany@gmail.com</a>.",
+    "s2Title": "2. Qué datos recopilamos",
+    "s2Intro": "Recopilamos las siguientes categorías de datos personales:",
+    "s2Items": [
+      "<strong>Datos de cuenta:</strong> correo electrónico, nombre de usuario y contraseña (almacenada como hash seguro; nunca guardamos tu contraseña en texto plano).",
+      "<strong>Datos de perfil:</strong> nombre visible, biografía, ubicación, foto de perfil y el texto \"sobre mí\" que proporciones opcionalmente.",
+      "<strong>Contenido que creas:</strong> itinerarios de viaje (título, destino, fechas, lugares, presupuesto, fotos), comentarios, me gusta y viajes guardados.",
+      "<strong>Datos sociales:</strong> a quién sigues y quién te sigue.",
+      "<strong>Datos técnicos:</strong> tokens de sesión usados para mantener tu sesión iniciada. No recopilamos direcciones IP, huellas de dispositivo ni datos analíticos más allá de lo estrictamente necesario para operar el servicio."
+    ],
+    "s3Title": "3. Cómo usamos tus datos",
+    "s3Intro": "Usamos tus datos personales exclusivamente para:",
+    "s3Items": [
+      "Crear y gestionar tu cuenta.",
+      "Mostrar tu perfil público y tus itinerarios a otros usuarios.",
+      "Ofrecer funciones sociales (seguir, comentarios, me gusta, viajes guardados).",
+      "Enviarte comunicaciones relacionadas con tu cuenta cuando sea necesario (p. ej. confirmación de eliminación de cuenta)."
+    ],
+    "s3Body2": "No usamos tus datos para publicidad, elaboración de perfiles ni venta a terceros. No enviamos correos de marketing.",
+    "s3Body3": "La base legal para el tratamiento es la ejecución de un contrato (art. 6.1.b RGPD), es decir, prestar el servicio al que te has suscrito.",
+    "s4Title": "4. Servicios de terceros",
+    "s4Intro": "Usamos los siguientes servicios externos que pueden tratar tus datos:",
+    "s4Items": [
+      "<strong>Cloudinary</strong>: usado para almacenar y servir fotos de perfil e imágenes de portada de itinerarios. Las imágenes que subes se almacenan en los servidores de Cloudinary. Consulta su <a href=\"https://cloudinary.com/privacy\">Política de Privacidad</a>.",
+      "<strong>Geoapify</strong>: usado para buscar destinos y lugares de interés al crear un itinerario. Las búsquedas (nombres de lugares) se envían a su API. Consulta su <a href=\"https://www.geoapify.com/privacy-policy\">Política de Privacidad</a>.",
+      "<strong>Generación de itinerarios con IA</strong>: cuando usas la función \"Generar con IA\", el destino, la duración del viaje y la categoría se envían a un servicio de IA para generar sugerencias de lugares. No se incluye información personal identificable en estas peticiones."
+    ],
+    "s5Title": "5. Conservación de datos",
+    "s5Body": "Conservamos tus datos personales mientras tu cuenta esté activa. Si eliminas tu cuenta, todos tus datos personales (perfil, itinerarios, comentarios y conexiones sociales) se eliminan permanentemente de nuestros sistemas. Las copias en caché o de respaldo pueden persistir hasta 30 días antes de ser purgadas.",
+    "s6Title": "6. Tus derechos (RGPD)",
+    "s6Intro": "Si te encuentras en el Espacio Económico Europeo, tienes los siguientes derechos:",
+    "s6Items": [
+      "<strong>Acceso:</strong> solicitar una copia de los datos que tenemos sobre ti.",
+      "<strong>Rectificación:</strong> corregir datos inexactos o incompletos desde los ajustes de tu perfil.",
+      "<strong>Supresión:</strong> eliminar tu cuenta y todos los datos asociados en cualquier momento desde los ajustes de tu perfil.",
+      "<strong>Portabilidad:</strong> solicitar tus datos en un formato legible por máquina.",
+      "<strong>Limitación:</strong> pedirnos que limitemos cómo tratamos tus datos.",
+      "<strong>Oposición:</strong> oponerte al tratamiento basado en intereses legítimos."
+    ],
+    "s6Body2": "Para ejercer cualquiera de estos derechos, contáctanos en <a href=\"mailto:tobeatravellercompany@gmail.com\">tobeatravellercompany@gmail.com</a>. Responderemos en un plazo de 30 días.",
+    "s6Body3": "También tienes derecho a presentar una reclamación ante tu autoridad nacional de protección de datos (en España: <a href=\"https://www.aepd.es\">AEPD</a>).",
+    "s7Title": "7. Cookies y almacenamiento de sesión",
+    "s7Body": [
+      "Usamos una única cookie de sesión para mantener tu sesión iniciada. Esta cookie es estrictamente necesaria para el funcionamiento del servicio y no requiere consentimiento según las normas de ePrivacy. No usamos cookies publicitarias, píxeles de seguimiento ni cookies analíticas.",
+      "En mobile, los tokens de autenticación se almacenan en el almacenamiento seguro del dispositivo en vez de en cookies."
+    ],
+    "s8Title": "8. Seguridad de los datos",
+    "s8Body": "Las contraseñas se cifran con un algoritmo seguro antes de almacenarse. Todos los datos se transmiten mediante HTTPS. Aplicamos medidas técnicas y organizativas razonables para proteger tus datos, aunque ningún sistema está completamente exento de riesgo.",
+    "s9Title": "9. Menores",
+    "s9Body": "ToBeATraveller no está dirigido a menores de 16 años. No recopilamos conscientemente datos de menores. Si crees que un menor se ha registrado, contáctanos para que podamos eliminar su cuenta.",
+    "s10Title": "10. Cambios en esta política",
+    "s10Body": "Podemos actualizar esta política ocasionalmente. Cuando lo hagamos, actualizaremos la fecha de \"Última actualización\" en la parte superior. El uso continuado del servicio tras los cambios constituye la aceptación de la política actualizada.",
+    "s11Title": "11. Contacto",
+    "s11Body": "Para cualquier pregunta o solicitud relacionada con la privacidad, contáctanos en <a href=\"mailto:tobeatravellercompany@gmail.com\">tobeatravellercompany@gmail.com</a>.",
+    "footerTermsLink": "Términos de Servicio",
+    "footerBackHome": "Volver al inicio"
   }
 }

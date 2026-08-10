@@ -30,6 +30,8 @@ export * from './store/filters/filterReducer.js';
 
 // Utils
 export { filterItineraries } from './utils/filterItineraries.js';
+export { parseRichText } from './utils/parseRichText.js';
+export { authFetch } from './utils/authFetch.js';
 export { getDestinations } from './services/itineraries.js';
 export { setApiUrl } from './utils/apiConfig.js';
 export { setTokenStorage } from './utils/tokenStorage.js';
