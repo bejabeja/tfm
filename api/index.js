@@ -10,7 +10,6 @@ import { errorHandler } from './src/middlewares/errorHandler.js';
 import { createAuthRouter } from './src/routes/authRouter.js';
 
 import { createEmailRouter } from './src/routes/emailRouter.js';
-import { createCloudinaryRouter } from "./src/routes/cloudinaryRouter.js";
 import { createCommentsRouter } from "./src/routes/commentsRouter.js";
 import { createNotificationsRouter } from "./src/routes/notificationsRouter.js";
 import { createFavoritesRouter } from "./src/routes/favoritesRouter.js";
@@ -32,7 +31,6 @@ app.use('/users', createUsersRouter());
 app.use('/users', authenticate, createFollowRouter());
 app.use('/auth', createAuthRouter());
 app.use('/itineraries', createItinerariesRouter());
-app.use('/cloudinary', createCloudinaryRouter());
 app.use('/favorites', authenticate, createFavoritesRouter());
 app.use('/likes', authenticate, createLikesRouter());
 app.use('/comments', createCommentsRouter());
