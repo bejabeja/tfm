@@ -9,7 +9,7 @@ import { useTranslation } from 'react-i18next';
 import {
   followUser, initAllUsers, loadMoreUsers, unfollowUser,
   selectAllUsers, selectAllUsersCurrentPage, selectAllUsersLoading,
-  selectAllUsersLoadingMore, selectAllUsersTotalCount, selectAllUsersTotalPages,
+  selectAllUsersLoadingMore, selectAllUsersTotalPages,
   selectIsAuthenticated, selectMe, selectAuthUser, setUserInfo,
 } from '@tobeatraveller/shared';
 import { UserCardSkeleton } from '../../components/Skeleton';
@@ -29,7 +29,6 @@ const CommunityScreen = ({ navigation }) => {
   const loadingMore  = useSelector(selectAllUsersLoadingMore);
   const currentPage  = useSelector(selectAllUsersCurrentPage);
   const totalPages   = useSelector(selectAllUsersTotalPages);
-  const totalCount   = useSelector(selectAllUsersTotalCount);
 
   const [search, setSearch] = useState('');
   const [sortBy, setSortBy] = useState('username');
@@ -61,9 +60,7 @@ const CommunityScreen = ({ navigation }) => {
       <View style={styles.header}>
         <View style={styles.headerTop}>
           <Text style={styles.headerTitle}>{t('community.title')}</Text>
-          {totalCount > 0 && (
-            <Text style={styles.memberCount}>{t('community.membersCount', { count: totalCount })}</Text>
-          )}
+          <Text style={styles.memberCount}>{t('community.growingCommunity')}</Text>
         </View>
 
         {/* Search */}

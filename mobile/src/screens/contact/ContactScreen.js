@@ -6,7 +6,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { selectMe, selectAuthUser, sendContact } from '@tobeatraveller/shared';
+import { contactSchema, selectMe, selectAuthUser, sendContact } from '@tobeatraveller/shared';
 import { shadow } from '../../utils/styles';
 
 const ContactScreen = ({ navigation }) => {
@@ -32,13 +32,17 @@ const ContactScreen = ({ navigation }) => {
   };
 
   const validate = () => {
+    const result = contactSchema.safeParse(fields);
+    if (result.success) {
+      setErrors({});
+      return true;
+    }
     const e = {};
-    if (!fields.name.trim())    e.name    = t('common.required');
-    if (!fields.email.trim() || !/\S+@\S+\.\S+/.test(fields.email)) e.email = t('errors.validEmailRequired');
-    if (!fields.subject.trim()) e.subject = t('common.required');
-    if (fields.message.trim().length < 10) e.message = t('errors.messageMin');
+    for (const issue of result.error.issues) {
+      e[issue.path[0]] = issue.message;
+    }
     setErrors(e);
-    return Object.keys(e).length === 0;
+    return false;
   };
 
   const handleSend = async () => {

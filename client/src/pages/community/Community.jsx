@@ -14,7 +14,6 @@ import {
   selectAllUsersError,
   selectAllUsersLoading,
   selectAllUsersLoadingMore,
-  selectAllUsersTotalCount,
   selectAllUsersTotalPages,
 } from "../../store/users/usersSelectors";
 import Error from "../error/Error.jsx";
@@ -32,7 +31,6 @@ const Community = () => {
   const error = useSelector(selectAllUsersError);
   const currentPage = useSelector(selectAllUsersCurrentPage);
   const totalPages = useSelector(selectAllUsersTotalPages);
-  const totalCount = useSelector(selectAllUsersTotalCount);
 
   const [searchName, setSearchName] = useState("");
   const [sortBy, setSortBy] = useState("username");
@@ -81,9 +79,7 @@ const Community = () => {
       <p className="community__hero-subtitle">
         {t("community.subtitle")}
       </p>
-      {totalCount > 0 && (
-        <span className="community__hero-count">{t("community.members", { count: totalCount })}</span>
-      )}
+      <span className="community__hero-count">{t("community.growingCommunity")}</span>
     </div>
   );
 

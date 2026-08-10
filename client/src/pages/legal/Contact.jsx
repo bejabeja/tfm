@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { sendContact } from "@tobeatraveller/shared";
+import { contactSchema } from "../../utils/schemasValidation";
 import "./Legal.scss";
 import "./Contact.scss";
 const CONTACT_EMAIL = "tobeatravellercompany@gmail.com";
@@ -20,14 +21,17 @@ const Contact = () => {
   const [errors, setErrors] = useState({});
 
   const validate = () => {
+    const result = contactSchema.safeParse(fields);
+    if (result.success) {
+      setErrors({});
+      return true;
+    }
     const e = {};
-    if (!fields.name.trim())    e.name    = t("common.required");
-    if (!fields.email.trim())   e.email   = t("common.required");
-    else if (!/\S+@\S+\.\S+/.test(fields.email)) e.email = t("errors.invalidEmail");
-    if (!fields.subject.trim()) e.subject = t("common.required");
-    if (!fields.message.trim()) e.message = t("common.required");
+    for (const issue of result.error.issues) {
+      e[issue.path[0]] = issue.message;
+    }
     setErrors(e);
-    return Object.keys(e).length === 0;
+    return false;
   };
 
   const handleChange = (e) => {

@@ -3,7 +3,7 @@ import toast from "react-hot-toast";
 import { IoArrowBackOutline, IoWarningOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { useTranslation } from "react-i18next";
+import { Trans, useTranslation } from "react-i18next";
 import i18n from "../../i18n";
 import { deleteMyAccount } from "../../services/users";
 import { logoutUser } from "../../store/auth/authActions";
@@ -110,10 +110,11 @@ const Settings = () => {
                 ✕
               </button>
             </div>
-            <p
-              className="modal__description"
-              dangerouslySetInnerHTML={{ __html: t("editProfile.deleteAccountDesc", { username: userMe?.username }) }}
-            />
+            <p className="modal__description">
+              <Trans i18nKey="editProfile.deleteAccountDesc" values={{ username: userMe?.username }}>
+                This will permanently delete your account and all your data. Type <strong>{{ username: userMe?.username }}</strong> to confirm.
+              </Trans>
+            </p>
             <div className="modal__input-wrap">
               <input
                 className="ep__delete-input"

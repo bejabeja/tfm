@@ -4,6 +4,7 @@ import db from '../db/clientPostgres.js';
 import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { generateAvatar } from "../utils/avatar.js";
+import { logger } from "../utils/logger.js";
 
 export class UserService {
     constructor(userRepository, itinerariesRepository, followRepository, emailService = null) {
@@ -34,7 +35,7 @@ export class UserService {
         const savedUser = await this.userRepository.save(userToSave);
 
         this.emailService?.sendWelcome({ username, email })
-            .catch(err => console.error('[email] welcome failed:', err));
+            .catch(err => logger.error('[email] welcome failed:', err));
 
         return savedUser;
     }
@@ -159,7 +160,7 @@ export class UserService {
         if (!user) throw new NotFoundError("User not found");
 
         this.emailService?.sendAccountDeleted({ username: user.username, email: user.email })
-            .catch(err => console.error('[email] account deleted failed:', err));
+            .catch(err => logger.error('[email] account deleted failed:', err));
 
         await this.userRepository.deleteUser(id);
         return user;

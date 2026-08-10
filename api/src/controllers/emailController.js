@@ -1,5 +1,6 @@
 import { ValidationError } from '../errors/ValidationError.js';
 import { contactSchema } from '../utils/schemasValidation.js';
+import { logger } from '../utils/logger.js';
 
 export class ContactController {
     constructor(emailService) {
@@ -16,7 +17,7 @@ export class ContactController {
             await this.emailService.sendContactNotification({ name, email, subject, message });
             // Confirmation to the sender: fire and forget, doesn't block the response
             this.emailService.sendContactConfirmation({ name, email })
-                .catch(err => console.error('[email] contact confirmation failed:', err));
+                .catch(err => logger.error('[email] contact confirmation failed:', err));
             return res.status(200).json({ message: 'Message sent' });
         } catch (error) {
             next(error);
