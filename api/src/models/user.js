@@ -88,6 +88,11 @@ export class User {
         };
     }
 
+    toPublicDTO() {
+        const { email, ...publicFields } = this.toDTO();
+        return publicFields;
+    }
+
     toSimpleDTO() {
         return {
             id: this.id,

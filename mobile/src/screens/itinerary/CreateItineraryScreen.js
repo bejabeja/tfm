@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import {
-  createItinerary, selectAuthUser, selectMe,
+  createItinerary, NEW_ITINERARY_DEFAULT_VISIBILITY, selectAuthUser, selectMe,
   setUserInfo, setUserInfoItineraries,
 } from '@tobeatraveller/shared';
 import {
@@ -44,7 +44,7 @@ const CreateItineraryScreen = ({ navigation }) => {
   const [budget, setBudget] = useState('');
   const [currency, setCurrency] = useState('EUR');
   const [travellers, setTravellers] = useState(1);
-  const [isPublic, setIsPublic] = useState(false);
+  const [isPublic, setIsPublic] = useState(NEW_ITINERARY_DEFAULT_VISIBILITY);
   const [places, setPlaces] = useState([]);
   const [days, setDays] = useState([1]);
   const [errors, setErrors] = useState({});

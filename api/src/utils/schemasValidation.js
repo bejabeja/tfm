@@ -62,3 +62,10 @@ export const resetPasswordSchema = z.object({
     token: z.string().min(64),
     newPassword: z.string().min(6),
 });
+
+export const contactSchema = z.object({
+    name: z.string().min(2, "Name must be at least 2 characters"),
+    email: z.string().email("Invalid email address"),
+    subject: z.string().min(2, "Subject must be at least 2 characters"),
+    message: z.string().min(10, "Message must be at least 10 characters"),
+});

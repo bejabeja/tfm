@@ -1,6 +1,6 @@
-import { AuthError } from "../errors/AuthError.js";
 import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
+import { assertItineraryOwner, assertItineraryVisible } from "../utils/itineraryAccess.js";
 
 export class ItineraryService {
     constructor(itinerariesRepository, placesRepository, userRepository, cloudinaryService, aiService) {
@@ -12,9 +12,10 @@ export class ItineraryService {
     }
     async getItineraryById(id, requestingUserId) {
         const itinerary = await this.itinerariesRepository.findById(id);
-        if (!itinerary || (!itinerary.isPublic && itinerary.userId !== requestingUserId)) {
+        if (!itinerary) {
             throw new NotFoundError("Itinerary not found");
         }
+        assertItineraryVisible(itinerary, requestingUserId);
         const places = await this.placesRepository.getPlacesByItineraryId(itinerary.id);
         for (const place of places) {
             itinerary.addPlace(place);
@@ -28,7 +29,7 @@ export class ItineraryService {
         let imagePublicId = "";
 
         if (file) {
-            const result = await this.cloudinaryService.uploadImageFromBuffer(file.buffer, file.originalname);
+            const result = await this.cloudinaryService.uploadImageFromBuffer(file.buffer);
             imageUrl = result.secure_url;
             imagePublicId = result.public_id;
         }
@@ -59,9 +60,7 @@ export class ItineraryService {
         if (!itinerary) {
             throw new NotFoundError("Itinerary not found");
         }
-        if (itinerary.userId !== userId) {
-            throw new AuthError();
-        }
+        assertItineraryOwner(itinerary, userId);
 
         if (itinerary.photoPublicId) {
             await this.cloudinaryService.deleteImage(itinerary.photoPublicId);
@@ -75,15 +74,13 @@ export class ItineraryService {
         if (!itinerary) {
             throw new NotFoundError("Itinerary not found");
         }
-        if (itinerary.userId !== userId) {
-            throw new AuthError();
-        }
+        assertItineraryOwner(itinerary, userId);
 
         if (file) {
             if (itinerary.photoPublicId) {
                 await this.cloudinaryService.deleteImage(itinerary.photoPublicId);
             }
-            const result = await this.cloudinaryService.uploadImageFromBuffer(file.buffer, file.originalname);
+            const result = await this.cloudinaryService.uploadImageFromBuffer(file.buffer);
             itineraryData.photoUrl = result.secure_url;
             itineraryData.photoPublicId = result.public_id;
         } else {

@@ -10,6 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  EXISTING_ITINERARY_VISIBILITY_FALLBACK,
   generateSmartItinerary, getItineraryById, updateItinerary,
   itineraryCategories, placeCategories,
   selectAuthUser, selectMe,
@@ -58,11 +59,11 @@ const EditExperienceScreen = ({ navigation, route }) => {
   const [destResults, setDestResults]   = useState([]);
   const [destSearching, setDestSearching] = useState(false);
   const [days, setDays]                 = useState(7);
-  const [category, setCategory]         = useState('adventure');
+  const [category, setCategory]         = useState(['adventure']);
   const [travelers, setTravelers]       = useState(1);
   const [intention, setIntention]       = useState('');
   const [generating, setGenerating]     = useState(false);
-  const [isPublic, setIsPublic]         = useState(true);
+  const [isPublic, setIsPublic]         = useState(EXISTING_ITINERARY_VISIBILITY_FALLBACK);
   const [title, setTitle]               = useState('');
   const [steps, setSteps]               = useState([]);
   const [editingKey, setEditingKey]     = useState(null);
@@ -77,9 +78,9 @@ const EditExperienceScreen = ({ navigation, route }) => {
       .then((data) => {
         setTitle(data.title ?? '');
         setDays(data.tripTotalDays ?? 7);
-        setCategory(data.category ?? 'adventure');
+        setCategory(data.category ? data.category.split(',') : ['adventure']);
         setTravelers(data.numberOfPeople ?? 1);
-        setIsPublic(data.isPublic ?? true);
+        setIsPublic(data.isPublic ?? EXISTING_ITINERARY_VISIBILITY_FALLBACK);
 
         const dest = {
           name: data.location?.name ?? '',
@@ -145,7 +146,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
     setGenerating(true);
     try {
       const data = await generateSmartItinerary({
-        destination: destination.name, days, category,
+        destination: destination.name, days, category: category.join(', '),
         numberOfTravellers: travelers, budget: null, currency: 'EUR',
         intention: intention.trim() || undefined,
         language: i18n.language,
@@ -194,7 +195,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
         title: title.trim(), description: '',
         location: { name: destination.name, label: destination.label ?? destination.name, lat: destination.coordinates?.lat ?? 0, lon: destination.coordinates?.lon ?? 0 },
         startDate: today, endDate: endObj.toISOString().split('T')[0],
-        budget: 0, currency: 'EUR', numberOfPeople: travelers, category, isPublic,
+        budget: 0, currency: 'EUR', numberOfPeople: travelers, category: category.join(','), isPublic,
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
           id: s._id,
           description: s.personalNote?.trim() ? `${s.description}\n\n✍️ ${s.personalNote.trim()}` : s.description,
@@ -320,9 +321,18 @@ const EditExperienceScreen = ({ navigation, route }) => {
               <Text style={ls.sectionLabel}>{ce('soulOfTrip')}</Text>
               <View style={ls.catGrid}>
                 {itineraryCategories.filter(c => c.value !== 'other').map(cat => (
-                  <TouchableOpacity key={cat.value} style={[ls.catCard, category === cat.value && ls.catCardOn]} onPress={() => setCategory(cat.value)} activeOpacity={0.75}>
+                  <TouchableOpacity
+                    key={cat.value}
+                    style={[ls.catCard, category.includes(cat.value) && ls.catCardOn]}
+                    onPress={() => setCategory(prev =>
+                      prev.includes(cat.value)
+                        ? prev.length > 1 ? prev.filter(c => c !== cat.value) : prev
+                        : [...prev, cat.value]
+                    )}
+                    activeOpacity={0.75}
+                  >
                     <Text style={ls.catCardEmoji}>{CATEGORY_EMOJI[cat.value]}</Text>
-                    <Text style={[ls.catCardName, category === cat.value && ls.catCardNameOn]}>{cat.label}</Text>
+                    <Text style={[ls.catCardName, category.includes(cat.value) && ls.catCardNameOn]}>{cat.label}</Text>
                     <Text style={ls.catCardDesc} numberOfLines={2}>{ce(`catDetails.${cat.value}`)}</Text>
                   </TouchableOpacity>
                 ))}

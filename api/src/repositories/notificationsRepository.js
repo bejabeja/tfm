@@ -1,5 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import client from '../db/clientPostgres.js';
+import { logger } from '../utils/logger.js';
 
 export class NotificationsRepository {
     async create({ id, userId, actorId, type, itineraryId, commentId }) {
@@ -10,8 +11,9 @@ export class NotificationsRepository {
                 VALUES ($1, $2, $3, $4, $5, $6)
             `;
             await client.query(query, [notificationId, userId, actorId, type, itineraryId ?? null, commentId ?? null]);
-        } catch (_err) {
-            // fire-and-forget: swallow errors silently
+        } catch (err) {
+            // fire-and-forget: don't let a notification failure break the caller's main flow
+            logger.error('[notifications] failed to create notification:', err);
         }
     }
 

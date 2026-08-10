@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { UserController } from "../controllers/userController.js";
-import { authenticate } from "../middlewares/authenticate.js";
+import { authenticate, optionalAuthenticate } from "../middlewares/authenticate.js";
 import { upload } from "../middlewares/uploadImage.js";
 import { FollowRepository } from "../repositories/followRepository.js";
 import { ItineraryRepository } from "../repositories/itineraryRepository.js";
@@ -26,7 +26,7 @@ export const createUsersRouter = () => {
     router.get("/all", userController.getAllUsersFiltered.bind(userController));
     router.get("/suggested", authenticate, userController.getSuggestedUsers.bind(userController));
     router.get("/check-username", userController.checkUsernameAvailable.bind(userController));
-    router.get("/:id", userController.getUserById.bind(userController));
+    router.get("/:id", optionalAuthenticate, userController.getUserById.bind(userController));
 
     return router;
 };

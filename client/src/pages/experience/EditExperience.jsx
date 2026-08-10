@@ -31,6 +31,7 @@ import { setUserInfo, setUserInfoItineraries } from "../../store/user/userInfoAc
 import { selectMe } from "../../store/user/userInfoSelectors";
 import { itineraryCategories } from "../../utils/constants/constants";
 import { useGeocodeSearch } from "../../hooks/useGeocodeSearch";
+import { EXISTING_ITINERARY_VISIBILITY_FALLBACK } from "../../utils/schemasValidation";
 import "./CreateExperience.scss"; // reuse same styles
 
 const STEP_CONFIG = {
@@ -135,11 +136,11 @@ const EditExperience = () => {
   const [destResults, setDestResults]   = useState([]);
   const [destSearching, setDestSearching] = useState(false);
   const [days, setDays]                 = useState(7);
-  const [category, setCategory]         = useState("adventure");
+  const [category, setCategory]         = useState(["adventure"]);
   const [travelers, setTravelers]       = useState(1);
   const [intention, setIntention]       = useState("");
   const [generating, setGenerating]     = useState(false);
-  const [isPublic, setIsPublic]         = useState(false);
+  const [isPublic, setIsPublic]         = useState(EXISTING_ITINERARY_VISIBILITY_FALLBACK);
   const [title, setTitle]               = useState("");
   const [steps, setSteps]               = useState([]);
   const [editingKey, setEditingKey]     = useState(null);
@@ -159,7 +160,7 @@ const EditExperience = () => {
       setDays(data.tripTotalDays ?? 7);
       setCategory(data.category ? data.category.split(",") : ["adventure"]);
       setTravelers(data.numberOfPeople ?? 1);
-      setIsPublic(data.isPublic ?? false);
+      setIsPublic(data.isPublic ?? EXISTING_ITINERARY_VISIBILITY_FALLBACK);
 
       const dest = {
         name: data.location?.name ?? "",
@@ -219,7 +220,7 @@ const EditExperience = () => {
     setGenerating(true);
     try {
       const data = await generateSmartItinerary({
-        destination: destination.name, days, category,
+        destination: destination.name, days, category: category.join(", "),
         numberOfTravellers: travelers, budget: null, currency: "EUR",
         intention: intention.trim() || undefined,
         language: i18n.language,
@@ -280,7 +281,7 @@ const EditExperience = () => {
           lon: destination.coordinates?.lon ?? 0,
         },
         startDate: today, endDate: endObj.toISOString().split("T")[0],
-        budget: 0, currency: "EUR", numberOfPeople: travelers, category: Array.isArray(category) ? category.join(",") : category, isPublic,
+        budget: 0, currency: "EUR", numberOfPeople: travelers, category: category.join(","), isPublic,
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
           id: s._id,
           description: s.personalNote?.trim()
@@ -402,8 +403,12 @@ const EditExperience = () => {
               {itineraryCategories.filter(c => c.value !== "other").map(cat => (
                 <button
                   key={cat.value} type="button"
-                  className={`cexp__cat-card ${category === cat.value ? "cexp__cat-card--active" : ""}`}
-                  onClick={() => setCategory(cat.value)}
+                  className={`cexp__cat-card ${category.includes(cat.value) ? "cexp__cat-card--active" : ""}`}
+                  onClick={() => setCategory(prev =>
+                    prev.includes(cat.value)
+                      ? prev.length > 1 ? prev.filter(c => c !== cat.value) : prev
+                      : [...prev, cat.value]
+                  )}
                 >
                   <span className="cexp__cat-card-emoji">{CATEGORY_EMOJI[cat.value]}</span>
                   <span className="cexp__cat-card-name">{cat.label}</span>

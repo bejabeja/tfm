@@ -15,11 +15,11 @@ export class AIService {
     ].filter(Boolean).join('\n');
 
     const intentionBlock = intention?.trim() ? `
-TRAVELER'S SPECIFIC WISHES — THIS IS YOUR PRIMARY DIRECTIVE:
+TRAVELER'S SPECIFIC WISHES: THIS IS YOUR PRIMARY DIRECTIVE:
 "${intention.trim()}"
 
 You MUST:
-1. If the traveler mentioned specific places, landmarks, or activities — include them EXACTLY (e.g. "Santa Claus Village" → include it; "snowmobile" → include a snowmobile activity; "fly to Helsinki" → include a flight/airport step).
+1. If the traveler mentioned specific places, landmarks, or activities, include them EXACTLY (e.g. "Santa Claus Village" → include it; "snowmobile" → include a snowmobile activity; "fly to Helsinki" → include a flight/airport step).
 2. Build the remaining places around those specific requests.
 3. Never substitute or ignore what the traveler explicitly asked for.
 ` : '';
@@ -37,7 +37,7 @@ ${intentionBlock}
 ${contextLines ? `Trip context:\n${contextLines}` : ''}
 ${languageInstruction}
 
-Generate exactly ${totalDays * 3} places total — 3 per day, days 1 to ${totalDays}.
+Generate exactly ${totalDays * 3} places total: 3 per day, days 1 to ${totalDays}.
 
 Each place must be a JSON object with:
 - title: name of the place or activity (string)
@@ -67,11 +67,11 @@ Output ONLY this JSON structure:
       });
 
       const text = response.choices[0]?.message?.content;
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
+      const jsonMatch = text?.match(/\{[\s\S]*\}/);
       if (!jsonMatch) throw new Error('No valid JSON found in response');
       return jsonMatch[0];
     } catch (error) {
-      // error propagates to errorHandler — no need to log here
+      // error propagates to errorHandler, no need to log here
       throw error;
     }
   }

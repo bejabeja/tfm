@@ -31,6 +31,7 @@ import { setUserInfo, setUserInfoItineraries } from "../../store/user/userInfoAc
 import { selectMe } from "../../store/user/userInfoSelectors";
 import { itineraryCategories } from "../../utils/constants/constants";
 import { useGeocodeSearch } from "../../hooks/useGeocodeSearch";
+import { NEW_ITINERARY_DEFAULT_VISIBILITY } from "../../utils/schemasValidation";
 import "./CreateExperience.scss";
 
 // ─── Step config (icons + colors) ────────────────────────────────────────────
@@ -136,7 +137,7 @@ const CreateExperience = () => {
   const [travelers, setTravelers]       = useState(1);
   const [intention, setIntention]       = useState("");
   const [generating, setGenerating]     = useState(false);
-  const [isPublic, setIsPublic]         = useState(false);
+  const [isPublic, setIsPublic]         = useState(NEW_ITINERARY_DEFAULT_VISIBILITY);
   const [title, setTitle]               = useState("");
   const [steps, setSteps]               = useState([]);
   const [editingKey, setEditingKey]     = useState(null);

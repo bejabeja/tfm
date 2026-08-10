@@ -20,7 +20,7 @@ export class CommentsController {
         try {
             const itineraryId = req.params.itineraryId;
 
-            const comments = await this.commentsService.getCommentsByItinerary(itineraryId);
+            const comments = await this.commentsService.getCommentsByItinerary(itineraryId, req.user?.id);
 
             return res.status(200).json(comments);
         } catch (error) {

@@ -86,6 +86,14 @@ export const deleteMyAccount = async () => {
     return response.json();
 };
 
+export const exportMyData = async () => {
+    const response = await authFetch(`${baseUrl()}/me/export`);
+    if (!response.ok) {
+        await parseError(response, 'Failed to export data');
+    }
+    return response.json();
+};
+
 export const getSuggestedUsers = async () => {
     try {
         const response = await authFetch(`${baseUrl()}/suggested`);

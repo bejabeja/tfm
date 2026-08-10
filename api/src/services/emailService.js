@@ -4,6 +4,7 @@ import { contactConfirmationTemplate } from '../emails/templates/contactConfirma
 import { contactTemplate } from '../emails/templates/contact.js';
 import { passwordResetTemplate } from '../emails/templates/passwordReset.js';
 import { welcomeTemplate } from '../emails/templates/welcome.js';
+import { logger } from '../utils/logger.js';
 
 export class EmailService {
     constructor() {
@@ -15,7 +16,7 @@ export class EmailService {
 
     async _send({ to, subject, html, replyTo }) {
         if (!this.apiKey) {
-            console.warn('[email] BREVO_API_KEY is not set — skipping email send');
+            logger.warn('[email] BREVO_API_KEY is not set, skipping email send');
             return;
         }
 

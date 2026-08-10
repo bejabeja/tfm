@@ -12,7 +12,7 @@ import {
   setUserInfo,
 } from "../../../store/user/userInfoActions";
 import { selectMe } from "../../../store/user/userInfoSelectors";
-import { createItinerarySchema } from "../../../utils/schemasValidation";
+import { createItinerarySchema, EXISTING_ITINERARY_VISIBILITY_FALLBACK } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sectionsForm/BasicInfoForm";
 import BudgetForm from "../sectionsForm/BudgetForm";
 import DatesForm from "../sectionsForm/DatesForm";
@@ -68,7 +68,7 @@ const EditItinerary = () => {
       currency: "",
       numberOfTravellers: "",
       category: "",
-      isPublic: true,
+      isPublic: EXISTING_ITINERARY_VISIBILITY_FALLBACK,
     },
   });
 
@@ -87,7 +87,14 @@ const EditItinerary = () => {
 
   useEffect(() => {
     const fetchItineraryData = async () => {
-      const response = await getItineraryById(id);
+      let response;
+      try {
+        response = await getItineraryById(id);
+      } catch {
+        toast.error(t("errors.itineraryLoad"));
+        navigate("/my-itineraries");
+        return;
+      }
       const resetValues = {
         imageUrl: response.photoUrl,
         title: response.title,
@@ -106,7 +113,7 @@ const EditItinerary = () => {
         currency: response.currency,
         numberOfTravellers: response.numberOfPeople.toString(),
         category: response.category,
-        isPublic: response.isPublic ?? true,
+        isPublic: response.isPublic ?? EXISTING_ITINERARY_VISIBILITY_FALLBACK,
         places: response.places.map((place) => ({
           id: place.id,
           description: place.description,
@@ -130,7 +137,7 @@ const EditItinerary = () => {
       setDays(existingDays);
     };
     fetchItineraryData();
-  }, []);
+  }, [id]);
 
   const editItinerary = async (data) => {
     if (data.isPublic) {

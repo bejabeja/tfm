@@ -84,7 +84,7 @@ export class UserService {
         return user.toSimpleDTO();
     }
 
-    async getUserById(id) {
+    async getUserById(id, requestingUserId) {
         const user = await this.userRepository.getUserById(id);
         if (!user) {
             throw new NotFoundError("User not found");
@@ -100,7 +100,7 @@ export class UserService {
         user.followersListIds = followersListIds;
         user.followingListIds = followingListIds;
 
-        return user.toDTO();
+        return requestingUserId === id ? user.toDTO() : user.toPublicDTO();
     }
 
     async updateUser(id, userData) {

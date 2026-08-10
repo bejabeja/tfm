@@ -4,7 +4,7 @@ export const filterItineraries = (itineraries, filters) => {
     return itineraries.filter((itinerary) => {
         if (
             filters.category &&
-            itinerary.category.toLowerCase() !== filters.category.toLowerCase()
+            itinerary.category?.toLowerCase() !== filters.category.toLowerCase()
         ) return false;
 
         const budget = parseFloat(itinerary.budget || "0");

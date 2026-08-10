@@ -1,5 +1,6 @@
 import { AuthError } from "../errors/AuthError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
+import { assertItineraryVisible } from "../utils/itineraryAccess.js";
 
 export class CommentsService {
     constructor(commentsRepository, userRepository, notificationsService = null, itineraryRepository = null) {
@@ -10,9 +11,10 @@ export class CommentsService {
     }
 
     async addComment(userId, itineraryId, content) {
+        const itinerary = await this.itineraryRepository?.findById(itineraryId);
+        assertItineraryVisible(itinerary, userId);
         const result = await this.commentsRepository.addComment(userId, itineraryId, content);
 
-        const itinerary = await this.itineraryRepository?.findById(itineraryId);
         if (itinerary?.userId && itinerary.userId !== userId) {
             this.notificationsService?.createNotification({
                 userId: itinerary.userId, actorId: userId, type: 'comment',
@@ -23,7 +25,9 @@ export class CommentsService {
         return result;
     }
 
-    async getCommentsByItinerary(itineraryId) {
+    async getCommentsByItinerary(itineraryId, requestingUserId) {
+        const itinerary = await this.itineraryRepository?.findById(itineraryId);
+        assertItineraryVisible(itinerary, requestingUserId);
         const comments = await this.commentsRepository.getCommentsByItinerary(itineraryId);
         return comments.map(comment => comment.toDTO());
     }

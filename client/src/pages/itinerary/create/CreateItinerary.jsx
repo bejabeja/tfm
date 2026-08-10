@@ -9,7 +9,7 @@ import SubmitButton from "../../../components/form/SubmitButton";
 import { createItinerary } from "../../../services/itinerary";
 import { setUserInfo, setUserInfoItineraries } from "../../../store/user/userInfoActions";
 import { selectMe } from "../../../store/user/userInfoSelectors";
-import { createItinerarySchema } from "../../../utils/schemasValidation";
+import { createItinerarySchema, NEW_ITINERARY_DEFAULT_VISIBILITY } from "../../../utils/schemasValidation";
 import BasicInfoForm from "../sectionsForm/BasicInfoForm";
 import BudgetForm from "../sectionsForm/BudgetForm";
 import DatesForm from "../sectionsForm/DatesForm";
@@ -54,7 +54,7 @@ const CreateItinerary = () => {
       currency: "",
       numberOfTravellers: "1",
       category: "adventure",
-      isPublic: false,
+      isPublic: NEW_ITINERARY_DEFAULT_VISIBILITY,
     },
   });
 

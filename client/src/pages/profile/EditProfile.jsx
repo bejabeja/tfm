@@ -11,6 +11,7 @@ import Modal from "../../components/modal/Modal";
 import { useAvatarUpload } from "../../hooks/useAvatarUpload";
 import { checkUsernameAvailable, updateUser } from "../../services/users";
 import { initAuthUser } from "../../store/auth/authActions";
+import { selectAuthUser } from "../../store/auth/authSelectors";
 import { setUserInfo } from "../../store/user/userInfoActions";
 import { selectMe } from "../../store/user/userInfoSelectors";
 import { generateAvatar } from "../../utils/constants/constants";
@@ -22,6 +23,7 @@ const EditProfile = () => {
   const dispatch = useDispatch();
   const { id } = useParams();
   const userMe = useSelector(selectMe);
+  const authUser = useSelector(selectAuthUser);
   const navigate = useNavigate();
 
   const [errorSubmit, setErrorSubmit] = useState(null);
@@ -43,7 +45,13 @@ const EditProfile = () => {
   const bioValue      = useWatch({ control, name: "bio" });
   const aboutValue    = useWatch({ control, name: "about" });
 
-  useEffect(() => { dispatch(setUserInfo(id)); }, [dispatch, id]);
+  useEffect(() => {
+    if (authUser && String(authUser.id) !== String(id)) {
+      navigate(`/profile/edit/${authUser.id}`, { replace: true });
+      return;
+    }
+    dispatch(setUserInfo(id));
+  }, [dispatch, id, authUser, navigate]);
 
   useEffect(() => {
     if (userMe) reset({

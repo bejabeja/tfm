@@ -1,3 +1,5 @@
+import { assertItineraryVisible } from "../utils/itineraryAccess.js";
+
 export class LikesService {
     constructor(likesRepository, notificationsService = null, itineraryRepository = null) {
         this.likesRepository = likesRepository;
@@ -6,13 +8,15 @@ export class LikesService {
     }
 
     async toggleLike(itineraryId, userId) {
+        const itinerary = await this.itineraryRepository?.findById(itineraryId);
+        assertItineraryVisible(itinerary, userId);
+
         const liked = await this.likesRepository.isLiked(itineraryId, userId);
         if (liked) {
             await this.likesRepository.removeLike(itineraryId, userId);
         } else {
             await this.likesRepository.addLike(itineraryId, userId);
 
-            const itinerary = await this.itineraryRepository?.findById(itineraryId);
             if (itinerary?.userId && itinerary.userId !== userId) {
                 this.notificationsService?.createNotification({
                     userId: itinerary.userId, actorId: userId, type: 'like', itineraryId
@@ -24,6 +28,9 @@ export class LikesService {
     }
 
     async isLiked(itineraryId, userId) {
+        const itinerary = await this.itineraryRepository?.findById(itineraryId);
+        assertItineraryVisible(itinerary, userId);
+
         const [isLiked, likesCount] = await Promise.all([
             this.likesRepository.isLiked(itineraryId, userId),
             this.likesRepository.getLikesCount(itineraryId),

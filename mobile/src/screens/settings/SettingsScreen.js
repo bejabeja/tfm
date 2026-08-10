@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import {
-  Alert, KeyboardAvoidingView, Linking, Platform,
-  ScrollView, StyleSheet, Text, TextInput,
+  Alert, KeyboardAvoidingView, Platform,
+  ScrollView, Share, StyleSheet, Text, TextInput,
   TouchableOpacity, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -9,11 +9,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import i18n from '../../i18n';
 import {
-  deleteMyAccount, logoutUser, selectAuthUser, selectMe,
+  deleteMyAccount, exportMyData, logoutUser, selectAuthUser, selectMe,
 } from '@tobeatraveller/shared';
 import { shadow } from '../../utils/styles';
-
-const API_URL = process.env.EXPO_PUBLIC_API_URL || '';
 
 const SettingsScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -28,6 +26,7 @@ const SettingsScreen = ({ navigation }) => {
   const [deleting, setDeleting] = useState(false);
   const [deleteInput, setDeleteInput] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [exporting, setExporting] = useState(false);
 
   const handleDeleteAccount = async () => {
     if (deleteInput !== user?.username) return;
@@ -41,11 +40,16 @@ const SettingsScreen = ({ navigation }) => {
     }
   };
 
-  const handleDownloadData = () => {
-    const url = `${API_URL}/users/me/export`;
-    Linking.openURL(url).catch(() =>
-      Alert.alert(t('errors.somethingWrong'), url)
-    );
+  const handleDownloadData = async () => {
+    setExporting(true);
+    try {
+      const data = await exportMyData();
+      await Share.share({ message: JSON.stringify(data, null, 2) });
+    } catch {
+      Alert.alert(t('errors.somethingWrong'));
+    } finally {
+      setExporting(false);
+    }
   };
 
   return (
@@ -95,8 +99,8 @@ const SettingsScreen = ({ navigation }) => {
           <View style={styles.card}>
             <Text style={styles.cardTitle}>{t('settings.yourData').toUpperCase()}</Text>
             <Text style={styles.cardDesc}>{t('editProfile.yourDataDesc')}</Text>
-            <TouchableOpacity style={styles.linkBtn} onPress={handleDownloadData}>
-              <Text style={styles.linkBtnText}>{t('editProfile.downloadData')} →</Text>
+            <TouchableOpacity style={styles.linkBtn} onPress={handleDownloadData} disabled={exporting}>
+              <Text style={styles.linkBtnText}>{exporting ? t('common.saving') : t('editProfile.downloadData')} →</Text>
             </TouchableOpacity>
           </View>
 

@@ -1,5 +1,6 @@
 import pkg from 'pg';
 import config from '../config/config.js';
+import { logger } from '../utils/logger.js';
 
 const { Pool } = pkg;
 
@@ -19,9 +20,9 @@ const client = config.databaseUrl
 export async function testConnection() {
     try {
         await client.query('SELECT 1');
-        console.log('✅ Successfully connected to PostgreSQL database');
+        logger.info('✅ Successfully connected to PostgreSQL database');
     } catch (error) {
-        console.error('❌ Error connecting to PostgreSQL database:', error.stack);
+        logger.error('❌ Error connecting to PostgreSQL database:', error.stack);
     }
 }
 

@@ -82,6 +82,8 @@ const RegisterScreen = ({ navigation }) => {
 
   const clearError = (field) => setErrors(p => ({ ...p, [field]: null }));
 
+  const [termsPrefix, termsMiddle, termsSuffix] = t('auth.termsAccept', { terms: '@@TERMS@@', privacy: '@@PRIVACY@@' }).split(/@@TERMS@@|@@PRIVACY@@/);
+
   return (
     <View style={styles.root}>
       <ImageBackground source={AUTH_BG} style={StyleSheet.absoluteFill} resizeMode="cover" />
@@ -197,14 +199,11 @@ const RegisterScreen = ({ navigation }) => {
                     {termsAccepted && <Text style={styles.checkmark}>✓</Text>}
                   </View>
                   <Text style={[styles.consentText, errors.termsAccepted && styles.consentTextError]}>
-                    {t('auth.termsAccept', {
-                      terms: t('auth.termsOfService'),
-                      privacy: t('auth.privacyPolicy'),
-                    })}
-                    {' '}
+                    {termsPrefix}
                     <Text style={styles.consentLink} onPress={() => Linking.openURL('https://tobeatraveller.com/terms')}>{t('auth.termsOfService')}</Text>
-                    {' '}{t('auth.termsAccept').includes('and') ? 'and' : 'y'}{' '}
+                    {termsMiddle}
                     <Text style={styles.consentLink} onPress={() => Linking.openURL('https://tobeatraveller.com/privacy-policy')}>{t('auth.privacyPolicy')}</Text>
+                    {termsSuffix}
                   </Text>
                 </TouchableOpacity>
                 {errors.termsAccepted ? <Text style={styles.consentError}>{errors.termsAccepted}</Text> : null}

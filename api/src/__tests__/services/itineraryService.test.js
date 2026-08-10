@@ -155,7 +155,7 @@ describe('ItineraryService', () => {
       const file = { buffer: Buffer.from('img'), originalname: 'photo.jpg' };
       await service.createItinerary(baseData, file, 'user-1');
 
-      expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalledWith(file.buffer, file.originalname);
+      expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalledWith(file.buffer);
       expect(itinerariesRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           photoUrl: 'https://cloudinary.com/image.jpg',
@@ -294,7 +294,7 @@ describe('ItineraryService', () => {
       await service.updateItinerary('itin-1', { ...baseUpdateData }, file, 'user-1');
 
       expect(cloudinaryService.deleteImage).toHaveBeenCalledWith('old-public-id');
-      expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalledWith(file.buffer, file.originalname);
+      expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalledWith(file.buffer);
       expect(itinerariesRepository.update).toHaveBeenCalledWith(
         'itin-1',
         expect.objectContaining({

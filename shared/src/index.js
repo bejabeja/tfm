@@ -1,6 +1,5 @@
 // Services
 export * from './services/auth.js';
-export { sendContact } from './services/contact.js';
 export * from './services/itineraries.js';
 export * from './services/itinerary.js';
 export * from './services/comments.js';
@@ -35,6 +34,7 @@ export { getDestinations } from './services/itineraries.js';
 export { setApiUrl } from './utils/apiConfig.js';
 export { setTokenStorage } from './utils/tokenStorage.js';
 export { setNotifier } from './utils/notifier.js';
+export { parseError } from './utils/parseError.js';
 export * from './utils/schemasValidation.js';
 export * from './utils/constants/colors.js';
 export * from './utils/constants/constants.js';

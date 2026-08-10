@@ -27,7 +27,7 @@ export class PlacesRepository {
             ]
         );
 
-        const place = Place.fromDb(result.rows[0], placeData.orderIndex);
+        const place = Place.fromDb(result.rows[0], placeData.orderIndex, placeData.dayNumber ?? 1);
         place.description = placeData.description;
         return place;
     }
@@ -63,7 +63,7 @@ export class PlacesRepository {
             ]
         );
 
-        const place = Place.fromDb(result.rows[0], placeData.orderIndex);
+        const place = Place.fromDb(result.rows[0], placeData.orderIndex, placeData.dayNumber ?? 1);
         place.description = placeData.description;
         return place;
     }

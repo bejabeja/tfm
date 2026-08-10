@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   createItinerary, generateSmartItinerary,
-  itineraryCategories, placeCategories,
+  itineraryCategories, NEW_ITINERARY_DEFAULT_VISIBILITY, placeCategories,
   selectAuthUser, selectMe,
   setUserInfo, setUserInfoItineraries,
 } from '@tobeatraveller/shared';
@@ -57,7 +57,7 @@ const PlanExperienceScreen = ({ navigation }) => {
   const [travelers, setTravelers]         = useState(1);
   const [intention, setIntention]         = useState('');
   const [generating, setGenerating]       = useState(false);
-  const [isPublic, setIsPublic]           = useState(false);
+  const [isPublic, setIsPublic]           = useState(NEW_ITINERARY_DEFAULT_VISIBILITY);
 
   // Review state
   const [title, setTitle]         = useState('');

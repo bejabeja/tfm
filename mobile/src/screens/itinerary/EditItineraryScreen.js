@@ -8,7 +8,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  getItineraryById, selectAuthUser, selectMe,
+  EXISTING_ITINERARY_VISIBILITY_FALLBACK, getItineraryById, selectAuthUser, selectMe,
   setUserInfo, updateItinerary,
 } from '@tobeatraveller/shared';
 import {
@@ -37,7 +37,7 @@ const EditItineraryScreen = ({ route, navigation }) => {
   const [budget, setBudget] = useState('');
   const [currency, setCurrency] = useState('EUR');
   const [travellers, setTravellers] = useState(1);
-  const [isPublic, setIsPublic] = useState(true);
+  const [isPublic, setIsPublic] = useState(EXISTING_ITINERARY_VISIBILITY_FALLBACK);
   const [places, setPlaces] = useState([]);
   const [days, setDays] = useState([1]);
   const [errors, setErrors] = useState({});
@@ -55,7 +55,7 @@ const EditItineraryScreen = ({ route, navigation }) => {
         setBudget(data.budget?.toString() ?? '');
         setCurrency(data.currency ?? 'EUR');
         setTravellers(data.numberOfPeople ?? 1);
-        setIsPublic(data.isPublic ?? true);
+        setIsPublic(data.isPublic ?? EXISTING_ITINERARY_VISIBILITY_FALLBACK);
         const loaded = (data.places ?? []).map((p, i) => ({
           _key: String(i), id: p.id,
           name: p.name ?? '', label: p.label ?? p.name ?? '',

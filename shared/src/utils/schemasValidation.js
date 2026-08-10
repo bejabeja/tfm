@@ -1,5 +1,10 @@
 import { z } from "zod";
 
+// Single source of truth for itinerary/experience visibility defaults,
+// shared by web and mobile create/edit screens.
+export const NEW_ITINERARY_DEFAULT_VISIBILITY = false;
+export const EXISTING_ITINERARY_VISIBILITY_FALLBACK = true;
+
 export const updateUserSchema = z.object({
     username: z.string()
         .min(2, "Username is required")
@@ -134,7 +139,7 @@ export const createItinerarySchema = z
         category: z
             .string(),
 
-        isPublic: z.boolean().default(true),
+        isPublic: z.boolean().default(EXISTING_ITINERARY_VISIBILITY_FALLBACK),
     })
     .refine((data) => data.endDate >= data.startDate, {
         message: "End date must be after or equal to start date",

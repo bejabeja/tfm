@@ -49,7 +49,12 @@ export class CommentsRepository {
   }
 
   async getCommentById(commentId) {
-    const query = `SELECT * FROM itinerary_comments WHERE id = $1;`;
+    const query = `
+          SELECT ic.*, u.username
+          FROM itinerary_comments ic
+          JOIN users u ON ic.user_id = u.id
+          WHERE ic.id = $1;
+        `;
     const result = await client.query(query, [commentId]);
     return result.rows[0] ? Comment.fromDB(result.rows[0]) : null;
   }
