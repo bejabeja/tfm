@@ -151,12 +151,12 @@ const Signup = () => {
                 checked={termsAccepted}
                 onChange={(e) => { setTermsAccepted(e.target.checked); setConsentErrors(p => ({ ...p, termsAccepted: undefined })); }}
               />
-              <span>
-                {t("auth.termsAccept", {
+              <span dangerouslySetInnerHTML={{
+                __html: t("auth.termsAccept", {
                   terms: `<a href="/terms" target="_blank" rel="noopener noreferrer">${t("auth.termsOfService")}</a>`,
                   privacy: `<a href="/privacy-policy" target="_blank" rel="noopener noreferrer">${t("auth.privacyPolicy")}</a>`,
-                })}
-              </span>
+                }),
+              }} />
             </label>
             {consentErrors.termsAccepted && <p className="auth__consent-error">{consentErrors.termsAccepted}</p>}
           </div>
