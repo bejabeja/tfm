@@ -9,7 +9,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
-// Map only on native — react-native-maps doesn't support web
+// Map only on native, react-native-maps doesn't support web
 const MapView = Platform.OS !== 'web' ? require('react-native-maps').default : null;
 const Marker  = Platform.OS !== 'web' ? require('react-native-maps').Marker  : null;
 import { ItineraryDetailSkeleton } from '../../components/Skeleton';
@@ -243,7 +243,7 @@ const ItineraryScreen = ({ route, navigation }) => {
           />
         </View>
 
-        {/* Places — timeline */}
+        {/* Places: timeline */}
         {itinerary.places?.length > 0 && (() => {
           const dayMap = {};
           itinerary.places.forEach((place, i) => {
@@ -285,7 +285,7 @@ const ItineraryScreen = ({ route, navigation }) => {
           );
         })()}
 
-        {/* Map — native only */}
+        {/* Map: native only */}
         {Platform.OS !== 'web' && itinerary.places?.some(p => p.latitude && p.longitude) && (
           <ItineraryMap places={itinerary.places} location={itinerary.location} t={t} />
         )}

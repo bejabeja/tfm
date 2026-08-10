@@ -164,12 +164,12 @@ const HomeScreen = ({ navigation }) => {
         </View>
       )}
 
-      {/* World Map — only in discover tab */}
+      {/* World Map: only in discover tab */}
       {(!isAuthenticated || tab === 'discover') && destinations.length > 0 && (
         <WorldMapSection destinations={destinations} navigation={navigation} t={t} />
       )}
 
-      {/* Featured Itineraries + People — only in discover tab */}
+      {/* Featured Itineraries + People: only in discover tab */}
       {(!isAuthenticated || tab === 'discover') && (
       <>
       <View style={styles.section}>

@@ -55,7 +55,7 @@ export const accountDeletedTemplate = ({ username }) => ({
             <tr>
               <td>
                 <p style="margin:0 0 12px;font-size:15px;color:#374151;line-height:1.6;">
-                  If this was a mistake, we're sorry to see you go — but you're always welcome back.
+                  If this was a mistake, we're sorry to see you go, but you're always welcome back.
                   You can create a new account at any time.
                 </p>
                 <table role="presentation" cellspacing="0" cellpadding="0" border="0">

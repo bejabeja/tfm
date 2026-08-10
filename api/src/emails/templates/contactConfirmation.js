@@ -7,7 +7,7 @@ export const contactConfirmationTemplate = ({ name }) => ({
     subject: "We've received your message",
     html: layout({
         title: "Message received",
-        preheader: "Thanks for reaching out — we'll get back to you shortly.",
+        preheader: "Thanks for reaching out, we'll get back to you shortly.",
         content: `
           <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:24px;">
             <tr>
@@ -16,7 +16,7 @@ export const contactConfirmationTemplate = ({ name }) => ({
                   Thanks, ${name}!
                 </h1>
                 <p style="margin:0;font-size:15px;color:${MUTED};line-height:1.6;">
-                  We've received your message and we'll get back to you as soon as possible —
+                  We've received your message and we'll get back to you as soon as possible,
                   usually within 1–2 business days.
                 </p>
               </td>

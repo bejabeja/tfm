@@ -11,7 +11,7 @@ const Contact = () => {
   const { t } = useTranslation();
 
   useEffect(() => {
-    document.title = `${t("contact.title")} — ToBeATraveller`;
+    document.title = `${t("contact.title")} - ToBeATraveller`;
     window.scrollTo(0, 0);
     return () => { document.title = "ToBeATraveller"; };
   }, [t]);

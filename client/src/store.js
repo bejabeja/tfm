@@ -7,7 +7,7 @@ import {
     usersReducer,
 } from "@tobeatraveller/shared";
 
-// authReducer stays local — web-specific initial state (localStorage hint)
+// authReducer stays local: web-specific initial state (localStorage hint)
 // and image preloading flags (imageHeroLoaded, imageAuthLoaded)
 import { authReducer } from "./store/auth/authReducer.js";
 

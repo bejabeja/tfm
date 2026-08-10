@@ -7,7 +7,7 @@ const CONTACT_EMAIL = "tobeatravellercompany@gmail.com";
 
 const Terms = () => {
   useEffect(() => {
-    document.title = "Terms of Service — ToBeATraveller";
+    document.title = "Terms of Service - ToBeATraveller";
     window.scrollTo(0, 0);
     return () => { document.title = "ToBeATraveller"; };
   }, []);

@@ -29,7 +29,7 @@ export const welcomeTemplate = ({ username }) => ({
                   Welcome aboard, ${username}! ✈️
                 </h1>
                 <p style="margin:0;font-size:15px;color:${MUTED};line-height:1.6;">
-                  Your ToBeATraveller account is ready. Discover journeys shared by travellers around the world — or share your own.
+                  Your ToBeATraveller account is ready. Discover journeys shared by travellers around the world, or share your own.
                 </p>
               </td>
             </tr>

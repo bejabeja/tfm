@@ -7,7 +7,7 @@ const CONTACT_EMAIL = "tobeatravellercompany@gmail.com";
 
 const PrivacyPolicy = () => {
   useEffect(() => {
-    document.title = "Privacy Policy — ToBeATraveller";
+    document.title = "Privacy Policy - ToBeATraveller";
     window.scrollTo(0, 0);
     return () => { document.title = "ToBeATraveller"; };
   }, []);
@@ -33,7 +33,7 @@ const PrivacyPolicy = () => {
           <ul>
             <li>
               <strong>Account data:</strong> email address, username, and password
-              (stored as a secure hash — we never store your password in plain text).
+              (stored as a secure hash; we never store your password in plain text).
             </li>
             <li>
               <strong>Profile data:</strong> display name, biography, location, profile
@@ -68,7 +68,7 @@ const PrivacyPolicy = () => {
           </p>
           <p>
             The legal basis for processing is the performance of a contract (Art. 6(1)(b) GDPR)
-            — i.e., providing the service you signed up for.
+            , i.e., providing the service you signed up for.
           </p>
         </Section>
 
@@ -76,17 +76,17 @@ const PrivacyPolicy = () => {
           <p>We use the following external services that may process your data:</p>
           <ul>
             <li>
-              <strong>Cloudinary</strong> — used to store and serve profile photos and
+              <strong>Cloudinary</strong>: used to store and serve profile photos and
               itinerary cover images. Images you upload are stored on Cloudinary's servers.
               See their <a href="https://cloudinary.com/privacy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
             </li>
             <li>
-              <strong>Geoapify</strong> — used to search for destinations and places of
+              <strong>Geoapify</strong>: used to search for destinations and places of
               interest when creating an itinerary. Search queries (place names) are sent
               to their API. See their <a href="https://www.geoapify.com/privacy-policy" target="_blank" rel="noopener noreferrer">Privacy Policy</a>.
             </li>
             <li>
-              <strong>AI itinerary generation</strong> — when you use the "Generate with AI"
+              <strong>AI itinerary generation</strong>: when you use the "Generate with AI"
               feature, the destination, trip duration, and category are sent to an AI
               service to generate place suggestions. No personally identifiable information
               is included in these requests.

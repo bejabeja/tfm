@@ -77,7 +77,7 @@ const EditItinerary = () => {
     name: "places",
   });
 
-  // #2 — sync days/dates nudge (same as Create)
+  // #2: sync days/dates nudge (same as Create)
   const startDate = watch("startDate");
   const endDate = watch("endDate");
   const tripDays =

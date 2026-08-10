@@ -521,7 +521,7 @@
     "placesTitle": "Places",
     "startBuilding": "Start building your itinerary",
     "startBuildingHint": "Add the places you want to visit, day by day",
-    "noPlacesDay": "No places yet — add your first place for this day.",
+    "noPlacesDay": "No places yet, add your first place for this day.",
     "daySummary": "{{places}} · {{days}}"
   },
   "settings": {

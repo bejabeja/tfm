@@ -61,7 +61,7 @@ const ForgotPassword = () => {
           {successEmail ? (
             <div style={{ padding: "1rem 0" }}>
               <p style={{ fontSize: "0.9rem", lineHeight: 1.6, color: "var(--text-color)", marginBottom: "0.5rem" }}>
-                {t("auth.checkInbox")} — {t("auth.resetLinkSent", { email: successEmail })}
+                {t("auth.checkInbox")}. {t("auth.resetLinkSent", { email: successEmail })}
               </p>
               <p style={{ fontSize: "0.82rem", color: "var(--text-secondary-color)" }}>
                 {t("auth.didntReceive")}{" "}

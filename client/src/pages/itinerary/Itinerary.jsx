@@ -99,7 +99,7 @@ const Itinerary = () => {
 
   useEffect(() => {
     if (!itinerary) return;
-    const title = `${itinerary.title} — ToBeATraveller`;
+    const title = `${itinerary.title} - ToBeATraveller`;
     const desc = itinerary.description?.slice(0, 160)
       || `A ${itinerary.tripTotalDays}-day trip to ${itinerary.location?.name || 'an amazing destination'}`;
     const image = itinerary.photoUrl;

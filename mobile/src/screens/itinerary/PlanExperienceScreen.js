@@ -383,7 +383,7 @@ const PlanExperienceScreen = ({ navigation }) => {
               </View>
             </View>
 
-            {/* Category — visual grid */}
+            {/* Category: visual grid */}
             <View style={ls.section}>
               <Text style={ls.sectionLabel}>{ce('soulOfTrip')}</Text>
               <View style={ls.catGrid}>

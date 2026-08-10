@@ -206,7 +206,7 @@ const EditItineraryScreen = ({ route, navigation }) => {
             </Field>
             <Field label="Destination">
               <View style={[s.input, ls.inputDisabled]}>
-                <Text style={ls.inputDisabledText}>{itinerary?.location?.name || '—'}</Text>
+                <Text style={ls.inputDisabledText}>{itinerary?.location?.name || '-'}</Text>
               </View>
               <Text style={ls.fieldNote}>Destination cannot be changed after creation.</Text>
             </Field>

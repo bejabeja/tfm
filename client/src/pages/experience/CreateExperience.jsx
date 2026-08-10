@@ -59,8 +59,8 @@ const ALL_STEP_TYPES = [
 ];
 
 const STEP_NAME_HINT = {
-  transport:     "e.g. Santa Claus Express — Platform 6, 17:28",
-  flight:        "e.g. Finnair AY 123 — Helsinki → Rovaniemi",
+  transport:     "e.g. Santa Claus Express, Platform 6, 17:28",
+  flight:        "e.g. Finnair AY 123, Helsinki → Rovaniemi",
   accommodation: "e.g. Arctic TreeHouse Hotel",
   activity:      "e.g. Husky Safari (2 h, outdoor)",
   local_tip:     "e.g. Send a postcard from Santa's Post Office",
@@ -348,7 +348,7 @@ const CreateExperience = () => {
             )}
           </div>
 
-          {/* Days + Travelers — side by side */}
+          {/* Days + Travelers: side by side */}
           <div className="cexp__counters">
             <div className="cexp__section">
               <label className="cexp__label">{ce("howManyDays")}</label>
@@ -375,7 +375,7 @@ const CreateExperience = () => {
             </div>
           </div>
 
-          {/* Category — visual grid */}
+          {/* Category: visual grid */}
           <div className="cexp__section">
             <label className="cexp__label">{ce("soulOfTrip")}</label>
             <div className="cexp__cat-grid">

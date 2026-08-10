@@ -26,7 +26,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
       await forgotPassword(email.trim().toLowerCase());
       setSent(true);
     } catch {
-      // Always show success — don't reveal if email exists
+      // Always show success, don't reveal if email exists
       setSent(true);
     } finally {
       setLoading(false);

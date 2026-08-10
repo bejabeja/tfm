@@ -98,7 +98,7 @@ export class AuthService {
 
     async forgotPassword(email) {
         const user = await this.userRepository.findByEmail(email);
-        // Return silently if user not found — do not reveal whether the email exists
+        // Return silently if user not found, do not reveal whether the email exists
         if (!user) return;
 
         const token = crypto.randomBytes(32).toString('hex');

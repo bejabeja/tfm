@@ -75,7 +75,7 @@ const Home = () => {
 
       <div className="section__container home__container">
 
-        {/* Feed tabs — only for authenticated users */}
+        {/* Feed tabs: only for authenticated users */}
         {isAuthenticated && (
           <div className="home__tabs">
             <button

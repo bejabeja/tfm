@@ -73,14 +73,14 @@ const LoginScreen = ({ navigation }) => {
         style={styles.kav}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
       >
-        {/* Branding — flex:1 fills all space above the sheet */}
+        {/* Branding: flex:1 fills all space above the sheet */}
         <View style={[styles.branding, { paddingTop: insets.top + 20 }]}>
           <Text style={styles.brandIcon}>🌍</Text>
           <Text style={styles.brandName}>Tobeatraveller</Text>
           <Text style={styles.tagline}>{t('auth.taglineLogin')}</Text>
         </View>
 
-        {/* Sheet — flex:0 sizes to content */}
+        {/* Sheet: flex:0 sizes to content */}
         <View style={styles.sheetOuter}>
           <View style={styles.sheetInner}>
             <ScrollView

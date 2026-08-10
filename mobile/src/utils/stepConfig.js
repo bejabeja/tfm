@@ -25,8 +25,8 @@ export const getStepConfig = (category) =>
 
 // Type-specific name placeholder hints
 export const STEP_NAME_HINT = {
-  transport:     'e.g. Santa Claus Express — Platform 6, 17:28',
-  flight:        'e.g. Finnair AY 123 — Helsinki → Rovaniemi',
+  transport:     'e.g. Santa Claus Express, Platform 6, 17:28',
+  flight:        'e.g. Finnair AY 123, Helsinki → Rovaniemi',
   accommodation: 'e.g. Arctic TreeHouse Hotel',
   activity:      'e.g. Husky Safari (2 h, outdoor)',
   local_tip:     "e.g. Send a postcard from Santa's Post Office",

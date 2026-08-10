@@ -26,7 +26,7 @@ const ResetPassword = () => {
     defaultValues: { newPassword: "", confirmPassword: "" },
   });
 
-  // No token in URL — redirect to login
+  // No token in URL, redirect to login
   if (!token) {
     return <Navigate to="/login" replace />;
   }

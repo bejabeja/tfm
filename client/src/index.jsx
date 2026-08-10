@@ -8,7 +8,7 @@ import App from "./App";
 import { store } from "./store";
 import { setApiUrl, setTokenStorage, COLORS, CSS_VAR_MAP } from "@tobeatraveller/shared";
 
-// Sync CSS custom properties from shared COLORS — single source of truth
+// Sync CSS custom properties from shared COLORS, single source of truth
 Object.entries(CSS_VAR_MAP).forEach(([cssVar, key]) =>
   document.documentElement.style.setProperty(cssVar, COLORS[key])
 );

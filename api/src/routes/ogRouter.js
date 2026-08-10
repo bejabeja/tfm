@@ -14,7 +14,7 @@ const ogHtml = ({ title, description, imageUrl, pageUrl, redirectUrl }) => `<!DO
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>${esc(title)} — ToBeATraveller</title>
+  <title>${esc(title)} - ToBeATraveller</title>
   <meta name="description" content="${esc(description)}" />
 
   <meta property="og:type"        content="article" />

@@ -152,7 +152,7 @@ export const createDevRouter = () => {
 
     <div class="template" data-url="/dev/emails/contact?name=Jane+Doe&email=jane@example.com&subject=Question+about+the+app&message=Hi!+I+wanted+to+ask+about+something." data-name="Contact notification" onclick="loadPreview(this)">
       <div class="template-name">Contact notification</div>
-      <div class="template-desc">Internal — sent to the team</div>
+      <div class="template-desc">Internal: sent to the team</div>
     </div>
     <a class="send-btn" onclick="sendTest('contact', this); return false;" href="#">Send test →</a>
     <div class="send-result" id="result-contact"></div>

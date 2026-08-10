@@ -498,7 +498,7 @@
     "placesTitle": "Lugares",
     "startBuilding": "Empieza a construir tu itinerario",
     "startBuildingHint": "Añade los lugares que quieres visitar, día a día",
-    "noPlacesDay": "Sin lugares — añade el primero para este día.",
+    "noPlacesDay": "Sin lugares, añade el primero para este día.",
     "daySummary": "{{places}} · {{days}}"
   },
   "myItineraries": {

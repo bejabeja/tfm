@@ -50,7 +50,7 @@ export const useGeocodeSearch = () => {
         });
     };
 
-    // backward compat — destination search uses searchDestinations
+    // backward compat: destination search uses searchDestinations
     const searchPlaces = searchDestinations;
 
     return { searchPlaces, searchDestinations, searchPOIs };

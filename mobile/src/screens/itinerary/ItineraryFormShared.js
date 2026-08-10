@@ -353,7 +353,7 @@ export const VisibilitySection = ({ value, onChange }) => {
 // ─── PlacesSection ───────────────────────────────────────────────────────────
 export const PlacesSection = ({
   places, days, setPlaces, setDays, isPublic, complete,
-  // AI + sync props (optional — only on Create)
+  // AI + sync props (optional, only on Create)
   tripDays, destination, category, travellers, budget, currency,
 }) => {
   const { t } = useTranslation();
@@ -657,7 +657,7 @@ export const s = StyleSheet.create({
   },
   typeChipLabel: { fontSize: 12, color: '#6B7280', fontWeight: '500' },
   typeChipLabelSelected: { color: '#fff', fontWeight: '600' },
-  // (kept for compatibility — replaced by typeChip below)
+  // (kept for compatibility, replaced by typeChip below)
   placeCatChipSelected: { borderColor: COLORS.primary, backgroundColor: COLORS.bgLight },
   placeCatEmoji: { fontSize: 16 },
   placeDescInput: { minHeight: 60, textAlignVertical: 'top', marginTop: 4 },

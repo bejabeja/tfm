@@ -47,7 +47,7 @@ const ItineraryCard = ({ itinerary, onPress, onRequestLogin }) => {
         end={{ x: 0, y: 1 }}
       />
 
-      {/* Like button — top right */}
+      {/* Like button: top right */}
       <TouchableOpacity
         style={styles.likeBtn}
         onPress={handleLike}
@@ -64,7 +64,7 @@ const ItineraryCard = ({ itinerary, onPress, onRequestLogin }) => {
         </Text>
       </TouchableOpacity>
 
-      {/* Content overlay — bottom */}
+      {/* Content overlay: bottom */}
       <View style={styles.overlay}>
         <Text style={styles.title} numberOfLines={2}>{itinerary.title}</Text>
         {itinerary.location?.name && (

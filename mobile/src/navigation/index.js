@@ -98,7 +98,7 @@ const TabNavigator = ({ navigation }) => {
             <View style={tb.handle} />
             <Text style={tb.sheetTitle}>What do you want to create?</Text>
 
-            {/* Option 1 — Itinerary */}
+            {/* Option 1: Itinerary */}
             <TouchableOpacity
               style={[tb.option, { borderColor: COLORS.accent + '40' }]}
               onPress={() => { setShowSheet(false); navigation.navigate('CreateItinerary'); }}
@@ -109,12 +109,12 @@ const TabNavigator = ({ navigation }) => {
               </View>
               <View style={tb.optionText}>
                 <Text style={[tb.optionTitle, { color: COLORS.accent }]}>Itinerary</Text>
-                <Text style={tb.optionDesc}>Plan day by day — places, budget, and all the details.</Text>
+                <Text style={tb.optionDesc}>Plan day by day: places, budget, and all the details.</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
             </TouchableOpacity>
 
-            {/* Option 2 — Experience */}
+            {/* Option 2: Experience */}
             <TouchableOpacity
               style={[tb.option, { borderColor: COLORS.primary + '40' }]}
               onPress={() => { setShowSheet(false); navigation.navigate('PlanExperience'); }}
@@ -125,7 +125,7 @@ const TabNavigator = ({ navigation }) => {
               </View>
               <View style={tb.optionText}>
                 <Text style={[tb.optionTitle, { color: COLORS.primary }]}>Experience</Text>
-                <Text style={tb.optionDesc}>Tell AI where you're going — it plans the whole journey.</Text>
+                <Text style={tb.optionDesc}>Tell AI where you're going, it plans the whole journey.</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
             </TouchableOpacity>

@@ -92,7 +92,7 @@ const Navbar = () => {
           </NavLink>
         </div>
 
-        {/* Single create button — opens sheet */}
+        {/* Single create button: opens sheet */}
         {isAuthenticated && (
           <button className="nav-create" onClick={openCreate} title={t("nav.createTrip")}>
             <IoAddOutline className="nav-icon" />

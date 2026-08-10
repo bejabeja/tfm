@@ -58,7 +58,7 @@ export class AuthController {
         }
         try {
             await this.authService.forgotPassword(result.data.email);
-            // Always return 200 — do not reveal whether the email exists
+            // Always return 200, do not reveal whether the email exists
             return res.status(200).json({ message: "If an account with that email exists, a reset link has been sent." });
         } catch (error) {
             next(error);
