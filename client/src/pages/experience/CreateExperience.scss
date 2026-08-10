@@ -4,7 +4,7 @@
   gap: 1.25rem;
   width: 100%;
   max-width: 640px;
-  // No padding override — section__container handles it (1rem mobile, 2rem 600px+)
+  // No padding override, section__container handles it (1rem mobile, 2rem 600px+)
 
   // Global CSS reset sets * { width: 100% } which breaks icons, chips, and pill buttons.
   // Restore natural sizing for inline/interactive elements; specific rules override below.
@@ -190,7 +190,7 @@
   padding: 0 0.25rem;
 }
 
-// Counters row — side by side on web
+// Counters row: side by side on web
 .cexp__counters {
   display: flex;
   gap: 1rem;
@@ -250,7 +250,7 @@
   }
 }
 
-// Category — 3-column visual grid
+// Category: 3-column visual grid
 .cexp__cat-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -440,7 +440,7 @@
   gap: 1rem;
 }
 
-// Card — matches mobile's `ls.card`
+// Card: matches mobile's `ls.card`
 .cexp__card {
   background: #fff;
   border: 1px solid var(--border-color, #e8ecf0);
@@ -507,7 +507,7 @@
   &:hover { background: rgba(232,116,59,0.14); }
 }
 
-// Day separator — matching mobile dayHeader
+// Day separator: matching mobile dayHeader
 .cexp__day-sep {
   display: flex;
   align-items: center;
@@ -591,7 +591,7 @@
   &:focus { border-color: #D97706; box-shadow: 0 0 0 2px rgba(217,119,6,0.08); }
 }
 
-// Timeline step — matching mobile's EditableStep
+// Timeline step: matching mobile's EditableStep
 .cexp-step {
   display: flex;
   gap: 0.85rem;
@@ -674,7 +674,7 @@
   line-height: 1.45;
 }
 
-// Badge — text only, matching mobile exactly
+// Badge: text only, matching mobile exactly
 .cexp-step__badge {
   display: inline-block;
   font-size: 0.68rem;
@@ -737,7 +737,7 @@
   &:hover { background: rgba(232,116,59,0.09); }
 }
 
-// Save button — teal, matching mobile saveFullBtn
+// Save button: teal, matching mobile saveFullBtn
 .cexp__save {
   width: 100%;
   padding: 1.1rem;
@@ -756,7 +756,7 @@
   &:disabled { opacity: 0.5; cursor: default; transform: none; }
 }
 
-// ── Edit step modal — bottom sheet matching mobile ────────────────────────────
+// ── Edit step modal: bottom sheet matching mobile ────────────────────────────
 .cexp__modal-backdrop {
   position: fixed;
   inset: 0;
@@ -809,7 +809,7 @@
   margin: 0;
 }
 
-// Type chips in modal — horizontal scroll
+// Type chips in modal: horizontal scroll
 .cexp__modal-types {
   display: flex;
   flex-wrap: wrap;

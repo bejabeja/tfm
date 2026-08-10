@@ -45,7 +45,7 @@ $avatar-overlap: 44px;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
   }
 
-  // row that contains the action button — pushes it to the right
+  // row that contains the action button, pushes it to the right
   // height = avatar-size - overlap so button aligns near avatar bottom
   &__card-actions {
     display: flex;

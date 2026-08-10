@@ -31,7 +31,7 @@
     }
   }
 
-  // Left branding panel — desktop only
+  // Left branding panel: desktop only
   &__visual {
     display: none;
 
@@ -209,7 +209,7 @@
     max-height: 74vh;
     overflow-y: auto;
 
-    // InputForm has its own margin-bottom: 0.5rem — don't add to it
+    // InputForm has its own margin-bottom: 0.5rem, don't add to it
     .input { margin-bottom: 0; }
 
     @media (min-width: 480px) {
