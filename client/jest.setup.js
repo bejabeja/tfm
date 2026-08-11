@@ -1,1 +1,7 @@
+import { TextDecoder, TextEncoder } from "util";
 import "@testing-library/jest-dom";
+
+if (typeof globalThis.TextEncoder === "undefined") {
+    globalThis.TextEncoder = TextEncoder;
+    globalThis.TextDecoder = TextDecoder;
+}

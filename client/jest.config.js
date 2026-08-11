@@ -1,3 +1,8 @@
+import { fileURLToPath } from "url";
+import path from "path";
+
+const babelrcPath = path.join(path.dirname(fileURLToPath(import.meta.url)), ".babelrc");
+
 export default {
     testEnvironment: "jest-environment-jsdom",
     setupFilesAfterEnv: ["<rootDir>/jest.setup.js"],
@@ -5,5 +10,14 @@ export default {
         "\\.(gif|ttf|eot|svg|png)$": "<rootDir>/test/__mocks__/fileMock.js",
         "\\.(css|less|sass|scss)$": "identity-obj-proxy",
         "^@/(.*)$": "<rootDir>/src/$1",
+    },
+    // @tobeatraveller/shared is a workspace package published as ESM source (no build
+    // step), so it needs Babel transformation like our own code instead of being skipped
+    // like a normal pre-built node_modules dependency. Its files live outside this
+    // package's directory tree, where .babelrc doesn't apply on its own, so the config
+    // file is passed explicitly instead of relying on per-directory discovery.
+    transformIgnorePatterns: ["/node_modules/(?!@tobeatraveller/shared)"],
+    transform: {
+        "^.+\\.(js|jsx)$": ["babel-jest", { configFile: babelrcPath }],
     },
 };
