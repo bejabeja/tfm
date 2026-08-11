@@ -361,7 +361,9 @@
     "errorMsg": "¡Vaya! Algo salió mal al cargar tus notificaciones.",
     "startedFollowing": " empezó a seguirte",
     "liked": " le gustó tu viaje ",
-    "commented": " comentó en "
+    "commented": " comentó en ",
+    "andOthers_one": " y {{count}} más",
+    "andOthers_other": " y {{count}} más"
   },
   "comments": {
     "title": "Comentarios",

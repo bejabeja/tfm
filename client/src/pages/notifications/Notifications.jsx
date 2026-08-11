@@ -40,10 +40,12 @@ const Notifications = () => {
     if (unreadCount > 0) dispatch(markAllNotificationsRead());
   }, [unreadCount, dispatch]);
 
+  const others = (n) => n.count > 1 && t("notifications.andOthers", { count: n.count - 1 });
+
   const TYPE_LABELS = {
-    follow:  (n) => <><strong>@{n.actor?.username}</strong>{t("notifications.startedFollowing")}</>,
-    like:    (n) => <><strong>@{n.actor?.username}</strong>{t("notifications.liked")}<em>{n.itinerary?.title}</em></>,
-    comment: (n) => <><strong>@{n.actor?.username}</strong>{t("notifications.commented")}<em>{n.itinerary?.title}</em></>,
+    follow:  (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{t("notifications.startedFollowing")}</>,
+    like:    (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{t("notifications.liked")}<em>{n.itinerary?.title}</em></>,
+    comment: (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{t("notifications.commented")}<em>{n.itinerary?.title}</em></>,
   };
 
   return (

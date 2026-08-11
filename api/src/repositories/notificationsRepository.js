@@ -2,9 +2,23 @@ import { v4 as uuidv4 } from 'uuid';
 import client from '../db/clientPostgres.js';
 import { logger } from '../utils/logger.js';
 
+const GROUPING_WINDOW_HOURS = 24;
+
 export class NotificationsRepository {
     async create({ id, userId, actorId, type, itineraryId, commentId }) {
         try {
+            const grouped = await client.query(
+                `UPDATE notifications
+                 SET count = count + CASE WHEN actor_id = $1 THEN 0 ELSE 1 END,
+                     actor_id = $1, comment_id = $2, is_read = false, created_at = NOW()
+                 WHERE user_id = $3 AND type = $4
+                   AND itinerary_id IS NOT DISTINCT FROM $5
+                   AND created_at > NOW() - INTERVAL '${GROUPING_WINDOW_HOURS} hours'
+                 RETURNING id`,
+                [actorId, commentId ?? null, userId, type, itineraryId ?? null]
+            );
+            if (grouped.rowCount > 0) return;
+
             const notificationId = id || uuidv4();
             const query = `
                 INSERT INTO notifications (id, user_id, actor_id, type, itinerary_id, comment_id)
@@ -24,6 +38,7 @@ export class NotificationsRepository {
                 n.type,
                 n.is_read,
                 n.created_at,
+                n.count,
                 a.id         AS actor_id,
                 a.username   AS actor_username,
                 a.avatar_url AS actor_avatar_url,
@@ -42,6 +57,7 @@ export class NotificationsRepository {
             type: row.type,
             isRead: row.is_read,
             createdAt: row.created_at,
+            count: row.count,
             actor: {
                 id: row.actor_id,
                 username: row.actor_username,

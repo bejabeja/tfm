@@ -106,6 +106,7 @@ const NotificationsScreen = ({ navigation }) => {
               <View style={styles.body}>
                 <Text style={styles.text} numberOfLines={2}>
                   <Text style={styles.bold}>@{n.actor?.username}</Text>
+                  {n.count > 1 && t('notifications.andOthers', { count: n.count - 1 })}
                   {n.type === 'follow' && t('notifications.startedFollowing')}
                   {n.type === 'like' && <Text>{t('notifications.liked')}<Text style={styles.italic}>{n.itinerary?.title}</Text></Text>}
                   {n.type === 'comment' && <Text>{t('notifications.commented')}<Text style={styles.italic}>{n.itinerary?.title}</Text></Text>}

@@ -384,7 +384,9 @@
     "errorMsg": "Oops! Something went wrong while loading your notifications.",
     "startedFollowing": " started following you",
     "liked": " liked your trip ",
-    "commented": " commented on "
+    "commented": " commented on ",
+    "andOthers_one": " and {{count}} other",
+    "andOthers_other": " and {{count}} others"
   },
   "comments": {
     "title": "Comments",
