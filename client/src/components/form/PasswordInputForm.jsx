@@ -1,8 +1,10 @@
 import { useState } from "react";
 import { Controller } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
+import { useTranslation } from "react-i18next";
 
 export const PasswordInputForm = ({ label, name, control, error, hint, autoComplete }) => {
+  const { t } = useTranslation();
   const errorId = `${name}-error`;
   const [showPassword, setShowPassword] = useState(false);
 
@@ -31,8 +33,8 @@ export const PasswordInputForm = ({ label, name, control, error, hint, autoCompl
           type="button"
           className="input-password__toggle"
           onClick={() => setShowPassword((prev) => !prev)}
-          aria-label={showPassword ? "Hide password" : "Show password"}
-          title={showPassword ? "Hide password" : "Show password"}
+          aria-label={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
+          title={showPassword ? t("auth.hidePassword") : t("auth.showPassword")}
         >
           {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
         </button>

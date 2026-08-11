@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link, useSearchParams } from "react-router-dom";
-import { resetPassword } from "@tobeatraveller/shared";
+import { resetPassword, translateAuthError } from "@tobeatraveller/shared";
 import { PasswordInputForm } from "../../components/form/PasswordInputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { resetPasswordSchema } from "../../utils/schemasValidation";
@@ -80,7 +80,7 @@ const ResetPassword = () => {
             <>
               <PasswordInputForm
                 name="newPassword"
-                label="New password"
+                label={t("auth.newPasswordLabel")}
                 control={control}
                 error={errors.newPassword}
                 autoComplete="new-password"
@@ -88,7 +88,7 @@ const ResetPassword = () => {
               />
               <PasswordInputForm
                 name="confirmPassword"
-                label="Confirm new password"
+                label={t("auth.confirmNewPasswordLabel")}
                 control={control}
                 error={errors.confirmPassword}
                 autoComplete="new-password"
@@ -97,7 +97,7 @@ const ResetPassword = () => {
               <div className="auth__form-error" role="alert" aria-live="assertive">
                 {serverError ? (
                   <>
-                    {serverError}{" "}
+                    {translateAuthError(t, serverError)}{" "}
                     <Link to="/forgot-password" style={{ color: "var(--primary-color)", fontWeight: 600 }}>
                       {t("auth.requestNewLink")}
                     </Link>

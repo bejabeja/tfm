@@ -4,6 +4,7 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
+import { translateAuthError } from "@tobeatraveller/shared";
 import { InputForm } from "../../components/form/InputForm";
 import { PasswordInputForm } from "../../components/form/PasswordInputForm";
 import SubmitButton from "../../components/form/SubmitButton";
@@ -75,9 +76,9 @@ const Login = () => {
             <p className="auth__form-subtitle">{t("auth.signInSubtitle")}</p>
           </div>
 
-          <InputForm name="email" label="Email" type="email" control={control} error={errors.email} autoComplete="email" />
+          <InputForm name="email" label={t("auth.emailLabel")} type="email" control={control} error={errors.email} autoComplete="email" />
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <PasswordInputForm name="password" label="Password" control={control} error={errors.password} autoComplete="current-password" />
+            <PasswordInputForm name="password" label={t("auth.passwordLabel")} control={control} error={errors.password} autoComplete="current-password" />
             <Link
               to="/forgot-password"
               style={{
@@ -93,7 +94,7 @@ const Login = () => {
           </div>
 
           <div className="auth__form-error" role="alert" aria-live="assertive">
-            {errorInAuth && Object.keys(errors).length === 0 ? errorInAuth : " "}
+            {errorInAuth && Object.keys(errors).length === 0 ? translateAuthError(t, errorInAuth) : " "}
           </div>
 
           <div className="auth__form-link">

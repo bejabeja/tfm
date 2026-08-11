@@ -493,7 +493,7 @@ export const PlacesSection = ({
     <Card title={t('itineraryForm.placesCount', { count: places.length })} badge={complete}>
       {/* Pace selector */}
       <View style={s.paceRow}>
-        {aiPaceOptions.map(({ value, labelKey }) => (
+        {aiPaceOptions.map(({ value, labelKey, descKey }) => (
           <TouchableOpacity
             key={value}
             style={[s.paceChip, pace === value && s.paceChipOn]}
@@ -501,6 +501,9 @@ export const PlacesSection = ({
           >
             <Text style={[s.paceChipText, pace === value && s.paceChipTextOn]}>
               {t(`itineraryForm.${labelKey}`)}
+            </Text>
+            <Text style={[s.paceChipDesc, pace === value && s.paceChipTextOn]}>
+              {t(`itineraryForm.${descKey}`)}
             </Text>
           </TouchableOpacity>
         ))}
@@ -729,12 +732,13 @@ export const s = StyleSheet.create({
   aiHint: { fontSize: 12, color: '#9ca3af', flex: 1 },
   paceRow: { flexDirection: 'row', gap: 6, marginBottom: 10 },
   paceChip: {
-    borderRadius: 999, paddingVertical: 5, paddingHorizontal: 12,
+    flex: 1, alignItems: 'center', borderRadius: 12, paddingVertical: 6, paddingHorizontal: 8,
     backgroundColor: '#f1f5f9', borderWidth: 1, borderColor: '#e2e8f0',
   },
   paceChipOn: { backgroundColor: '#ede9fe', borderColor: '#7c3aed' },
   paceChipText: { fontSize: 12, color: '#6b7280', fontWeight: '500' },
   paceChipTextOn: { color: '#7c3aed', fontWeight: '700' },
+  paceChipDesc: { fontSize: 10, color: '#9ca3af', marginTop: 1 },
 
   // Days sync nudge
   syncHint: {

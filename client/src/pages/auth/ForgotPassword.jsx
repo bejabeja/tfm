@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
-import { forgotPassword } from "@tobeatraveller/shared";
+import { forgotPassword, translateAuthError } from "@tobeatraveller/shared";
 import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
 import { forgotPasswordSchema } from "../../utils/schemasValidation";
@@ -78,7 +78,7 @@ const ForgotPassword = () => {
             <>
               <InputForm
                 name="email"
-                label="Email"
+                label={t("auth.emailLabel")}
                 type="email"
                 control={control}
                 error={errors.email}
@@ -86,7 +86,7 @@ const ForgotPassword = () => {
               />
 
               <div className="auth__form-error" role="alert" aria-live="assertive">
-                {serverError || " "}
+                {serverError ? translateAuthError(t, serverError) : " "}
               </div>
 
               <SubmitButton label={t("auth.sendResetLink")} loading={isSubmitting} />

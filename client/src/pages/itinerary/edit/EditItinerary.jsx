@@ -241,6 +241,10 @@ const EditItinerary = () => {
           setDays={setDays}
           isPublic={watch("isPublic")}
           tripDays={tripDays}
+          category={watch("category")}
+          numberOfTravellers={watch("numberOfTravellers")}
+          budget={watch("budget")}
+          currency={watch("currency")}
         />
         <BudgetForm control={control} errors={errors} tripDays={tripDays} setValue={setValue} />
         <TravellersForm control={control} errors={errors} />

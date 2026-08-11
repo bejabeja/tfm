@@ -44,7 +44,9 @@ const Community = () => {
 
   const handleLoadMore = () => {
     if (hasMore) {
-      dispatch(loadMoreUsers(currentPage + 1, searchName, sortBy));
+      dispatch(loadMoreUsers(currentPage + 1, searchName, sortBy)).then(() => {
+        loadMoreRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+      });
     }
   };
 

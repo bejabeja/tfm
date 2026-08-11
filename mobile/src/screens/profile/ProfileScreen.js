@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Alert, Image, ScrollView,
   Share, StyleSheet, Text, TouchableOpacity, View,
@@ -42,6 +42,15 @@ const ProfileScreen = ({ route, navigation }) => {
 
   const profileId = route.params?.id;
   const isOwnProfile = !profileId || (me && String(profileId) === String(me.id));
+
+  // Tracks the profile currently on screen, so a follow toggle that resolves after
+  // navigating to a different profile (React Navigation reuses this screen instance)
+  // doesn't write its result into the wrong profile's state.
+  const profileIdRef = useRef(profileId);
+  useEffect(() => {
+    profileIdRef.current = profileId;
+    setFollowLoading(false);
+  }, [profileId]);
 
   const [otherUser, setOtherUser] = useState(null);
   const [otherItineraries, setOtherItineraries] = useState([]);
@@ -102,20 +111,23 @@ const ProfileScreen = ({ route, navigation }) => {
 
   const handleFollowToggle = async () => {
     if (!isAuthenticated) { navigation.navigate('Tabs', { screen: 'Profile' }); return; }
+    const requestedProfileId = profileId;
     const wasFollowing = isFollowing;
     setIsFollowing(!wasFollowing);
     setFollowLoading(true);
     try {
       if (wasFollowing) {
-        await unfollowUser(profileId);
+        await unfollowUser(requestedProfileId);
       } else {
-        await followUser(profileId);
+        await followUser(requestedProfileId);
       }
+      if (profileIdRef.current !== requestedProfileId) return;
       if (me?.id) dispatch(setUserInfo(me.id));
     } catch {
+      if (profileIdRef.current !== requestedProfileId) return;
       setIsFollowing(wasFollowing);
     }
-    finally { setFollowLoading(false); }
+    finally { if (profileIdRef.current === requestedProfileId) setFollowLoading(false); }
   };
 
   if (!isAuthenticated && isOwnProfile) {

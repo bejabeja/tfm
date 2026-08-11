@@ -1,13 +1,20 @@
+import { commentSchema } from "../utils/schemasValidation.js";
+import { ValidationError } from "../errors/ValidationError.js";
+
 export class CommentsController {
     constructor(commentsService) {
         this.commentsService = commentsService
     }
 
     async addComment(req, res, next) {
+        const result = commentSchema.safeParse(req.body);
+        if (!result.success) {
+            return next(new ValidationError(result.error.errors[0]?.message || "Invalid comment"));
+        }
         try {
             const userId = req.user.id;
             const itineraryId = req.params.itineraryId;
-            const content = req.body.text;
+            const content = result.data.text;
 
             const comment = await this.commentsService.addComment(userId, itineraryId, content);
             return res.status(201).json({ message: 'Comment added', comment });

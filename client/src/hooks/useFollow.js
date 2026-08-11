@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from 'react-router-dom';
 import { followUser, unfollowUser } from "../services/followers";
@@ -8,6 +9,7 @@ import { setUserInfo, setUserInfoFollowing } from "../store/user/userInfoActions
 import { selectMe } from "../store/user/userInfoSelectors";
 
 export const useFollow = (targetUserId) => {
+    const { t } = useTranslation();
     const dispatch = useDispatch();
     const navigate = useNavigate()
     const isAuthenticated = useSelector(selectIsAuthenticated)
@@ -17,6 +19,15 @@ export const useFollow = (targetUserId) => {
     const [isLoadingFollow, setIsLoadingFollow] = useState(false);
 
     const isMyUser = targetUserId === userMe?.id;
+
+    // Tracks the current profile being viewed, so a toggleFollow request that resolves
+    // after the user has already navigated to a different profile doesn't write its
+    // result into this now-reused hook instance's state.
+    const targetUserIdRef = useRef(targetUserId);
+    useEffect(() => {
+        targetUserIdRef.current = targetUserId;
+        setIsLoadingFollow(false);
+    }, [targetUserId]);
 
     useEffect(() => {
         const checkFollowing = () => {
@@ -31,26 +42,30 @@ export const useFollow = (targetUserId) => {
             navigate('/login')
             return;
         }
+        if (isLoadingFollow) return;
 
+        const requestedTargetId = targetUserId;
         const wasFollowing = isFollowing;
         setIsFollowing(!wasFollowing);
         setIsLoadingFollow(true);
         try {
             if (wasFollowing) {
-                await unfollowUser(targetUserId);
+                await unfollowUser(requestedTargetId);
             } else {
-                await followUser(targetUserId);
+                await followUser(requestedTargetId);
             }
+            if (targetUserIdRef.current !== requestedTargetId) return;
             if (userMe?.id) {
                 dispatch(setUserInfo(userMe.id));
                 dispatch(setUserInfoFollowing(userMe.id));
             }
         } catch (err) {
             console.error("Failed to toggle follow:", err);
-            toast.error("Could not update follow status. Please try again.");
+            if (targetUserIdRef.current !== requestedTargetId) return;
+            toast.error(t("followers.couldNotUpdate"));
             setIsFollowing(wasFollowing);
         } finally {
-            setIsLoadingFollow(false);
+            if (targetUserIdRef.current === requestedTargetId) setIsLoadingFollow(false);
         }
     };
 

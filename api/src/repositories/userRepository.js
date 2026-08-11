@@ -6,7 +6,7 @@ export class UserRepository {
         const { uuid, username, email, password, location, avatarUrl, termsAcceptedAt } = user;
         const result = await db.query(
             "INSERT INTO users (id, username, email, password, location, avatar_url, terms_accepted_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-            [uuid, username, email, password, location, avatarUrl, termsAcceptedAt ?? null]
+            [uuid, username, email.trim().toLowerCase(), password, location, avatarUrl, termsAcceptedAt ?? null]
         );
 
         return User.fromDb(result.rows[0]);
@@ -24,8 +24,8 @@ export class UserRepository {
 
     async findByEmail(email) {
         const result = await db.query(
-            "SELECT * FROM users WHERE email = $1",
-            [email]
+            "SELECT * FROM users WHERE LOWER(email) = LOWER($1)",
+            [email.trim()]
         );
         if (result.rows.length === 0) return null;
 

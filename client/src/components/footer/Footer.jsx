@@ -1,40 +1,45 @@
 import { IoEarthOutline } from "react-icons/io5";
+import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import "./Footer.scss";
 
-const Footer = () => (
-  <footer className="footer">
-    <div className="footer__inner">
-      <div className="footer__brand">
-        <Link to="/" className="footer__logo">
-          <IoEarthOutline aria-hidden="true" />
-          <span>ToBeATraveller</span>
-        </Link>
-        <p className="footer__tagline">Discover journeys around the world.</p>
+const Footer = () => {
+  const { t } = useTranslation();
+
+  return (
+    <footer className="footer">
+      <div className="footer__inner">
+        <div className="footer__brand">
+          <Link to="/" className="footer__logo">
+            <IoEarthOutline aria-hidden="true" />
+            <span>ToBeATraveller</span>
+          </Link>
+          <p className="footer__tagline">{t("footer.tagline")}</p>
+        </div>
+
+        <nav className="footer__nav" aria-label="Footer navigation">
+          <div className="footer__nav-group">
+            <span className="footer__nav-label">{t("footer.discover")}</span>
+            <Link to="/explore">{t("footer.exploreTrips")}</Link>
+            <Link to="/community">{t("footer.community")}</Link>
+          </div>
+          <div className="footer__nav-group">
+            <span className="footer__nav-label">{t("footer.legal")}</span>
+            <Link to="/privacy-policy">{t("auth.privacyPolicy")}</Link>
+            <Link to="/terms">{t("auth.termsOfService")}</Link>
+          </div>
+          <div className="footer__nav-group">
+            <span className="footer__nav-label">{t("footer.contact")}</span>
+            <Link to="/contact">{t("footer.getInTouch")}</Link>
+          </div>
+        </nav>
       </div>
 
-      <nav className="footer__nav" aria-label="Footer navigation">
-        <div className="footer__nav-group">
-          <span className="footer__nav-label">Discover</span>
-          <Link to="/explore">Explore trips</Link>
-          <Link to="/community">Community</Link>
-        </div>
-        <div className="footer__nav-group">
-          <span className="footer__nav-label">Legal</span>
-          <Link to="/privacy-policy">Privacy Policy</Link>
-          <Link to="/terms">Terms of Service</Link>
-        </div>
-        <div className="footer__nav-group">
-          <span className="footer__nav-label">Contact</span>
-          <Link to="/contact">Get in touch</Link>
-        </div>
-      </nav>
-    </div>
-
-    <div className="footer__bottom">
-      <p>&copy; {new Date().getFullYear()} ToBeATraveller. All rights reserved.</p>
-    </div>
-  </footer>
-);
+      <div className="footer__bottom">
+        <p>&copy; {new Date().getFullYear()} ToBeATraveller. {t("footer.rightsReserved")}</p>
+      </div>
+    </footer>
+  );
+};
 
 export default Footer;

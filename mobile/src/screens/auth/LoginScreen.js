@@ -8,7 +8,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { loginUser, selectAuthError } from '@tobeatraveller/shared';
+import { loginUser, selectAuthError, translateAuthError } from '@tobeatraveller/shared';
 import { shadow, textShadow } from '../../utils/styles';
 
 const AUTH_BG = require('../../../assets/auth.webp');
@@ -103,7 +103,7 @@ const LoginScreen = ({ navigation, route }) => {
               <Text style={styles.subtitle}>{t('auth.signInSubtitle')}</Text>
 
               <Field
-                label="Email"
+                label={t("auth.emailLabel")}
                 value={email}
                 onChangeText={v => { setEmail(v); clearError('email'); }}
                 keyboardType="email-address"
@@ -115,7 +115,7 @@ const LoginScreen = ({ navigation, route }) => {
               />
 
               <Field
-                label="Password"
+                label={t("auth.passwordLabel")}
                 value={password}
                 onChangeText={v => { setPassword(v); clearError('password'); }}
                 secureTextEntry={!showPassword}
@@ -123,7 +123,12 @@ const LoginScreen = ({ navigation, route }) => {
                 autoComplete="password"
                 error={errors.password}
                 right={
-                  <TouchableOpacity onPress={() => setShowPassword(s => !s)} style={styles.eyeBtn}>
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(s => !s)}
+                    style={styles.eyeBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
+                  >
                     <Text style={styles.eyeIcon}>{showPassword ? '🙈' : '👁'}</Text>
                   </TouchableOpacity>
                 }
@@ -138,7 +143,7 @@ const LoginScreen = ({ navigation, route }) => {
               </TouchableOpacity>
 
               {authError && Object.keys(errors).length === 0 && (
-                <Text style={styles.authError}>{authError}</Text>
+                <Text style={styles.authError}>{translateAuthError(t, authError)}</Text>
               )}
 
               <TouchableOpacity
@@ -184,7 +189,7 @@ const Field = ({ label, error, right, ...inputProps }) => (
   <View style={fieldStyles.wrapper}>
     <Text style={fieldStyles.label}>{label}</Text>
     <View style={[fieldStyles.row, error && fieldStyles.rowError]}>
-      <TextInput style={fieldStyles.input} placeholderTextColor="#9ca3af" {...inputProps} />
+      <TextInput style={fieldStyles.input} placeholderTextColor="#9ca3af" accessibilityLabel={label} {...inputProps} />
       {right}
     </View>
     {error ? <Text style={fieldStyles.error}>{error}</Text> : null}

@@ -1,13 +1,16 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { IoArrowBackOutline, IoWarningOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Trans, useTranslation } from "react-i18next";
 import i18n from "../../i18n";
+import Spinner from "../../components/spinner/Spinner";
 import { deleteMyAccount, exportMyData } from "../../services/users";
 import { logoutUser } from "../../store/auth/authActions";
-import { selectMe } from "../../store/user/userInfoSelectors";
+import { selectAuthUser } from "../../store/auth/authSelectors";
+import { setUserInfo } from "../../store/user/userInfoActions";
+import { selectMe, selectMeLoading } from "../../store/user/userInfoSelectors";
 import "../profile/EditProfile.scss";
 import "./Settings.scss";
 
@@ -15,7 +18,10 @@ const Settings = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const userMe = useSelector(selectMe);
+  const meDetail = useSelector(selectMe);
+  const meLoading = useSelector(selectMeLoading);
+  const authUser = useSelector(selectAuthUser);
+  const userMe = meDetail ?? authUser;
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteConfirmInput, setDeleteConfirmInput] = useState("");
@@ -23,6 +29,12 @@ const Settings = () => {
   const [isExporting, setIsExporting] = useState(false);
 
   const currentLang = i18n.language?.startsWith("en") ? "en" : "es";
+
+  useEffect(() => {
+    if (authUser?.id && !meDetail && !meLoading) dispatch(setUserInfo(authUser.id));
+  }, [authUser?.id, meDetail, meLoading, dispatch]);
+
+  if (!userMe) return <Spinner />;
 
   const handleExportData = async () => {
     setIsExporting(true);

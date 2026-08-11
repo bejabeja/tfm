@@ -41,4 +41,43 @@ describe('AIService.generateTextPrompt', () => {
         const prompt = await capturePrompt({ pace: 'ludicrous-speed' });
         expect(prompt).toContain('Generate exactly 9 places total: 3 per day');
     });
+
+    // Regression: max_tokens used to be a flat 4000 regardless of how many places were
+    // actually requested, so a long trip on an intense pace could ask for far more JSON
+    // than the budget allowed, truncating the response and failing with a confusing
+    // "AI returned invalid JSON" error instead of a length-related one.
+    it('scales max_tokens up with the number of places requested', async () => {
+        service.client.chat.completions.create.mockResolvedValue(stubGroqResponse('{}'));
+        await service.generateTextPrompt('Rome', 3, { pace: 'normal' });
+        const fewPlacesTokens = service.client.chat.completions.create.mock.calls[0][0].max_tokens;
+
+        await service.generateTextPrompt('Rome', 30, { pace: 'intense' });
+        const manyPlacesTokens = service.client.chat.completions.create.mock.calls[1][0].max_tokens;
+
+        expect(manyPlacesTokens).toBeGreaterThan(fewPlacesTokens);
+    });
+
+    it('caps max_tokens at a safe ceiling for very long, intense-pace trips', async () => {
+        service.client.chat.completions.create.mockResolvedValue(stubGroqResponse('{}'));
+        await service.generateTextPrompt('Rome', 60, { pace: 'intense' });
+        const maxTokens = service.client.chat.completions.create.mock.calls[0][0].max_tokens;
+
+        expect(maxTokens).toBeLessThanOrEqual(8000);
+    });
+
+    // Regression: capping max_tokens alone left the prompt still asking for
+    // totalDays * placesPerDay places, so a long enough trip got truncated JSON anyway.
+    // The requested places-per-day must shrink too, so the prompt's own place count
+    // never exceeds what the capped token budget can hold.
+    it('reduces places per day, not just max_tokens, for trips too long to fit the ceiling', async () => {
+        service.client.chat.completions.create.mockResolvedValue(stubGroqResponse('{}'));
+        await service.generateTextPrompt('Rome', 60, { pace: 'intense' });
+
+        const call = service.client.chat.completions.create.mock.calls.at(-1)[0];
+        const longTripPrompt = call.messages[1].content;
+        const [, placeCount] = longTripPrompt.match(/Generate exactly (\d+) places total/);
+
+        expect(call.max_tokens).toBeLessThanOrEqual(8000);
+        expect(Number(placeCount)).toBeLessThan(60 * 4);
+    });
 });

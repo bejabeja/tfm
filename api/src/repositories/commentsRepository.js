@@ -11,7 +11,7 @@ export class CommentsRepository {
          VALUES ($1, $2, $3, $4)
          RETURNING *
        )
-       SELECT inserted.*, u.username
+       SELECT inserted.*, u.username, u.avatar_url
        FROM inserted
        JOIN users u ON u.id = inserted.user_id;`,
       [id, userId, itineraryId, content]
@@ -25,13 +25,14 @@ export class CommentsRepository {
 
   async getCommentsByItinerary(itineraryId) {
     const query = `
-          SELECT 
+          SELECT
             ic.id,
             ic.user_id,
             ic.itinerary_id,
             ic.content,
             ic.created_at,
-            u.username
+            u.username,
+            u.avatar_url
           FROM itinerary_comments ic
           JOIN users u ON ic.user_id = u.id
           WHERE ic.itinerary_id = $1
@@ -56,7 +57,7 @@ export class CommentsRepository {
 
   async getCommentById(commentId) {
     const query = `
-          SELECT ic.*, u.username
+          SELECT ic.*, u.username, u.avatar_url
           FROM itinerary_comments ic
           JOIN users u ON ic.user_id = u.id
           WHERE ic.id = $1;

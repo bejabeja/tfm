@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Alert, KeyboardAvoidingView, Platform,
+  ActivityIndicator, Alert, KeyboardAvoidingView, Platform,
   ScrollView, StyleSheet, Text, TextInput,
   TouchableOpacity, View,
 } from 'react-native';
@@ -30,6 +30,14 @@ const SettingsScreen = ({ navigation }) => {
   const [deleteInput, setDeleteInput] = useState('');
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const [exporting, setExporting] = useState(false);
+
+  if (!user) {
+    return (
+      <View style={[styles.container, styles.loadingContainer, { paddingTop: insets.top }]}>
+        <ActivityIndicator size="large" color="#E8743B" />
+      </View>
+    );
+  }
 
   const handleDeleteAccount = async () => {
     if (deleteInput !== user?.username) return;
@@ -185,6 +193,7 @@ const SettingsScreen = ({ navigation }) => {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f8fafc' },
+  loadingContainer: { alignItems: 'center', justifyContent: 'center' },
 
   header: {
     flexDirection: 'row', alignItems: 'center',

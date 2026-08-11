@@ -41,11 +41,12 @@ const Notifications = () => {
   }, [unreadCount, dispatch]);
 
   const others = (n) => n.count > 1 && t("notifications.andOthers", { count: n.count - 1 });
+  const verb = (n, key) => t(`notifications.${n.count > 1 ? `${key}Plural` : key}`);
 
   const TYPE_LABELS = {
-    follow:  (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{t("notifications.startedFollowing")}</>,
-    like:    (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{t("notifications.liked")}<em>{n.itinerary?.title}</em></>,
-    comment: (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{t("notifications.commented")}<em>{n.itinerary?.title}</em></>,
+    follow:  (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{verb(n, "startedFollowing")}</>,
+    like:    (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{verb(n, "liked")}<em>{n.itinerary?.title}</em></>,
+    comment: (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{verb(n, "commented")}<em>{n.itinerary?.title}</em></>,
   };
 
   return (
@@ -114,7 +115,7 @@ const NotificationItem = ({ notification: n, typeLabels }) => {
       />
       <div className="notif-item__body">
         <p className="notif-item__text">{label}</p>
-        <span className="notif-item__time">{n.createdAt}</span>
+        <span className="notif-item__time">{n.postedAgo}</span>
       </div>
       {!n.isRead && <span className="notif-item__dot" aria-hidden="true" />}
     </Link>

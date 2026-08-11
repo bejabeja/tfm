@@ -16,6 +16,7 @@ const PlacesForm = ({
   control, errors, fields, append, remove, replace, move,
   destination, days, setDays, isPublic, tripDays, isComplete,
   category, numberOfTravellers, budget, currency,
+  pace: controlledPace, setPace: setControlledPace,
 }) => {
   const { t } = useTranslation();
   const f = (key, vars) => t(`itineraryForm.${key}`, vars);
@@ -26,7 +27,9 @@ const PlacesForm = ({
   const [confirmRemoveDay, setConfirmRemoveDay] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showRegenConfirm, setShowRegenConfirm] = useState(false);
-  const [pace, setPace] = useState(DEFAULT_AI_PACE);
+  const [uncontrolledPace, setUncontrolledPace] = useState(DEFAULT_AI_PACE);
+  const pace = controlledPace ?? uncontrolledPace;
+  const setPace = setControlledPace ?? setUncontrolledPace;
 
   useEffect(() => {
     if (isPublic && !prevIsPublic.current) {
@@ -139,9 +142,9 @@ const PlacesForm = ({
             disabled={isGenerating}
             aria-label={f("paceLabel")}
           >
-            {aiPaceOptions.map(({ value, labelKey }) => (
+            {aiPaceOptions.map(({ value, labelKey, descKey }) => (
               <option key={value} value={value}>
-                {f(labelKey)}
+                {f(labelKey)} – {f(descKey)}
               </option>
             ))}
           </select>

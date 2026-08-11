@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import {
   Alert, KeyboardAvoidingView, Linking, Platform, ScrollView,
   StyleSheet, Text, TextInput, TouchableOpacity, View,
@@ -6,7 +6,15 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { contactSchema, selectMe, selectAuthUser, sendContact } from '@tobeatraveller/shared';
+import {
+  contactSchema,
+  selectMe,
+  selectAuthUser,
+  sendContact,
+  CONTACT_NAME_MAX_LENGTH,
+  CONTACT_SUBJECT_MAX_LENGTH,
+  CONTACT_MESSAGE_MAX_LENGTH,
+} from '@tobeatraveller/shared';
 import { shadow } from '../../utils/styles';
 
 const CONTACT_EMAIL = 'tobeatravellercompany@gmail.com';
@@ -28,7 +36,22 @@ const ContactScreen = ({ navigation }) => {
   const [sent, setSent] = useState(false);
   const [errors, setErrors] = useState({});
 
+  // Tracks whether name/email still hold an autofilled value the user hasn't touched,
+  // so a fuller profile that resolves after this screen mounted (e.g. app launch fetch
+  // still in flight) can still fill them in instead of leaving them blank forever.
+  const autofilledRef = useRef({ name: true, email: true });
+
+  useEffect(() => {
+    if (!me) return;
+    setFields((prev) => ({
+      ...prev,
+      name: autofilledRef.current.name ? (me.name || me.username || prev.name) : prev.name,
+      email: autofilledRef.current.email ? (me.email || prev.email) : prev.email,
+    }));
+  }, [me]);
+
   const set = (key, value) => {
+    if (key === 'name' || key === 'email') autofilledRef.current[key] = false;
     setFields(f => ({ ...f, [key]: value }));
     setErrors(e => ({ ...e, [key]: null }));
   };
@@ -108,6 +131,7 @@ const ContactScreen = ({ navigation }) => {
                   placeholder={t('contact.namePlaceholder')}
                   placeholderTextColor="#9ca3af"
                   autoComplete="name"
+                  maxLength={CONTACT_NAME_MAX_LENGTH}
                 />
               </Field>
 
@@ -131,6 +155,7 @@ const ContactScreen = ({ navigation }) => {
                   onChangeText={v => set('subject', v)}
                   placeholder={t('contact.subjectPlaceholder')}
                   placeholderTextColor="#9ca3af"
+                  maxLength={CONTACT_SUBJECT_MAX_LENGTH}
                 />
               </Field>
 
@@ -142,7 +167,7 @@ const ContactScreen = ({ navigation }) => {
                   placeholder={t('contact.messagePlaceholder')}
                   placeholderTextColor="#9ca3af"
                   multiline
-                  maxLength={1000}
+                  maxLength={CONTACT_MESSAGE_MAX_LENGTH}
                   textAlignVertical="top"
                 />
               </Field>

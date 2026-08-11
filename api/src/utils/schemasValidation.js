@@ -63,9 +63,21 @@ export const resetPasswordSchema = z.object({
     newPassword: z.string().min(6),
 });
 
+// Keep in sync with shared/src/utils/schemasValidation.js's contactSchema and
+// shared/src/utils/constants/constants.js#MAX_COMMENT_LENGTH (api/ has no dependency on
+// shared/, so these limits are duplicated by necessity, not oversight).
+const CONTACT_NAME_MAX_LENGTH = 100;
+const CONTACT_SUBJECT_MAX_LENGTH = 150;
+const CONTACT_MESSAGE_MAX_LENGTH = 1000;
+const COMMENT_MAX_LENGTH = 500;
+
 export const contactSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: z.string().min(2, "Name must be at least 2 characters").max(CONTACT_NAME_MAX_LENGTH, `Name must be less than ${CONTACT_NAME_MAX_LENGTH} characters`),
     email: z.string().email("Invalid email address"),
-    subject: z.string().min(2, "Subject must be at least 2 characters"),
-    message: z.string().min(10, "Message must be at least 10 characters"),
+    subject: z.string().min(2, "Subject must be at least 2 characters").max(CONTACT_SUBJECT_MAX_LENGTH, `Subject must be less than ${CONTACT_SUBJECT_MAX_LENGTH} characters`),
+    message: z.string().min(10, "Message must be at least 10 characters").max(CONTACT_MESSAGE_MAX_LENGTH, `Message must be less than ${CONTACT_MESSAGE_MAX_LENGTH} characters`),
+});
+
+export const commentSchema = z.object({
+    text: z.string().min(1, "Comment cannot be empty").max(COMMENT_MAX_LENGTH, `Comment must be at most ${COMMENT_MAX_LENGTH} characters`),
 });

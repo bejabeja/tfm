@@ -6,7 +6,7 @@ import {
   StyleSheet, Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 
 // Map only on native, react-native-maps doesn't support web
@@ -20,7 +20,7 @@ import {
   addComment, addFavorite, checkIsFavorite, checkIsLiked, deleteComment,
   deleteItinerary, getCommentsByItineraryId, getCurrencySymbol,
   getItineraryById, getUserById, removeFavorite, toggleLike,
-  selectIsAuthenticated, selectMe,
+  selectIsAuthenticated, selectMe, MAX_COMMENT_LENGTH, updateCommentsCount,
 } from '@tobeatraveller/shared';
 
 const formatBudget = (budget) => {
@@ -32,6 +32,7 @@ const formatBudget = (budget) => {
 const ItineraryScreen = ({ route, navigation }) => {
   const { id } = route.params;
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const me = useSelector(selectMe);
 
@@ -43,6 +44,7 @@ const ItineraryScreen = ({ route, navigation }) => {
   const [isFavorite, setIsFavorite] = useState(false);
   const [isLiked, setIsLiked] = useState(false);
   const [likesCount, setLikesCount] = useState(0);
+  const [isLikeToggling, setIsLikeToggling] = useState(false);
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -114,9 +116,11 @@ const ItineraryScreen = ({ route, navigation }) => {
 
   const handleLike = async () => {
     if (!isAuthenticated) { navigation.navigate('Tabs', { screen: 'Profile' }); return; }
+    if (isLikeToggling) return;
     const prev = isLiked;
     setIsLiked(!prev);
     setLikesCount(c => prev ? c - 1 : c + 1);
+    setIsLikeToggling(true);
     try {
       const data = await toggleLike(itinerary.id);
       setIsLiked(data.isLiked);
@@ -125,6 +129,8 @@ const ItineraryScreen = ({ route, navigation }) => {
       setIsLiked(prev);
       setLikesCount(c => prev ? c + 1 : c - 1);
       Alert.alert(t('errors.somethingWrong'), t('itinerary.errorLike'));
+    } finally {
+      setIsLikeToggling(false);
     }
   };
 
@@ -150,11 +156,15 @@ const ItineraryScreen = ({ route, navigation }) => {
   };
 
   const handleAddComment = async () => {
-    if (!commentText.trim()) return;
+    if (!commentText.trim() || submitting) return;
     setSubmitting(true);
     try {
       const created = await addComment(itinerary.id, commentText.trim());
-      setComments(prev => [...prev, created]);
+      setComments(prev => {
+        const next = [...prev, created];
+        dispatch(updateCommentsCount(itinerary.id, next.length));
+        return next;
+      });
       setCommentText('');
     } catch {
       Alert.alert(t('errors.somethingWrong'), t('comments.couldNotPost'));
@@ -169,7 +179,11 @@ const ItineraryScreen = ({ route, navigation }) => {
         onPress: async () => {
           try {
             await deleteComment(commentId);
-            setComments(prev => prev.filter(c => c.id !== commentId));
+            setComments(prev => {
+              const next = prev.filter(c => c.id !== commentId);
+              dispatch(updateCommentsCount(itinerary.id, next.length));
+              return next;
+            });
           } catch {
             Alert.alert(t('errors.somethingWrong'), t('comments.couldNotDelete'));
           }
@@ -358,7 +372,7 @@ const ItineraryScreen = ({ route, navigation }) => {
                   value={commentText}
                   onChangeText={setCommentText}
                   multiline
-                  maxLength={500}
+                  maxLength={MAX_COMMENT_LENGTH}
                 />
                 {commentText.trim() !== '' && (
                   <View style={styles.commentFormActions}>
@@ -604,8 +618,8 @@ const styles = StyleSheet.create({
   },
   badge: {
     alignSelf: 'flex-start',
-    backgroundColor: 'rgba(26,83,92,0.85)',
-    borderWidth: 1, borderColor: 'rgba(168,213,199,0.3)',
+    backgroundColor: 'rgba(232,116,59,0.85)',
+    borderWidth: 1, borderColor: 'rgba(250,200,170,0.35)',
     borderRadius: 14,
     paddingVertical: 4, paddingHorizontal: 12, marginBottom: 10,
   },

@@ -8,7 +8,7 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { checkUsernameAvailable, registerUser, selectAuthError } from '@tobeatraveller/shared';
+import { checkUsernameAvailable, registerUser, selectAuthError, translateAuthError } from '@tobeatraveller/shared';
 import { shadow, textShadow } from '../../utils/styles';
 import { RichText } from '../../components/RichText';
 
@@ -35,6 +35,7 @@ const RegisterScreen = ({ navigation }) => {
   const [ageConfirmed, setAgeConfirmed] = useState(false);
 
   const timer = useRef(null);
+  const latestUsernameRef = useRef('');
 
   useEffect(() => {
     if (!username || username.length < 2 || /\s/.test(username)) {
@@ -43,8 +44,11 @@ const RegisterScreen = ({ navigation }) => {
     }
     setUsernameStatus('checking');
     clearTimeout(timer.current);
+    const requestedUsername = username;
+    latestUsernameRef.current = requestedUsername;
     timer.current = setTimeout(async () => {
-      const available = await checkUsernameAvailable(username);
+      const available = await checkUsernameAvailable(requestedUsername);
+      if (latestUsernameRef.current !== requestedUsername) return;
       if (available === null) { setUsernameStatus(null); return; }
       setUsernameStatus(available ? 'available' : 'taken');
     }, 500);
@@ -123,7 +127,7 @@ const RegisterScreen = ({ navigation }) => {
               <Text style={styles.subtitle}>{t('auth.createAccountSubtitle')}</Text>
 
               <Field
-                label="Email"
+                label={t("auth.emailLabel")}
                 value={email}
                 onChangeText={v => { setEmail(v); clearError('email'); }}
                 keyboardType="email-address"
@@ -135,7 +139,7 @@ const RegisterScreen = ({ navigation }) => {
               />
 
               <Field
-                label="Username"
+                label={t("auth.usernameLabel")}
                 value={username}
                 onChangeText={v => { setUsername(v); clearError('username'); }}
                 autoCapitalize="none"
@@ -157,7 +161,7 @@ const RegisterScreen = ({ navigation }) => {
               />
 
               <Field
-                label="Password"
+                label={t("auth.passwordLabel")}
                 value={password}
                 onChangeText={v => { setPassword(v); clearError('password'); }}
                 secureTextEntry={!showPassword}
@@ -165,7 +169,12 @@ const RegisterScreen = ({ navigation }) => {
                 autoComplete="password-new"
                 error={errors.password}
                 right={
-                  <TouchableOpacity onPress={() => setShowPassword(s => !s)} style={styles.eyeBtn}>
+                  <TouchableOpacity
+                    onPress={() => setShowPassword(s => !s)}
+                    style={styles.eyeBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={showPassword ? t('auth.hidePassword') : t('auth.showPassword')}
+                  >
                     <Text style={styles.eyeIcon}>{showPassword ? '🙈' : '👁'}</Text>
                   </TouchableOpacity>
                 }
@@ -173,7 +182,7 @@ const RegisterScreen = ({ navigation }) => {
               <Text style={fieldStyles.hint}>{t('errors.passwordMin')}</Text>
 
               <Field
-                label="Confirm password"
+                label={t("auth.confirmPasswordLabel")}
                 value={confirmPassword}
                 onChangeText={v => { setConfirmPassword(v); clearError('confirmPassword'); }}
                 secureTextEntry={!showConfirm}
@@ -181,7 +190,12 @@ const RegisterScreen = ({ navigation }) => {
                 autoComplete="password-new"
                 error={errors.confirmPassword}
                 right={
-                  <TouchableOpacity onPress={() => setShowConfirm(s => !s)} style={styles.eyeBtn}>
+                  <TouchableOpacity
+                    onPress={() => setShowConfirm(s => !s)}
+                    style={styles.eyeBtn}
+                    accessibilityRole="button"
+                    accessibilityLabel={showConfirm ? t('auth.hidePassword') : t('auth.showPassword')}
+                  >
                     <Text style={styles.eyeIcon}>{showConfirm ? '🙈' : '👁'}</Text>
                   </TouchableOpacity>
                 }
@@ -236,7 +250,7 @@ const RegisterScreen = ({ navigation }) => {
                     </Text>
                   </Text>
                 ) : (
-                  <Text style={styles.authError}>{authError}</Text>
+                  <Text style={styles.authError}>{translateAuthError(t, authError)}</Text>
                 )
               )}
 
@@ -272,7 +286,7 @@ const Field = ({ label, error, right, ...inputProps }) => (
   <View style={fieldStyles.wrapper}>
     <Text style={fieldStyles.label}>{label}</Text>
     <View style={[fieldStyles.row, error && fieldStyles.rowError]}>
-      <TextInput style={fieldStyles.input} placeholderTextColor="#9ca3af" {...inputProps} />
+      <TextInput style={fieldStyles.input} placeholderTextColor="#9ca3af" accessibilityLabel={label} {...inputProps} />
       {right}
     </View>
     {error ? <Text style={fieldStyles.error}>{error}</Text> : null}

@@ -40,19 +40,14 @@ export const getfeaturedUsers = async () => {
 }
 
 export const getUserById = async (id) => {
-    try {
-        const response = await authFetch(`${baseUrl()}/${id}`, {
-            method: 'GET',
-            headers: { 'Content-Type': 'application/json' },
-        });
-        if (!response.ok) {
-            await parseError(response, 'Failed to get user');
-        }
-        return response.json();
-    } catch (err) {
-        return null;
+    const response = await authFetch(`${baseUrl()}/${id}`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+    });
+    if (!response.ok) {
+        await parseError(response, 'Failed to get user');
     }
-
+    return response.json();
 }
 
 export const updateUser = async (data) => {

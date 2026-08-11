@@ -150,9 +150,13 @@ export const createItinerarySchema = z
     })
     ;
 
+export const CONTACT_NAME_MAX_LENGTH = 100;
+export const CONTACT_SUBJECT_MAX_LENGTH = 150;
+export const CONTACT_MESSAGE_MAX_LENGTH = 1000;
+
 export const contactSchema = z.object({
-    name: z.string().min(2, "Name must be at least 2 characters"),
+    name: z.string().min(2, "Name must be at least 2 characters").max(CONTACT_NAME_MAX_LENGTH, `Name must be less than ${CONTACT_NAME_MAX_LENGTH} characters`),
     email: z.string().email("Invalid email address"),
-    subject: z.string().min(2, "Subject must be at least 2 characters"),
-    message: z.string().min(10, "Message must be at least 10 characters"),
+    subject: z.string().min(2, "Subject must be at least 2 characters").max(CONTACT_SUBJECT_MAX_LENGTH, `Subject must be less than ${CONTACT_SUBJECT_MAX_LENGTH} characters`),
+    message: z.string().min(10, "Message must be at least 10 characters").max(CONTACT_MESSAGE_MAX_LENGTH, `Message must be less than ${CONTACT_MESSAGE_MAX_LENGTH} characters`),
 });

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { MAX_COMMENT_LENGTH } from "@tobeatraveller/shared";
 import {
   addComment,
   deleteComment,
@@ -77,7 +78,11 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
           comments.map((comment) => (
             <div key={comment.id} className="comment">
               <div className="comment__avatar">
-                {comment.user?.username?.charAt(0).toUpperCase()}
+                {comment.user?.avatarUrl ? (
+                  <img src={comment.user.avatarUrl} alt={comment.user.username} />
+                ) : (
+                  comment.user?.username?.charAt(0).toUpperCase()
+                )}
               </div>
               <div className="comment__body">
                 <strong>@{comment.user?.username}</strong>
@@ -120,13 +125,14 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
               onChange={(e) => setNewComment(e.target.value)}
               placeholder={t("comments.addComment")}
               rows={1}
+              maxLength={MAX_COMMENT_LENGTH}
               enterKeyHint="send"
               onInput={(e) => {
                 e.target.style.height = "auto";
                 e.target.style.height = e.target.scrollHeight + "px";
               }}
               onKeyDown={(e) => {
-                if (e.key === "Enter" && !e.shiftKey) {
+                if (e.key === "Enter" && !e.shiftKey && !e.nativeEvent?.isComposing) {
                   e.preventDefault();
                   handleAddComment();
                 }

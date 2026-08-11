@@ -107,11 +107,11 @@ const NotificationsScreen = ({ navigation }) => {
                 <Text style={styles.text} numberOfLines={2}>
                   <Text style={styles.bold}>@{n.actor?.username}</Text>
                   {n.count > 1 && t('notifications.andOthers', { count: n.count - 1 })}
-                  {n.type === 'follow' && t('notifications.startedFollowing')}
-                  {n.type === 'like' && <Text>{t('notifications.liked')}<Text style={styles.italic}>{n.itinerary?.title}</Text></Text>}
-                  {n.type === 'comment' && <Text>{t('notifications.commented')}<Text style={styles.italic}>{n.itinerary?.title}</Text></Text>}
+                  {n.type === 'follow' && t(`notifications.startedFollowing${n.count > 1 ? 'Plural' : ''}`)}
+                  {n.type === 'like' && <Text>{t(`notifications.liked${n.count > 1 ? 'Plural' : ''}`)}<Text style={styles.italic}>{n.itinerary?.title}</Text></Text>}
+                  {n.type === 'comment' && <Text>{t(`notifications.commented${n.count > 1 ? 'Plural' : ''}`)}<Text style={styles.italic}>{n.itinerary?.title}</Text></Text>}
                 </Text>
-                <Text style={styles.time}>{n.createdAt}</Text>
+                <Text style={styles.time}>{n.postedAgo}</Text>
               </View>
               {!n.isRead && <View style={styles.dot} />}
             </TouchableOpacity>

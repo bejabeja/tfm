@@ -1,16 +1,31 @@
 import { v4 as uuidv4 } from 'uuid';
 import client from '../db/clientPostgres.js';
 import { logger } from '../utils/logger.js';
+import { timeAgo } from '../utils/date.js';
 
 const GROUPING_WINDOW_HOURS = 24;
 
 export class NotificationsRepository {
     async create({ id, userId, actorId, type, itineraryId, commentId }) {
         try {
+            // Folds into an existing notification of the same (user, type, itinerary)
+            // opened within the grouping window. `created_at` is intentionally left out
+            // of the SET clause so the window is measured from the first event in the
+            // group, not refreshed on every fold; `last_activity_at` tracks recency for
+            // sorting/display instead. actor_ids accumulates every distinct actor so the
+            // "and N others" count reflects real participants, not just whether the
+            // latest actor differs from the previous one.
+            //
+            // Known limitation: two truly concurrent first-events for a group that
+            // doesn't exist yet can both miss this UPDATE and both INSERT below,
+            // producing two rows instead of one. Not fixed with a DB constraint here
+            // since a time-window group can't be expressed as a stable unique key; given
+            // how rare and low-impact this is (the next event still folds correctly),
+            // it's an accepted tradeoff rather than something worth a bigger redesign.
             const grouped = await client.query(
                 `UPDATE notifications
-                 SET count = count + CASE WHEN actor_id = $1 THEN 0 ELSE 1 END,
-                     actor_id = $1, comment_id = $2, is_read = false, created_at = NOW()
+                 SET actor_ids = CASE WHEN $1 = ANY(actor_ids) THEN actor_ids ELSE array_append(actor_ids, $1) END,
+                     actor_id = $1, comment_id = $2, is_read = false, last_activity_at = NOW()
                  WHERE user_id = $3 AND type = $4
                    AND itinerary_id IS NOT DISTINCT FROM $5
                    AND created_at > NOW() - INTERVAL '${GROUPING_WINDOW_HOURS} hours'
@@ -21,8 +36,8 @@ export class NotificationsRepository {
 
             const notificationId = id || uuidv4();
             const query = `
-                INSERT INTO notifications (id, user_id, actor_id, type, itinerary_id, comment_id)
-                VALUES ($1, $2, $3, $4, $5, $6)
+                INSERT INTO notifications (id, user_id, actor_id, type, itinerary_id, comment_id, actor_ids)
+                VALUES ($1, $2, $3, $4, $5, $6, ARRAY[$3]::UUID[])
             `;
             await client.query(query, [notificationId, userId, actorId, type, itineraryId ?? null, commentId ?? null]);
         } catch (err) {
@@ -37,8 +52,8 @@ export class NotificationsRepository {
                 n.id,
                 n.type,
                 n.is_read,
-                n.created_at,
-                n.count,
+                n.last_activity_at,
+                n.actor_ids,
                 a.id         AS actor_id,
                 a.username   AS actor_username,
                 a.avatar_url AS actor_avatar_url,
@@ -48,7 +63,7 @@ export class NotificationsRepository {
             JOIN users a ON n.actor_id = a.id
             LEFT JOIN itineraries i ON n.itinerary_id = i.id
             WHERE n.user_id = $1
-            ORDER BY n.created_at DESC
+            ORDER BY n.last_activity_at DESC
             LIMIT $2 OFFSET $3
         `;
         const result = await client.query(query, [userId, limit, offset]);
@@ -56,8 +71,8 @@ export class NotificationsRepository {
             id: row.id,
             type: row.type,
             isRead: row.is_read,
-            createdAt: row.created_at,
-            count: row.count,
+            postedAgo: timeAgo(row.last_activity_at),
+            count: row.actor_ids?.length || 1,
             actor: {
                 id: row.actor_id,
                 username: row.actor_username,

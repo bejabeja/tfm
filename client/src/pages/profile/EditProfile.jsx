@@ -63,12 +63,17 @@ const EditProfile = () => {
     });
   }, [userMe, reset]);
 
+  const latestUsernameRef = useRef("");
+
   useEffect(() => {
     if (!usernameValue || usernameValue.length < 2 || /\s/.test(usernameValue)) { setUsernameStatus(null); return; }
     if (userMe && usernameValue === userMe.username) { setUsernameStatus(null); return; }
     setUsernameStatus("checking");
+    const requestedUsername = usernameValue;
+    latestUsernameRef.current = requestedUsername;
     const timer = setTimeout(async () => {
-      const available = await checkUsernameAvailable(usernameValue);
+      const available = await checkUsernameAvailable(requestedUsername);
+      if (latestUsernameRef.current !== requestedUsername) return;
       if (available === null) { setUsernameStatus(null); return; }
       setUsernameStatus(available ? "available" : "taken");
     }, 500);

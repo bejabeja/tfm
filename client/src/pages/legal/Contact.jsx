@@ -1,12 +1,17 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { sendContact } from "@tobeatraveller/shared";
 import { selectAuthUser } from "../../store/auth/authSelectors";
 import { setUserInfo } from "../../store/user/userInfoActions";
-import { selectMe } from "../../store/user/userInfoSelectors";
-import { contactSchema } from "../../utils/schemasValidation";
+import { selectMe, selectMeLoading } from "../../store/user/userInfoSelectors";
+import {
+  contactSchema,
+  CONTACT_NAME_MAX_LENGTH,
+  CONTACT_SUBJECT_MAX_LENGTH,
+  CONTACT_MESSAGE_MAX_LENGTH,
+} from "../../utils/schemasValidation";
 import "./Legal.scss";
 import "./Contact.scss";
 const CONTACT_EMAIL = "tobeatravellercompany@gmail.com";
@@ -15,6 +20,7 @@ const Contact = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const meDetail = useSelector(selectMe);
+  const meLoading = useSelector(selectMeLoading);
   const authUser = useSelector(selectAuthUser);
   const me = meDetail ?? authUser;
 
@@ -25,8 +31,8 @@ const Contact = () => {
   }, [t]);
 
   useEffect(() => {
-    if (authUser?.id && !meDetail) dispatch(setUserInfo(authUser.id));
-  }, [authUser?.id, meDetail, dispatch]);
+    if (authUser?.id && !meDetail && !meLoading) dispatch(setUserInfo(authUser.id));
+  }, [authUser?.id, meDetail, meLoading, dispatch]);
 
   const [fields, setFields] = useState({
     name: me?.name || me?.username || "",
@@ -35,12 +41,18 @@ const Contact = () => {
     message: "",
   });
 
+  // Tracks whether name/email still hold an autofilled value the user hasn't touched,
+  // so a fuller profile arriving later (with a real `name`, where the initial fill only
+  // had `username` to fall back on) can still replace it instead of being blocked by a
+  // naive "only fill if empty" check.
+  const autofilledRef = useRef({ name: true, email: true });
+
   useEffect(() => {
     if (!me) return;
     setFields((prev) => ({
       ...prev,
-      name: prev.name || me.name || me.username || "",
-      email: prev.email || me.email || "",
+      name: autofilledRef.current.name ? (me.name || me.username || prev.name) : prev.name,
+      email: autofilledRef.current.email ? (me.email || prev.email) : prev.email,
     }));
   }, [me]);
   const [status, setStatus] = useState("idle"); // idle | sending | success | error
@@ -62,6 +74,7 @@ const Contact = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+    if (name === "name" || name === "email") autofilledRef.current[name] = false;
     setFields((prev) => ({ ...prev, [name]: value }));
     setErrors((prev) => ({ ...prev, [name]: null }));
   };
@@ -73,7 +86,7 @@ const Contact = () => {
     try {
       await sendContact(fields);
       setStatus("success");
-      setFields({ name: "", email: "", subject: "", message: "" });
+      setFields((prev) => ({ ...prev, subject: "", message: "" }));
     } catch {
       setStatus("error");
     }
@@ -110,6 +123,7 @@ const Contact = () => {
                   onChange={handleChange}
                   placeholder={t("contact.namePlaceholder")}
                   autoComplete="name"
+                  maxLength={CONTACT_NAME_MAX_LENGTH}
                 />
               </Field>
               <Field label={t("contact.yourEmail")} error={errors.email}>
@@ -131,6 +145,7 @@ const Contact = () => {
                 value={fields.subject}
                 onChange={handleChange}
                 placeholder={t("contact.subjectPlaceholder")}
+                maxLength={CONTACT_SUBJECT_MAX_LENGTH}
               />
             </Field>
 
@@ -141,6 +156,7 @@ const Contact = () => {
                 onChange={handleChange}
                 placeholder={t("contact.messagePlaceholder")}
                 rows={6}
+                maxLength={CONTACT_MESSAGE_MAX_LENGTH}
               />
             </Field>
 

@@ -15,7 +15,8 @@ export class Comment {
             content: row.content,
             user: {
                 id: row.user_id,
-                username: row.username
+                username: row.username,
+                avatarUrl: row.avatar_url,
             },
             itineraryId: row.itinerary_id,
             createdAt: row.created_at

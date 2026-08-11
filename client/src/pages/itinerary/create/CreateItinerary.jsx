@@ -5,6 +5,7 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { DEFAULT_AI_PACE } from "@tobeatraveller/shared";
 import Modal from "../../../components/modal/Modal";
 import SubmitButton from "../../../components/form/SubmitButton";
 import { createItinerary } from "../../../services/itinerary";
@@ -38,6 +39,7 @@ const CreateItinerary = () => {
   const [step, setStep] = useState(0);
   const [imageFile, setImageFile] = useState(null);
   const [days, setDays] = useState([1]);
+  const [pace, setPace] = useState(DEFAULT_AI_PACE);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const userMe = useSelector(selectMe);
 
@@ -208,6 +210,7 @@ const CreateItinerary = () => {
             category={watch("category")}
             numberOfTravellers={watch("numberOfTravellers")}
             budget={watch("budget")} currency={watch("currency")}
+            pace={pace} setPace={setPace}
           />
         )}
         {step === 4 && (

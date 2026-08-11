@@ -4,6 +4,7 @@ import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { translateAuthError } from "@tobeatraveller/shared";
 import { InputForm } from "../../components/form/InputForm";
 import { PasswordInputForm } from "../../components/form/PasswordInputForm";
 import SubmitButton from "../../components/form/SubmitButton";
@@ -52,6 +53,7 @@ const Signup = () => {
   const usernameValue = useWatch({ control, name: "username" });
   const emailValue = useWatch({ control, name: "email" });
   const isDuplicateEmail = errorInAuth === "Email already in use";
+  const latestUsernameRef = useRef("");
 
   useEffect(() => {
     if (!usernameValue || usernameValue.length < 2 || /\s/.test(usernameValue)) {
@@ -59,8 +61,11 @@ const Signup = () => {
       return;
     }
     setUsernameStatus("checking");
+    const requestedUsername = usernameValue;
+    latestUsernameRef.current = requestedUsername;
     const timer = setTimeout(async () => {
-      const available = await checkUsernameAvailable(usernameValue);
+      const available = await checkUsernameAvailable(requestedUsername);
+      if (latestUsernameRef.current !== requestedUsername) return;
       if (available === null) { setUsernameStatus(null); return; }
       setUsernameStatus(available ? "available" : "taken");
     }, 500);
@@ -84,7 +89,7 @@ const Signup = () => {
         (cErrors.ageConfirmed ? ageCheckboxRef : termsCheckboxRef).current?.focus();
         return;
       }
-      dispatch(createUser({ ...data, termsAccepted, ageConfirmed }, () => navigate("/welcome")));
+      return dispatch(createUser({ ...data, termsAccepted, ageConfirmed }, () => navigate("/welcome")));
     })();
   };
 
@@ -117,11 +122,11 @@ const Signup = () => {
             <p className="auth__form-subtitle">{t("auth.createAccountSubtitle")}</p>
           </div>
 
-          <InputForm name="email" label="Email" type="email" control={control} error={errors.email} autoComplete="email" />
+          <InputForm name="email" label={t("auth.emailLabel")} type="email" control={control} error={errors.email} autoComplete="email" />
 
           <InputForm
             name="username"
-            label="Username"
+            label={t("auth.usernameLabel")}
             type="text"
             control={control}
             error={errors.username}
@@ -143,13 +148,13 @@ const Signup = () => {
 
           <PasswordInputForm
             name="password"
-            label="Password"
+            label={t("auth.passwordLabel")}
             control={control}
             error={errors.password}
             autoComplete="new-password"
             hint={t("errors.passwordMin")}
           />
-          <PasswordInputForm name="confirmPassword" label="Confirm password" control={control} error={errors.confirmPassword} autoComplete="new-password" />
+          <PasswordInputForm name="confirmPassword" label={t("auth.confirmPasswordLabel")} control={control} error={errors.confirmPassword} autoComplete="new-password" />
 
           <div className="auth__consent" ref={consentRef}>
             <label className={`auth__consent-label${consentErrors.ageConfirmed ? " auth__consent-label--error" : ""}`}>
@@ -191,7 +196,7 @@ const Signup = () => {
                     </Link>
                   </>
                 )
-                : errorInAuth)
+                : translateAuthError(t, errorInAuth))
               : " "}
           </div>
 

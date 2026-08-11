@@ -6,6 +6,9 @@ export {
     resetPasswordSchema,
     createItinerarySchema,
     contactSchema,
+    CONTACT_NAME_MAX_LENGTH,
+    CONTACT_SUBJECT_MAX_LENGTH,
+    CONTACT_MESSAGE_MAX_LENGTH,
     NEW_ITINERARY_DEFAULT_VISIBILITY,
     EXISTING_ITINERARY_VISIBILITY_FALLBACK,
 } from '@tobeatraveller/shared';

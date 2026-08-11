@@ -1,4 +1,6 @@
 import { toast } from "react-hot-toast";
+import { translateAuthError } from "@tobeatraveller/shared";
+import i18n from "../../i18n";
 import { createNewUser, login, logout } from "../../services/auth";
 import { getUserForAuth } from "../../services/users";
 import { resetUserInfo } from "../user/userInfoActions";
@@ -17,9 +19,9 @@ export const createUser = (user, onSuccess) => {
             await toast.promise(
                 createNewUser(user),
                 {
-                    loading: "Creating account...",
-                    success: "Account created successfully!",
-                    error: (err) => err.message || "Registration failed",
+                    loading: i18n.t("auth.creatingAccount"),
+                    success: i18n.t("auth.accountCreated"),
+                    error: (err) => translateAuthError(i18n.t.bind(i18n), err.message) || i18n.t("auth.registrationFailed"),
                 }
             );
             const newUser = await login(user);
@@ -38,9 +40,9 @@ export const loginUser = (user, onSuccess) => {
             const newUser = await toast.promise(
                 login(user),
                 {
-                    loading: "Logging in...",
-                    success: "Welcome back!",
-                    error: (err) => err.message || "Login failed",
+                    loading: i18n.t("auth.loggingIn"),
+                    success: i18n.t("auth.welcomeBack"),
+                    error: (err) => translateAuthError(i18n.t.bind(i18n), err.message) || i18n.t("auth.loginFailed"),
                 }
             );
             saveHint(newUser);
@@ -59,9 +61,9 @@ export const logoutUser = () => {
             saveHint(null);
             dispatch({ type: "@auth/logout" });
             dispatch(resetUserInfo());
-            toast.success("Session closed successfully");
+            toast.success(i18n.t("auth.sessionClosed"));
         } catch (error) {
-            toast.error("Failed to log out");
+            toast.error(i18n.t("auth.logoutFailed"));
         }
     };
 };

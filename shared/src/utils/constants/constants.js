@@ -45,10 +45,15 @@ export const itineraryCategories = [
 
 export const DEFAULT_AI_PACE = "normal";
 
+// placesPerDay here is UI copy only; the actual generation limit lives in
+// api/src/services/AIService.js#PLACES_PER_DAY_BY_PACE (api/ doesn't depend on shared/).
+// Keep both in sync when changing a pace's places-per-day value.
 export const aiPaceOptions = [
   { value: "relaxed", placesPerDay: 2, labelKey: "paceRelaxed", descKey: "paceRelaxedDesc" },
   { value: "normal", placesPerDay: 3, labelKey: "paceNormal", descKey: "paceNormalDesc" },
   { value: "intense", placesPerDay: 4, labelKey: "paceIntense", descKey: "paceIntenseDesc" },
 ];
+
+export const MAX_COMMENT_LENGTH = 500;
 
 

@@ -1,15 +1,27 @@
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import { useTranslation } from "react-i18next";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { checkIsLiked, toggleLike } from "../services/likes";
 import { selectIsAuthenticated } from "../store/auth/authSelectors";
 
 export const useLike = (itineraryId, initialLikesCount = 0) => {
+    const { t } = useTranslation();
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const navigate = useNavigate();
     const [isLiked, setIsLiked] = useState(false);
     const [likesCount, setLikesCount] = useState(initialLikesCount);
+    const [isToggling, setIsToggling] = useState(false);
+
+    // Tracks the itinerary currently on screen, so a toggleLike request that resolves
+    // after navigating to a different itinerary (the hook instance can be reused across
+    // an in-page param-only navigation) doesn't write its result into the wrong itinerary's state.
+    const itineraryIdRef = useRef(itineraryId);
+    useEffect(() => {
+        itineraryIdRef.current = itineraryId;
+        setIsToggling(false);
+    }, [itineraryId]);
 
     useEffect(() => {
         if (!isAuthenticated || !itineraryId) return;
@@ -29,22 +41,29 @@ export const useLike = (itineraryId, initialLikesCount = 0) => {
             navigate("/login");
             return;
         }
+        if (isToggling) return;
 
+        const requestedItineraryId = itineraryId;
         const wasLiked = isLiked;
         setIsLiked(!wasLiked);
         setLikesCount((prev) => (wasLiked ? prev - 1 : prev + 1));
+        setIsToggling(true);
 
         try {
             const data = await toggleLike(itineraryId);
+            if (itineraryIdRef.current !== requestedItineraryId) return;
             setIsLiked(data.isLiked);
             setLikesCount(data.likesCount);
         } catch (err) {
             console.error("[useLike] toggleLike failed:", err);
-            toast.error("Could not update like. Try again.");
+            if (itineraryIdRef.current !== requestedItineraryId) return;
+            toast.error(t("itinerary.errorLike"));
             setIsLiked(wasLiked);
             setLikesCount((prev) => (wasLiked ? prev + 1 : prev - 1));
+        } finally {
+            if (itineraryIdRef.current === requestedItineraryId) setIsToggling(false);
         }
     };
 
-    return { isLiked, likesCount, handleToggleLike };
+    return { isLiked, likesCount, handleToggleLike, isToggling };
 };
