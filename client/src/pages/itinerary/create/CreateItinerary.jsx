@@ -120,7 +120,7 @@ const CreateItinerary = () => {
       },
       startDate: data.startDate,
       endDate: data.endDate,
-      budget: Number(data.budget),
+      budget: data.budget,
       currency: data.currency,
       numberOfPeople: Number(data.numberOfTravellers),
       places: data.places.map((place, index) => ({

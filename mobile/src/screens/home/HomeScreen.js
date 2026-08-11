@@ -12,10 +12,11 @@ import { useTranslation } from 'react-i18next';
 import {
   getDestinations,
   initFeaturedItineraries, initFeaturedUsers, initFeed,
+  refreshUnreadCount,
   selectFeaturedItineraries, selectFeaturedItinerariesLoading,
   selectFeaturedUsers, selectFeaturedUsersLoading,
   selectFeed, selectFeedLoading,
-  selectIsAuthenticated,
+  selectIsAuthenticated, selectUnreadCount,
 } from '@tobeatraveller/shared';
 import ItineraryCard from '../../components/ItineraryCard';
 import { ItineraryCardSkeleton, UserAvatarSkeleton } from '../../components/Skeleton';
@@ -72,12 +73,20 @@ const HomeScreen = ({ navigation }) => {
   const feed = useSelector(selectFeed);
   const feedLoading = useSelector(selectFeedLoading);
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const unreadCount = useSelector(selectUnreadCount);
 
   useEffect(() => {
     if (!itineraries?.length) dispatch(initFeaturedItineraries());
     if (!users?.length) dispatch(initFeaturedUsers());
     getDestinations().then(setDestinations).catch(() => {});
   }, [dispatch]);
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    dispatch(refreshUnreadCount());
+    const interval = setInterval(() => dispatch(refreshUnreadCount()), 30000);
+    return () => clearInterval(interval);
+  }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
     if (isAuthenticated && tab === 'following') dispatch(initFeed(1));
@@ -108,6 +117,11 @@ const HomeScreen = ({ navigation }) => {
               activeOpacity={0.7}
             >
               <Ionicons name="notifications-outline" size={24} color="#fff" />
+              {unreadCount > 0 && (
+                <View style={styles.bellBadge}>
+                  <Text style={styles.bellBadgeText}>{unreadCount > 99 ? '99+' : unreadCount}</Text>
+                </View>
+              )}
             </TouchableOpacity>
           )}
         </View>
@@ -284,7 +298,16 @@ const styles = StyleSheet.create({
   heroTitle: { fontSize: 26, fontWeight: '800', color: '#fff', letterSpacing: -0.3 },
   heroSubtitle: { fontSize: 14, color: '#A8D5C7', marginTop: 4 },
 
-  bellBtn: { padding: 4 },
+  bellBtn: { padding: 4, position: 'relative' },
+  bellBadge: {
+    position: 'absolute', top: 0, right: 0,
+    minWidth: 16, height: 16, borderRadius: 8,
+    paddingHorizontal: 3,
+    backgroundColor: '#E8743B',
+    alignItems: 'center', justifyContent: 'center',
+    borderWidth: 1.5, borderColor: COLORS.accentDark,
+  },
+  bellBadgeText: { color: '#fff', fontSize: 9, fontWeight: '700' },
 
   tabs: {
     flexDirection: 'row', gap: 4,

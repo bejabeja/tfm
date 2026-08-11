@@ -7,6 +7,7 @@ import {
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import {
   EXISTING_ITINERARY_VISIBILITY_FALLBACK, getItineraryById, selectAuthUser, selectMe,
   setUserInfo, updateItinerary,
@@ -19,6 +20,7 @@ import { shadow } from '../../utils/styles';
 
 const EditItineraryScreen = ({ route, navigation }) => {
   const { id } = route.params;
+  const { t } = useTranslation();
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const meDetail = useSelector(selectMe);
@@ -69,7 +71,7 @@ const EditItineraryScreen = ({ route, navigation }) => {
           : [1];
         setDays(uniqueDays);
       } catch {
-        Alert.alert('Error', 'Could not load itinerary.');
+        Alert.alert(t('errors.somethingWrong'), t('editItinerary.loadError'));
         navigation.goBack();
       } finally { setLoading(false); }
     })();
@@ -82,13 +84,13 @@ const EditItineraryScreen = ({ route, navigation }) => {
 
   const validate = () => {
     const e = {};
-    if (!title.trim() || title.length < 2) e.title = 'Title must be at least 2 characters';
-    if (title.length > 50) e.title = 'Max 50 characters';
-    if (description.length > 500) e.description = 'Max 500 characters';
-    if (!startDate) e.startDate = 'Start date required';
-    if (!endDate) e.endDate = 'End date required';
-    if (startDate && endDate && endDate < startDate) e.endDate = 'End date must be after start';
-    if (!budget || isNaN(parseFloat(budget))) e.budget = 'Valid budget required';
+    if (!title.trim() || title.length < 2) e.title = t('createItinerary.titleMin');
+    if (title.length > 50) e.title = t('createItinerary.titleMax');
+    if (description.length > 500) e.description = t('createItinerary.descriptionMax');
+    if (!startDate) e.startDate = t('createItinerary.startDateRequired');
+    if (!endDate) e.endDate = t('createItinerary.endDateRequired');
+    if (startDate && endDate && endDate < startDate) e.endDate = t('createItinerary.endDateAfterStart');
+    if (budget && isNaN(parseFloat(budget))) e.budget = t('createItinerary.budgetRequired');
     setErrors(e);
     return Object.keys(e).length === 0;
   };
@@ -98,7 +100,7 @@ const EditItineraryScreen = ({ route, navigation }) => {
     if (isPublic) {
       const emptyDays = days.filter(d => !places.some(p => p.dayNumber === d));
       if (emptyDays.length > 0) {
-        Alert.alert('Empty days', `Day ${emptyDays.join(', ')} ${emptyDays.length === 1 ? 'has' : 'have'} no places. Add places or switch to private.`);
+        Alert.alert(t('createItinerary.emptyDaysTitle'), t('createItinerary.emptyDaysDesc', { days: emptyDays.join(', ') }));
         return;
       }
     }
@@ -115,7 +117,7 @@ const EditItineraryScreen = ({ route, navigation }) => {
           lon: itinerary.location.lon,
         },
         startDate, endDate,
-        budget: Number(budget), currency,
+        budget: budget ? Number(budget) : null, currency,
         numberOfPeople: travellers, category, isPublic,
         places: places.map((p, i) => ({
           id: p.id, description: p.description,
@@ -134,20 +136,20 @@ const EditItineraryScreen = ({ route, navigation }) => {
       if (me?.id) dispatch(setUserInfo(me.id));
       navigation.goBack();
     } catch (err) {
-      Alert.alert('Error', err?.message || 'Failed to save. Please try again.');
+      Alert.alert(t('errors.somethingWrong'), err?.message || t('editItinerary.errorSave'));
     } finally { setSaving(false); }
   };
 
   const handleCancel = () => {
-    Alert.alert('Discard changes?', 'Unsaved changes will be lost.', [
-      { text: 'Keep editing', style: 'cancel' },
-      { text: 'Discard', style: 'destructive', onPress: () => navigation.goBack() },
+    Alert.alert(t('editProfile.discardChanges'), t('editProfile.discardChangesDesc'), [
+      { text: t('editProfile.keepEditing'), style: 'cancel' },
+      { text: t('common.discard'), style: 'destructive', onPress: () => navigation.goBack() },
     ]);
   };
 
   const pickPhoto = async () => {
     const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (status !== 'granted') { Alert.alert('Permission needed', 'Allow photo library access.'); return; }
+    if (status !== 'granted') { Alert.alert(t('createItinerary.permissionNeeded'), t('createItinerary.permissionDesc')); return; }
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ['images'],
       allowsEditing: true, aspect: [16, 9], quality: 0.8,
@@ -165,13 +167,13 @@ const EditItineraryScreen = ({ route, navigation }) => {
         <TouchableOpacity style={ls.headerBack} onPress={handleCancel}>
           <Text style={ls.headerBackText}>←</Text>
         </TouchableOpacity>
-        <Text style={ls.headerTitle}>Edit Itinerary</Text>
+        <Text style={ls.headerTitle}>{t('editItinerary.title')}</Text>
         <TouchableOpacity
           style={[ls.headerSave, saving && ls.btnDisabled]}
           onPress={handleSave}
           disabled={saving}
         >
-          <Text style={ls.headerSaveText}>{saving ? 'Saving…' : 'Save'}</Text>
+          <Text style={ls.headerSaveText}>{saving ? t('common.saving') : t('common.save')}</Text>
         </TouchableOpacity>
       </View>
 
@@ -185,21 +187,21 @@ const EditItineraryScreen = ({ route, navigation }) => {
           <TouchableOpacity style={ls.photoCard} onPress={pickPhoto} activeOpacity={0.85}>
             {currentPhoto
               ? <Image source={{ uri: currentPhoto }} style={ls.photo} resizeMode="cover" />
-              : <View style={ls.photoPlaceholder}><Text style={ls.photoPlaceholderText}>📷 Tap to add photo</Text></View>
+              : <View style={ls.photoPlaceholder}><Text style={ls.photoPlaceholderText}>{t('createItinerary.addCoverPhoto')}</Text></View>
             }
             <View style={ls.photoOverlay}>
-              <Text style={ls.photoOverlayText}>📷 Change photo</Text>
+              <Text style={ls.photoOverlayText}>{t('createItinerary.changePhoto')}</Text>
             </View>
           </TouchableOpacity>
 
           {/* Basic Info */}
-          <Card title="Basic Info">
+          <Card title={t('createItinerary.basicInfo')}>
             <Field label="Title" error={errors.title} hint={`${title.length}/50`} hintWarn={title.length > 45}>
               <TextInput
                 style={[s.input, errors.title && s.inputError]}
                 value={title}
                 onChangeText={v => { setTitle(v); setErrors(e => ({ ...e, title: null })); }}
-                placeholder="A weekend in Rome…"
+                placeholder={t('createItinerary.titlePlaceholder')}
                 placeholderTextColor="#9ca3af"
                 maxLength={50}
               />
@@ -208,14 +210,14 @@ const EditItineraryScreen = ({ route, navigation }) => {
               <View style={[s.input, ls.inputDisabled]}>
                 <Text style={ls.inputDisabledText}>{itinerary?.location?.name || '-'}</Text>
               </View>
-              <Text style={ls.fieldNote}>Destination cannot be changed after creation.</Text>
+              <Text style={ls.fieldNote}>{t('editItinerary.destinationLocked')}</Text>
             </Field>
             <Field label="Description" error={errors.description} hint={`${description.length}/500`} hintWarn={description.length > 450}>
               <TextInput
                 style={[s.input, s.textarea, errors.description && s.inputError]}
                 value={description}
                 onChangeText={setDescription}
-                placeholder="What makes this trip special?"
+                placeholder={t('createItinerary.descriptionPlaceholder')}
                 placeholderTextColor="#9ca3af"
                 multiline
                 maxLength={500}

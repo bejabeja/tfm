@@ -61,7 +61,7 @@ const CreateItineraryScreen = ({ navigation }) => {
   const isDatesComplete = !!(startDate && endDate);
   const isPhotoComplete = !!photoUri;
   const isPlacesComplete = places.length > 0 && places.every(p => !!p.name.trim());
-  const isBudgetComplete = !!(parseFloat(budget) > 0 && currency);
+  const isBudgetComplete = !!currency;
   const sectionsComplete = [isBasicComplete, isDatesComplete, isPhotoComplete, isPlacesComplete, isBudgetComplete].filter(Boolean).length;
   const progress = Math.round((sectionsComplete / 5) * 100);
 
@@ -115,7 +115,7 @@ const CreateItineraryScreen = ({ navigation }) => {
     if (!startDate) e.startDate = t('createItinerary.startDateRequired');
     if (!endDate) e.endDate = t('createItinerary.endDateRequired');
     if (startDate && endDate && endDate < startDate) e.endDate = t('createItinerary.endDateAfterStart');
-    if (!budget || isNaN(parseFloat(budget))) e.budget = t('createItinerary.budgetRequired');
+    if (budget && isNaN(parseFloat(budget))) e.budget = t('createItinerary.budgetRequired');
     if (!currency) e.currency = t('createItinerary.currencyRequired');
     setErrors(e);
     return Object.keys(e).length === 0;
@@ -144,7 +144,7 @@ const CreateItineraryScreen = ({ navigation }) => {
         },
         startDate,
         endDate,
-        budget: Number(budget),
+        budget: budget ? Number(budget) : null,
         currency,
         numberOfPeople: travellers,
         category,

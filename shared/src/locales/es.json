@@ -272,6 +272,7 @@
     "destination": "Destino",
     "duration": "Duración",
     "budget": "Presupuesto",
+    "budgetNotSpecified": "No especificado",
     "travelers": "Viajeros",
     "tripArea": "Área del viaje",
     "places": "Lugares",
@@ -438,6 +439,12 @@
     "budgetRequired": "Se requiere un presupuesto válido",
     "currencyRequired": "La moneda es obligatoria",
     "errorCreate": "No se pudo crear el itinerario. Por favor, inténtalo más tarde."
+  },
+  "editItinerary": {
+    "title": "Editar itinerario",
+    "loadError": "No se pudo cargar el itinerario.",
+    "destinationLocked": "El destino no se puede cambiar después de crear el itinerario.",
+    "errorSave": "No se pudo guardar. Por favor, inténtalo de nuevo."
   },
   "itineraryForm": {
     "tripCategory": "Categoría del viaje",

@@ -11,7 +11,6 @@ export const updateUserSchema = z.object({
         .max(50, "Username must be less than 50 characters")
         .regex(/^\S+$/, "Username cannot contain spaces"),
     location: z.string()
-        .min(2, "Location is required")
         .max(50, "No valid location"),
     name: z
         .string()
@@ -123,7 +122,7 @@ export const createItinerarySchema = z
         budget: z
             .string()
             .optional()
-            .transform(val => (val && !isNaN(Number(val)) ? parseFloat(val) : 0)),
+            .transform(val => (val && !isNaN(Number(val)) ? parseFloat(val) : null)),
 
         currency: z
             .string()

@@ -272,6 +272,7 @@
     "destination": "Destination",
     "duration": "Duration",
     "budget": "Budget",
+    "budgetNotSpecified": "Not specified",
     "travelers": "Travellers",
     "tripArea": "Trip area",
     "places": "Places",
@@ -461,6 +462,12 @@
     "budgetRequired": "Valid budget required",
     "currencyRequired": "Currency required",
     "errorCreate": "Failed to create itinerary. Please try again."
+  },
+  "editItinerary": {
+    "title": "Edit Itinerary",
+    "loadError": "Could not load itinerary.",
+    "destinationLocked": "Destination cannot be changed after creation.",
+    "errorSave": "Failed to save. Please try again."
   },
   "itineraryForm": {
     "tripCategory": "Trip Category",

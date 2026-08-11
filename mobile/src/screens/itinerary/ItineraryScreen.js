@@ -86,8 +86,9 @@ const ItineraryScreen = ({ route, navigation }) => {
 
   const isMyItinerary = me?.id === itinerary.userId;
   const currencySymbol = getCurrencySymbol(itinerary.currency);
+  const hasBudget = itinerary.budget !== null && itinerary.budget !== undefined && itinerary.budget !== '';
   const budget = parseFloat(itinerary.budget);
-  const perPerson = itinerary.numberOfPeople > 1 && !isNaN(budget)
+  const perPerson = hasBudget && itinerary.numberOfPeople > 1 && !isNaN(budget)
     ? formatBudget(budget / itinerary.numberOfPeople)
     : null;
 
@@ -100,11 +101,13 @@ const ItineraryScreen = ({ route, navigation }) => {
 
   const handleFavorite = async () => {
     if (!isAuthenticated) { navigation.navigate('Tabs', { screen: 'Profile' }); return; }
+    const wasFavorite = isFavorite;
+    setIsFavorite(!wasFavorite);
     try {
-      if (isFavorite) await removeFavorite(itinerary.id);
+      if (wasFavorite) await removeFavorite(itinerary.id);
       else await addFavorite(itinerary.id);
-      setIsFavorite(f => !f);
     } catch {
+      setIsFavorite(wasFavorite);
       Alert.alert(t('errors.somethingWrong'), t('itinerary.errorFavorite'));
     }
   };
@@ -273,7 +276,7 @@ const ItineraryScreen = ({ route, navigation }) => {
           <StatCard
             icon="💰"
             label={t('itinerary.budget')}
-            value={`${formatBudget(itinerary.budget)} ${currencySymbol || itinerary.currency}`}
+            value={hasBudget ? `${formatBudget(itinerary.budget)} ${currencySymbol || itinerary.currency}` : t('itinerary.budgetNotSpecified')}
             subvalue={perPerson ? `${currencySymbol || ''}${perPerson}${t('itinerary.perPerson')}` : null}
           />
           <StatCard

@@ -232,16 +232,18 @@ const Hero = ({
 
   const handleSave = async () => {
     if (!isAuthenticated) { navigate("/login"); return; }
+    const wasFavorite = isFavorite;
+    setIsFavorite(!wasFavorite);
     try {
-      if (!isFavorite) {
+      if (!wasFavorite) {
         await addFavorite(itinerary.id);
         toast.success(t("itinerary.addedToFavorites"));
       } else {
         await removeFavorite(itinerary.id);
         toast.success(t("itinerary.removedFromFavorites"));
       }
-      setIsFavorite(!isFavorite);
     } catch {
+      setIsFavorite(wasFavorite);
       toast.error(t("itinerary.errorFavorites"));
     }
   };
@@ -337,9 +339,10 @@ const formatBudget = (budget) => {
 
 const Stats = ({ itinerary, hasDescription, t }) => {
   const currencySymbol = getCurrencySymbol(itinerary.currency);
+  const hasBudget = itinerary.budget !== null && itinerary.budget !== undefined && itinerary.budget !== "";
   const budget = parseFloat(itinerary.budget);
   const perPerson =
-    itinerary.numberOfPeople > 1 && !isNaN(budget)
+    hasBudget && itinerary.numberOfPeople > 1 && !isNaN(budget)
       ? formatBudget(budget / itinerary.numberOfPeople)
       : null;
   return (
@@ -362,12 +365,16 @@ const Stats = ({ itinerary, hasDescription, t }) => {
         </div>
         <span className="itinerary__stat-label">{t("itinerary.budget")}</span>
         <span className="itinerary__stat-value">
-          {formatBudget(itinerary.budget)}{currencySymbol ? "" : ` ${itinerary.currency}`}
-          {perPerson && (
-            <span className="itinerary__stat-subvalue">
-              {` · ${currencySymbol || ""}${perPerson}${t("itinerary.perPerson")}`}
-            </span>
-          )}
+          {hasBudget ? (
+            <>
+              {formatBudget(itinerary.budget)}{currencySymbol ? "" : ` ${itinerary.currency}`}
+              {perPerson && (
+                <span className="itinerary__stat-subvalue">
+                  {` · ${currencySymbol || ""}${perPerson}${t("itinerary.perPerson")}`}
+                </span>
+              )}
+            </>
+          ) : t("itinerary.budgetNotSpecified")}
         </span>
       </div>
       <div className="itinerary__stat">

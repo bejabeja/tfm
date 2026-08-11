@@ -110,7 +110,7 @@ const EditItinerary = () => {
         description: response.description,
         startDate: response.startDate.split("T")[0],
         endDate: response.endDate.split("T")[0],
-        budget: response.budget?.toString(),
+        budget: response.budget?.toString() ?? "",
         currency: response.currency,
         numberOfTravellers: response.numberOfPeople.toString(),
         category: response.category,
@@ -165,7 +165,7 @@ const EditItinerary = () => {
       },
       startDate: data.startDate,
       endDate: data.endDate,
-      budget: Number(data.budget),
+      budget: data.budget,
       currency: data.currency,
       numberOfPeople: Number(data.numberOfTravellers),
       places: data.places.map((place, index) => ({
