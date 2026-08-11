@@ -129,6 +129,8 @@ const RegisterScreen = ({ navigation }) => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                textContentType="emailAddress"
+                autoComplete="email"
                 error={errors.email}
               />
 
@@ -138,6 +140,8 @@ const RegisterScreen = ({ navigation }) => {
                 onChangeText={v => { setUsername(v); clearError('username'); }}
                 autoCapitalize="none"
                 autoCorrect={false}
+                textContentType="username"
+                autoComplete="username-new"
                 error={errors.username}
                 right={
                   usernameStatus && (
@@ -157,6 +161,8 @@ const RegisterScreen = ({ navigation }) => {
                 value={password}
                 onChangeText={v => { setPassword(v); clearError('password'); }}
                 secureTextEntry={!showPassword}
+                textContentType="newPassword"
+                autoComplete="password-new"
                 error={errors.password}
                 right={
                   <TouchableOpacity onPress={() => setShowPassword(s => !s)} style={styles.eyeBtn}>
@@ -164,12 +170,15 @@ const RegisterScreen = ({ navigation }) => {
                   </TouchableOpacity>
                 }
               />
+              <Text style={fieldStyles.hint}>{t('errors.passwordMin')}</Text>
 
               <Field
                 label="Confirm password"
                 value={confirmPassword}
                 onChangeText={v => { setConfirmPassword(v); clearError('confirmPassword'); }}
                 secureTextEntry={!showConfirm}
+                textContentType="newPassword"
+                autoComplete="password-new"
                 error={errors.confirmPassword}
                 right={
                   <TouchableOpacity onPress={() => setShowConfirm(s => !s)} style={styles.eyeBtn}>
@@ -369,6 +378,7 @@ const fieldStyles = StyleSheet.create({
   rowError: { borderColor: '#dc2626' },
   input: { flex: 1, paddingVertical: 13, paddingHorizontal: 14, fontSize: 15, color: '#111827' },
   error: { fontSize: 12, color: '#dc2626', marginTop: 4 },
+  hint: { fontSize: 12, color: '#6b7280', marginBottom: 12 },
 });
 
 export default RegisterScreen;

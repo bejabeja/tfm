@@ -83,12 +83,15 @@ const ResetPassword = () => {
                 label="New password"
                 control={control}
                 error={errors.newPassword}
+                autoComplete="new-password"
+                hint={t("errors.passwordMin")}
               />
               <PasswordInputForm
                 name="confirmPassword"
                 label="Confirm new password"
                 control={control}
                 error={errors.confirmPassword}
+                autoComplete="new-password"
               />
 
               <div className="auth__form-error" role="alert" aria-live="assertive">

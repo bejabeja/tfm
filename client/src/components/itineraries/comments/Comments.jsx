@@ -40,12 +40,16 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
   }, [itineraryId]);
 
   const handleAddComment = async () => {
-    if (!newComment.trim()) return;
+    if (!newComment.trim() || loading) return;
     setLoading(true);
     try {
-      await addComment(itineraryId, newComment);
+      const comment = await addComment(itineraryId, newComment);
+      setComments((prev) => {
+        const next = [...prev, comment];
+        dispatch(updateCommentsCount(itineraryId, next.length));
+        return next;
+      });
       setNewComment("");
-      await fetchComments();
     } catch (error) {
       console.error("Failed to add comment", error);
       toast.error(t("comments.couldNotPost"));
@@ -66,7 +70,7 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
 
   return (
     <div className="comments">
-      <h2 className="comments__title">{t("comments.title")}</h2>
+      <h2 className="comments__title">{t("comments.title")} ({comments.length})</h2>
 
       <div className="comments__list">
         {comments.length > 0 ? (
@@ -78,7 +82,7 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
               <div className="comment__body">
                 <strong>@{comment.user?.username}</strong>
                 <p>{comment.content}</p>
-                <span className="comment__timestamp">{comment.postedAgo}</span>
+                {comment.postedAgo && <span className="comment__timestamp">{comment.postedAgo}</span>}
                 {isAuthenticated && comment.user?.id === userMe?.id && (
                   <div>
                     <button
@@ -96,9 +100,9 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
               </div>
             </div>
           ))
-        ) : isAuthenticated ? (
+        ) : (
           <p className="comments__empty">{t("comments.beFirst")}</p>
-        ) : null}
+        )}
       </div>
 
       {isAuthenticated ? (

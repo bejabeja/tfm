@@ -43,4 +43,12 @@ export const itineraryCategories = [
   { value: "other", label: "Other" },
 ];
 
+export const DEFAULT_AI_PACE = "normal";
+
+export const aiPaceOptions = [
+  { value: "relaxed", placesPerDay: 2, labelKey: "paceRelaxed", descKey: "paceRelaxedDesc" },
+  { value: "normal", placesPerDay: 3, labelKey: "paceNormal", descKey: "paceNormalDesc" },
+  { value: "intense", placesPerDay: 4, labelKey: "paceIntense", descKey: "paceIntenseDesc" },
+];
+
 

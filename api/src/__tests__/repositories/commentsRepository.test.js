@@ -9,6 +9,27 @@ vi.mock('uuid', () => ({ v4: vi.fn(() => 'mock-uuid') }));
 import client from '../../db/clientPostgres.js';
 import { CommentsRepository } from '../../repositories/commentsRepository.js';
 
+describe('CommentsRepository.addComment()', () => {
+    const repo = new CommentsRepository();
+
+    // Regression coverage: addComment used to INSERT ... RETURNING * with no join to
+    // users, so the comment it handed back to the controller had `user.username`
+    // undefined until the page refetched comments (which does join). Callers that
+    // render this return value directly (optimistic inserts on web and mobile) showed
+    // a blank "@" and a blank avatar right after posting.
+    it('returns a comment with the poster\'s username, not just their id', async () => {
+        client.query
+            .mockResolvedValueOnce({
+                rows: [{ id: 'mock-uuid', content: 'Nice trip!', user_id: 'u1', username: 'jane', itinerary_id: 'itin-1', created_at: new Date() }],
+            })
+            .mockResolvedValueOnce({ rows: [] });
+
+        const comment = await repo.addComment('u1', 'itin-1', 'Nice trip!');
+
+        expect(comment.user).toEqual({ id: 'u1', username: 'jane' });
+    });
+});
+
 describe('CommentsRepository.getCommentById()', () => {
     const repo = new CommentsRepository();
 

@@ -169,7 +169,7 @@ const Itinerary = () => {
           </aside>
         </div>
 
-        <div className="itinerary__comments">
+        <div className="itinerary__comments" id="comments">
           <Comments itineraryId={itinerary.id} isAuthenticated={isAuthenticated} />
         </div>
       </div>
@@ -264,6 +264,9 @@ const Hero = ({
       <div className="itinerary__hero-content">
         {itinerary.category !== "other" && (
           <span className="itinerary__badge">{itinerary.category}</span>
+        )}
+        {isMyItinerary && itinerary.isPublic === false && (
+          <span className="itinerary__badge itinerary__badge--private">🔒 {t("itinerary.privateOwnerBadge")}</span>
         )}
         <h1 className="itinerary__hero-title">{itinerary.title}</h1>
         <div className="itinerary__hero-meta">

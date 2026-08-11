@@ -136,6 +136,12 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
     width: fit-content;
+
+    &--private {
+      text-transform: none;
+      letter-spacing: normal;
+      margin-top: 0.4rem;
+    }
   }
 
   &__body {

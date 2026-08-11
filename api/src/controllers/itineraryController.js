@@ -49,9 +49,9 @@ export class ItineraryController {
 
     async generateSmartItinerary(req, res, next) {
         try {
-            const { destination, days, category, numberOfTravellers, budget, currency, intention, language } = req.body;
+            const { destination, days, category, numberOfTravellers, budget, currency, intention, language, pace } = req.body;
             const itinerary = await this.itineraryService.generateSmartItinerary(destination, days, {
-                category, numberOfTravellers, budget, currency, intention, language,
+                category, numberOfTravellers, budget, currency, intention, language, pace,
             });
             res.status(200).json(itinerary)
         } catch (error) {

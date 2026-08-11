@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import {
-  Alert, KeyboardAvoidingView, Platform, ScrollView,
+  Alert, KeyboardAvoidingView, Linking, Platform, ScrollView,
   StyleSheet, Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -8,6 +8,8 @@ import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
 import { contactSchema, selectMe, selectAuthUser, sendContact } from '@tobeatraveller/shared';
 import { shadow } from '../../utils/styles';
+
+const CONTACT_EMAIL = 'tobeatravellercompany@gmail.com';
 
 const ContactScreen = ({ navigation }) => {
   const { t } = useTranslation();
@@ -52,7 +54,14 @@ const ContactScreen = ({ navigation }) => {
       await sendContact(fields);
       setSent(true);
     } catch {
-      Alert.alert(t('errors.somethingWrong'), t('errors.couldNotSend'));
+      Alert.alert(
+        t('errors.somethingWrong'),
+        t('errors.couldNotSend'),
+        [
+          { text: t('common.cancel'), style: 'cancel' },
+          { text: t('contact.emailUsDirectly'), onPress: () => Linking.openURL(`mailto:${CONTACT_EMAIL}`) },
+        ]
+      );
     } finally {
       setLoading(false);
     }

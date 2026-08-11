@@ -1,7 +1,11 @@
 import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { useDispatch, useSelector } from "react-redux";
 import { sendContact } from "@tobeatraveller/shared";
+import { selectAuthUser } from "../../store/auth/authSelectors";
+import { setUserInfo } from "../../store/user/userInfoActions";
+import { selectMe } from "../../store/user/userInfoSelectors";
 import { contactSchema } from "../../utils/schemasValidation";
 import "./Legal.scss";
 import "./Contact.scss";
@@ -9,6 +13,10 @@ const CONTACT_EMAIL = "tobeatravellercompany@gmail.com";
 
 const Contact = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const meDetail = useSelector(selectMe);
+  const authUser = useSelector(selectAuthUser);
+  const me = meDetail ?? authUser;
 
   useEffect(() => {
     document.title = `${t("contact.title")} - ToBeATraveller`;
@@ -16,7 +24,25 @@ const Contact = () => {
     return () => { document.title = "ToBeATraveller"; };
   }, [t]);
 
-  const [fields, setFields] = useState({ name: "", email: "", subject: "", message: "" });
+  useEffect(() => {
+    if (authUser?.id && !meDetail) dispatch(setUserInfo(authUser.id));
+  }, [authUser?.id, meDetail, dispatch]);
+
+  const [fields, setFields] = useState({
+    name: me?.name || me?.username || "",
+    email: me?.email || "",
+    subject: "",
+    message: "",
+  });
+
+  useEffect(() => {
+    if (!me) return;
+    setFields((prev) => ({
+      ...prev,
+      name: prev.name || me.name || me.username || "",
+      email: prev.email || me.email || "",
+    }));
+  }, [me]);
   const [status, setStatus] = useState("idle"); // idle | sending | success | error
   const [errors, setErrors] = useState({});
 

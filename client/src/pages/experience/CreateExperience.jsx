@@ -25,6 +25,7 @@ import {
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { aiPaceOptions, DEFAULT_AI_PACE } from "@tobeatraveller/shared";
 import Modal from "../../components/modal/Modal";
 import ImageUpload from "../itinerary/sectionsForm/ImageUpload";
 import { GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary } from "../../services/itineraries";
@@ -137,6 +138,7 @@ const CreateExperience = () => {
   const [days, setDays]                 = useState(7);
   const [category, setCategory]         = useState("adventure");
   const [travelers, setTravelers]       = useState(1);
+  const [pace, setPace]                 = useState(DEFAULT_AI_PACE);
   const [intention, setIntention]       = useState("");
   const [generating, setGenerating]     = useState(false);
   const [isPublic, setIsPublic]         = useState(NEW_ITINERARY_DEFAULT_VISIBILITY);
@@ -191,6 +193,7 @@ const CreateExperience = () => {
         numberOfTravellers: travelers, budget: null, currency: "EUR",
         intention: intention.trim() || undefined,
         language: i18n.language,
+        pace,
       });
       const generated = (data.places ?? []).map((p, i) => ({
         _key: `ai-${i}`,
@@ -409,6 +412,24 @@ const CreateExperience = () => {
             </div>
           </div>
 
+          {/* Pace */}
+          <div className="cexp__section">
+            <label className="cexp__label">{ce("paceLabel")}</label>
+            <div className="cexp__pace-row">
+              {aiPaceOptions.map(({ value, labelKey, descKey }) => (
+                <button
+                  key={value}
+                  type="button"
+                  className={`cexp__pace-opt ${pace === value ? "cexp__pace-opt--on" : ""}`}
+                  onClick={() => setPace(value)}
+                >
+                  <span className="cexp__pace-opt-name">{ce(labelKey)}</span>
+                  <span className="cexp__pace-opt-desc">{ce(descKey)}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Intention */}
           <div className="cexp__section">
             <label className="cexp__label cexp__label--intention">
@@ -422,7 +443,10 @@ const CreateExperience = () => {
               rows={3}
               maxLength={400}
             />
-            <span className="cexp__intention-hint">{ce("intentionHint")}</span>
+            <div className="cexp__intention-footer">
+              <span className="cexp__intention-hint">{ce("intentionHint")}</span>
+              <span className="cexp__intention-counter">{intention.length}/400</span>
+            </div>
           </div>
 
           {/* Visibility */}
@@ -472,7 +496,10 @@ const CreateExperience = () => {
 
           {/* Title card */}
           <div className="cexp__card">
-            <span className="cexp__card-label">{ce("experienceName")}</span>
+            <div className="cexp__card-label-row">
+              <span className="cexp__card-label">{ce("experienceName")}</span>
+              <span className="cexp__title-counter">{title.length}/50</span>
+            </div>
             <input
               className="cexp__title-input"
               value={title}

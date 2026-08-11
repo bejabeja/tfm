@@ -22,7 +22,7 @@ export class CommentsService {
             }).catch(() => {});
         }
 
-        return result;
+        return result.toDTO();
     }
 
     async getCommentsByItinerary(itineraryId, requestingUserId) {

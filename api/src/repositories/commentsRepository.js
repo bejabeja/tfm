@@ -6,8 +6,14 @@ export class CommentsRepository {
   async addComment(userId, itineraryId, content) {
     const id = uuidv4();
     const result = await client.query(
-      `INSERT INTO itinerary_comments (id, user_id, itinerary_id, content)
-       VALUES ($1, $2, $3, $4) RETURNING *;`,
+      `WITH inserted AS (
+         INSERT INTO itinerary_comments (id, user_id, itinerary_id, content)
+         VALUES ($1, $2, $3, $4)
+         RETURNING *
+       )
+       SELECT inserted.*, u.username
+       FROM inserted
+       JOIN users u ON u.id = inserted.user_id;`,
       [id, userId, itineraryId, content]
     );
     await client.query(

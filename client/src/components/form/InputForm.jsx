@@ -33,6 +33,7 @@ export const InputForm = ({
   maxLength,
   prefix,
   right,
+  autoComplete,
 }) => {
   const errorId = `${name}-error`;
 
@@ -52,6 +53,7 @@ export const InputForm = ({
                 <input
                   id={name}
                   type={type}
+                  autoComplete={autoComplete}
                   {...field}
                   {...inputProps}
                   maxLength={maxLength}
@@ -65,6 +67,7 @@ export const InputForm = ({
                 <input
                   id={name}
                   type={type}
+                  autoComplete={autoComplete}
                   {...field}
                   {...inputProps}
                   maxLength={maxLength}
@@ -78,6 +81,7 @@ export const InputForm = ({
               <input
                 id={name}
                 type={type}
+                autoComplete={autoComplete}
                 {...field}
                 {...inputProps}
                 maxLength={maxLength}

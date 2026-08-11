@@ -301,6 +301,21 @@
   gap: 0.4rem;
 }
 
+.form__ai-controls {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.form__ai-pace-select {
+  font-size: 0.78rem;
+  border: 1px solid var(--border-color, #e8ecf0);
+  border-radius: 8px;
+  padding: 0.35rem 0.5rem;
+  background: #fff;
+  color: var(--text-color);
+}
+
 .form__ai-btn {
   gap: 0.4rem;
 

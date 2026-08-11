@@ -57,8 +57,16 @@ const ForgotPasswordScreen = ({ navigation }) => {
               boldStyle={styles.subtitleBold}
             />
             <Text style={styles.browserNote}>{t('auth.resetOpensInBrowser')}</Text>
-            <TouchableOpacity style={styles.btn} onPress={() => navigation.navigate('Login')}>
-              <Text style={styles.btnText}>{t('auth.backToSignIn')}</Text>
+            {error ? <Text style={styles.errorText}>{error}</Text> : null}
+            <TouchableOpacity
+              style={[styles.btn, loading && styles.btnDisabled]}
+              onPress={handleSubmit}
+              disabled={loading}
+            >
+              <Text style={styles.btnText}>{loading ? t('common.sending') : t('auth.resendLink')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity onPress={() => navigation.navigate('Login')}>
+              <Text style={styles.link}>{t('auth.backToSignIn')}</Text>
             </TouchableOpacity>
           </View>
         ) : (

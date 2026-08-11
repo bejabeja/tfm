@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { MdClose, MdKeyboardArrowDown, MdKeyboardArrowUp, MdOutlineExplore } from "react-icons/md";
 import { RiSparklingLine } from "react-icons/ri";
 import toast from "react-hot-toast";
+import { aiPaceOptions, DEFAULT_AI_PACE } from "@tobeatraveller/shared";
 import { getCategoryIcon } from "../../../assets/icons";
 import AutocompletePlaceInput from "../../../components/form/AutocompletePlaceInput";
 import Modal from "../../../components/modal/Modal";
@@ -25,6 +26,7 @@ const PlacesForm = ({
   const [confirmRemoveDay, setConfirmRemoveDay] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showRegenConfirm, setShowRegenConfirm] = useState(false);
+  const [pace, setPace] = useState(DEFAULT_AI_PACE);
 
   useEffect(() => {
     if (isPublic && !prevIsPublic.current) {
@@ -91,7 +93,7 @@ const PlacesForm = ({
     try {
       const data = await generateSmartItinerary({
         destination: destination.name, days: totalDays,
-        category, numberOfTravellers, budget, currency,
+        category, numberOfTravellers, budget, currency, pace,
       });
       const generatedPlaces = data.places.map((p) => ({
         description: p.description,
@@ -129,16 +131,31 @@ const PlacesForm = ({
           )}
           {isComplete && <span className="form__section-check">✓</span>}
         </h2>
-        <button
-          type="button"
-          className="btn btn--secondary btn--sm form__ai-btn"
-          onClick={handleGenerateWithAI}
-          disabled={isGenerating || !destination?.name}
-          title={!destination?.name ? f("setDestinationFirst") : f("generateWithAI")}
-        >
-          <RiSparklingLine />
-          {isGenerating ? f("generating") : f("generateWithAI")}
-        </button>
+        <div className="form__ai-controls">
+          <select
+            className="form__ai-pace-select"
+            value={pace}
+            onChange={(e) => setPace(e.target.value)}
+            disabled={isGenerating}
+            aria-label={f("paceLabel")}
+          >
+            {aiPaceOptions.map(({ value, labelKey }) => (
+              <option key={value} value={value}>
+                {f(labelKey)}
+              </option>
+            ))}
+          </select>
+          <button
+            type="button"
+            className="btn btn--secondary btn--sm form__ai-btn"
+            onClick={handleGenerateWithAI}
+            disabled={isGenerating || !destination?.name}
+            title={!destination?.name ? f("setDestinationFirst") : f("generateWithAIHint")}
+          >
+            <RiSparklingLine />
+            {isGenerating ? f("generating") : f("generateWithAI")}
+          </button>
+        </div>
       </div>
 
       {tripDays > days.length && (

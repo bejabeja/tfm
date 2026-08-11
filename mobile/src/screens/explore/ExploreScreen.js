@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import {
-  ActivityIndicator, FlatList, Modal, RefreshControl, ScrollView,
+  ActivityIndicator, Alert, FlatList, Modal, RefreshControl, ScrollView,
   StyleSheet, Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -170,6 +170,7 @@ const ExploreScreen = ({ navigation, route }) => {
               key={cat.value}
               style={[styles.catChip, category === cat.value && styles.catChipSelected]}
               onPress={() => setCategory(prev => prev === cat.value ? '' : cat.value)}
+              onLongPress={() => Alert.alert(cat.label, t(`createExperience.catDetails.${cat.value}`))}
             >
               <Text style={styles.catEmoji}>{CATEGORY_EMOJI[cat.value]}</Text>
               <Text style={[styles.catLabel, category === cat.value && styles.catLabelSelected]}>

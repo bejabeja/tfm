@@ -102,17 +102,19 @@ const ProfileScreen = ({ route, navigation }) => {
 
   const handleFollowToggle = async () => {
     if (!isAuthenticated) { navigation.navigate('Tabs', { screen: 'Profile' }); return; }
+    const wasFollowing = isFollowing;
+    setIsFollowing(!wasFollowing);
     setFollowLoading(true);
     try {
-      if (isFollowing) {
+      if (wasFollowing) {
         await unfollowUser(profileId);
-        setIsFollowing(false);
       } else {
         await followUser(profileId);
-        setIsFollowing(true);
       }
       if (me?.id) dispatch(setUserInfo(me.id));
-    } catch {}
+    } catch {
+      setIsFollowing(wasFollowing);
+    }
     finally { setFollowLoading(false); }
   };
 

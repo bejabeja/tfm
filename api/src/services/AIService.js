@@ -1,12 +1,20 @@
 import Groq from 'groq-sdk';
 
+const PLACES_PER_DAY_BY_PACE = {
+  relaxed: 2,
+  normal: 3,
+  intense: 4,
+};
+const DEFAULT_PACE = 'normal';
+
 export class AIService {
   constructor() {
     this.client = new Groq({ apiKey: process.env.GROQ_API_KEY });
   }
 
   async generateTextPrompt(destination, totalDays, context = {}) {
-    const { category, numberOfTravellers, budget, currency, intention, language } = context;
+    const { category, numberOfTravellers, budget, currency, intention, language, pace } = context;
+    const placesPerDay = PLACES_PER_DAY_BY_PACE[pace] ?? PLACES_PER_DAY_BY_PACE[DEFAULT_PACE];
 
     const contextLines = [
       category && category !== 'other' ? `- Trip style: ${category}` : null,
@@ -37,7 +45,7 @@ ${intentionBlock}
 ${contextLines ? `Trip context:\n${contextLines}` : ''}
 ${languageInstruction}
 
-Generate exactly ${totalDays * 3} places total: 3 per day, days 1 to ${totalDays}.
+Generate exactly ${totalDays * placesPerDay} places total: ${placesPerDay} per day, days 1 to ${totalDays}.
 
 Each place must be a JSON object with:
 - title: name of the place or activity (string)

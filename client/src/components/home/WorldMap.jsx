@@ -2,6 +2,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { useEffect, useState } from "react";
 import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
+import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { getDestinations } from "../../services/itineraries";
 import "./WorldMap.scss";
@@ -15,6 +16,7 @@ const createDestinationMarker = (count) =>
   });
 
 const WorldMap = () => {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const [destinations, setDestinations] = useState([]);
 
@@ -51,7 +53,7 @@ const WorldMap = () => {
           >
             <Tooltip direction="top" offset={[0, -20]}>
               <strong>{dest.name}</strong>
-              <span>{dest.count} {dest.count === 1 ? "itinerary" : "itineraries"}</span>
+              <span>{t("home.worldMapItineraryCount", { count: dest.count })}</span>
             </Tooltip>
           </Marker>
         ))}

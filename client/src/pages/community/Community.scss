@@ -126,6 +126,17 @@
     font-style: italic;
   }
 
+  &__clear-search {
+    margin-top: 0.5rem;
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-style: normal;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+  }
+
   // Guest / non-authenticated view
   &__guest-preview {
     position: relative;

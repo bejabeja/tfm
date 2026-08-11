@@ -24,7 +24,8 @@ export const addComment = async (itineraryId, commentText) => {
     if (!response.ok) {
         await parseError(response, 'Failed to post comment');
     }
-    return response.json();
+    const { comment } = await response.json();
+    return comment;
 };
 
 export const deleteComment = async (commentId) => {

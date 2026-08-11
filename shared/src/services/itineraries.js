@@ -52,14 +52,14 @@ export const getfeaturedItineraries = async () => {
     return response.json();
 }
 
-export const generateSmartItinerary = async ({ destination, days, category, numberOfTravellers, budget, currency, intention, language }) => {
+export const generateSmartItinerary = async ({ destination, days, category, numberOfTravellers, budget, currency, intention, language, pace }) => {
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), GENERATE_TIMEOUT_MS);
     try {
         const response = await authFetch(`${baseUrl()}/generate-smart`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ destination, days, category, numberOfTravellers, budget, currency, intention, language }),
+            body: JSON.stringify({ destination, days, category, numberOfTravellers, budget, currency, intention, language, pace }),
             signal: controller.signal,
         });
         if (!response.ok) await parseError(response, 'Failed to generate itinerary');

@@ -6,8 +6,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import {
-  currencyOptions, GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary, getCurrencySymbol,
-  itineraryCategories, placeCategories,
+  aiPaceOptions, currencyOptions, DEFAULT_AI_PACE, GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary,
+  getCurrencySymbol, itineraryCategories, placeCategories,
 } from '@tobeatraveller/shared';
 import { COLORS, shadow } from '../../utils/styles';
 import { STEP_CONFIG, STEP_NAME_HINT, getStepConfig } from '../../utils/stepConfig';
@@ -358,6 +358,7 @@ export const PlacesSection = ({
 }) => {
   const { t } = useTranslation();
   const [generating, setGenerating] = useState(false);
+  const [pace, setPace] = useState(DEFAULT_AI_PACE);
 
   const addPlace = (dayNumber) =>
     setPlaces(prev => [...prev, {
@@ -459,6 +460,7 @@ export const PlacesSection = ({
         numberOfTravellers: travellers,
         budget,
         currency,
+        pace,
       });
       const generated = (data.places ?? []).map((p, i) => ({
         _key: `ai-${i}-${Date.now()}`,
@@ -489,6 +491,21 @@ export const PlacesSection = ({
 
   return (
     <Card title={t('itineraryForm.placesCount', { count: places.length })} badge={complete}>
+      {/* Pace selector */}
+      <View style={s.paceRow}>
+        {aiPaceOptions.map(({ value, labelKey }) => (
+          <TouchableOpacity
+            key={value}
+            style={[s.paceChip, pace === value && s.paceChipOn]}
+            onPress={() => setPace(value)}
+          >
+            <Text style={[s.paceChipText, pace === value && s.paceChipTextOn]}>
+              {t(`itineraryForm.${labelKey}`)}
+            </Text>
+          </TouchableOpacity>
+        ))}
+      </View>
+
       {/* AI generation button */}
       <View style={s.aiRow}>
         <TouchableOpacity
@@ -505,6 +522,9 @@ export const PlacesSection = ({
           <Text style={s.aiHint}>{t('itineraryForm.setDestinationFirst')}</Text>
         )}
       </View>
+      {canGenerate && !generating && places.length === 0 && (
+        <Text style={s.aiHint}>{t('itineraryForm.generateWithAIHint')}</Text>
+      )}
 
       {/* Days/dates sync nudge */}
       {showSyncHint && (
@@ -707,6 +727,14 @@ export const s = StyleSheet.create({
   aiBtnDisabled: { opacity: 0.45 },
   aiBtnText: { color: '#fff', fontWeight: '600', fontSize: 13 },
   aiHint: { fontSize: 12, color: '#9ca3af', flex: 1 },
+  paceRow: { flexDirection: 'row', gap: 6, marginBottom: 10 },
+  paceChip: {
+    borderRadius: 999, paddingVertical: 5, paddingHorizontal: 12,
+    backgroundColor: '#f1f5f9', borderWidth: 1, borderColor: '#e2e8f0',
+  },
+  paceChipOn: { backgroundColor: '#ede9fe', borderColor: '#7c3aed' },
+  paceChipText: { fontSize: 12, color: '#6b7280', fontWeight: '500' },
+  paceChipTextOn: { color: '#7c3aed', fontWeight: '700' },
 
   // Days sync nudge
   syncHint: {

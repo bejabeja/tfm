@@ -75,9 +75,9 @@ const Login = () => {
             <p className="auth__form-subtitle">{t("auth.signInSubtitle")}</p>
           </div>
 
-          <InputForm name="email" label="Email" type="email" control={control} error={errors.email} />
+          <InputForm name="email" label="Email" type="email" control={control} error={errors.email} autoComplete="email" />
           <div style={{ display: "flex", flexDirection: "column" }}>
-            <PasswordInputForm name="password" label="Password" control={control} error={errors.password} />
+            <PasswordInputForm name="password" label="Password" control={control} error={errors.password} autoComplete="current-password" />
             <Link
               to="/forgot-password"
               style={{

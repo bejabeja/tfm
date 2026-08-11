@@ -139,9 +139,10 @@ const EditProfile = () => {
             <div className="ep__fields">
               <InputForm name="name" label="Name" control={control} type="text"
                 placeholder={t("editProfile.namePlaceholder")} error={errors.name} />
-              <div className="ep__username-wrap">
+              <div className="ep__username-wrap ep__field-with-count">
                 <InputForm name="username" label="Username" control={control} type="text"
                   placeholder={t("editProfile.usernamePlaceholder")} error={errors.username} />
+                <CharCount value={usernameValue} max={50} warnAt={40} />
                 {usernameStatus && (
                   <span className={`ep__username-status ep__username-status--${usernameStatus}`} aria-live="polite">
                     {usernameStatus === "checking"  && t("common.checking")}

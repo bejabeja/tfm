@@ -156,12 +156,20 @@ const HomeScreen = ({ navigation }) => {
             <View style={styles.feedEmpty}>
               <Text style={styles.feedEmptyIcon}>🗺️</Text>
               <Text style={styles.feedEmptyTitle}>{t('home.noFeedTrips')}</Text>
-              <TouchableOpacity
-                style={styles.feedEmptyBtn}
-                onPress={() => navigation.navigate('Community')}
-              >
-                <Text style={styles.feedEmptyBtnText}>{t('home.findTravelers')}</Text>
-              </TouchableOpacity>
+              <View style={styles.feedEmptyCtas}>
+                <TouchableOpacity
+                  style={styles.feedEmptyBtn}
+                  onPress={() => navigation.navigate('Community')}
+                >
+                  <Text style={styles.feedEmptyBtnText}>{t('home.findTravelers')}</Text>
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={[styles.feedEmptyBtn, styles.feedEmptyBtnPrimary]}
+                  onPress={() => navigation.navigate('CreateItinerary')}
+                >
+                  <Text style={[styles.feedEmptyBtnText, styles.feedEmptyBtnTextPrimary]}>{t('home.shareFirstTrip')}</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           ) : (
             <View style={styles.grid}>
@@ -326,11 +334,14 @@ const styles = StyleSheet.create({
   feedEmptyIcon: { fontSize: 40 },
   feedEmptyTitle: { fontSize: 16, fontWeight: '700', color: '#111827' },
   feedEmptySub: { fontSize: 13, color: '#6b7280', textAlign: 'center' },
+  feedEmptyCtas: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center', gap: 8, marginTop: 8 },
   feedEmptyBtn: {
-    marginTop: 8, backgroundColor: COLORS.primary, borderRadius: 999,
+    backgroundColor: COLORS.primary, borderRadius: 999,
     paddingVertical: 10, paddingHorizontal: 20,
   },
   feedEmptyBtnText: { color: '#fff', fontWeight: '600', fontSize: 13 },
+  feedEmptyBtnPrimary: { backgroundColor: COLORS.accent },
+  feedEmptyBtnTextPrimary: { color: '#fff' },
 
   section: { paddingHorizontal: 16, paddingTop: 20 },
   sectionHeader: {

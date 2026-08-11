@@ -17,7 +17,7 @@ describe('CommentsService', () => {
 
     beforeEach(() => {
         commentsRepository = {
-            addComment: vi.fn().mockResolvedValue({ id: 'comment-1' }),
+            addComment: vi.fn().mockResolvedValue({ id: 'comment-1', toDTO: () => ({ id: 'comment-1' }) }),
             getCommentsByItinerary: vi.fn().mockResolvedValue([{ toDTO: () => ({ id: 'comment-1' }) }]),
         };
         itineraryRepository = { findById: vi.fn() };
@@ -67,6 +67,21 @@ describe('CommentsService', () => {
             itineraryRepository.findById.mockResolvedValue(makeItinerary({ isPublic: false, userId: 'owner-1' }));
 
             await expect(service.addComment('owner-1', 'itin-1', 'note to self')).resolves.toEqual({ id: 'comment-1' });
+        });
+
+        // Regression: addComment used to return the raw repository row (missing
+        // postedAgo, present via .toDTO()), unlike getCommentsByItinerary which always
+        // maps through .toDTO(). Callers that render the POST response directly
+        // (optimistic inserts on web and mobile) never showed a timestamp until refetch.
+        it('returns the comment through toDTO(), same as getCommentsByItinerary', async () => {
+            itineraryRepository.findById.mockResolvedValue(makeItinerary({ isPublic: true }));
+            const toDTO = vi.fn(() => ({ id: 'comment-1', postedAgo: 'just now' }));
+            commentsRepository.addComment.mockResolvedValue({ id: 'comment-1', toDTO });
+
+            const result = await service.addComment('commenter-1', 'itin-1', 'Nice trip!');
+
+            expect(toDTO).toHaveBeenCalled();
+            expect(result).toEqual({ id: 'comment-1', postedAgo: 'just now' });
         });
     });
 });

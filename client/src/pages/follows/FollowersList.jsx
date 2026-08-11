@@ -22,9 +22,11 @@ const FollowersList = () => {
     <section className="follow-list section__container">
       <h2 className="follow-list__title">{t("followers.title")}</h2>
       <div className="follow-list__grid">
-        {followers?.map((user) => (
-          <UserCard key={user.id} user={user} />
-        ))}
+        {followers?.length === 0 ? (
+          <p>{t("followers.noFollowers")}</p>
+        ) : (
+          followers?.map((user) => <UserCard key={user.id} user={user} />)
+        )}
       </div>
     </section>
   );

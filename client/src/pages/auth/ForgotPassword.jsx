@@ -82,6 +82,7 @@ const ForgotPassword = () => {
                 type="email"
                 control={control}
                 error={errors.email}
+                autoComplete="email"
               />
 
               <div className="auth__form-error" role="alert" aria-live="assertive">

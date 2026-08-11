@@ -109,6 +109,8 @@ const LoginScreen = ({ navigation, route }) => {
                 keyboardType="email-address"
                 autoCapitalize="none"
                 autoCorrect={false}
+                textContentType="emailAddress"
+                autoComplete="email"
                 error={errors.email}
               />
 
@@ -117,6 +119,8 @@ const LoginScreen = ({ navigation, route }) => {
                 value={password}
                 onChangeText={v => { setPassword(v); clearError('password'); }}
                 secureTextEntry={!showPassword}
+                textContentType="password"
+                autoComplete="password"
                 error={errors.password}
                 right={
                   <TouchableOpacity onPress={() => setShowPassword(s => !s)} style={styles.eyeBtn}>

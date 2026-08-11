@@ -253,3 +253,10 @@
   color: var(--text-secondary-color);
   font-size: 0.95rem;
 }
+
+.home__feed-empty-ctas {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}

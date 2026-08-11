@@ -32,19 +32,23 @@ export const useFollow = (targetUserId) => {
             return;
         }
 
+        const wasFollowing = isFollowing;
+        setIsFollowing(!wasFollowing);
         setIsLoadingFollow(true);
         try {
-            if (isFollowing) {
+            if (wasFollowing) {
                 await unfollowUser(targetUserId);
             } else {
                 await followUser(targetUserId);
             }
-            dispatch(setUserInfo(userMe.id));
-            dispatch(setUserInfoFollowing(userMe.id));
-            setIsFollowing((prev) => !prev);
+            if (userMe?.id) {
+                dispatch(setUserInfo(userMe.id));
+                dispatch(setUserInfoFollowing(userMe.id));
+            }
         } catch (err) {
             console.error("Failed to toggle follow:", err);
             toast.error("Could not update follow status. Please try again.");
+            setIsFollowing(wasFollowing);
         } finally {
             setIsLoadingFollow(false);
         }

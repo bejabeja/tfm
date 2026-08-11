@@ -89,6 +89,7 @@ const Filters = ({ onChange, defaultValues = {} }) => {
             key={cat.value}
             className={`filter-chip${filters.category === cat.value ? " filter-chip--active" : ""}`}
             onClick={() => toggleCategory(cat.value)}
+            title={t(`createExperience.catDetails.${cat.value}`)}
           >
             {categoryEmojis[cat.value]} {cat.label}
           </button>

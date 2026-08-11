@@ -117,7 +117,7 @@ const Signup = () => {
             <p className="auth__form-subtitle">{t("auth.createAccountSubtitle")}</p>
           </div>
 
-          <InputForm name="email" label="Email" type="email" control={control} error={errors.email} />
+          <InputForm name="email" label="Email" type="email" control={control} error={errors.email} autoComplete="email" />
 
           <InputForm
             name="username"
@@ -125,6 +125,7 @@ const Signup = () => {
             type="text"
             control={control}
             error={errors.username}
+            autoComplete="username"
             right={
               usernameStatus && (
                 <span
@@ -140,8 +141,15 @@ const Signup = () => {
             }
           />
 
-          <PasswordInputForm name="password" label="Password" control={control} error={errors.password} />
-          <PasswordInputForm name="confirmPassword" label="Confirm password" control={control} error={errors.confirmPassword} />
+          <PasswordInputForm
+            name="password"
+            label="Password"
+            control={control}
+            error={errors.password}
+            autoComplete="new-password"
+            hint={t("errors.passwordMin")}
+          />
+          <PasswordInputForm name="confirmPassword" label="Confirm password" control={control} error={errors.confirmPassword} autoComplete="new-password" />
 
           <div className="auth__consent" ref={consentRef}>
             <label className={`auth__consent-label${consentErrors.ageConfirmed ? " auth__consent-label--error" : ""}`}>

@@ -136,8 +136,17 @@ const Community = () => {
 
           {!users?.length && !loading && (
             <div className="community__no-results">
-              <p>{t("community.noTravelers")}</p>
-              <p>{t("community.tryAdjusting")}</p>
+              {searchName ? (
+                <>
+                  <p>{t("community.noTravelers")}</p>
+                  <p>{t("community.tryAdjusting")}</p>
+                  <button type="button" className="community__clear-search" onClick={handleReset}>
+                    {t("community.clearSearch")}
+                  </button>
+                </>
+              ) : (
+                <p>{t("community.noTravellersFound")}</p>
+              )}
             </div>
           )}
 

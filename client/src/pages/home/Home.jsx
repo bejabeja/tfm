@@ -99,9 +99,14 @@ const Home = () => {
             {feed.length === 0 && !feedLoading ? (
               <div className="home__feed-empty">
                 <p>{t("home.noFeedTrips")}</p>
-                <Link to="/community" className="btn btn--secondary">
-                  {t("home.findTravelers")}
-                </Link>
+                <div className="home__feed-empty-ctas">
+                  <Link to="/community" className="btn btn--secondary">
+                    {t("home.findTravelers")}
+                  </Link>
+                  <Link to="/create-itinerary" className="btn btn--primary">
+                    {t("home.shareFirstTrip")}
+                  </Link>
+                </div>
               </div>
             ) : (
               <>

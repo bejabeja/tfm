@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Controller } from "react-hook-form";
 import { FiEye, FiEyeOff } from "react-icons/fi";
 
-export const PasswordInputForm = ({ label, name, control, error }) => {
+export const PasswordInputForm = ({ label, name, control, error, hint, autoComplete }) => {
   const errorId = `${name}-error`;
   const [showPassword, setShowPassword] = useState(false);
 
@@ -19,6 +19,7 @@ export const PasswordInputForm = ({ label, name, control, error }) => {
             <input
               id={name}
               type={showPassword ? "text" : "password"}
+              autoComplete={autoComplete}
               {...field}
               className={`input__field ${error ? "input__field--invalid" : ""}`}
               aria-invalid={!!error}
@@ -36,6 +37,7 @@ export const PasswordInputForm = ({ label, name, control, error }) => {
           {showPassword ? <FiEyeOff size={18} /> : <FiEye size={18} />}
         </button>
       </div>
+      {hint && !error && <p className="input-password__hint">{hint}</p>}
       <div
         className="input__error"
         id={errorId}

@@ -195,4 +195,10 @@
       color: var(--primary-color);
     }
   }
+
+  &__hint {
+    margin: 0.25rem 0 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary-color);
+  }
 }

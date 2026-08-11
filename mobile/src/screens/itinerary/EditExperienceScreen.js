@@ -10,7 +10,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  EXISTING_ITINERARY_VISIBILITY_FALLBACK,
+  aiPaceOptions, DEFAULT_AI_PACE, EXISTING_ITINERARY_VISIBILITY_FALLBACK,
   GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary, getItineraryById, updateItinerary,
   itineraryCategories, placeCategories,
   selectAuthUser, selectMe,
@@ -62,6 +62,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
   const [days, setDays]                 = useState(7);
   const [category, setCategory]         = useState('adventure');
   const [travelers, setTravelers]       = useState(1);
+  const [pace, setPace]                 = useState(DEFAULT_AI_PACE);
   const [intention, setIntention]       = useState('');
   const [generating, setGenerating]     = useState(false);
   const [isPublic, setIsPublic]         = useState(EXISTING_ITINERARY_VISIBILITY_FALLBACK);
@@ -164,6 +165,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
         numberOfTravellers: travelers, budget: null, currency: 'EUR',
         intention: intention.trim() || undefined,
         language: i18n.language,
+        pace,
       });
       const generated = (data.places ?? []).map((p, i) => ({
         _key: `ai-${i}`, name: p.title ?? '', description: p.description ?? '',
@@ -350,6 +352,23 @@ const EditExperienceScreen = ({ navigation, route }) => {
                     <Text style={ls.catCardEmoji}>{CATEGORY_EMOJI[cat.value]}</Text>
                     <Text style={[ls.catCardName, category === cat.value && ls.catCardNameOn]}>{cat.label}</Text>
                     <Text style={ls.catCardDesc} numberOfLines={2}>{ce(`catDetails.${cat.value}`)}</Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            </View>
+
+            {/* Pace */}
+            <View style={ls.section}>
+              <Text style={ls.sectionLabel}>{ce('paceLabel')}</Text>
+              <View style={ls.visibilityRow}>
+                {aiPaceOptions.map(({ value, labelKey, descKey }) => (
+                  <TouchableOpacity
+                    key={value}
+                    style={[ls.visibilityOpt, pace === value && ls.visibilityOptOn]}
+                    onPress={() => setPace(value)}
+                  >
+                    <Text style={ls.visibilityOptName}>{ce(labelKey)}</Text>
+                    <Text style={ls.visibilityOptDesc}>{ce(descKey)}</Text>
                   </TouchableOpacity>
                 ))}
               </View>

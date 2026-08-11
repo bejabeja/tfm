@@ -232,6 +232,11 @@ const ItineraryScreen = ({ route, navigation }) => {
               <Text style={styles.badgeText}>{itinerary.category}</Text>
             </View>
           )}
+          {isMyItinerary && itinerary.isPublic === false && (
+            <View style={[styles.badge, styles.privateBadge]}>
+              <Text style={[styles.badgeText, styles.privateBadgeText]}>🔒 {t('itinerary.privateOwnerBadge')}</Text>
+            </View>
+          )}
           <Text style={styles.heroTitle}>{itinerary.title}</Text>
           <View style={styles.heroMeta}>
             <TouchableOpacity
@@ -578,8 +583,8 @@ const styles = StyleSheet.create({
     borderColor: 'rgba(255,100,100,0.3)',
   },
   actionBtnSaved: {
-    backgroundColor: 'rgba(0,119,182,0.75)',
-    borderColor: 'rgba(100,200,255,0.3)',
+    backgroundColor: 'rgba(26,83,92,0.85)',
+    borderColor: 'rgba(111,199,190,0.3)',
   },
   actionBtnLiked: {
     backgroundColor: 'rgba(230,57,70,0.85)',
@@ -605,6 +610,8 @@ const styles = StyleSheet.create({
     paddingVertical: 4, paddingHorizontal: 12, marginBottom: 10,
   },
   badgeText: { color: '#fff', fontSize: 11, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.8 },
+  privateBadge: { backgroundColor: 'rgba(0,0,0,0.55)' },
+  privateBadgeText: { textTransform: 'none', letterSpacing: 0 },
   heroTitle: {
     fontSize: 26, fontWeight: '800', color: '#fff', marginBottom: 12,
     lineHeight: 32,
