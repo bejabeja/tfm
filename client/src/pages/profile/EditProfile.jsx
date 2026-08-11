@@ -89,7 +89,8 @@ const EditProfile = () => {
       await Promise.all([dispatch(initAuthUser()), dispatch(setUserInfo(id))]);
       navigate(`/profile/${id}`);
     } catch (err) {
-      toast.error(t("errors.updateProfileFailed"));
+      const isAvatarError = err.message === "Image must be under 5 MB";
+      toast.error(isAvatarError ? err.message : t("errors.updateProfileFailed"));
       setErrorSubmit(err.message);
     }
   };
@@ -111,7 +112,7 @@ const EditProfile = () => {
           type="button"
           className={`ep__save${hasChanges ? " ep__save--active" : ""}`}
           onClick={handleSubmit(saveUser)}
-          disabled={isSubmitting || usernameStatus === "taken" || !hasChanges}
+          disabled={isSubmitting || usernameStatus === "taken" || usernameStatus === "checking" || !hasChanges}
         >
           {isSubmitting ? t("common.saving") : t("editProfile.saveProfile")}
         </button>

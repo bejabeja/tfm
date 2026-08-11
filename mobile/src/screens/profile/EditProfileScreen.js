@@ -125,7 +125,7 @@ const EditProfileScreen = ({ navigation }) => {
   };
 
   const handleSave = async () => {
-    if (!validate() || usernameStatus === 'taken') return;
+    if (!validate() || usernameStatus === 'taken' || usernameStatus === 'checking') return;
     setSaving(true);
     setSubmitError(null);
     try {
@@ -179,9 +179,9 @@ const EditProfileScreen = ({ navigation }) => {
         </TouchableOpacity>
         <Text style={styles.headerTitle}>{t('editProfile.title')}</Text>
         <TouchableOpacity
-          style={[styles.headerSave, (saving || usernameStatus === 'taken') && styles.headerSaveDisabled]}
+          style={[styles.headerSave, (saving || usernameStatus === 'taken' || usernameStatus === 'checking') && styles.headerSaveDisabled]}
           onPress={handleSave}
-          disabled={saving || usernameStatus === 'taken'}
+          disabled={saving || usernameStatus === 'taken' || usernameStatus === 'checking'}
         >
           <Text style={styles.headerSaveText}>{saving ? t('common.saving') : t('common.save')}</Text>
         </TouchableOpacity>

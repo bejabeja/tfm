@@ -1,3 +1,4 @@
+import { ValidationError } from "../errors/ValidationError.js";
 import { updateUserSchema } from "../utils/schemasValidation.js";
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -44,7 +45,7 @@ export class UserController {
 
             if (req.file) {
                 if (req.file.size > MAX_AVATAR_SIZE) {
-                    return res.status(400).json({ message: "Image must be under 5 MB" });
+                    return next(new ValidationError("Image must be under 5 MB"));
                 }
                 const currentUser = await this.userService.getUserForAuth(id);
                 const oldPublicId = extractCloudinaryPublicId(currentUser.avatarUrl);

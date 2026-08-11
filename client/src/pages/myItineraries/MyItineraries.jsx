@@ -3,7 +3,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
-import { setUserInfoItineraries } from "../../store/user/userInfoActions";
+import { selectAuthUser } from "../../store/auth/authSelectors";
+import { setUserInfo, setUserInfoItineraries } from "../../store/user/userInfoActions";
 import {
   selectMe,
   selectMeError,
@@ -18,6 +19,7 @@ import Filters from "./filters/Filters";
 const MyItineraries = () => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
+  const authUser = useSelector(selectAuthUser);
   const userMe = useSelector(selectMe);
   const myItineraries = useSelector(selectMyItineraries);
   const myItinerariesLoading = useSelector(selectMyItinerariesLoading);
@@ -37,13 +39,23 @@ const MyItineraries = () => {
 
   const hasActiveFilters = Object.values(filters).some(Boolean) || visibility !== 'all';
 
-  if (userMeError) {
-    return <div>Error: {userMeError}</div>;
-  }
-
   const handleRetry = () => {
     dispatch(setUserInfoItineraries());
   };
+
+  if (userMeError) {
+    return (
+      <div className="explore__error">
+        <p className="error-message">{t("myItineraries.errorMsg")}</p>
+        <button
+          className="btn btn--ghost"
+          onClick={() => authUser?.id && dispatch(setUserInfo(authUser.id))}
+        >
+          {t("myItineraries.tryAgain")}
+        </button>
+      </div>
+    );
+  }
 
   return (
     <section className="my-itineraries section__container">

@@ -1,15 +1,19 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
+import { selectIsAuthenticated } from '@tobeatraveller/shared';
 import { RichText } from '../../components/RichText';
 
-const onInternalLink = (navigation) => (href) => {
+const onInternalLink = (navigation, isAuthenticated) => (href) => {
   if (href === '/terms') navigation.navigate('Terms');
+  if (href === '/settings') navigation.navigate(isAuthenticated ? 'Settings' : 'Login');
 };
 
 const PrivacyPolicyScreen = ({ navigation }) => {
   const { t } = useTranslation();
   const insets = useSafeAreaInsets();
+  const isAuthenticated = useSelector(selectIsAuthenticated);
   const lp = (key, vars) => t(`legalPrivacy.${key}`, vars);
 
   return (
@@ -56,7 +60,12 @@ const PrivacyPolicyScreen = ({ navigation }) => {
           {lp('s6Items', { returnObjects: true }).map((item, i) => (
             <Bullet key={i}><RichText text={item} style={styles.bulletText} boldStyle={styles.bold} /></Bullet>
           ))}
-          <RichText text={lp('s6Body2')} style={styles.p} linkStyle={styles.link} />
+          <RichText
+            text={lp('s6Body2')}
+            style={styles.p}
+            linkStyle={styles.link}
+            onInternalLink={onInternalLink(navigation, isAuthenticated)}
+          />
           <RichText text={lp('s6Body3')} style={styles.p} linkStyle={styles.link} />
         </Section>
         <Section title={lp('s7Title')}>
@@ -76,7 +85,7 @@ const PrivacyPolicyScreen = ({ navigation }) => {
             text={lp('s11Body')}
             style={styles.p}
             linkStyle={styles.link}
-            onInternalLink={onInternalLink(navigation)}
+            onInternalLink={onInternalLink(navigation, isAuthenticated)}
           />
         </Section>
 

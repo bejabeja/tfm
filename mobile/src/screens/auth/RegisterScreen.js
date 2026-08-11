@@ -77,6 +77,8 @@ const RegisterScreen = ({ navigation }) => {
         { email: email.trim(), username: username.trim(), password, confirmPassword, termsAccepted, ageConfirmed },
         () => navigation.navigate('Onboarding')
       ));
+    } catch {
+      // authError below already reflects the failure; this only avoids an unhandled rejection.
     } finally {
       setLoading(false);
     }

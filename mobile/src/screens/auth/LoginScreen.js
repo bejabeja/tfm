@@ -48,6 +48,8 @@ const LoginScreen = ({ navigation, route }) => {
     setLoading(true);
     try {
       await dispatch(loginUser({ email: email.trim(), password }));
+    } catch {
+      // authError below already reflects the failure; this only avoids an unhandled rejection.
     } finally {
       setLoading(false);
     }
@@ -57,6 +59,8 @@ const LoginScreen = ({ navigation, route }) => {
     setGuestLoading(true);
     try {
       await dispatch(loginUser({ email: GUEST_EMAIL, password: GUEST_PASSWORD }));
+    } catch {
+      // authError below already reflects the failure; this only avoids an unhandled rejection.
     } finally {
       setGuestLoading(false);
     }
