@@ -103,7 +103,9 @@ const NotificationItem = ({ notification: n, typeLabels }) => {
   const label = typeLabels[n.type]?.(n);
   const href = n.type === "follow"
     ? `/profile/${n.actor?.id}`
-    : n.itinerary?.id ? `/itinerary/${n.itinerary.id}` : "#";
+    : n.itinerary?.id
+      ? `/itinerary/${n.itinerary.id}${n.type === "comment" && n.commentId ? `#comment-${n.commentId}` : ""}`
+      : "#";
 
   return (
     <Link to={href} className={`notif-item${n.isRead ? "" : " notif-item--unread"}`}>

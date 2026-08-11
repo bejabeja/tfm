@@ -43,7 +43,12 @@ const NotificationsScreen = ({ navigation }) => {
 
   const handlePress = (n) => {
     if (n.type === 'follow') navigation.navigate('UserProfile', { id: n.actor?.id });
-    else if (n.itinerary?.id) navigation.navigate('Itinerary', { id: n.itinerary.id });
+    else if (n.itinerary?.id) {
+      navigation.navigate('Itinerary', {
+        id: n.itinerary.id,
+        commentId: n.type === 'comment' ? n.commentId : undefined,
+      });
+    }
   };
 
   return (

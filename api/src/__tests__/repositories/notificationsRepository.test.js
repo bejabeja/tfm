@@ -93,4 +93,19 @@ describe('NotificationsRepository.getByUserId()', () => {
 
         expect(notification.count).toBe(1);
     });
+
+    it('exposes commentId so the client can deep-link to the specific comment', async () => {
+        client.query.mockResolvedValueOnce({
+            rows: [{
+                id: 'n1', type: 'comment', is_read: false,
+                last_activity_at: new Date(), actor_ids: ['a1'], comment_id: 'c1',
+                actor_id: 'a1', actor_username: 'jane', actor_avatar_url: null,
+                itinerary_id: 'itin-1', itinerary_title: 'Trip',
+            }],
+        });
+
+        const [notification] = await repo.getByUserId('u1');
+
+        expect(notification.commentId).toBe('c1');
+    });
 });

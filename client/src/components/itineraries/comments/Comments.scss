@@ -26,6 +26,11 @@
     border-radius: 8px;
     margin-bottom: 0.75rem;
     gap: 1rem;
+    transition: background-color 0.6s ease;
+
+    &--highlighted {
+      background-color: var(--primary-color-soft, rgba(0, 119, 182, 0.12));
+    }
 
     &__avatar {
       width: 36px;

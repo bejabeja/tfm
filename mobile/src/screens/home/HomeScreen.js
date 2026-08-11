@@ -12,7 +12,6 @@ import { useTranslation } from 'react-i18next';
 import {
   getDestinations,
   initFeaturedItineraries, initFeaturedUsers, initFeed,
-  refreshUnreadCount,
   selectFeaturedItineraries, selectFeaturedItinerariesLoading,
   selectFeaturedUsers, selectFeaturedUsersLoading,
   selectFeed, selectFeedLoading,
@@ -80,13 +79,6 @@ const HomeScreen = ({ navigation }) => {
     if (!users?.length) dispatch(initFeaturedUsers());
     getDestinations().then(setDestinations).catch(() => {});
   }, [dispatch]);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    dispatch(refreshUnreadCount());
-    const interval = setInterval(() => dispatch(refreshUnreadCount()), 30000);
-    return () => clearInterval(interval);
-  }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
     if (isAuthenticated && tab === 'following') dispatch(initFeed(1));

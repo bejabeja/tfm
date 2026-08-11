@@ -54,6 +54,7 @@ export class NotificationsRepository {
                 n.is_read,
                 n.last_activity_at,
                 n.actor_ids,
+                n.comment_id,
                 a.id         AS actor_id,
                 a.username   AS actor_username,
                 a.avatar_url AS actor_avatar_url,
@@ -73,6 +74,7 @@ export class NotificationsRepository {
             isRead: row.is_read,
             postedAgo: timeAgo(row.last_activity_at),
             count: row.actor_ids?.length || 1,
+            commentId: row.comment_id,
             actor: {
                 id: row.actor_id,
                 username: row.actor_username,

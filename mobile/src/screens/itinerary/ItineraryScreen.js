@@ -2,7 +2,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { Ionicons } from '@expo/vector-icons';
 import { useEffect, useRef, useState } from 'react';
 import {
-  Alert, Image, Platform, ScrollView, Share,
+  Alert, findNodeHandle, Image, Platform, ScrollView, Share,
   StyleSheet, Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -21,6 +21,7 @@ import {
   deleteItinerary, getCommentsByItineraryId, getCurrencySymbol,
   getItineraryById, getUserById, removeFavorite, toggleLike,
   selectIsAuthenticated, selectMe, MAX_COMMENT_LENGTH, updateCommentsCount,
+  COMMENT_HIGHLIGHT_DURATION_MS,
 } from '@tobeatraveller/shared';
 
 const formatBudget = (budget) => {
@@ -30,7 +31,7 @@ const formatBudget = (budget) => {
 };
 
 const ItineraryScreen = ({ route, navigation }) => {
-  const { id } = route.params;
+  const { id, commentId: targetCommentId } = route.params;
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -48,6 +49,10 @@ const ItineraryScreen = ({ route, navigation }) => {
   const [comments, setComments] = useState([]);
   const [commentText, setCommentText] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [highlightedCommentId, setHighlightedCommentId] = useState(null);
+  const scrollViewRef = useRef(null);
+  const commentNodesRef = useRef({});
+  const handledCommentIdRef = useRef(null);
 
   useEffect(() => {
     (async () => {
@@ -72,6 +77,23 @@ const ItineraryScreen = ({ route, navigation }) => {
       checkIsLiked(itinerary.id).then(d => { setIsLiked(d.isLiked); setLikesCount(d.likesCount); }).catch(() => {});
     }
   }, [itinerary?.id, isAuthenticated]);
+
+  useEffect(() => {
+    if (!targetCommentId || handledCommentIdRef.current === targetCommentId || comments.length === 0) return;
+    const commentNode = commentNodesRef.current[targetCommentId];
+    const scrollNode = findNodeHandle(scrollViewRef.current);
+    if (!commentNode || !scrollNode) return;
+    commentNode.measureLayout(
+      scrollNode,
+      (x, y) => {
+        handledCommentIdRef.current = targetCommentId;
+        scrollViewRef.current?.scrollTo({ y: Math.max(y - 24, 0), animated: true });
+        setHighlightedCommentId(targetCommentId);
+        setTimeout(() => setHighlightedCommentId(null), COMMENT_HIGHLIGHT_DURATION_MS);
+      },
+      () => {}
+    );
+  }, [targetCommentId, comments]);
 
   if (loading) return <ScrollView style={styles.container}><ItineraryDetailSkeleton /></ScrollView>;
   if (!itinerary) return (
@@ -193,7 +215,7 @@ const ItineraryScreen = ({ route, navigation }) => {
   };
 
   return (
-    <ScrollView style={styles.container} showsVerticalScrollIndicator={false}>
+    <ScrollView ref={scrollViewRef} style={styles.container} showsVerticalScrollIndicator={false}>
       {/* Hero */}
       <View style={styles.heroContainer}>
         <Image source={{ uri: itinerary.photoUrl }} style={styles.heroImage} resizeMode="cover" />
@@ -403,7 +425,14 @@ const ItineraryScreen = ({ route, navigation }) => {
           )}
 
           {comments.map((comment) => (
-            <View key={comment.id} style={styles.commentCard}>
+            <View
+              key={comment.id}
+              ref={(node) => {
+                if (node) commentNodesRef.current[comment.id] = node;
+                else delete commentNodesRef.current[comment.id];
+              }}
+              style={[styles.commentCard, highlightedCommentId === comment.id && styles.commentCardHighlighted]}
+            >
               <View style={styles.commentAvatar}>
                 {comment.user?.avatarUrl
                   ? <Image source={{ uri: comment.user.avatarUrl }} style={styles.commentAvatarImg} />
@@ -718,6 +747,9 @@ const styles = StyleSheet.create({
   commentCard: {
     flexDirection: 'row', gap: 10,
     paddingVertical: 12, borderBottomWidth: 1, borderBottomColor: '#f3f4f6',
+  },
+  commentCardHighlighted: {
+    backgroundColor: COLORS.bgLight, marginHorizontal: -16, paddingHorizontal: 16,
   },
   commentAvatar: {
     width: 34, height: 34, borderRadius: 17,

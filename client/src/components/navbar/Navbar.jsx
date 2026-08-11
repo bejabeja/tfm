@@ -15,7 +15,7 @@ import { RiUserCommunityLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { refreshUnreadCount, selectUnreadCount } from "@tobeatraveller/shared";
+import { selectUnreadCount } from "@tobeatraveller/shared";
 import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
 import { generateAvatar } from "../../utils/constants/constants";
@@ -37,13 +37,6 @@ const Navbar = () => {
   );
 
   const isAuthRoute = ["/login", "/register"].includes(location.pathname);
-
-  useEffect(() => {
-    if (!isAuthenticated) return;
-    dispatch(refreshUnreadCount());
-    const interval = setInterval(() => dispatch(refreshUnreadCount()), 30000);
-    return () => clearInterval(interval);
-  }, [isAuthenticated, dispatch]);
 
   useEffect(() => {
     setMeOpen(false);

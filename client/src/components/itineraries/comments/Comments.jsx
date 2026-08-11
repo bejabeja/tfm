@@ -1,9 +1,9 @@
 import toast from "react-hot-toast";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { MAX_COMMENT_LENGTH } from "@tobeatraveller/shared";
+import { Link, useLocation } from "react-router-dom";
+import { COMMENT_HIGHLIGHT_DURATION_MS, MAX_COMMENT_LENGTH } from "@tobeatraveller/shared";
 import {
   addComment,
   deleteComment,
@@ -17,11 +17,14 @@ import "./Comments.scss";
 
 const Comments = ({ itineraryId, isAuthenticated }) => {
   const { t } = useTranslation();
+  const location = useLocation();
   const [comments, setComments] = useState([]);
   const [newComment, setNewComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [commentToDelete, setCommentToDelete] = useState(null);
+  const [highlightedCommentId, setHighlightedCommentId] = useState(null);
+  const handledCommentHashRef = useRef(null);
 
   const dispatch = useDispatch();
   const userMe = useSelector(selectMe);
@@ -39,6 +42,18 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
   useEffect(() => {
     if (itineraryId) fetchComments();
   }, [itineraryId]);
+
+  useEffect(() => {
+    const match = location.hash.match(/^#comment-(.+)$/);
+    const targetId = match?.[1];
+    if (!targetId || handledCommentHashRef.current === targetId) return;
+    if (!comments.some((c) => c.id === targetId)) return;
+    handledCommentHashRef.current = targetId;
+    document.getElementById(`comment-${targetId}`)?.scrollIntoView({ behavior: "smooth", block: "center" });
+    setHighlightedCommentId(targetId);
+    const timeout = setTimeout(() => setHighlightedCommentId(null), COMMENT_HIGHLIGHT_DURATION_MS);
+    return () => clearTimeout(timeout);
+  }, [comments, location.hash]);
 
   const handleAddComment = async () => {
     if (!newComment.trim() || loading) return;
@@ -76,7 +91,11 @@ const Comments = ({ itineraryId, isAuthenticated }) => {
       <div className="comments__list">
         {comments.length > 0 ? (
           comments.map((comment) => (
-            <div key={comment.id} className="comment">
+            <div
+              key={comment.id}
+              id={`comment-${comment.id}`}
+              className={`comment${highlightedCommentId === comment.id ? " comment--highlighted" : ""}`}
+            >
               <div className="comment__avatar">
                 {comment.user?.avatarUrl ? (
                   <img src={comment.user.avatarUrl} alt={comment.user.username} />
