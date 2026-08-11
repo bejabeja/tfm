@@ -60,7 +60,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
   const [destResults, setDestResults]   = useState([]);
   const [destSearching, setDestSearching] = useState(false);
   const [days, setDays]                 = useState(7);
-  const [category, setCategory]         = useState(['adventure']);
+  const [category, setCategory]         = useState('adventure');
   const [travelers, setTravelers]       = useState(1);
   const [intention, setIntention]       = useState('');
   const [generating, setGenerating]     = useState(false);
@@ -81,7 +81,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
         setTitle(data.title ?? '');
         setPhotoUri(data.photoUrl || null);
         setDays(data.tripTotalDays ?? 7);
-        setCategory(data.category ? data.category.split(',') : ['adventure']);
+        setCategory((data.category || 'adventure').split(',')[0]);
         setTravelers(data.numberOfPeople ?? 1);
         setIsPublic(data.isPublic ?? EXISTING_ITINERARY_VISIBILITY_FALLBACK);
 
@@ -160,7 +160,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
     setGenerating(true);
     try {
       const data = await generateSmartItinerary({
-        destination: destination.name, days, category: category.join(', '),
+        destination: destination.name, days, category,
         numberOfTravellers: travelers, budget: null, currency: 'EUR',
         intention: intention.trim() || undefined,
         language: i18n.language,
@@ -210,7 +210,7 @@ const EditExperienceScreen = ({ navigation, route }) => {
         description: ce('autoDescription', { count: days, destination: destination.name }),
         location: { name: destination.name, label: destination.label ?? destination.name, lat: destination.coordinates?.lat ?? 0, lon: destination.coordinates?.lon ?? 0 },
         startDate: today, endDate: endObj.toISOString().split('T')[0],
-        budget: 0, currency: 'EUR', numberOfPeople: travelers, category: category.join(','), isPublic,
+        budget: 0, currency: 'EUR', numberOfPeople: travelers, category, isPublic,
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
           id: s._id,
           description: s.personalNote?.trim() ? `${s.description}\n\n✍️ ${s.personalNote.trim()}` : s.description,
@@ -343,16 +343,12 @@ const EditExperienceScreen = ({ navigation, route }) => {
                 {itineraryCategories.filter(c => c.value !== 'other').map(cat => (
                   <TouchableOpacity
                     key={cat.value}
-                    style={[ls.catCard, category.includes(cat.value) && ls.catCardOn]}
-                    onPress={() => setCategory(prev =>
-                      prev.includes(cat.value)
-                        ? prev.length > 1 ? prev.filter(c => c !== cat.value) : prev
-                        : [...prev, cat.value]
-                    )}
+                    style={[ls.catCard, category === cat.value && ls.catCardOn]}
+                    onPress={() => setCategory(cat.value)}
                     activeOpacity={0.75}
                   >
                     <Text style={ls.catCardEmoji}>{CATEGORY_EMOJI[cat.value]}</Text>
-                    <Text style={[ls.catCardName, category.includes(cat.value) && ls.catCardNameOn]}>{cat.label}</Text>
+                    <Text style={[ls.catCardName, category === cat.value && ls.catCardNameOn]}>{cat.label}</Text>
                     <Text style={ls.catCardDesc} numberOfLines={2}>{ce(`catDetails.${cat.value}`)}</Text>
                   </TouchableOpacity>
                 ))}

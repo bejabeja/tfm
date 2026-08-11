@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Dimensions, ImageBackground, KeyboardAvoidingView,
   Platform, ScrollView, StyleSheet, Text, TextInput,
@@ -16,14 +16,18 @@ const { height: SCREEN_H } = Dimensions.get('window');
 const GUEST_EMAIL = 'test.tobeatraveller@gmail.com';
 const GUEST_PASSWORD = 'testtest';
 
-const LoginScreen = ({ navigation }) => {
+const LoginScreen = ({ navigation, route }) => {
   const { t } = useTranslation();
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const authError = useSelector(selectAuthError);
 
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(route?.params?.email ?? '');
   const [password, setPassword] = useState('');
+
+  useEffect(() => {
+    if (route?.params?.email) setEmail(route.params.email);
+  }, [route?.params?.email]);
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [guestLoading, setGuestLoading] = useState(false);

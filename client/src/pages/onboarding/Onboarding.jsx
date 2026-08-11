@@ -18,7 +18,8 @@ const Onboarding = () => {
   const [loading, setLoading] = useState(true);
 
   const count = following.size;
-  const canContinue = count >= 1;
+  const noSuggestions = !loading && users.length === 0;
+  const canContinue = count >= 1 || noSuggestions;
 
   useEffect(() => {
     getSuggestedUsers().then(data => {
@@ -50,7 +51,9 @@ const Onboarding = () => {
     navigate("/");
   };
 
-  const progressLabel = count === 0
+  const progressLabel = noSuggestions
+    ? t("onboarding.readyToGo")
+    : count === 0
     ? t("onboarding.followPrompt")
     : count >= DOTS
     ? t("onboarding.readyToGo")
@@ -86,6 +89,12 @@ const Onboarding = () => {
                 </div>
               </div>
             ))}
+          </div>
+        ) : noSuggestions ? (
+          <div className="onboarding__empty">
+            <span className="onboarding__empty-emoji">🧭</span>
+            <p className="onboarding__empty-title">{t("onboarding.noSuggestionsTitle")}</p>
+            <p className="onboarding__empty-desc">{t("onboarding.noSuggestionsDesc")}</p>
           </div>
         ) : (
           <div className="onboarding__grid">

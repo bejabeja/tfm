@@ -90,6 +90,34 @@
     @media (min-width: 768px) { grid-template-columns: repeat(4, 1fr); }
   }
 
+  // ── Empty state ────────────────────────────────────────────────
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    gap: 0.4rem;
+    padding: 2.5rem 1.5rem;
+    border-radius: 16px;
+    background: var(--surface-color);
+    border: 1.5px solid var(--border-color);
+  }
+
+  &__empty-emoji { font-size: 2rem; margin-bottom: 0.25rem; }
+
+  &__empty-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--text-color);
+  }
+
+  &__empty-desc {
+    font-size: 0.875rem;
+    color: var(--text-secondary-color);
+    max-width: 360px;
+    line-height: 1.5;
+  }
+
   // ── Card ──────────────────────────────────────────────────────
   &__card {
     border-radius: 16px;

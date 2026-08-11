@@ -185,9 +185,11 @@ const Explore = () => {
             <div className="explore__no-results-icon">
               <IoSearchOutline />
             </div>
-            <p className="explore__no-results-title">{t("explore.noResultsTitle")}</p>
+            <p className="explore__no-results-title">
+              {hasActiveFilters ? t("explore.noResultsTitle") : t("explore.noItinerariesYetTitle")}
+            </p>
             <p className="explore__no-results-sub">
-              {t("explore.noResultsSub")}
+              {hasActiveFilters ? t("explore.noResultsSub") : t("explore.noItinerariesYetSub")}
             </p>
           </div>
         ) : (

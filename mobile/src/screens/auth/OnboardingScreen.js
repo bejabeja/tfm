@@ -22,7 +22,8 @@ const OnboardingScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
 
   const count = following.size;
-  const canContinue = count >= 1;
+  const noSuggestions = !loading && users.length === 0;
+  const canContinue = count >= 1 || noSuggestions;
 
   const handleFinish = () => {
     if (authUser?.id) dispatch(setUserInfo(authUser.id));
@@ -54,7 +55,9 @@ const OnboardingScreen = ({ navigation }) => {
     }
   };
 
-  const progressLabel = count === 0
+  const progressLabel = noSuggestions
+    ? t('onboarding.readyToGo')
+    : count === 0
     ? t('onboarding.followPrompt')
     : count >= DOTS
     ? t('onboarding.readyToGo')
@@ -91,6 +94,12 @@ const OnboardingScreen = ({ navigation }) => {
 
         {loading ? (
           <ActivityIndicator size="large" color="#E8743B" style={styles.loader} />
+        ) : noSuggestions ? (
+          <View style={styles.empty}>
+            <Text style={styles.emptyEmoji}>🧭</Text>
+            <Text style={styles.emptyTitle}>{t('onboarding.noSuggestionsTitle')}</Text>
+            <Text style={styles.emptyDesc}>{t('onboarding.noSuggestionsDesc')}</Text>
+          </View>
         ) : (
           <View style={styles.grid}>
             {users.map(user => (
@@ -216,6 +225,16 @@ const styles = StyleSheet.create({
   progressLabel: { fontSize: 13, color: '#6b7280', fontWeight: '500' },
 
   loader: { marginTop: 40 },
+
+  empty: {
+    alignItems: 'center', gap: 6,
+    paddingVertical: 40, paddingHorizontal: 24,
+    borderRadius: 16, backgroundColor: '#fff',
+    borderWidth: 1.5, borderColor: '#e5e7eb',
+  },
+  emptyEmoji: { fontSize: 32, marginBottom: 4 },
+  emptyTitle: { fontSize: 15, fontWeight: '700', color: '#111827' },
+  emptyDesc: { fontSize: 13, color: '#6b7280', textAlign: 'center', lineHeight: 19 },
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 10 },
 

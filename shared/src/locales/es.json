@@ -48,6 +48,7 @@
     "noAccount": "¿Nuevo por aquí?",
     "createAccountLink": "Crea una cuenta",
     "alreadyHaveAccount": "¿Ya tienes cuenta?",
+    "emailInUse": "Este email ya está registrado.",
     "exploreWithout": "Explorar sin cuenta →",
     "continueAsGuest": "Continuar como invitado",
     "forgotPassword": "¿Olvidaste tu contraseña?",
@@ -136,6 +137,8 @@
     "clearAll": "Limpiar todo",
     "noResultsTitle": "No se encontraron itinerarios",
     "noResultsSub": "Intenta ajustar tu búsqueda o filtros",
+    "noItinerariesYetTitle": "Todavía no hay itinerarios públicos",
+    "noItinerariesYetSub": "Sé el primero en compartir un viaje aquí",
     "errorMsg": "¡Vaya! Algo salió mal al cargar los itinerarios.",
     "tryAgain": "Intentar de nuevo",
     "saveLike": "Guarda viajes, dale me gusta a itinerarios y sigue a viajeros",
@@ -594,7 +597,9 @@
     "followPrompt": "Sigue al menos 1 viajero para continuar",
     "followPromptBtn": "Sigue a alguien para continuar",
     "followedCount": "{{count}} seguidos ✓",
-    "readyToGo": "¡Todo listo! 🎉"
+    "readyToGo": "¡Todo listo! 🎉",
+    "noSuggestionsTitle": "Todavía no hay sugerencias",
+    "noSuggestionsDesc": "Ahora mismo no hay nadie a quien seguir. Más adelante puedes buscar viajeros a los que seguir desde Comunidad."
   },
   "createExperience": {
     "heroInput": "Crea una Experiencia",

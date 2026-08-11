@@ -138,7 +138,7 @@ const EditExperience = () => {
   const [destResults, setDestResults]   = useState([]);
   const [destSearching, setDestSearching] = useState(false);
   const [days, setDays]                 = useState(7);
-  const [category, setCategory]         = useState(["adventure"]);
+  const [category, setCategory]         = useState("adventure");
   const [travelers, setTravelers]       = useState(1);
   const [intention, setIntention]       = useState("");
   const [generating, setGenerating]     = useState(false);
@@ -164,7 +164,7 @@ const EditExperience = () => {
       setTitle(data.title ?? "");
       setPhotoUrl(data.photoUrl ?? "");
       setDays(data.tripTotalDays ?? 7);
-      setCategory(data.category ? data.category.split(",") : ["adventure"]);
+      setCategory((data.category || "adventure").split(",")[0]);
       setTravelers(data.numberOfPeople ?? 1);
       setIsPublic(data.isPublic ?? EXISTING_ITINERARY_VISIBILITY_FALLBACK);
 
@@ -235,7 +235,7 @@ const EditExperience = () => {
     setGenerating(true);
     try {
       const data = await generateSmartItinerary({
-        destination: destination.name, days, category: category.join(", "),
+        destination: destination.name, days, category,
         numberOfTravellers: travelers, budget: null, currency: "EUR",
         intention: intention.trim() || undefined,
         language: i18n.language,
@@ -297,7 +297,7 @@ const EditExperience = () => {
           lon: destination.coordinates?.lon ?? 0,
         },
         startDate: today, endDate: endObj.toISOString().split("T")[0],
-        budget: 0, currency: "EUR", numberOfPeople: travelers, category: category.join(","), isPublic,
+        budget: 0, currency: "EUR", numberOfPeople: travelers, category, isPublic,
         places: steps.filter(s => s.name.trim()).map((s, i) => ({
           id: s._id,
           description: s.personalNote?.trim()
@@ -420,12 +420,8 @@ const EditExperience = () => {
               {itineraryCategories.filter(c => c.value !== "other").map(cat => (
                 <button
                   key={cat.value} type="button"
-                  className={`cexp__cat-card ${category.includes(cat.value) ? "cexp__cat-card--active" : ""}`}
-                  onClick={() => setCategory(prev =>
-                    prev.includes(cat.value)
-                      ? prev.length > 1 ? prev.filter(c => c !== cat.value) : prev
-                      : [...prev, cat.value]
-                  )}
+                  className={`cexp__cat-card ${category === cat.value ? "cexp__cat-card--active" : ""}`}
+                  onClick={() => setCategory(cat.value)}
                 >
                   <span className="cexp__cat-card-emoji">{CATEGORY_EMOJI[cat.value]}</span>
                   <span className="cexp__cat-card-name">{cat.label}</span>

@@ -20,6 +20,7 @@ const RegisterScreen = ({ navigation }) => {
   const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const authError = useSelector(selectAuthError);
+  const isDuplicateEmail = authError === 'Email already in use';
 
   const [email, setEmail] = useState('');
   const [username, setUsername] = useState('');
@@ -213,7 +214,19 @@ const RegisterScreen = ({ navigation }) => {
               </View>
 
               {authError && Object.keys(errors).length === 0 && (
-                <Text style={styles.authError}>{authError}</Text>
+                isDuplicateEmail ? (
+                  <Text style={styles.authError}>
+                    {t('auth.emailInUse')}{' '}
+                    <Text
+                      style={styles.authErrorLink}
+                      onPress={() => navigation.navigate('Login', { email: email.trim() })}
+                    >
+                      {t('auth.alreadyHaveAccount')} {t('auth.signInLink')}
+                    </Text>
+                  </Text>
+                ) : (
+                  <Text style={styles.authError}>{authError}</Text>
+                )
               )}
 
               <TouchableOpacity
@@ -311,6 +324,7 @@ const styles = StyleSheet.create({
   required: { color: '#dc2626', fontWeight: '700' },
   consentError: { fontSize: 11, color: '#dc2626', marginLeft: 28 },
   authError: { color: '#dc2626', fontSize: 13, textAlign: 'center', marginBottom: 4 },
+  authErrorLink: { fontWeight: '700', textDecorationLine: 'underline' },
 
   btn: {
     backgroundColor: '#E8743B', borderRadius: 999,

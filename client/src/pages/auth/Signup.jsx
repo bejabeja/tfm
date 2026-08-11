@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
@@ -36,6 +36,9 @@ const Signup = () => {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [ageConfirmed, setAgeConfirmed] = useState(false);
   const [consentErrors, setConsentErrors] = useState({});
+  const consentRef = useRef(null);
+  const ageCheckboxRef = useRef(null);
+  const termsCheckboxRef = useRef(null);
 
   const {
     control,
@@ -47,6 +50,8 @@ const Signup = () => {
   });
 
   const usernameValue = useWatch({ control, name: "username" });
+  const emailValue = useWatch({ control, name: "email" });
+  const isDuplicateEmail = errorInAuth === "Email already in use";
 
   useEffect(() => {
     if (!usernameValue || usernameValue.length < 2 || /\s/.test(usernameValue)) {
@@ -74,7 +79,11 @@ const Signup = () => {
     e.preventDefault();
     const cErrors = validateConsent();
     handleSubmit((data) => {
-      if (Object.keys(cErrors).length > 0) return;
+      if (Object.keys(cErrors).length > 0) {
+        consentRef.current?.scrollIntoView({ behavior: "smooth", block: "center" });
+        (cErrors.ageConfirmed ? ageCheckboxRef : termsCheckboxRef).current?.focus();
+        return;
+      }
       dispatch(createUser({ ...data, termsAccepted, ageConfirmed }, () => navigate("/welcome")));
     })();
   };
@@ -134,9 +143,10 @@ const Signup = () => {
           <PasswordInputForm name="password" label="Password" control={control} error={errors.password} />
           <PasswordInputForm name="confirmPassword" label="Confirm password" control={control} error={errors.confirmPassword} />
 
-          <div className="auth__consent">
+          <div className="auth__consent" ref={consentRef}>
             <label className={`auth__consent-label${consentErrors.ageConfirmed ? " auth__consent-label--error" : ""}`}>
               <input
+                ref={ageCheckboxRef}
                 type="checkbox"
                 checked={ageConfirmed}
                 onChange={(e) => { setAgeConfirmed(e.target.checked); setConsentErrors(p => ({ ...p, ageConfirmed: undefined })); }}
@@ -147,6 +157,7 @@ const Signup = () => {
 
             <label className={`auth__consent-label${consentErrors.termsAccepted ? " auth__consent-label--error" : ""}`}>
               <input
+                ref={termsCheckboxRef}
                 type="checkbox"
                 checked={termsAccepted}
                 onChange={(e) => { setTermsAccepted(e.target.checked); setConsentErrors(p => ({ ...p, termsAccepted: undefined })); }}
@@ -162,7 +173,18 @@ const Signup = () => {
           </div>
 
           <div className="auth__form-error" role="alert" aria-live="assertive">
-            {errorInAuth && Object.keys(errors).length === 0 ? errorInAuth : " "}
+            {errorInAuth && Object.keys(errors).length === 0
+              ? (isDuplicateEmail
+                ? (
+                  <>
+                    {t("auth.emailInUse")}{" "}
+                    <Link to="/login" state={{ email: emailValue }}>
+                      {t("auth.alreadyHaveAccount")} {t("auth.signInLink")}
+                    </Link>
+                  </>
+                )
+                : errorInAuth)
+              : " "}
           </div>
 
           <div className="auth__form-link">
