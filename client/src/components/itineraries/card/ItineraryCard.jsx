@@ -4,6 +4,7 @@ import { FaRegComment } from "react-icons/fa6";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLike } from "../../../hooks/useLike";
+import { optimizedCloudinaryUrl } from "../../../utils/cloudinaryUrl";
 import OfficialBadge from "../../users/OfficialBadge";
 
 const ItineraryCard = ({ itinerary, user: userProp }) => {
@@ -54,15 +55,17 @@ const ItineraryCard = ({ itinerary, user: userProp }) => {
             <span className="itinerary-card__category">{category}</span>
           )}
           <img
-            src={photoUrl}
-            alt={location?.name}
+            src={optimizedCloudinaryUrl(photoUrl, { width: 480 })}
+            alt={title ? `Cover photo for ${title}` : `Trip to ${location?.name || "an amazing destination"}`}
+            loading="lazy"
             className="itinerary-card__image"
           />
           <div className="itinerary-card__author">
             {avatarUrl && (
               <img
-                src={avatarUrl}
+                src={optimizedCloudinaryUrl(avatarUrl, { width: 48 })}
                 alt={username}
+                loading="lazy"
                 className="itinerary-card__avatar"
               />
             )}

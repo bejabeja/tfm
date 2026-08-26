@@ -96,7 +96,7 @@ const App = () => {
         <Navbar />
       </div>
       <div className={`main-content${isAuthRoute ? " main-content--auth" : ""}`}>
-        <div className="content">
+        <main className="content">
           <Routes>
             {/* public routes */}
             <Route path="/login" element={<Login />} />
@@ -132,7 +132,7 @@ const App = () => {
               <Route path="/itinerary/edit/:id" element={<EditItinerary />} />
             </Route>
           </Routes>
-        </div>
+        </main>
 
         {isPublicRoute && <Footer />}
       </div>

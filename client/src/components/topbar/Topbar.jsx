@@ -1,12 +1,12 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GoPerson, GoSignOut } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { logoutUser } from "../../store/auth/authActions.js";
 import {
   selectMe,
   selectMeLoading,
 } from "../../store/user/userInfoSelectors.js";
+import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl.js";
 import "./Topbar.scss";
 
 const Topbar = () => {
@@ -44,8 +44,8 @@ const Topbar = () => {
         ) : (
           <button className="dropbtn" onClick={toggleDropdown}>
             <img
-              src={userMe?.avatarUrl}
-              alt="user photo avatar"
+              src={optimizedCloudinaryUrl(userMe?.avatarUrl, { width: 48 })}
+              alt={userMe?.username ? `@${userMe.username}` : "Your avatar"}
               className="avatar"
             />
             <span>{userMe?.username}</span>

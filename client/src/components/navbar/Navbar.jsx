@@ -19,6 +19,7 @@ import { selectUnreadCount } from "@tobeatraveller/shared";
 import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
 import { generateAvatar } from "../../utils/constants/constants";
+import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl";
 import "./Navbar.scss";
 
 const Navbar = () => {
@@ -133,7 +134,7 @@ const Navbar = () => {
             <div className="nav-footer">
               <Link to={`/profile/${userMe.id}`} className="nav-footer__user" title={`@${userMe.username}`}>
                 <img
-                  src={userMe.avatarUrl || generateAvatar(userMe.username)}
+                  src={optimizedCloudinaryUrl(userMe.avatarUrl, { width: 48 }) || generateAvatar(userMe.username)}
                   alt={userMe.username}
                   className="nav-footer__avatar"
                 />

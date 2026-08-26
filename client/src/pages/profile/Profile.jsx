@@ -11,6 +11,7 @@ import { useFollow } from "../../hooks/useFollow";
 import { usePageMeta } from "../../hooks/usePageMeta";
 import { useProfileData } from "../../hooks/useProfileData";
 import { selectAuthUser } from "../../store/auth/authSelectors";
+import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl";
 import { generateAvatar } from "../../utils/constants/constants";
 import { filterItineraries } from "@tobeatraveller/shared";
 import FollowsModal from "../../components/follows/FollowsModal";
@@ -67,7 +68,7 @@ const Profile = () => {
     title: user && `@${user.username}`,
     description: user?.bio || user?.about
       || (user && t("profile.metaDescriptionFallback", { username: user.username })),
-    image: user?.avatarUrl,
+    image: optimizedCloudinaryUrl(user?.avatarUrl, { width: 1200 }),
     type: "profile",
   });
 
@@ -195,7 +196,7 @@ const HeaderSection = ({
       <div className="profile__card-body">
         <img
           className="profile__avatar"
-          src={user?.avatarUrl}
+          src={optimizedCloudinaryUrl(user?.avatarUrl, { width: 200 })}
           alt={user?.name || user?.username}
           onError={(e) => { e.currentTarget.src = generateAvatar(user?.username); }}
         />

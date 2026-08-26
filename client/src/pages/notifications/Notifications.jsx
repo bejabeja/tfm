@@ -3,6 +3,7 @@ import { IoNotificationsOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl";
 import {
   initNotifications,
   loadMoreNotifications,
@@ -110,8 +111,9 @@ const NotificationItem = ({ notification: n, typeLabels }) => {
   return (
     <Link to={href} className={`notif-item${n.isRead ? "" : " notif-item--unread"}`}>
       <img
-        src={n.actor?.avatarUrl}
+        src={optimizedCloudinaryUrl(n.actor?.avatarUrl, { width: 48 })}
         alt={n.actor?.username}
+        loading="lazy"
         className="notif-item__avatar"
         onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${n.actor?.username}&background=random&color=fff`; }}
       />

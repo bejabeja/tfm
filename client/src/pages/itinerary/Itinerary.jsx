@@ -35,6 +35,7 @@ import Comments from "../../components/itineraries/comments/Comments.jsx";
 import Map from "../../components/itineraries/map/Map.jsx";
 import { usePageMeta } from "../../hooks/usePageMeta.js";
 import { selectMe } from "../../store/user/userInfoSelectors.js";
+import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
 import "./Itinerary.scss";
 import Error from "../error/Error.jsx";
@@ -101,7 +102,7 @@ const Itinerary = () => {
   usePageMeta({
     title: itinerary?.title,
     description: itineraryDescription,
-    image: itinerary?.photoUrl,
+    image: optimizedCloudinaryUrl(itinerary?.photoUrl, { width: 1200 }),
     type: "article",
   });
 
@@ -233,7 +234,7 @@ const Hero = ({
   return (
     <div
       className="itinerary__hero"
-      style={{ backgroundImage: `url(${itinerary?.photoUrl || "/images/hero.jpg"})` }}
+      style={{ backgroundImage: `url(${optimizedCloudinaryUrl(itinerary?.photoUrl, { width: 1600 }) || "/images/hero.jpg"})` }}
     >
       <div className="itinerary__hero-overlay" />
 
@@ -254,7 +255,7 @@ const Hero = ({
         <div className="itinerary__hero-meta">
           <Link to={`/profile/${userItinerary?.id}`} className="itinerary__hero-author">
             {userItinerary?.avatarUrl ? (
-              <img src={userItinerary.avatarUrl} alt={userItinerary.username} className="itinerary__hero-avatar" />
+              <img src={optimizedCloudinaryUrl(userItinerary.avatarUrl, { width: 48 })} alt={userItinerary.username} className="itinerary__hero-avatar" />
             ) : (
               <span className="itinerary__hero-avatar itinerary__hero-avatar--fallback">
                 {userItinerary?.username?.charAt(0).toUpperCase()}

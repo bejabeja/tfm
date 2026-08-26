@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { optimizedCloudinaryUrl } from "../../../utils/cloudinaryUrl";
 import OfficialBadge from "../OfficialBadge";
 
 const UserCard = ({
@@ -34,9 +35,19 @@ const UserCard = ({
     <div className="user-card" onClick={handleProfile}>
       <div className="user-card__banner">
         {lastItinerary?.photoUrl && (
-          <img src={lastItinerary.photoUrl} alt="" className="user-card__banner-img" />
+          <img
+            src={optimizedCloudinaryUrl(lastItinerary.photoUrl, { width: 480 })}
+            alt={`Cover photo of @${username}'s trip${lastItinerary.title ? `: ${lastItinerary.title}` : ""}`}
+            loading="lazy"
+            className="user-card__banner-img"
+          />
         )}
-        <img src={avatarUrl} alt={username} className="user-card__image" />
+        <img
+          src={optimizedCloudinaryUrl(avatarUrl, { width: 96 })}
+          alt={username}
+          loading="lazy"
+          className="user-card__image"
+        />
       </div>
       <div className="user-card__body">
         <div className="user-card__name-row">
