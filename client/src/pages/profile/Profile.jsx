@@ -10,9 +10,11 @@ import Modal from "../../components/modal/Modal";
 import { useFollow } from "../../hooks/useFollow";
 import { usePageMeta } from "../../hooks/usePageMeta";
 import { useProfileData } from "../../hooks/useProfileData";
+import JsonLd from "../../components/seo/JsonLd";
 import { selectAuthUser } from "../../store/auth/authSelectors";
 import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl";
 import { generateAvatar } from "../../utils/constants/constants";
+import { buildProfileJsonLd } from "../../utils/jsonLd";
 import { filterItineraries } from "@tobeatraveller/shared";
 import FollowsModal from "../../components/follows/FollowsModal";
 import OfficialBadge from "../../components/users/OfficialBadge";
@@ -64,12 +66,22 @@ const Profile = () => {
   const followsYou = !isMyProfile && isAuthenticated &&
     user?.followingListIds?.some((u) => String(u.id) === String(authUser?.id));
 
+  const profileDescription = user?.bio || user?.about
+    || (user && t("profile.metaDescriptionFallback", { username: user.username }));
+  const profileImage = optimizedCloudinaryUrl(user?.avatarUrl, { width: 1200 });
+
   usePageMeta({
     title: user && `@${user.username}`,
-    description: user?.bio || user?.about
-      || (user && t("profile.metaDescriptionFallback", { username: user.username })),
-    image: optimizedCloudinaryUrl(user?.avatarUrl, { width: 1200 }),
+    description: profileDescription,
+    image: profileImage,
     type: "profile",
+  });
+
+  const profileJsonLd = buildProfileJsonLd({
+    user,
+    description: profileDescription,
+    image: profileImage,
+    url: user && window.location.href,
   });
 
   if (error) return <Error message={t("errors.profileLoad")} />;
@@ -99,6 +111,7 @@ const Profile = () => {
 
   return (
     <section className="profile section__container">
+      {profileJsonLd && <JsonLd data={profileJsonLd} />}
       <div className="profile__layout">
         <div className="profile__sidebar">
           {loadingUser ? (

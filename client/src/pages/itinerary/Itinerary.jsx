@@ -33,10 +33,12 @@ import {
 import toast from "react-hot-toast";
 import Comments from "../../components/itineraries/comments/Comments.jsx";
 import Map from "../../components/itineraries/map/Map.jsx";
+import JsonLd from "../../components/seo/JsonLd.jsx";
 import { usePageMeta } from "../../hooks/usePageMeta.js";
 import { selectMe } from "../../store/user/userInfoSelectors.js";
 import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl.js";
 import { getCurrencySymbol } from "../../utils/constants/currencies.js";
+import { buildItineraryJsonLd } from "../../utils/jsonLd.js";
 import "./Itinerary.scss";
 import Error from "../error/Error.jsx";
 
@@ -99,11 +101,21 @@ const Itinerary = () => {
   const itineraryDescription = itinerary?.description
     || (itinerary && `A ${itinerary.tripTotalDays}-day trip to ${itinerary.location?.name || 'an amazing destination'}`);
 
+  const itineraryImage = optimizedCloudinaryUrl(itinerary?.photoUrl, { width: 1200 });
+
   usePageMeta({
     title: itinerary?.title,
     description: itineraryDescription,
-    image: optimizedCloudinaryUrl(itinerary?.photoUrl, { width: 1200 }),
+    image: itineraryImage,
     type: "article",
+  });
+
+  const itineraryJsonLd = buildItineraryJsonLd({
+    itinerary,
+    author: userItinerary,
+    description: itineraryDescription,
+    image: itineraryImage,
+    url: itinerary && window.location.href,
   });
 
   if (loading) return <Spinner />;
@@ -118,6 +130,7 @@ const Itinerary = () => {
 
   return (
     <section className="itinerary break-text">
+      {itineraryJsonLd && <JsonLd data={itineraryJsonLd} />}
       <Hero
         itinerary={itinerary}
         userItinerary={userItinerary}
