@@ -4,7 +4,6 @@ import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { translateAuthError } from "@tobeatraveller/shared";
 import { InputForm } from "../../components/form/InputForm";
 import { PasswordInputForm } from "../../components/form/PasswordInputForm";
 import SubmitButton from "../../components/form/SubmitButton";
@@ -44,16 +43,30 @@ const Signup = () => {
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    setError,
+    trigger,
+    formState: { errors, isSubmitting, touchedFields },
   } = useForm({
     resolver: zodResolver(signupSchema),
+    mode: "onBlur",
     defaultValues: { email: "", username: "", password: "", confirmPassword: "" },
   });
 
   const usernameValue = useWatch({ control, name: "username" });
-  const emailValue = useWatch({ control, name: "email" });
-  const isDuplicateEmail = errorInAuth === "Email already in use";
+  const passwordValue = useWatch({ control, name: "password" });
   const latestUsernameRef = useRef("");
+
+  useEffect(() => {
+    if (errorInAuth === "Email already in use") {
+      setError("email", { type: "manual", message: t("auth.emailInUse") });
+    } else if (errorInAuth === "Username is not available. Please choose another one.") {
+      setError("username", { type: "manual", message: t("auth.usernameNotAvailable") });
+    }
+  }, [errorInAuth, setError, t]);
+
+  useEffect(() => {
+    if (touchedFields.confirmPassword) trigger("confirmPassword");
+  }, [passwordValue, trigger, touchedFields.confirmPassword]);
 
   useEffect(() => {
     if (!usernameValue || usernameValue.length < 2 || /\s/.test(usernameValue)) {
@@ -185,23 +198,8 @@ const Signup = () => {
             {consentErrors.termsAccepted && <p className="auth__consent-error">{consentErrors.termsAccepted}</p>}
           </div>
 
-          <div className="auth__form-error" role="alert" aria-live="assertive">
-            {errorInAuth && Object.keys(errors).length === 0
-              ? (isDuplicateEmail
-                ? (
-                  <>
-                    {t("auth.emailInUse")}{" "}
-                    <Link to="/login" state={{ email: emailValue }}>
-                      {t("auth.alreadyHaveAccount")} {t("auth.signInLink")}
-                    </Link>
-                  </>
-                )
-                : translateAuthError(t, errorInAuth))
-              : " "}
-          </div>
-
           <div className="auth__form-link">
-            <SubmitButton label={t("auth.createAccount")} loading={isSubmitting} disabled={usernameStatus === "taken"} />
+            <SubmitButton label={t("auth.createAccount")} loading={isSubmitting} disabled={usernameStatus === "taken" || usernameStatus === "checking"} />
             <Link to="/login">{t("auth.alreadyHaveAccount")} <strong>{t("auth.signInLink")}</strong></Link>
             <Link to="/explore" className="auth__form-browse">
               {t("auth.exploreWithout")}

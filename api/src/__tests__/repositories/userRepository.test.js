@@ -38,3 +38,26 @@ describe('UserRepository email case-insensitivity', () => {
         expect(params[2]).toBe('jane@example.com');
     });
 });
+
+// Regression coverage: findSuggested used to return users the caller already follows,
+// so the onboarding "people to follow" screen showed them as not-followed and clicking
+// "Follow" on them failed with a 409 ConflictError from FollowService.
+describe('UserRepository.findSuggested excludes already-followed users', () => {
+    const repo = new UserRepository();
+
+    beforeEach(() => {
+        db.query.mockReset();
+    });
+
+    it('filters out users already followed by the requester', async () => {
+        db.query.mockResolvedValue({ rows: [] });
+
+        await repo.findSuggested('current-user-id');
+
+        const query = db.query.mock.calls[0][0];
+        expect(query).toMatch(/NOT EXISTS/);
+        expect(query).toMatch(/FROM user_followers/);
+        expect(query).toMatch(/follower_id = \$1 AND followed_id = users\.id/);
+        expect(db.query.mock.calls[0][1]).toEqual(['current-user-id']);
+    });
+});

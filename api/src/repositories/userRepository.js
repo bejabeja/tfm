@@ -70,6 +70,10 @@ export class UserRepository {
             WHERE users.id != $1
               AND users.role != 'test'
               AND EXISTS (SELECT 1 FROM itineraries WHERE user_id = users.id)
+              AND NOT EXISTS (
+                  SELECT 1 FROM user_followers
+                  WHERE follower_id = $1 AND followed_id = users.id
+              )
             ORDER BY (SELECT COUNT(*) FROM itineraries WHERE user_id = users.id) DESC
             LIMIT 8
         `, [currentUserId]);

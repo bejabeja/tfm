@@ -62,7 +62,7 @@ export const InputForm = ({
                   aria-describedby={error ? errorId : undefined}
                 />
               </div>
-            ) : right ? (
+            ) : right !== undefined ? (
               <div className="input__right-wrapper">
                 <input
                   id={name}
@@ -75,7 +75,7 @@ export const InputForm = ({
                   aria-invalid={!!error}
                   aria-describedby={error ? errorId : undefined}
                 />
-                <div className="input__right">{right}</div>
+                {right && <div className="input__right">{right}</div>}
               </div>
             ) : (
               <input

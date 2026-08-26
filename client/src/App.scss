@@ -13,6 +13,10 @@
   padding-bottom: 60px; // mobile bottom nav
 }
 
+.side-content--hidden {
+  display: none;
+}
+
 .content {
   flex: 1;
   display: flex;
@@ -37,10 +41,6 @@
     min-width: 240px;
     flex-shrink: 0;
     transition: width 0.2s ease, min-width 0.2s ease;
-
-    &--hidden {
-      display: none;
-    }
   }
 
   :root.sidebar-collapsed .side-content {

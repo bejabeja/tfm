@@ -1,18 +1,32 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { forgotPassword, translateAuthError } from "@tobeatraveller/shared";
 import { InputForm } from "../../components/form/InputForm";
 import SubmitButton from "../../components/form/SubmitButton";
+import { setImageAuthLoaded } from "../../store/auth/authActions";
+import { selectimageAuthLoaded } from "../../store/auth/authSelectors";
+import { authImage } from "../../utils/constants/constants";
+import { preloadImg } from "../../utils/preloadImg";
 import { forgotPasswordSchema } from "../../utils/schemasValidation";
 import "./Auth.scss";
 
 const ForgotPassword = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const imageAuthLoaded = useSelector(selectimageAuthLoaded);
   const [successEmail, setSuccessEmail] = useState(null);
   const [serverError, setServerError] = useState(null);
+
+  useEffect(() => {
+    if (imageAuthLoaded) return;
+    preloadImg(authImage, () => {
+      dispatch(setImageAuthLoaded());
+    });
+  }, [dispatch, imageAuthLoaded]);
 
   const {
     control,
@@ -20,6 +34,7 @@ const ForgotPassword = () => {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(forgotPasswordSchema),
+    mode: "onBlur",
     defaultValues: { email: "" },
   });
 
@@ -35,7 +50,19 @@ const ForgotPassword = () => {
 
   return (
     <section className="auth">
-      <div className="auth__panel" style={{ width: "100%" }}>
+      <div className={`auth__bg ${imageAuthLoaded ? "loaded" : ""}`} />
+
+      <div className={`auth__visual ${imageAuthLoaded ? "auth__visual--loaded" : ""}`}>
+        <Link to="/" className="auth__brand">
+          <img src="/logo-white.svg" alt="ToBeATraveller" height="28" />
+        </Link>
+        <div className="auth__tagline">
+          <h2>{t("auth.taglineForgotPassword")}</h2>
+          <p>{t("auth.taglineForgotPasswordSub")}</p>
+        </div>
+      </div>
+
+      <div className="auth__panel">
         <form onSubmit={handleSubmit(onSubmit)} className="auth__form">
           <Link to="/" className="auth__form-logo">
             <img src="/logo.svg" alt="ToBeATraveller" height="28" />
@@ -51,7 +78,8 @@ const ForgotPassword = () => {
           {successEmail ? (
             <div style={{ padding: "1rem 0" }}>
               <p style={{ fontSize: "0.9rem", lineHeight: 1.6, color: "var(--text-color)", marginBottom: "0.5rem" }}>
-                {t("auth.checkInbox")}. {t("auth.resetLinkSent", { email: successEmail })}
+                {t("auth.checkInbox")}.{" "}
+                <span dangerouslySetInnerHTML={{ __html: t("auth.resetLinkSent", { email: successEmail }) }} />
               </p>
               <p style={{ fontSize: "0.82rem", color: "var(--text-secondary-color)" }}>
                 {t("auth.didntReceive")}{" "}
@@ -73,6 +101,10 @@ const ForgotPassword = () => {
                 </button>
                 .
               </p>
+
+              <div className="auth__form-link">
+                <Link to="/login">{t("auth.backToLogin")}</Link>
+              </div>
             </div>
           ) : (
             <>
@@ -89,13 +121,12 @@ const ForgotPassword = () => {
                 {serverError ? translateAuthError(t, serverError) : " "}
               </div>
 
-              <SubmitButton label={t("auth.sendResetLink")} loading={isSubmitting} />
+              <div className="auth__form-link">
+                <SubmitButton label={t("auth.sendResetLink")} loading={isSubmitting} />
+                <Link to="/login">{t("auth.backToLogin")}</Link>
+              </div>
             </>
           )}
-
-          <div className="auth__form-link" style={{ paddingTop: "0.75rem" }}>
-            <Link to="/login">{t("auth.backToLogin")}</Link>
-          </div>
         </form>
       </div>
     </section>

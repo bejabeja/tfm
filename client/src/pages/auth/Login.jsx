@@ -4,7 +4,6 @@ import { useForm } from "react-hook-form";
 import { useTranslation } from "react-i18next";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { translateAuthError } from "@tobeatraveller/shared";
 import { InputForm } from "../../components/form/InputForm";
 import { PasswordInputForm } from "../../components/form/PasswordInputForm";
 import SubmitButton from "../../components/form/SubmitButton";
@@ -39,11 +38,19 @@ const Login = () => {
   const {
     control,
     handleSubmit,
+    setError,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
+    mode: "onBlur",
     defaultValues: { email: location.state?.email ?? "", password: "" },
   });
+
+  useEffect(() => {
+    if (errorInAuth === "Invalid credentials") {
+      setError("password", { type: "manual", message: t("auth.invalidCredentials") });
+    }
+  }, [errorInAuth, setError, t]);
 
   const checkUser = (data) =>
     dispatch(loginUser(data, () => navigate("/")));
@@ -91,10 +98,6 @@ const Login = () => {
             >
               {t("auth.forgotPassword")}
             </Link>
-          </div>
-
-          <div className="auth__form-error" role="alert" aria-live="assertive">
-            {errorInAuth && Object.keys(errors).length === 0 ? translateAuthError(t, errorInAuth) : " "}
           </div>
 
           <div className="auth__form-link">

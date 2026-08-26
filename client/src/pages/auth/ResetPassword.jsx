@@ -1,34 +1,68 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
-import { useForm } from "react-hook-form";
+import { useEffect, useState } from "react";
+import { useForm, useWatch } from "react-hook-form";
 import { useTranslation } from "react-i18next";
+import { useDispatch, useSelector } from "react-redux";
 import { Link, useSearchParams } from "react-router-dom";
 import { resetPassword, translateAuthError } from "@tobeatraveller/shared";
 import { PasswordInputForm } from "../../components/form/PasswordInputForm";
 import SubmitButton from "../../components/form/SubmitButton";
+import { setImageAuthLoaded } from "../../store/auth/authActions";
+import { selectimageAuthLoaded } from "../../store/auth/authSelectors";
+import { authImage } from "../../utils/constants/constants";
+import { preloadImg } from "../../utils/preloadImg";
 import { resetPasswordSchema } from "../../utils/schemasValidation";
 import "./Auth.scss";
 
 const ResetPassword = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
+  const imageAuthLoaded = useSelector(selectimageAuthLoaded);
   const [searchParams] = useSearchParams();
   const token = searchParams.get("token");
   const [success, setSuccess] = useState(false);
   const [serverError, setServerError] = useState(null);
 
+  useEffect(() => {
+    if (imageAuthLoaded) return;
+    preloadImg(authImage, () => {
+      dispatch(setImageAuthLoaded());
+    });
+  }, [dispatch, imageAuthLoaded]);
+
   const {
     control,
     handleSubmit,
-    formState: { errors, isSubmitting },
+    trigger,
+    formState: { errors, isSubmitting, touchedFields },
   } = useForm({
     resolver: zodResolver(resetPasswordSchema),
+    mode: "onBlur",
     defaultValues: { newPassword: "", confirmPassword: "" },
   });
+
+  const newPasswordValue = useWatch({ control, name: "newPassword" });
+
+  useEffect(() => {
+    if (touchedFields.confirmPassword) trigger("confirmPassword");
+  }, [newPasswordValue, trigger, touchedFields.confirmPassword]);
 
   if (!token) {
     return (
       <section className="auth">
-        <div className="auth__panel" style={{ width: "100%" }}>
+        <div className={`auth__bg ${imageAuthLoaded ? "loaded" : ""}`} />
+
+        <div className={`auth__visual ${imageAuthLoaded ? "auth__visual--loaded" : ""}`}>
+          <Link to="/" className="auth__brand">
+            <img src="/logo-white.svg" alt="ToBeATraveller" height="28" />
+          </Link>
+          <div className="auth__tagline">
+            <h2>{t("auth.taglineResetPassword")}</h2>
+            <p>{t("auth.taglineResetPasswordSub")}</p>
+          </div>
+        </div>
+
+        <div className="auth__panel">
           <div className="auth__form" style={{ textAlign: "center" }}>
             <p style={{ fontSize: "0.9rem", color: "var(--text-color)", marginBottom: "1rem" }}>
               {t("errors.invalidLink")}
@@ -54,7 +88,19 @@ const ResetPassword = () => {
 
   return (
     <section className="auth">
-      <div className="auth__panel" style={{ width: "100%" }}>
+      <div className={`auth__bg ${imageAuthLoaded ? "loaded" : ""}`} />
+
+      <div className={`auth__visual ${imageAuthLoaded ? "auth__visual--loaded" : ""}`}>
+        <Link to="/" className="auth__brand">
+          <img src="/logo-white.svg" alt="ToBeATraveller" height="28" />
+        </Link>
+        <div className="auth__tagline">
+          <h2>{t("auth.taglineResetPassword")}</h2>
+          <p>{t("auth.taglineResetPasswordSub")}</p>
+        </div>
+      </div>
+
+      <div className="auth__panel">
         <form onSubmit={handleSubmit(onSubmit)} className="auth__form">
           <Link to="/" className="auth__form-logo">
             <img src="/logo.svg" alt="ToBeATraveller" height="28" />
@@ -108,9 +154,8 @@ const ResetPassword = () => {
                 )}
               </div>
 
-              <SubmitButton label={t("auth.updatePassword")} loading={isSubmitting} />
-
-              <div className="auth__form-link" style={{ paddingTop: "0.75rem" }}>
+              <div className="auth__form-link">
+                <SubmitButton label={t("auth.updatePassword")} loading={isSubmitting} />
                 <Link to="/login">{t("auth.backToLogin")}</Link>
               </div>
             </>

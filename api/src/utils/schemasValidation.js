@@ -33,7 +33,9 @@ export const signupSchema = z.object({
         .string()
         .email("Invalid email address")
         .min(1, "Email is required"),
-    password: z.string().min(6, "Password must be at least 6 characters long"),
+    password: z.string()
+        .min(6, "Password must be at least 6 characters long")
+        .refine((password) => password.trim().length >= 6, "Password must be at least 6 characters long"),
     confirmPassword: z.string(),
     location: z.string().max(50, "No valid location").optional().or(z.literal("")),
     termsAccepted: z.literal(true, {
@@ -60,7 +62,9 @@ export const forgotPasswordSchema = z.object({
 
 export const resetPasswordSchema = z.object({
     token: z.string().min(64),
-    newPassword: z.string().min(6),
+    newPassword: z.string()
+        .min(6)
+        .refine((password) => password.trim().length >= 6, "Password must be at least 6 characters"),
 });
 
 // Keep in sync with shared/src/utils/schemasValidation.js's contactSchema and

@@ -37,7 +37,9 @@ export const signupSchema = z.object({
         .min(2, "Username must be at least 2 characters")
         .max(50, "Username must be less than 50 characters")
         .regex(/^\S+$/, "Username cannot contain spaces"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string()
+        .min(6, "Password must be at least 6 characters")
+        .refine((password) => password.trim().length >= 6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
 
 }).refine((data) => data.password === data.confirmPassword, {
@@ -55,7 +57,9 @@ export const forgotPasswordSchema = z.object({
 });
 
 export const resetPasswordSchema = z.object({
-    newPassword: z.string().min(6, "Password must be at least 6 characters"),
+    newPassword: z.string()
+        .min(6, "Password must be at least 6 characters")
+        .refine((password) => password.trim().length >= 6, "Password must be at least 6 characters"),
     confirmPassword: z.string(),
 }).refine((data) => data.newPassword === data.confirmPassword, {
     message: "Passwords don't match",
