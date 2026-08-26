@@ -25,6 +25,17 @@ export class ItineraryRepository {
     return result.rows.length ? Itinerary.fromDb(result.rows[0]) : null;
   }
 
+  async findPublicSitemapEntries() {
+    const result = await client.query(`
+      SELECT i.id, i.updated_at
+      FROM itineraries i
+      JOIN users u ON u.id = i.user_id
+      WHERE i.is_public = true AND u.role != 'test'
+      ORDER BY i.updated_at DESC
+    `);
+    return result.rows.map((row) => ({ id: row.id, updatedAt: row.updated_at }));
+  }
+
   async create(itineraryData) {
     const {
       userId, title, description, location, startDate, endDate,

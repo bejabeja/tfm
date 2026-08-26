@@ -61,3 +61,22 @@ describe('UserRepository.findSuggested excludes already-followed users', () => {
         expect(db.query.mock.calls[0][1]).toEqual(['current-user-id']);
     });
 });
+
+describe('UserRepository.findAllForSitemap()', () => {
+    const repo = new UserRepository();
+
+    beforeEach(() => {
+        db.query.mockReset();
+    });
+
+    it('excludes test users and maps rows to plain {id, updatedAt} entries', async () => {
+        db.query.mockResolvedValue({
+            rows: [{ id: 'user-1', updated_at: '2026-01-01T00:00:00.000Z' }],
+        });
+
+        const entries = await repo.findAllForSitemap();
+
+        expect(db.query.mock.calls[0][0]).toMatch(/role != 'test'/);
+        expect(entries).toEqual([{ id: 'user-1', updatedAt: '2026-01-01T00:00:00.000Z' }]);
+    });
+});

@@ -1,0 +1,19 @@
+User-agent: *
+Allow: /
+
+Disallow: /login
+Disallow: /register
+Disallow: /forgot-password
+Disallow: /reset-password
+Disallow: /welcome
+Disallow: /notifications
+Disallow: /settings
+Disallow: /my-itineraries
+Disallow: /itineraries/saved
+Disallow: /create-itinerary
+Disallow: /create-experience
+Disallow: /experience/edit/
+Disallow: /itinerary/edit/
+Disallow: /profile/
+
+Sitemap: https://tobeatraveller.mabella.dev/sitemap.xml

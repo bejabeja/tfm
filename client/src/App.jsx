@@ -24,6 +24,7 @@ import Profile from "./pages/profile/Profile";
 import Settings from "./pages/settings/Settings";
 import { clearError, initAuthUser } from "./store/auth/authActions";
 import { refreshUnreadCount } from "@tobeatraveller/shared";
+import { useCanonicalUrl } from "./hooks/useCanonicalUrl";
 
 import CustomToaster from "./components/toast/CustomToaster";
 import Community from "./pages/community/Community";
@@ -46,6 +47,8 @@ const App = () => {
   const location = useLocation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const userAuthenticated = useSelector(selectAuthUser);
+
+  useCanonicalUrl(location.pathname);
 
   useEffect(() => {
     dispatch(initAuthUser());

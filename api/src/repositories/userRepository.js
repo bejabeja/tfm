@@ -38,6 +38,14 @@ export class UserRepository {
         return result.rows.map(row => User.fromDb(row));
     }
 
+    async findAllForSitemap() {
+        const result = await db.query(
+            "SELECT id, updated_at FROM users WHERE role != 'test'"
+        );
+
+        return result.rows.map(row => ({ id: row.id, updatedAt: row.updated_at }));
+    }
+
     async getUserById(id) {
         const result = await db.query(
             "SELECT * FROM users WHERE id = $1",

@@ -19,6 +19,7 @@ import { healthCheckRouter } from './src/routes/healthCheckRouter.js';
 import { createItinerariesRouter } from "./src/routes/itinerariesRouter.js";
 import { createUsersRouter } from './src/routes/usersRouter.js';
 import { createOgRouter } from './src/routes/ogRouter.js';
+import { createSitemapRouter } from './src/routes/sitemapRouter.js';
 
 const app = express();
 
@@ -42,6 +43,7 @@ if (config.nodeEnv !== 'production') {
     app.use('/dev', createDevRouter());
 }
 app.use('/og', createOgRouter());
+app.use('/', createSitemapRouter());
 app.use('/api', healthCheckRouter());
 
 Sentry.setupExpressErrorHandler(app);
