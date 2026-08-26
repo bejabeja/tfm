@@ -39,9 +39,15 @@ export class UserRepository {
     }
 
     async findAllForSitemap() {
-        const result = await db.query(
-            "SELECT id, updated_at FROM users WHERE role != 'test'"
-        );
+        const result = await db.query(`
+            SELECT users.id, users.updated_at
+            FROM users
+            WHERE users.role != 'test'
+              AND EXISTS (
+                  SELECT 1 FROM itineraries
+                  WHERE itineraries.user_id = users.id AND itineraries.is_public = true
+              )
+        `);
 
         return result.rows.map(row => ({ id: row.id, updatedAt: row.updated_at }));
     }

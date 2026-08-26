@@ -7,6 +7,7 @@ import { IoSearchOutline } from "react-icons/io5";
 import LoadingButton from "../../components/LoadingButton.jsx";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection.jsx";
 import Filters from "../myItineraries/filters/Filters.jsx";
+import { usePageMeta } from "../../hooks/usePageMeta.js";
 import { selectIsAuthenticated } from "../../store/auth/authSelectors.js";
 
 import {
@@ -41,6 +42,8 @@ const Explore = () => {
   const totalPages = useSelector(selectExploreTotalPages);
   const totalItems = useSelector(selectExploreTotalItems);
   const page = useSelector(selectExplorePage);
+
+  usePageMeta({ title: t("explore.title"), description: t("explore.subtitle") });
 
   const SORT_OPTIONS = [
     { value: "recent",    label: t("explore.sortRecent") },

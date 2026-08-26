@@ -6,6 +6,7 @@ import { RiUserCommunityLine } from "react-icons/ri";
 import LoadingButton from "../../components/LoadingButton.jsx";
 import UsersSection from "../../components/users/UsersSection.jsx";
 import useDebouncedEffect from "../../hooks/useDebounced.js";
+import { usePageMeta } from "../../hooks/usePageMeta.js";
 import { selectIsAuthenticated } from "../../store/auth/authSelectors.js";
 import { initAllUsers, loadMoreUsers } from "../../store/users/usersActions";
 import {
@@ -31,6 +32,8 @@ const Community = () => {
   const error = useSelector(selectAllUsersError);
   const currentPage = useSelector(selectAllUsersCurrentPage);
   const totalPages = useSelector(selectAllUsersTotalPages);
+
+  usePageMeta({ title: t("community.title"), description: t("community.subtitle") });
 
   const [searchName, setSearchName] = useState("");
   const [sortBy, setSortBy] = useState("username");

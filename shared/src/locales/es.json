@@ -220,6 +220,7 @@
     "follow": "Seguir"
   },
   "profile": {
+    "metaDescriptionFallback": "Los itinerarios de viaje de {{username}} en ToBeATraveller",
     "followers": "Seguidores",
     "following": "Siguiendo",
     "trips": "Viajes",
@@ -726,6 +727,7 @@
   },
   "legalTerms": {
     "documentTitle": "Términos de Servicio",
+    "metaDescription": "Los términos y condiciones para crear una cuenta y usar las apps web y móvil de ToBeATraveller.",
     "lastUpdated": "Última actualización: {{date}}",
     "s1Title": "1. Aceptación de los términos",
     "s1Body": [
@@ -802,6 +804,7 @@
   },
   "legalPrivacy": {
     "documentTitle": "Política de Privacidad",
+    "metaDescription": "Cómo ToBeATraveller recopila, usa y protege tus datos personales.",
     "lastUpdated": "Última actualización: {{date}}",
     "s1Title": "1. Quiénes somos",
     "s1Body": "ToBeATraveller (\"nosotros\") es una plataforma para compartir itinerarios de viaje. Somos el responsable del tratamiento de los datos personales recogidos a través de este servicio. Puedes contactarnos en <a href=\"mailto:tobeatravellercompany@gmail.com\">tobeatravellercompany@gmail.com</a>.",

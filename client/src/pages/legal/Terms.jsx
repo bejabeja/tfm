@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import RichText from "../../components/RichText";
+import { usePageMeta } from "../../hooks/usePageMeta";
 import "./Legal.scss";
 
 const LAST_UPDATED = "29 May 2025";
@@ -9,13 +10,13 @@ const LAST_UPDATED = "29 May 2025";
 const Terms = () => {
   const { t } = useTranslation();
 
-  useEffect(() => {
-    document.title = "Terms of Service - ToBeATraveller";
-    window.scrollTo(0, 0);
-    return () => { document.title = "ToBeATraveller"; };
-  }, []);
-
   const lt = (key, vars) => t(`legalTerms.${key}`, vars);
+
+  usePageMeta({ title: lt("documentTitle"), description: lt("metaDescription") });
+
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
 
   return (
     <div className="legal section__container">

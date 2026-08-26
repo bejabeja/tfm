@@ -3,6 +3,7 @@ import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { sendContact } from "@tobeatraveller/shared";
+import { usePageMeta } from "../../hooks/usePageMeta";
 import { selectAuthUser } from "../../store/auth/authSelectors";
 import { setUserInfo } from "../../store/user/userInfoActions";
 import { selectMe, selectMeLoading } from "../../store/user/userInfoSelectors";
@@ -24,11 +25,11 @@ const Contact = () => {
   const authUser = useSelector(selectAuthUser);
   const me = meDetail ?? authUser;
 
+  usePageMeta({ title: t("contact.title"), description: t("contact.subtitle") });
+
   useEffect(() => {
-    document.title = `${t("contact.title")} - ToBeATraveller`;
     window.scrollTo(0, 0);
-    return () => { document.title = "ToBeATraveller"; };
-  }, [t]);
+  }, []);
 
   useEffect(() => {
     if (authUser?.id && !meDetail && !meLoading) dispatch(setUserInfo(authUser.id));

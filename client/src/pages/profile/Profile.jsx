@@ -8,6 +8,7 @@ import { Link, useParams } from "react-router-dom";
 import ItinerariesSection from "../../components/itineraries/ItinerariesSection";
 import Modal from "../../components/modal/Modal";
 import { useFollow } from "../../hooks/useFollow";
+import { usePageMeta } from "../../hooks/usePageMeta";
 import { useProfileData } from "../../hooks/useProfileData";
 import { selectAuthUser } from "../../store/auth/authSelectors";
 import { generateAvatar } from "../../utils/constants/constants";
@@ -62,11 +63,13 @@ const Profile = () => {
   const followsYou = !isMyProfile && isAuthenticated &&
     user?.followingListIds?.some((u) => String(u.id) === String(authUser?.id));
 
-  useEffect(() => {
-    if (!user) return;
-    document.title = `@${user.username} - Tobeatraveller`;
-    return () => { document.title = "Tobeatraveller"; };
-  }, [user]);
+  usePageMeta({
+    title: user && `@${user.username}`,
+    description: user?.bio || user?.about
+      || (user && t("profile.metaDescriptionFallback", { username: user.username })),
+    image: user?.avatarUrl,
+    type: "profile",
+  });
 
   if (error) return <Error message={t("errors.profileLoad")} />;
 

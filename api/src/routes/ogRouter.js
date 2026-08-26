@@ -3,12 +3,7 @@ import config from '../config/config.js';
 import { ItineraryRepository } from '../repositories/itineraryRepository.js';
 import { PlacesRepository } from '../repositories/placesRepository.js';
 import { ItineraryService } from '../services/itineraryService.js';
-
-const esc = (str) => String(str ?? '')
-    .replace(/&/g, '&amp;')
-    .replace(/"/g, '&quot;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
+import { escapeXml as esc } from '../utils/xmlEscape.js';
 
 const ogHtml = ({ title, description, imageUrl, pageUrl, redirectUrl }) => `<!DOCTYPE html>
 <html lang="en">

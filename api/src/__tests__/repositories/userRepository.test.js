@@ -69,14 +69,17 @@ describe('UserRepository.findAllForSitemap()', () => {
         db.query.mockReset();
     });
 
-    it('excludes test users and maps rows to plain {id, updatedAt} entries', async () => {
+    it('excludes test users and users with no public itinerary, mapping rows to plain {id, updatedAt} entries', async () => {
         db.query.mockResolvedValue({
             rows: [{ id: 'user-1', updated_at: '2026-01-01T00:00:00.000Z' }],
         });
 
         const entries = await repo.findAllForSitemap();
 
-        expect(db.query.mock.calls[0][0]).toMatch(/role != 'test'/);
+        const query = db.query.mock.calls[0][0];
+        expect(query).toMatch(/role != 'test'/);
+        expect(query).toMatch(/EXISTS/);
+        expect(query).toMatch(/itineraries\.is_public = true/);
         expect(entries).toEqual([{ id: 'user-1', updatedAt: '2026-01-01T00:00:00.000Z' }]);
     });
 });
