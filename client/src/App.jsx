@@ -1,46 +1,50 @@
-import { useEffect } from "react";
+import { lazy, Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.scss";
 import Footer from "./components/footer/Footer";
 import Navbar from "./components/navbar/Navbar";
+import Spinner from "./components/spinner/Spinner";
 import PrivateLayout from "./pages/PrivateLayout";
-import ForgotPassword from "./pages/auth/ForgotPassword";
-import Login from "./pages/auth/Login";
-import Logout from "./pages/auth/Logout";
-import ResetPassword from "./pages/auth/ResetPassword";
-import Signup from "./pages/auth/Signup";
-import Explore from "./pages/explore/Explore";
 import Home from "./pages/home/Home";
-import Itinerary from "./pages/itinerary/Itinerary";
-import CreateItinerary from "./pages/itinerary/create/CreateItinerary";
-import CreateExperience from "./pages/experience/CreateExperience";
-import EditExperience from "./pages/experience/EditExperience";
-import EditItinerary from "./pages/itinerary/edit/EditItinerary";
-import MyItineraries from "./pages/myItineraries/MyItineraries";
-import Onboarding from "./pages/onboarding/Onboarding";
-import EditProfile from "./pages/profile/EditProfile";
-import Profile from "./pages/profile/Profile";
-import Settings from "./pages/settings/Settings";
 import { clearError, initAuthUser } from "./store/auth/authActions";
 import { refreshUnreadCount } from "@tobeatraveller/shared";
 import { useCanonicalUrl } from "./hooks/useCanonicalUrl";
 
 import CustomToaster from "./components/toast/CustomToaster";
-import Community from "./pages/community/Community";
-import Favorites from "./pages/favorites/Favorites";
-import FollowersList from "./pages/follows/FollowersList";
-import FollowingList from "./pages/follows/FollowingList";
-import Contact from "./pages/legal/Contact";
-import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
-import Terms from "./pages/legal/Terms";
-import Notifications from "./pages/notifications/Notifications";
 import {
   selectAuthUser,
   selectIsAuthenticated,
 } from "./store/auth/authSelectors";
 import { initFilters } from "./store/filters/filterActions";
 import { loadMyUserInfo } from "./store/user/userInfoActions";
+
+// Code-split per route so the initial bundle isn't the whole app; Home stays eager
+// since it's the most common cold-landing page and shouldn't wait on a chunk fetch.
+const Login = lazy(() => import("./pages/auth/Login"));
+const Signup = lazy(() => import("./pages/auth/Signup"));
+const Logout = lazy(() => import("./pages/auth/Logout"));
+const ForgotPassword = lazy(() => import("./pages/auth/ForgotPassword"));
+const ResetPassword = lazy(() => import("./pages/auth/ResetPassword"));
+const Explore = lazy(() => import("./pages/explore/Explore"));
+const Community = lazy(() => import("./pages/community/Community"));
+const Contact = lazy(() => import("./pages/legal/Contact"));
+const PrivacyPolicy = lazy(() => import("./pages/legal/PrivacyPolicy"));
+const Terms = lazy(() => import("./pages/legal/Terms"));
+const Profile = lazy(() => import("./pages/profile/Profile"));
+const Itinerary = lazy(() => import("./pages/itinerary/Itinerary"));
+const FollowersList = lazy(() => import("./pages/follows/FollowersList"));
+const FollowingList = lazy(() => import("./pages/follows/FollowingList"));
+const Onboarding = lazy(() => import("./pages/onboarding/Onboarding"));
+const Notifications = lazy(() => import("./pages/notifications/Notifications"));
+const MyItineraries = lazy(() => import("./pages/myItineraries/MyItineraries"));
+const Favorites = lazy(() => import("./pages/favorites/Favorites"));
+const EditProfile = lazy(() => import("./pages/profile/EditProfile"));
+const Settings = lazy(() => import("./pages/settings/Settings"));
+const CreateItinerary = lazy(() => import("./pages/itinerary/create/CreateItinerary"));
+const CreateExperience = lazy(() => import("./pages/experience/CreateExperience"));
+const EditExperience = lazy(() => import("./pages/experience/EditExperience"));
+const EditItinerary = lazy(() => import("./pages/itinerary/edit/EditItinerary"));
 
 const App = () => {
   const dispatch = useDispatch();
@@ -97,41 +101,43 @@ const App = () => {
       </div>
       <div className={`main-content${isAuthRoute ? " main-content--auth" : ""}`}>
         <main className="content">
-          <Routes>
-            {/* public routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Signup />} />
-            <Route path="/logout" element={<Logout />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/" element={<Home />} />
-            <Route path="/explore" element={<Explore />} />
-            <Route path="/community" element={<Community />} />
-            <Route path="/privacy-policy" element={<PrivacyPolicy />} />
-            <Route path="/terms" element={<Terms />} />
-            <Route path="/contact" element={<Contact />} />
+          <Suspense fallback={<Spinner />}>
+            <Routes>
+              {/* public routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Signup />} />
+              <Route path="/logout" element={<Logout />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/explore" element={<Explore />} />
+              <Route path="/community" element={<Community />} />
+              <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/contact" element={<Contact />} />
 
-            {/* routes to decide if private or not */}
-            <Route path="/friend-profile/:id" element={<Profile />} />
-            <Route path="/itinerary/:id" element={<Itinerary />} />
-            <Route path="/profile/:id/followers" element={<FollowersList />} />
-            <Route path="/profile/:id/following" element={<FollowingList />} />
+              {/* routes to decide if private or not */}
+              <Route path="/friend-profile/:id" element={<Profile />} />
+              <Route path="/itinerary/:id" element={<Itinerary />} />
+              <Route path="/profile/:id/followers" element={<FollowersList />} />
+              <Route path="/profile/:id/following" element={<FollowingList />} />
 
-            {/* private routes */}
-            <Route element={<PrivateLayout />}>
-              <Route path="/welcome" element={<Onboarding />} />
-              <Route path="/notifications" element={<Notifications />} />
-              <Route path="/my-itineraries" element={<MyItineraries />} />
-              <Route path="/itineraries/saved" element={<Favorites />} />
-              <Route path="/profile/:id" element={<Profile />} />
-              <Route path="/profile/edit/:id" element={<EditProfile />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/create-itinerary" element={<CreateItinerary />} />
-              <Route path="/create-experience" element={<CreateExperience />} />
-              <Route path="/experience/edit/:id" element={<EditExperience />} />
-              <Route path="/itinerary/edit/:id" element={<EditItinerary />} />
-            </Route>
-          </Routes>
+              {/* private routes */}
+              <Route element={<PrivateLayout />}>
+                <Route path="/welcome" element={<Onboarding />} />
+                <Route path="/notifications" element={<Notifications />} />
+                <Route path="/my-itineraries" element={<MyItineraries />} />
+                <Route path="/itineraries/saved" element={<Favorites />} />
+                <Route path="/profile/:id" element={<Profile />} />
+                <Route path="/profile/edit/:id" element={<EditProfile />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/create-itinerary" element={<CreateItinerary />} />
+                <Route path="/create-experience" element={<CreateExperience />} />
+                <Route path="/experience/edit/:id" element={<EditExperience />} />
+                <Route path="/itinerary/edit/:id" element={<EditItinerary />} />
+              </Route>
+            </Routes>
+          </Suspense>
         </main>
 
         {isPublicRoute && <Footer />}
