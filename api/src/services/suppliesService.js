@@ -96,6 +96,25 @@ export class SuppliesService {
         return items.map(item => item.toDTO());
     }
 
+    // For cataloguing stock you already have without pretending you're about to
+    // shop for it (e.g. setting up the app for the first time, or a gift). Merges
+    // into an existing item with the same name + unit, same as everywhere else.
+    async addInventoryItem(data, userId) {
+        const existing = await this.inventoryRepository.findByNameAndUnit(userId, data.name, data.unit);
+        const incomingNotes = formatNoteSegment(data.amount, data.notes);
+
+        const item = existing
+            ? await this.inventoryRepository.update(existing.id, {
+                name: existing.name,
+                category: existing.category,
+                amount: existing.amount + data.amount,
+                unit: existing.unit,
+                notes: appendNotes(existing.notes, incomingNotes),
+            })
+            : await this.inventoryRepository.create({ ...data, userId, notes: incomingNotes });
+        return item.toDTO();
+    }
+
     async updateInventoryItem(id, data, userId) {
         const item = await this._getOwnedInventoryItem(id, userId);
         const updated = await this.inventoryRepository.update(item.id, data);
@@ -107,22 +126,32 @@ export class SuppliesService {
         await this.inventoryRepository.delete(id);
     }
 
-    // Running out doesn't just delete the item: it moves back to the shopping list,
-    // merging into an existing list entry for the same name + unit if there is one.
-    async markUsedUp(id, userId) {
+    // Using some of an item either just lowers the amount you still have (consumedAmount
+    // less than what's in stock), or, once it hits zero, moves it back to the shopping
+    // list - merging into an existing list entry for the same name + unit if there is one.
+    async markUsedUp(id, userId, consumedAmount) {
         const item = await this._getOwnedInventoryItem(id, userId);
+        const usedAmount = consumedAmount != null ? Math.min(consumedAmount, item.amount) : item.amount;
+        const remaining = item.amount - usedAmount;
+
+        if (remaining > 0) {
+            const updated = await this.inventoryRepository.update(id, {
+                name: item.name, category: item.category, amount: remaining, unit: item.unit, notes: item.notes,
+            });
+            return updated.toDTO();
+        }
 
         const existing = await this.shoppingListRepository.findByNameAndUnit(userId, item.name, item.unit);
         const shoppingListItem = existing
             ? await this.shoppingListRepository.update(existing.id, {
                 name: existing.name,
                 category: existing.category,
-                amount: existing.amount + item.amount,
+                amount: existing.amount + usedAmount,
                 unit: existing.unit,
                 notes: appendNotes(existing.notes, item.notes),
             })
             : await this.shoppingListRepository.create({
-                userId, name: item.name, category: item.category, amount: item.amount, unit: item.unit, notes: item.notes,
+                userId, name: item.name, category: item.category, amount: usedAmount, unit: item.unit, notes: item.notes,
             });
 
         await this.inventoryRepository.delete(id);

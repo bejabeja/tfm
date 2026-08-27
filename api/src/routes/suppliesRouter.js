@@ -19,6 +19,7 @@ export const createSuppliesRouter = () => {
     router.post('/shopping-list/:id/purchase', suppliesController.markPurchased.bind(suppliesController));
 
     router.get('/inventory', suppliesController.getInventory.bind(suppliesController));
+    router.post('/inventory', suppliesController.addInventoryItem.bind(suppliesController));
     router.patch('/inventory/:id', suppliesController.updateInventoryItem.bind(suppliesController));
     router.delete('/inventory/:id', suppliesController.deleteInventoryItem.bind(suppliesController));
     router.post('/inventory/:id/use-up', suppliesController.markUsedUp.bind(suppliesController));

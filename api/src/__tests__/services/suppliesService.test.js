@@ -91,6 +91,33 @@ describe('SuppliesService', () => {
         });
     });
 
+    describe('addInventoryItem()', () => {
+        it('sums the amount into an existing inventory item with the same name and unit', async () => {
+            inventoryRepository.findByNameAndUnit = async () => makeInventoryItem({ amount: 100 });
+            let updateArgs;
+            inventoryRepository.update = async (id, data) => { updateArgs = { id, data }; return makeInventoryItem({ id, ...data }); };
+
+            const result = await service.addInventoryItem({ name: 'Pasta', category: 'food', amount: 200, unit: 'g' }, 'user-1');
+
+            expect(updateArgs.data.amount).toBe(300);
+            expect(result.amount).toBe(300);
+        });
+
+        it('creates a new inventory item directly when none matches, without going through the shopping list', async () => {
+            inventoryRepository.findByNameAndUnit = async () => null;
+            let createArgs;
+            inventoryRepository.create = async (data) => { createArgs = data; return makeInventoryItem({ ...data, id: 'inv-new' }); };
+            let shoppingListCreateCalled = false;
+            shoppingListRepository.create = async () => { shoppingListCreateCalled = true; };
+
+            const result = await service.addInventoryItem({ name: 'Latas de atún', category: 'food', amount: 6, unit: 'cans' }, 'user-1');
+
+            expect(createArgs.amount).toBe(6);
+            expect(shoppingListCreateCalled).toBe(false);
+            expect(result.id).toBe('inv-new');
+        });
+    });
+
     describe('markPurchased()', () => {
         it('sums the amount into an existing inventory item with the same name and unit', async () => {
             inventoryRepository.findByNameAndUnit = async () => makeInventoryItem({ amount: 100 });
@@ -202,6 +229,33 @@ describe('SuppliesService', () => {
 
             expect(createArgs).toMatchObject({ name: 'Peppers', category: 'food', amount: 1, unit: 'units' });
             expect(result.name).toBe('Peppers');
+        });
+
+        it('only lowers the amount and keeps the item in inventory when the consumed amount is less than what is in stock', async () => {
+            inventoryRepository.findById = async () => makeInventoryItem({ name: 'Pasta', amount: 600, unit: 'g' });
+            let updateArgs;
+            inventoryRepository.update = async (id, data) => { updateArgs = { id, data }; return makeInventoryItem({ id, ...data }); };
+            let createCalled = false;
+            shoppingListRepository.create = async () => { createCalled = true; };
+            let deleteCalled = false;
+            inventoryRepository.delete = async () => { deleteCalled = true; };
+
+            const result = await service.markUsedUp('inv-1', 'user-1', 200);
+
+            expect(updateArgs.data.amount).toBe(400); // 600 - 200 consumed
+            expect(deleteCalled).toBe(false);
+            expect(createCalled).toBe(false);
+            expect(result.amount).toBe(400);
+        });
+
+        it('clamps the consumed amount to what is actually in stock', async () => {
+            inventoryRepository.findById = async () => makeInventoryItem({ name: 'Pasta', amount: 100, unit: 'g' });
+            let createArgs;
+            shoppingListRepository.create = async (data) => { createArgs = data; return makeShoppingListItem({ ...data, id: 'sl-new' }); };
+
+            await service.markUsedUp('inv-1', 'user-1', 500); // more than the 100g actually in stock
+
+            expect(createArgs.amount).toBe(100);
         });
 
         it('merges into an existing shopping list entry for the same name and unit instead of duplicating it', async () => {

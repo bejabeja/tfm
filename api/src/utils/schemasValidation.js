@@ -120,3 +120,7 @@ export const supplyItemSchema = z.object({
 export const purchaseAmountSchema = z.object({
     purchasedAmount: z.number().positive("Purchased amount must be greater than zero").optional(),
 });
+
+export const consumeAmountSchema = z.object({
+    consumedAmount: z.number().positive("Consumed amount must be greater than zero").optional(),
+});

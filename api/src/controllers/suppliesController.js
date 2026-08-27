@@ -1,5 +1,5 @@
 import { ValidationError } from '../errors/ValidationError.js';
-import { supplyItemSchema, purchaseAmountSchema } from '../utils/schemasValidation.js';
+import { supplyItemSchema, purchaseAmountSchema, consumeAmountSchema } from '../utils/schemasValidation.js';
 
 export class SuppliesController {
     constructor(suppliesService) {
@@ -79,6 +79,17 @@ export class SuppliesController {
         }
     }
 
+    async addInventoryItem(req, res, next) {
+        const data = this._validate(req, next);
+        if (!data) return;
+        try {
+            const item = await this.suppliesService.addInventoryItem(data, req.user.id);
+            res.status(201).json(item);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async updateInventoryItem(req, res, next) {
         const data = this._validate(req, next);
         if (!data) return;
@@ -100,8 +111,12 @@ export class SuppliesController {
     }
 
     async markUsedUp(req, res, next) {
+        const result = consumeAmountSchema.safeParse(req.body ?? {});
+        if (!result.success) {
+            return next(new ValidationError(result.error.errors[0]?.message || "Validation failed"));
+        }
         try {
-            const item = await this.suppliesService.markUsedUp(req.params.id, req.user.id);
+            const item = await this.suppliesService.markUsedUp(req.params.id, req.user.id, result.data.consumedAmount);
             res.status(200).json(item);
         } catch (error) {
             next(error);

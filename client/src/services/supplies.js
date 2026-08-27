@@ -1,4 +1,4 @@
 export {
     getShoppingList, addShoppingListItem, updateShoppingListItem, deleteShoppingListItem, markShoppingListItemPurchased,
-    getInventory, updateInventoryItem, deleteInventoryItem, markInventoryItemUsedUp,
+    getInventory, addInventoryItem, updateInventoryItem, deleteInventoryItem, markInventoryItemUsedUp,
 } from '@tobeatraveller/shared';

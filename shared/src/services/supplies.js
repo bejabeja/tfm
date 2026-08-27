@@ -38,11 +38,17 @@ export const markShoppingListItemPurchased = (id, purchasedAmount) =>
 export const getInventory = () =>
     jsonRequest("/inventory", { method: "GET" }, "Failed to get inventory");
 
+export const addInventoryItem = (item) =>
+    jsonRequest("/inventory", { method: "POST", body: JSON.stringify(item) }, "Failed to add item");
+
 export const updateInventoryItem = (id, item) =>
     jsonRequest(`/inventory/${id}`, { method: "PATCH", body: JSON.stringify(item) }, "Failed to update item");
 
 export const deleteInventoryItem = (id) =>
     jsonRequest(`/inventory/${id}`, { method: "DELETE" }, "Failed to delete item");
 
-export const markInventoryItemUsedUp = (id) =>
-    jsonRequest(`/inventory/${id}/use-up`, { method: "POST" }, "Failed to mark item as used up");
+export const markInventoryItemUsedUp = (id, consumedAmount) =>
+    jsonRequest(`/inventory/${id}/use-up`, {
+        method: "POST",
+        body: consumedAmount != null ? JSON.stringify({ consumedAmount }) : undefined,
+    }, "Failed to mark item as used up");

@@ -1,11 +1,11 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
-import { IoAddOutline, IoBagCheckOutline, IoCartOutline, IoPencilOutline, IoRefreshOutline, IoTrashOutline } from "react-icons/io5";
+import { IoAddOutline, IoBagCheckOutline, IoCartOutline, IoCloseOutline, IoPencilOutline, IoRefreshOutline, IoSearchOutline, IoTrashOutline } from "react-icons/io5";
 import { supplyCategories, supplyUnits } from "@tobeatraveller/shared";
 import Modal from "../../components/modal/Modal";
 import {
-  addShoppingListItem, deleteInventoryItem, deleteShoppingListItem, getInventory, getShoppingList,
+  addInventoryItem, addShoppingListItem, deleteInventoryItem, deleteShoppingListItem, getInventory, getShoppingList,
   markInventoryItemUsedUp, markShoppingListItemPurchased, updateInventoryItem, updateShoppingListItem,
 } from "../../services/supplies";
 import SupplyFormModal from "./SupplyFormModal";
@@ -16,16 +16,17 @@ const Supplies = () => {
   const s = (key, vars) => t(`supplies.${key}`, vars);
 
   const [tab, setTab] = useState("shopping");
+  const [search, setSearch] = useState("");
   const [shoppingList, setShoppingList] = useState([]);
   const [inventory, setInventory] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [formTarget, setFormTarget] = useState(null); // { mode: 'add' | 'edit-shopping' | 'edit-inventory', item? }
+  const [formTarget, setFormTarget] = useState(null); // { mode: 'add-shopping' | 'add-inventory' | 'edit-shopping' | 'edit-inventory', item? }
   const [deleteTarget, setDeleteTarget] = useState(null); // { mode, id }
   const [deleting, setDeleting] = useState(false);
-  const [purchaseTarget, setPurchaseTarget] = useState(null); // shopping list item being purchased
-  const [purchaseAmount, setPurchaseAmount] = useState("");
-  const [purchasing, setPurchasing] = useState(false);
+  const [quantityPrompt, setQuantityPrompt] = useState(null); // { type: 'purchase' | 'consume', item }
+  const [quantityValue, setQuantityValue] = useState("");
+  const [confirmingQuantity, setConfirmingQuantity] = useState(false);
 
   const loadData = () => {
     setLoading(true);
@@ -49,8 +50,11 @@ const Supplies = () => {
   const closeForm = () => setFormTarget(null);
 
   const handleSave = async (data) => {
-    if (formTarget.mode === "add") {
+    if (formTarget.mode === "add-shopping") {
       await addShoppingListItem(data);
+      toast.success(s("added"));
+    } else if (formTarget.mode === "add-inventory") {
+      await addInventoryItem(data);
       toast.success(s("added"));
     } else if (formTarget.mode === "edit-shopping") {
       await updateShoppingListItem(formTarget.item.id, data);
@@ -63,44 +67,40 @@ const Supplies = () => {
     loadData();
   };
 
-  const openPurchase = (item) => {
-    setPurchaseTarget(item);
-    setPurchaseAmount(String(item.amount));
+  const openQuantityPrompt = (type, item) => {
+    setQuantityPrompt({ type, item });
+    setQuantityValue(String(item.amount));
   };
 
-  const confirmPurchase = async () => {
-    const amount = parseFloat(purchaseAmount);
+  const confirmQuantityPrompt = async () => {
+    const amount = parseFloat(quantityValue);
     if (isNaN(amount) || amount <= 0) {
       toast.error(s("invalidAmount"));
       return;
     }
-    setPurchasing(true);
+    const { type, item } = quantityPrompt;
+    setConfirmingQuantity(true);
     try {
-      await markShoppingListItemPurchased(purchaseTarget.id, amount);
-      toast.success(s("movedToInventory", { name: purchaseTarget.name }));
-      setPurchaseTarget(null);
+      if (type === "purchase") {
+        await markShoppingListItemPurchased(item.id, amount);
+        toast.success(s("movedToInventory", { name: item.name }));
+      } else {
+        await markInventoryItemUsedUp(item.id, amount);
+        toast.success(amount < item.amount ? s("amountUpdated", { name: item.name }) : s("movedToShoppingList", { name: item.name }));
+      }
+      setQuantityPrompt(null);
       loadData();
     } catch (err) {
       toast.error(err.message || s("saveError"));
     } finally {
-      setPurchasing(false);
+      setConfirmingQuantity(false);
     }
   };
 
-  const purchaseUnitAllowsDecimals = purchaseTarget
-    ? supplyUnits.find(u => u.value === purchaseTarget.unit)?.allowsDecimals ?? true
+  const quantityUnitAllowsDecimals = quantityPrompt
+    ? supplyUnits.find(u => u.value === quantityPrompt.item.unit)?.allowsDecimals ?? true
     : true;
-  const purchaseStep = purchaseUnitAllowsDecimals ? "0.01" : "1";
-
-  const handleUsedUp = async (item) => {
-    try {
-      await markInventoryItemUsedUp(item.id);
-      toast.success(s("movedToShoppingList", { name: item.name }));
-      loadData();
-    } catch (err) {
-      toast.error(err.message || s("saveError"));
-    }
-  };
+  const quantityStep = quantityUnitAllowsDecimals ? "0.01" : "1";
 
   const confirmDelete = async () => {
     setDeleting(true);
@@ -125,7 +125,9 @@ const Supplies = () => {
     );
   }
 
-  const items = tab === "shopping" ? shoppingList : inventory;
+  const tabItems = tab === "shopping" ? shoppingList : inventory;
+  const query = search.trim().toLowerCase();
+  const items = query ? tabItems.filter(item => item.name.toLowerCase().includes(query)) : tabItems;
 
   const knownItems = Object.values(
     [...inventory, ...shoppingList].reduce((byKey, current) => {
@@ -139,11 +141,9 @@ const Supplies = () => {
     <section className="supplies section__container">
       <div className="supplies__header">
         <h1 className="supplies__title">{s("title")}</h1>
-        {tab === "shopping" && (
-          <button type="button" className="btn btn--primary" onClick={() => setFormTarget({ mode: "add" })}>
-            <IoAddOutline /> {s("addItem")}
-          </button>
-        )}
+        <button type="button" className="btn btn--primary" onClick={() => setFormTarget({ mode: tab === "shopping" ? "add-shopping" : "add-inventory" })}>
+          <IoAddOutline /> {s("addItem")}
+        </button>
       </div>
 
       <div className="supplies__tabs">
@@ -165,6 +165,24 @@ const Supplies = () => {
         </button>
       </div>
 
+      {(shoppingList.length > 0 || inventory.length > 0) && (
+        <div className="supplies__search">
+          <IoSearchOutline className="supplies__search-icon" />
+          <input
+            type="text"
+            className="supplies__search-input"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder={s("searchPlaceholder")}
+          />
+          {search && (
+            <button type="button" className="supplies__search-clear" onClick={() => setSearch("")} aria-label={t("common.close")}>
+              <IoCloseOutline />
+            </button>
+          )}
+        </div>
+      )}
+
       {loading ? (
         <div className="supplies__list">
           {Array.from({ length: 4 }).map((_, i) => (
@@ -173,7 +191,11 @@ const Supplies = () => {
         </div>
       ) : items.length === 0 ? (
         <div className="supplies__empty">
-          <p>{tab === "shopping" ? s("noShoppingItems") : s("noInventoryItems")}</p>
+          <p>
+            {query
+              ? s("noSearchResults", { query: search.trim() })
+              : (tab === "shopping" ? s("noShoppingItems") : s("noInventoryItems"))}
+          </p>
         </div>
       ) : (
         <div className="supplies__list">
@@ -187,11 +209,11 @@ const Supplies = () => {
               </div>
               <div className="supplies__item-actions">
                 {tab === "shopping" ? (
-                  <button type="button" className="supplies__item-action-btn supplies__item-action-btn--primary" onClick={() => openPurchase(item)} title={s("markPurchased")}>
+                  <button type="button" className="supplies__item-action-btn supplies__item-action-btn--primary" onClick={() => openQuantityPrompt("purchase", item)} title={s("markPurchased")}>
                     <IoBagCheckOutline />
                   </button>
                 ) : (
-                  <button type="button" className="supplies__item-action-btn supplies__item-action-btn--primary" onClick={() => handleUsedUp(item)} title={s("markUsedUp")}>
+                  <button type="button" className="supplies__item-action-btn supplies__item-action-btn--primary" onClick={() => openQuantityPrompt("consume", item)} title={s("markUsedUp")}>
                     <IoRefreshOutline />
                   </button>
                 )}
@@ -220,8 +242,8 @@ const Supplies = () => {
       {formTarget && (
         <SupplyFormModal
           item={formTarget.item}
-          title={formTarget.mode === "add" ? s("addItem") : s("editItem")}
-          saveLabel={formTarget.mode === "add" ? s("addItem") : t("common.save")}
+          title={formTarget.mode.startsWith("add") ? s("addItem") : s("editItem")}
+          saveLabel={formTarget.mode.startsWith("add") ? s("addItem") : t("common.save")}
           existingItems={knownItems}
           onClose={closeForm}
           onSave={handleSave}
@@ -238,28 +260,34 @@ const Supplies = () => {
         loading={deleting}
       />
 
-      {purchaseTarget && (
-        <div className="supplies__purchase-backdrop" onClick={() => setPurchaseTarget(null)}>
+      {quantityPrompt && (
+        <div className="supplies__purchase-backdrop" onClick={() => setQuantityPrompt(null)}>
           <div className="supplies__purchase-panel" onClick={(e) => e.stopPropagation()} role="dialog" aria-modal="true">
-            <h2>{s("purchaseTitle", { name: purchaseTarget.name })}</h2>
-            <p className="supplies__purchase-hint">{s("purchaseHint", { amount: purchaseTarget.amount, unit: s(`unit.${purchaseTarget.unit}`, purchaseTarget.unit) })}</p>
-            <label htmlFor="purchase-amount" className="input__label">{s("amountLabel")}</label>
+            <h2>
+              {s(quantityPrompt.type === "purchase" ? "purchaseTitle" : "consumeTitle", { name: quantityPrompt.item.name })}
+            </h2>
+            <p className="supplies__purchase-hint">
+              {s(quantityPrompt.type === "purchase" ? "purchaseHint" : "consumeHint", {
+                amount: quantityPrompt.item.amount, unit: s(`unit.${quantityPrompt.item.unit}`, quantityPrompt.item.unit),
+              })}
+            </p>
+            <label htmlFor="quantity-prompt-amount" className="input__label">{s("amountLabel")}</label>
             <input
-              id="purchase-amount"
+              id="quantity-prompt-amount"
               type="number"
               className="input__field"
-              value={purchaseAmount}
-              onChange={(e) => setPurchaseAmount(e.target.value)}
-              step={purchaseStep}
-              min={purchaseStep}
+              value={quantityValue}
+              onChange={(e) => setQuantityValue(e.target.value)}
+              step={quantityStep}
+              min={quantityStep}
               autoFocus
             />
             <div className="supplies__purchase-actions">
-              <button type="button" className="btn btn--ghost" onClick={() => setPurchaseTarget(null)}>
+              <button type="button" className="btn btn--ghost" onClick={() => setQuantityPrompt(null)}>
                 {t("common.cancel")}
               </button>
-              <button type="button" className="btn btn--primary" onClick={confirmPurchase} disabled={purchasing}>
-                {purchasing ? t("common.loading") : s("confirmPurchase")}
+              <button type="button" className="btn btn--primary" onClick={confirmQuantityPrompt} disabled={confirmingQuantity}>
+                {confirmingQuantity ? t("common.loading") : s(quantityPrompt.type === "purchase" ? "confirmPurchase" : "confirmConsume")}
               </button>
             </div>
           </div>
