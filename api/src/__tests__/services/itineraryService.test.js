@@ -114,6 +114,80 @@ describe('ItineraryService', () => {
     });
   });
 
+  describe('cloneItinerary()', () => {
+    it('clones a public itinerary from another user', async () => {
+      const source = makeItinerary({
+        id: 'itin-1',
+        userId: 'owner-1',
+        isPublic: true,
+        photoUrl: 'https://example.com/photo.jpg',
+        photoPublicId: 'owner-public-id',
+      });
+      const clone = makeItinerary({ id: 'itin-2', userId: 'cloner-1' });
+      itinerariesRepository.findById.mockResolvedValue(source);
+      placesRepository.getPlacesByItineraryId.mockResolvedValue([]);
+      itinerariesRepository.create.mockResolvedValue(clone);
+
+      const result = await service.cloneItinerary('itin-1', 'cloner-1');
+
+      expect(itinerariesRepository.create).toHaveBeenCalledWith(
+        expect.objectContaining({ userId: 'cloner-1', isPublic: false, photoPublicId: null, photoUrl: source.photoUrl })
+      );
+      expect(result).toEqual({ id: 'itin-1', title: 'My trip', places: [] });
+    });
+
+    it('throws NotFoundError when the source itinerary does not exist', async () => {
+      itinerariesRepository.findById.mockResolvedValue(null);
+
+      await expect(service.cloneItinerary('nonexistent', 'cloner-1'))
+        .rejects.toThrow(NotFoundError);
+    });
+
+    it('throws NotFoundError when cloning a private itinerary owned by someone else', async () => {
+      const source = makeItinerary({ userId: 'owner-1', isPublic: false });
+      itinerariesRepository.findById.mockResolvedValue(source);
+
+      await expect(service.cloneItinerary('itin-1', 'cloner-1'))
+        .rejects.toThrow(NotFoundError);
+    });
+
+    it('allows cloning your own private itinerary', async () => {
+      const source = makeItinerary({ userId: 'user-1', isPublic: false });
+      const clone = makeItinerary({ id: 'itin-2' });
+      itinerariesRepository.findById.mockResolvedValue(source);
+      placesRepository.getPlacesByItineraryId.mockResolvedValue([]);
+      itinerariesRepository.create.mockResolvedValue(clone);
+
+      await expect(service.cloneItinerary('itin-1', 'user-1')).resolves.toBeDefined();
+    });
+
+    it('re-inserts and links every place from the source itinerary', async () => {
+      const source = makeItinerary({ isPublic: true });
+      const clone = makeItinerary({ id: 'itin-2' });
+      const sourcePlace = {
+        name: 'Colosseum', label: 'Ancient arena', latitude: 41.89, longitude: 12.49,
+        category: 'monument', orderIndex: 0, dayNumber: 1, description: 'A big arena',
+      };
+      const insertedPlace = makePlace('place-2', 0);
+      itinerariesRepository.findById.mockResolvedValue(source);
+      placesRepository.getPlacesByItineraryId.mockResolvedValue([sourcePlace]);
+      itinerariesRepository.create.mockResolvedValue(clone);
+      placesRepository.insertPlace.mockResolvedValue(insertedPlace);
+
+      await service.cloneItinerary('itin-1', 'cloner-1');
+
+      expect(placesRepository.insertPlace).toHaveBeenCalledWith(
+        expect.objectContaining({
+          infoPlace: { name: 'Colosseum', label: 'Ancient arena', lat: 41.89, lon: 12.49 },
+          category: 'monument',
+          dayNumber: 1,
+        })
+      );
+      expect(itinerariesRepository.linkPlace).toHaveBeenCalledWith('itin-2', 'place-2', 0, 1, 'A big arena');
+      expect(clone.addPlace).toHaveBeenCalledWith(insertedPlace);
+    });
+  });
+
   describe('createItinerary()', () => {
     const baseData = {
       userId: 'user-1',

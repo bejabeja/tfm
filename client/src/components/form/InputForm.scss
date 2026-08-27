@@ -34,6 +34,12 @@
     &--invalid {
       border-color: red;
     }
+
+    &:disabled {
+      background-color: var(--surface-color, #f8fafc);
+      color: var(--text-secondary-color);
+      cursor: not-allowed;
+    }
   }
 
   &__footer {

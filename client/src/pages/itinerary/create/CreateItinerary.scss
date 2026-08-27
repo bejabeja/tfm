@@ -870,7 +870,7 @@
     max-width: 50%;
   }
 
-  .form__container .form__cta {
+  .form__container > div.form__cta {
     display: flex;
     flex-direction: row;
   }

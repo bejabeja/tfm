@@ -13,6 +13,7 @@
     "discard": "Descartar",
     "close": "Cerrar",
     "edit": "Editar",
+    "clone": "Clonar",
     "post": "Publicar",
     "posting": "Publicando…",
     "send": "Enviar",
@@ -325,6 +326,8 @@
     "delete": "Eliminar",
     "deletedSuccess": "Itinerario eliminado correctamente",
     "deleteFailed": "No se pudo eliminar el itinerario",
+    "cloneSuccess": "¡Viaje clonado! Revísalo antes de publicarlo.",
+    "cloneFailed": "No se pudo clonar el viaje",
     "errorLoading": "No pudimos cargar el itinerario. Por favor, inténtalo más tarde.",
     "createItinerary": "Crear itinerario",
     "shareJourney": "Comparte tu aventura con el mundo",
@@ -485,6 +488,7 @@
     "errorSave": "No se pudo guardar. Por favor, inténtalo de nuevo."
   },
   "itineraryForm": {
+    "basicInfo": "Información básica",
     "tripCategory": "Categoría del viaje",
     "dates": "Fechas",
     "weekend": "Fin de semana",

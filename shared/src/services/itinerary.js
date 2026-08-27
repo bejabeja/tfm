@@ -26,6 +26,16 @@ export const createItinerary = async (formData) => {
     return response.json();
 };
 
+export const cloneItinerary = async (id) => {
+    const response = await authFetch(`${baseUrl()}/${id}/clone`, {
+        method: "POST",
+    });
+    if (!response.ok) {
+        await parseError(response, "Failed to clone itinerary");
+    }
+    return response.json();
+};
+
 export const deleteItinerary = async (id) => {
     const response = await authFetch(`${baseUrl()}/${id}`, {
         method: "DELETE",

@@ -24,6 +24,16 @@ export class ItineraryController {
         }
     }
 
+    async cloneItinerary(req, res, next) {
+        try {
+            const { id } = req.params;
+            const cloned = await this.itineraryService.cloneItinerary(id, req.user.id);
+            res.status(201).json(cloned);
+        } catch (error) {
+            next(error);
+        }
+    }
+
     async deleteItinerary(req, res, next) {
         try {
             const { id } = req.params;

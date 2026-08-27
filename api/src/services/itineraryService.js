@@ -55,6 +55,51 @@ export class ItineraryService {
         return itinerary.toDTO();
     }
 
+    async cloneItinerary(sourceId, userId) {
+        const source = await this.itinerariesRepository.findById(sourceId);
+        if (!source) {
+            throw new NotFoundError("Itinerary not found");
+        }
+        assertItineraryVisible(source, userId);
+
+        const places = await this.placesRepository.getPlacesByItineraryId(source.id);
+
+        const itinerary = await this.itinerariesRepository.create({
+            userId,
+            title: source.title,
+            description: source.description,
+            location: source.location,
+            startDate: source.startDate,
+            endDate: source.endDate,
+            numberOfPeople: source.numberOfPeople,
+            category: source.category,
+            budget: source.budget,
+            currency: source.currency,
+            photoUrl: source.photoUrl,
+            photoPublicId: null,
+            isPublic: false,
+            source: source.source,
+        });
+        if (!itinerary) {
+            throw new ConflictError("It was not possible to clone the itinerary");
+        }
+
+        for (const place of places) {
+            const placeData = {
+                infoPlace: { name: place.name, label: place.label, lat: place.latitude, lon: place.longitude },
+                category: place.category,
+                orderIndex: place.orderIndex,
+                dayNumber: place.dayNumber,
+                description: place.description,
+            };
+            const newPlace = await this.placesRepository.insertPlace(placeData);
+            await this.itinerariesRepository.linkPlace(itinerary.id, newPlace.id, placeData.orderIndex, placeData.dayNumber, placeData.description);
+            itinerary.addPlace(newPlace);
+        }
+
+        return itinerary.toDTO();
+    }
+
     async deleteItinerary(id, userId) {
         const itinerary = await this.itinerariesRepository.findById(id);
         if (!itinerary) {

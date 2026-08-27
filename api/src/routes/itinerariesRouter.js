@@ -41,6 +41,7 @@ export const createItinerariesRouter = () => {
     router.post("/generate-smart", authenticate, itineraryController.generateSmartItinerary.bind(itineraryController));
     router.patch("/:id",        authenticate, upload.single("file"), itineraryController.updateItinerary.bind(itineraryController));
     router.delete("/:id",       authenticate, itineraryController.deleteItinerary.bind(itineraryController));
+    router.post("/:id/clone",   authenticate, itineraryController.cloneItinerary.bind(itineraryController));
 
     return router;
 }

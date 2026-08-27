@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import {
   FaBookmark,
   FaCity,
+  FaClone,
   FaEdit,
   FaHeart,
   FaRegBookmark,
@@ -22,7 +23,7 @@ import {
   checkIsFavorite,
   removeFavorite,
 } from "../../services/favorites.js";
-import { deleteItinerary, getItineraryById } from "../../services/itinerary.js";
+import { cloneItinerary, deleteItinerary, getItineraryById } from "../../services/itinerary.js";
 import { getUserById } from "../../services/users.js";
 import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import {
@@ -226,6 +227,17 @@ const Hero = ({
     }
   };
 
+  const handleClone = async () => {
+    if (!isAuthenticated) { navigate("/login"); return; }
+    try {
+      const cloned = await cloneItinerary(itinerary.id);
+      toast.success(t("itinerary.cloneSuccess"));
+      navigate(cloned.source === "experience" ? `/experience/edit/${cloned.id}` : `/itinerary/edit/${cloned.id}`);
+    } catch {
+      toast.error(t("itinerary.cloneFailed"));
+    }
+  };
+
   const handleSave = async () => {
     if (!isAuthenticated) { navigate("/login"); return; }
     const wasFavorite = isFavorite;
@@ -296,6 +308,9 @@ const Hero = ({
         </button>
         <button className="action-icon-btn" onClick={handleShare} title={t("common.send")}>
           <MdOutlineShare />
+        </button>
+        <button className="action-icon-btn" onClick={handleClone} title={t("common.clone")}>
+          <FaClone />
         </button>
         {isMyItinerary ? (
           <>

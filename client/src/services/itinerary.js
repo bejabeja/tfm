@@ -1,1 +1,1 @@
-export { getItineraryById, createItinerary, deleteItinerary, updateItinerary } from '@tobeatraveller/shared';
+export { getItineraryById, createItinerary, cloneItinerary, deleteItinerary, updateItinerary } from '@tobeatraveller/shared';
