@@ -1,18 +1,22 @@
 import { Router } from 'express';
 import config from '../config/config.js';
+import { FollowRepository } from '../repositories/followRepository.js';
 import { ItineraryRepository } from '../repositories/itineraryRepository.js';
 import { PlacesRepository } from '../repositories/placesRepository.js';
+import { UserRepository } from '../repositories/userRepository.js';
 import { ItineraryService } from '../services/itineraryService.js';
+import { UserService } from '../services/userService.js';
+import { buildItineraryOgMeta, buildUserOgMeta } from '../utils/ogMeta.js';
 import { escapeXml as esc } from '../utils/xmlEscape.js';
 
-const ogHtml = ({ title, description, imageUrl, pageUrl, redirectUrl }) => `<!DOCTYPE html>
+const ogHtml = ({ title, description, imageUrl, pageUrl, redirectUrl, type }) => `<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <title>${esc(title)} - ToBeATraveller</title>
   <meta name="description" content="${esc(description)}" />
 
-  <meta property="og:type"        content="article" />
+  <meta property="og:type"        content="${esc(type)}" />
   <meta property="og:site_name"   content="ToBeATraveller" />
   <meta property="og:url"         content="${esc(pageUrl)}" />
   <meta property="og:title"       content="${esc(title)}" />
@@ -41,6 +45,10 @@ export const createOgRouter = () => {
     const placesRepository = new PlacesRepository();
     const itineraryService = new ItineraryService(itineraryRepository, placesRepository);
 
+    const userRepository = new UserRepository();
+    const followRepository = new FollowRepository();
+    const userService = new UserService(userRepository, itineraryRepository, followRepository);
+
     router.get('/itinerary/:id', async (req, res) => {
         const { id } = req.params;
         const appUrl = config.appUrl;
@@ -48,16 +56,28 @@ export const createOgRouter = () => {
 
         try {
             const itinerary = await itineraryService.getItineraryById(id);
-
-            const title = itinerary.title || 'Trip on ToBeATraveller';
-            const description = itinerary.description
-                ? itinerary.description.slice(0, 160)
-                : `A ${itinerary.tripTotalDays}-day trip to ${itinerary.location?.name || 'an amazing destination'}`;
-            const imageUrl = itinerary.photoUrl || `${appUrl}/images/hero.jpg`;
+            const { title, description, imageUrl } = buildItineraryOgMeta(itinerary, appUrl);
 
             res.setHeader('Content-Type', 'text/html; charset=utf-8');
             res.setHeader('Cache-Control', 'public, max-age=3600');
-            res.send(ogHtml({ title, description, imageUrl, pageUrl: redirectUrl, redirectUrl }));
+            res.send(ogHtml({ title, description, imageUrl, pageUrl: redirectUrl, redirectUrl, type: 'article' }));
+        } catch {
+            res.redirect(302, redirectUrl);
+        }
+    });
+
+    router.get('/profile/:id', async (req, res) => {
+        const { id } = req.params;
+        const appUrl = config.appUrl;
+        const redirectUrl = `${appUrl}/friend-profile/${id}`;
+
+        try {
+            const user = await userService.getUserById(id);
+            const { title, description, imageUrl } = buildUserOgMeta(user);
+
+            res.setHeader('Content-Type', 'text/html; charset=utf-8');
+            res.setHeader('Cache-Control', 'public, max-age=3600');
+            res.send(ogHtml({ title, description, imageUrl, pageUrl: redirectUrl, redirectUrl, type: 'profile' }));
         } catch {
             res.redirect(302, redirectUrl);
         }

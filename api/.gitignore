@@ -2,10 +2,7 @@
 node_modules/
 
 # Dotenv files
-.env
-.env.local
-.env.development
-.env.production
+.env*
 
 # Logs
 *.log
@@ -23,3 +20,4 @@ build/
 
 # Sentry Config File
 .sentryclirc
+.vercel
