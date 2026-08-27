@@ -308,6 +308,7 @@ export class ItineraryRepository {
       commented: 'ORDER BY comments_count DESC',
       cheapest:  'ORDER BY budget ASC',
       recent:    'ORDER BY created_at DESC',
+      official:  "ORDER BY (users.role = 'official') DESC, created_at DESC",
     }[filters.sortBy] ?? 'ORDER BY created_at DESC';
 
     const query = `

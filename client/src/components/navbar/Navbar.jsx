@@ -10,8 +10,8 @@ import {
   IoNotificationsOutline,
   IoSaveOutline,
   IoSearch,
+  IoSearchOutline,
 } from "react-icons/io5";
-import { RiUserCommunityLine } from "react-icons/ri";
 import { useDispatch, useSelector } from "react-redux";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -20,6 +20,7 @@ import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
 import { generateAvatar } from "../../utils/constants/constants";
 import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl";
+import GlobalSearch from "./GlobalSearch";
 import "./Navbar.scss";
 
 const Navbar = () => {
@@ -33,6 +34,7 @@ const Navbar = () => {
 
   const [meOpen, setMeOpen]             = useState(false);
   const [createOpen, setCreateOpen]     = useState(false);
+  const [searchOpen, setSearchOpen]     = useState(false);
   const [isCollapsed, setIsCollapsed]   = useState(
     () => localStorage.getItem("sidebar-collapsed") === "true"
   );
@@ -42,6 +44,7 @@ const Navbar = () => {
   useEffect(() => {
     setMeOpen(false);
     setCreateOpen(false);
+    setSearchOpen(false);
   }, [location]);
 
   useEffect(() => {
@@ -70,6 +73,11 @@ const Navbar = () => {
           <img src="/logo.svg" alt="ToBeATraveller" className="logo__full" height="28" />
         </Link>
 
+        <button type="button" className="nav-search-trigger" title={t("globalSearch.trigger")} onClick={() => setSearchOpen(true)}>
+          <IoSearchOutline className="nav-search-trigger__icon" />
+          <span>{t("globalSearch.placeholder")}</span>
+        </button>
+
         <div className="nav-section">
           <h3>{t("nav.discover")}</h3>
           <NavLink to="/" className="nav-item" end title={t("nav.home")}>
@@ -79,10 +87,6 @@ const Navbar = () => {
           <NavLink to="/explore" className="nav-item" title={t("nav.explore")}>
             <IoSearch className="nav-icon" />
             <span>{t("nav.explore")}</span>
-          </NavLink>
-          <NavLink to="/community" className="nav-item" title={t("nav.community")}>
-            <RiUserCommunityLine className="nav-icon" />
-            <span>{t("nav.community")}</span>
           </NavLink>
         </div>
 
@@ -187,10 +191,10 @@ const Navbar = () => {
             </div>
           </button>
         )}
-        <NavLink to="/community" className="bottom-nav__item">
-          <RiUserCommunityLine className="bottom-nav__icon" />
-          <span>{t("nav.community")}</span>
-        </NavLink>
+        <button type="button" className="bottom-nav__item" onClick={() => setSearchOpen(true)}>
+          <IoSearchOutline className="bottom-nav__icon" />
+          <span>{t("globalSearch.trigger")}</span>
+        </button>
         {isAuthenticated ? (
           <button className={`bottom-nav__item ${meOpen ? "active" : ""}`} onClick={() => setMeOpen(!meOpen)}>
             <GoPerson className="bottom-nav__icon" />
@@ -239,6 +243,8 @@ const Navbar = () => {
           </div>
         </div>
       )}
+
+      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 };

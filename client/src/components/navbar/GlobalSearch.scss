@@ -1,0 +1,170 @@
+.global-search {
+  &__backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding: 10vh 1rem 2rem;
+  }
+
+  &__panel {
+    position: relative;
+    width: 100%;
+    max-width: 560px;
+    max-height: 70vh;
+    background: var(--white-color, #fff);
+    border-radius: 14px;
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.25);
+    display: flex;
+    flex-direction: column;
+    // overflow: hidden here (instead of clip) makes Chromium mis-layout this
+    // panel's children ~180px to the left of the panel's own box in this
+    // environment (reproduced and isolated: happens with overflow:hidden
+    // regardless of border-radius/flex, disappears with overflow:visible or
+    // overflow:clip). clip gives the same rounded-corner clipping, no bug.
+    overflow: clip;
+  }
+
+  &__input-row {
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    padding: 1rem 1.25rem;
+    border-bottom: 1px solid var(--border-color, #e2e8f0);
+  }
+
+  &__input-icon {
+    width: fit-content;
+    color: var(--text-secondary-color);
+    font-size: 1.2rem;
+    flex-shrink: 0;
+  }
+
+  &__input {
+    flex: 1;
+    width: auto;
+    border: none;
+    outline: none;
+    font-size: 1rem;
+    font-family: inherit;
+    color: var(--text-color);
+    background: transparent;
+
+    &::placeholder {
+      color: var(--text-secondary-color);
+    }
+  }
+
+  &__close {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--text-secondary-color);
+    font-size: 1.25rem;
+    cursor: pointer;
+    flex-shrink: 0;
+
+    &:hover {
+      color: var(--text-color);
+    }
+  }
+
+  &__results {
+    width: auto;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 0.5rem;
+  }
+
+  &__hint {
+    padding: 1.5rem 1rem;
+    text-align: center;
+    color: var(--text-secondary-color);
+    font-size: 0.9rem;
+  }
+
+  &__section {
+    width: auto;
+    margin-bottom: 0.5rem;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  &__section-title {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--text-secondary-color);
+    padding: 0.5rem 0.75rem 0.25rem;
+  }
+
+  &__result {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: none;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: left;
+    font-family: inherit;
+
+    &:hover {
+      background: rgba(0, 119, 182, 0.07);
+    }
+  }
+
+  &__result-thumb {
+    width: 2.5rem;
+    height: 2.5rem;
+    border-radius: 8px;
+    object-fit: cover;
+    flex-shrink: 0;
+    background: var(--surface-color, #f1f5f9);
+
+    &--round {
+      border-radius: 50%;
+    }
+  }
+
+  &__result-text {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    gap: 0.1rem;
+    min-width: 0;
+    width: auto;
+
+    strong {
+      display: block;
+      width: 100%;
+      font-size: 0.9rem;
+      color: var(--text-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    span {
+      display: block;
+      width: 100%;
+      font-size: 0.8rem;
+      color: var(--text-secondary-color);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}

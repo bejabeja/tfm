@@ -105,7 +105,6 @@
     "discover": "Descubrir",
     "home": "Inicio",
     "explore": "Explorar",
-    "community": "Comunidad",
     "createTrip": "Crear viaje",
     "yourSpace": "Tu espacio",
     "notifications": "Notificaciones",
@@ -124,6 +123,15 @@
     "createSheetExperience": "Experiencia",
     "createSheetExperienceDesc": "Dile a la IA adónde vas, ella construye el viaje.",
     "createSheetCancel": "Cancelar"
+  },
+  "globalSearch": {
+    "trigger": "Buscar",
+    "placeholder": "Buscar viajes o personas…",
+    "trips": "Viajes",
+    "people": "Personas",
+    "featuredTrips": "Viajes destacados",
+    "suggestedPeople": "Personas para seguir",
+    "noResults": "Sin resultados para \"{{query}}\""
   },
   "home": {
     "heroTitle": "To Be a Traveller",
