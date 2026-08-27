@@ -267,17 +267,6 @@
   }
 }
 
-// #6: image upload filename
-.image-upload-filename {
-  font-size: 0.78rem;
-  color: var(--text-secondary-color);
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  max-width: 180px;
-  display: block;
-}
-
 // #8: destination locked note
 .form__field-note {
   font-size: 0.78rem;
@@ -648,21 +637,6 @@
   }
 }
 
-.image-upload-container {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.image-upload-preview {
-  width: 100%;
-  max-width: 320px;
-  height: 180px;
-  object-fit: cover;
-  border-radius: 10px;
-  border: 1px solid var(--border-color, #e2e8f0);
-}
-
 // Progress bar
 .form__progress {
   display: flex;
@@ -703,60 +677,6 @@
   0% { transform: scale(0); opacity: 0; }
   60% { transform: scale(1.4); opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
-}
-
-// Drag-and-drop dropzone
-.form__dropzone {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 0.4rem;
-  border: 2px dashed var(--border-color, #e2e8f0);
-  border-radius: 12px;
-  padding: 2rem 1rem;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  text-align: center;
-
-  &:hover, &--dragging {
-    border-color: var(--primary-color);
-    background: rgba(0, 119, 182, 0.04);
-  }
-
-  &-icon {
-    font-size: 2.5rem;
-    color: var(--text-secondary-color);
-    opacity: 0.7;
-  }
-
-  &-text {
-    font-size: 0.95rem;
-    font-weight: 500;
-    color: var(--text-color, #333);
-  }
-
-  &-hint {
-    font-size: 0.82rem;
-    color: var(--text-secondary-color);
-  }
-
-  &-link {
-    color: var(--primary-color);
-    text-decoration: underline;
-  }
-
-  &-preview {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-  }
-
-  &-actions {
-    display: flex;
-    gap: 0.5rem;
-    align-items: center;
-  }
 }
 
 // Budget preset chips

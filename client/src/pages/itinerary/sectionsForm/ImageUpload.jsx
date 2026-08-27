@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdOutlineCameraAlt } from "react-icons/md";
+import "./ImageUpload.scss";
 
 const ImageUpload = ({ onUpload, imageUrl: initialImageUrl, isComplete }) => {
   const { t } = useTranslation();

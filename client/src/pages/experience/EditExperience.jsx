@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
   IoAddCircleOutline,
   IoAirplaneOutline,
+  IoArrowBackOutline,
   IoBonfireOutline,
   IoBulbOutline,
   IoBusinessOutline,
@@ -360,6 +361,11 @@ const EditExperience = () => {
         {phase === "review" && (
           <button className="cexp__hero-edit" onClick={() => setPhase("input")} type="button">
             <IoRefreshOutline size={14} /> {ce("editBtn")}
+          </button>
+        )}
+        {phase === "input" && steps.length > 0 && (
+          <button className="cexp__hero-edit" onClick={() => setPhase("review")} type="button">
+            <IoArrowBackOutline size={14} /> {ce("backToReview")}
           </button>
         )}
       </header>

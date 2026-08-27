@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import {
   IoAddCircleOutline,
   IoAirplaneOutline,
+  IoArrowBackOutline,
   IoBonfireOutline,
   IoBulbOutline,
   IoBusinessOutline,
@@ -328,6 +329,11 @@ const CreateExperience = () => {
             <IoRefreshOutline size={14} /> {ce("editBtn")}
           </button>
         )}
+        {phase === "input" && steps.length > 0 && (
+          <button className="cexp__hero-edit" onClick={() => setPhase("review")} type="button">
+            <IoArrowBackOutline size={14} /> {ce("backToReview")}
+          </button>
+        )}
       </header>
 
       {phase === "input" ? (
@@ -549,6 +555,31 @@ const CreateExperience = () => {
               ))}
               <button type="button" className="cexp__add-step" onClick={addStep}>
                 <IoAddCircleOutline size={16} /> {ce("addMoment")}
+              </button>
+            </div>
+          </div>
+
+          {/* Visibility */}
+          <div className="cexp__section">
+            <label className="cexp__label">{ce("visibilityLabel")}</label>
+            <div className="cexp__visibility-row">
+              <button
+                type="button"
+                className={`cexp__visibility-opt ${isPublic ? "cexp__visibility-opt--on" : ""}`}
+                onClick={() => setIsPublic(true)}
+              >
+                <span>🌍</span>
+                <span className="cexp__visibility-opt-name">{ce("visibilityPublic")}</span>
+                <span className="cexp__visibility-opt-desc">{ce("visibilityPublicDesc")}</span>
+              </button>
+              <button
+                type="button"
+                className={`cexp__visibility-opt ${!isPublic ? "cexp__visibility-opt--on" : ""}`}
+                onClick={() => setIsPublic(false)}
+              >
+                <span>🔒</span>
+                <span className="cexp__visibility-opt-name">{ce("visibilityPrivate")}</span>
+                <span className="cexp__visibility-opt-desc">{ce("visibilityPrivateDesc")}</span>
               </button>
             </div>
           </div>
