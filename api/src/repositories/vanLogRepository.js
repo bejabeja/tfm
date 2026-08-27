@@ -1,6 +1,6 @@
 import { v4 as uuidv4 } from 'uuid';
 import client from '../db/clientPostgres.js';
-import { VanLogEntry } from '../models/vanLogEntry.js';
+import { VanLogEntry, toDateOnlyString } from '../models/vanLogEntry.js';
 
 export class VanLogRepository {
     async create(data) {
@@ -30,10 +30,39 @@ export class VanLogRepository {
         return VanLogEntry.fromDb(result.rows[0]);
     }
 
-    async findByUserId(userId) {
+    buildFilters(userId, filters = {}) {
+        const conditions = [`user_id = $1`];
+        const values = [userId];
+        let i = 2;
+
+        if (filters.category) {
+            conditions.push(`category = $${i++}`);
+            values.push(filters.category);
+        }
+
+        if (filters.country) {
+            conditions.push(`LOWER(location_country) = LOWER($${i++})`);
+            values.push(filters.country);
+        }
+
+        if (filters.dateFrom) {
+            conditions.push(`entry_date >= $${i++}::date`);
+            values.push(filters.dateFrom);
+        }
+
+        if (filters.dateTo) {
+            conditions.push(`entry_date <= $${i++}::date`);
+            values.push(filters.dateTo);
+        }
+
+        return { conditions, values };
+    }
+
+    async findByUserId(userId, filters = {}) {
+        const { conditions, values } = this.buildFilters(userId, filters);
         const result = await client.query(
-            `SELECT * FROM van_log_entries WHERE user_id = $1 ORDER BY entry_date DESC, created_at DESC`,
-            [userId]
+            `SELECT * FROM van_log_entries WHERE ${conditions.join(" AND ")} ORDER BY entry_date DESC, created_at DESC`,
+            values
         );
         return result.rows.map(VanLogEntry.fromDb);
     }
@@ -78,7 +107,7 @@ export class VanLogRepository {
 
     async getTotalsByCategory(userId) {
         const result = await client.query(
-            `SELECT category, COALESCE(SUM(amount), 0) AS total, COUNT(*)::int AS count
+            `SELECT category, COALESCE(SUM(amount), 0) AS total, COUNT(*)::int AS count, MAX(entry_date) AS last_date
              FROM van_log_entries
              WHERE user_id = $1
              GROUP BY category`,
@@ -86,6 +115,23 @@ export class VanLogRepository {
         );
         return result.rows.map(row => ({
             category: row.category,
+            total: Number(row.total),
+            count: row.count,
+            lastDate: toDateOnlyString(row.last_date),
+        }));
+    }
+
+    async getTotalsByCountry(userId) {
+        const result = await client.query(
+            `SELECT location_country AS country, COALESCE(SUM(amount), 0) AS total, COUNT(*)::int AS count
+             FROM van_log_entries
+             WHERE user_id = $1 AND location_country IS NOT NULL
+             GROUP BY location_country
+             ORDER BY total DESC`,
+            [userId]
+        );
+        return result.rows.map(row => ({
+            country: row.country,
             total: Number(row.total),
             count: row.count,
         }));

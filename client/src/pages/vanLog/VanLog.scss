@@ -55,12 +55,60 @@
       color: var(--text-color);
     }
 
+    &-last {
+      width: auto;
+      font-size: 0.68rem;
+      font-weight: 500;
+      color: var(--text-secondary-color);
+      white-space: nowrap;
+    }
+
     &--total {
       background: var(--accent-color);
       border-color: var(--accent-color);
 
       span, strong { color: var(--white-color); }
     }
+
+    &--country {
+      border-color: var(--primary-color);
+
+      span { color: var(--primary-color); }
+    }
+  }
+
+  &__filters {
+    width: auto;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+
+  &__filter-select,
+  &__filter-date {
+    width: fit-content;
+    font-size: 0.85rem;
+    font-family: inherit;
+    color: var(--text-color);
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 0.5rem 0.75rem;
+  }
+
+  &__filter-clear {
+    width: fit-content;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--text-secondary-color);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0.5rem 0.25rem;
+
+    &:hover { color: var(--text-color); }
   }
 
   &__list {
@@ -115,6 +163,12 @@
     width: auto;
     font-size: 0.8rem;
     color: var(--text-secondary-color);
+  }
+
+  &__entry-date-relative {
+    width: auto;
+    font-style: italic;
+    opacity: 0.75;
   }
 
   &__entry-title {

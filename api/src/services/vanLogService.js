@@ -11,8 +11,8 @@ export class VanLogService {
         return entry.toDTO();
     }
 
-    async getEntriesByUser(userId) {
-        const entries = await this.vanLogRepository.findByUserId(userId);
+    async getEntriesByUser(userId, filters) {
+        const entries = await this.vanLogRepository.findByUserId(userId, filters);
         return entries.map(entry => entry.toDTO());
     }
 
@@ -28,9 +28,12 @@ export class VanLogService {
     }
 
     async getStats(userId) {
-        const totals = await this.vanLogRepository.getTotalsByCategory(userId);
-        const totalAmount = totals.reduce((sum, entry) => sum + entry.total, 0);
-        return { totalAmount, byCategory: totals };
+        const [byCategory, byCountry] = await Promise.all([
+            this.vanLogRepository.getTotalsByCategory(userId),
+            this.vanLogRepository.getTotalsByCountry(userId),
+        ]);
+        const totalAmount = byCategory.reduce((sum, entry) => sum + entry.total, 0);
+        return { totalAmount, byCategory, byCountry };
     }
 
     async _getOwnedEntry(id, userId) {

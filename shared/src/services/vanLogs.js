@@ -4,8 +4,16 @@ import { parseError } from "../utils/parseError";
 
 const baseUrl = () => `${getApiUrl()}/van-logs`;
 
-export const getVanLogEntries = async () => {
-    const response = await authFetch(`${baseUrl()}`, {
+export const getVanLogEntries = async (filters = {}) => {
+    const params = new URLSearchParams();
+    Object.entries(filters).forEach(([key, value]) => {
+        if (value !== "" && value !== null && value !== undefined) {
+            params.append(key, value);
+        }
+    });
+    const query = params.toString();
+
+    const response = await authFetch(`${baseUrl()}${query ? `?${query}` : ""}`, {
         method: "GET",
         headers: { "Content-Type": "application/json" },
     });

@@ -19,6 +19,7 @@ describe('VanLogService', () => {
             update: async () => makeEntry(),
             delete: async () => {},
             getTotalsByCategory: async () => [],
+            getTotalsByCountry: async () => [],
         };
         service = new VanLogService(repository);
     });
@@ -63,6 +64,20 @@ describe('VanLogService', () => {
 
             expect(stats.totalAmount).toBe(0);
             expect(stats.byCategory).toEqual([]);
+        });
+
+        it('includes the per-country breakdown alongside the per-category one', async () => {
+            repository.getTotalsByCountry = async () => ([
+                { country: 'Germany', total: 65.4, count: 1 },
+                { country: 'France', total: 30, count: 2 },
+            ]);
+
+            const stats = await service.getStats('user-1');
+
+            expect(stats.byCountry).toEqual([
+                { country: 'Germany', total: 65.4, count: 1 },
+                { country: 'France', total: 30, count: 2 },
+            ]);
         });
     });
 });

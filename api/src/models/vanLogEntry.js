@@ -3,6 +3,19 @@ export const VAN_LOG_CATEGORIES = [
     'fuel', 'groceries', 'laundry', 'parking', 'overnight_stay', 'maintenance', 'other',
 ];
 
+// pg parses a DATE column into a Date at local midnight; JSON.stringify then calls
+// toISOString() (always UTC), which shifts the date back a day in any positive UTC
+// offset (e.g. midnight CEST -> 22:00 UTC the previous day). Formatting with local
+// getters instead of toISOString keeps the calendar date the caller actually stored.
+export const toDateOnlyString = (date) => {
+    if (!date) return null;
+    const d = new Date(date);
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, '0');
+    const day = String(d.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+};
+
 export class VanLogEntry {
     constructor({ id, userId, category, title, amount, currency, location, notes, entryDate, createdAt, updatedAt }) {
         this.id = id;
@@ -35,7 +48,7 @@ export class VanLogEntry {
                 lon: row.longitude,
             } : null,
             notes: row.notes,
-            entryDate: row.entry_date,
+            entryDate: toDateOnlyString(row.entry_date),
             createdAt: row.created_at,
             updatedAt: row.updated_at,
         });

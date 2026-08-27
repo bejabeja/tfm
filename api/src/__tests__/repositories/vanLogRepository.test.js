@@ -47,6 +47,32 @@ describe('VanLogRepository', () => {
         expect(params).toEqual(['user-1']);
     });
 
+    it('filters by category, country and date range when provided', async () => {
+        client.query.mockResolvedValue({ rows: [] });
+
+        await repo.findByUserId('user-1', {
+            category: 'fuel', country: 'Germany', dateFrom: '2026-08-01', dateTo: '2026-08-31',
+        });
+
+        const [queryText, params] = client.query.mock.calls[0];
+        expect(queryText).toMatch(/category = \$2/);
+        expect(queryText).toMatch(/LOWER\(location_country\) = LOWER\(\$3\)/);
+        expect(queryText).toMatch(/entry_date >= \$4::date/);
+        expect(queryText).toMatch(/entry_date <= \$5::date/);
+        expect(params).toEqual(['user-1', 'fuel', 'Germany', '2026-08-01', '2026-08-31']);
+    });
+
+    it('ignores filters that are not provided', async () => {
+        client.query.mockResolvedValue({ rows: [] });
+
+        await repo.findByUserId('user-1', { category: 'fuel' });
+
+        const [queryText, params] = client.query.mock.calls[0];
+        expect(queryText).not.toMatch(/location_country/);
+        expect(queryText).not.toMatch(/entry_date [<>]/);
+        expect(params).toEqual(['user-1', 'fuel']);
+    });
+
     it('returns null when updating/finding a non-existent entry', async () => {
         client.query.mockResolvedValue({ rows: [] });
 
@@ -55,19 +81,37 @@ describe('VanLogRepository', () => {
         expect(result).toBeNull();
     });
 
-    it('sums amounts and counts entries per category', async () => {
+    it('sums amounts, counts entries and reports the most recent date per category', async () => {
         client.query.mockResolvedValue({
             rows: [
-                { category: 'fuel', total: '120.00', count: 3 },
-                { category: 'groceries', total: '45.00', count: 2 },
+                { category: 'fuel', total: '120.00', count: 3, last_date: '2026-08-20' },
+                { category: 'groceries', total: '45.00', count: 2, last_date: '2026-08-25' },
             ],
         });
 
         const totals = await repo.getTotalsByCategory('user-1');
 
         expect(totals).toEqual([
-            { category: 'fuel', total: 120, count: 3 },
-            { category: 'groceries', total: 45, count: 2 },
+            { category: 'fuel', total: 120, count: 3, lastDate: '2026-08-20' },
+            { category: 'groceries', total: 45, count: 2, lastDate: '2026-08-25' },
         ]);
+    });
+
+    it('sums amounts and counts entries per country, excluding entries with no country', async () => {
+        client.query.mockResolvedValue({
+            rows: [
+                { country: 'Germany', total: '65.40', count: 1 },
+                { country: 'France', total: '30.00', count: 2 },
+            ],
+        });
+
+        const totals = await repo.getTotalsByCountry('user-1');
+
+        expect(totals).toEqual([
+            { country: 'Germany', total: 65.4, count: 1 },
+            { country: 'France', total: 30, count: 2 },
+        ]);
+        const [queryText] = client.query.mock.calls[0];
+        expect(queryText).toMatch(/location_country IS NOT NULL/);
     });
 });
