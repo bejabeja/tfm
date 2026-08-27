@@ -18,6 +18,7 @@ import { buildProfileJsonLd } from "../../utils/jsonLd";
 import { filterItineraries } from "@tobeatraveller/shared";
 import FollowsModal from "../../components/follows/FollowsModal";
 import OfficialBadge from "../../components/users/OfficialBadge";
+import SuggestedUsersWidget from "../../components/users/suggestedUsers/SuggestedUsersWidget";
 import Error from "../error/Error";
 import "./Profile.scss";
 
@@ -132,6 +133,7 @@ const Profile = () => {
               />
               {isMyProfile && <ProfileCompleteness user={user} t={t} />}
               {aboutContent}
+              {isMyProfile && <SuggestedUsersWidget />}
             </>
           )}
         </div>
