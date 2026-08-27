@@ -521,6 +521,55 @@ describe('ItineraryService', () => {
 
       expect(itinerariesRepository.linkImage).toHaveBeenCalledWith('itin-1', 'https://cloudinary.com/new.jpg', 'pub-new', 1);
     });
+
+    it('leaves the gallery untouched when keepImageIds is not sent at all (e.g. the Experience edit flow)', async () => {
+      const itinerary = makeItinerary();
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+      itinerariesRepository.getImagesByItineraryId.mockResolvedValue([
+        { id: 'img-a', photoPublicId: 'pub-a' },
+        { id: 'img-b', photoPublicId: 'pub-b' },
+      ]);
+
+      const updateData = { ...baseUpdateData }; // no keepImageIds field
+      await service.updateItinerary('itin-1', updateData, null, [], 'user-1');
+
+      expect(cloudinaryService.deleteImage).not.toHaveBeenCalled();
+      expect(itinerariesRepository.unlinkImage).not.toHaveBeenCalled();
+    });
+
+    it('deletes every image when keepImageIds is explicitly sent as an empty array', async () => {
+      const itinerary = makeItinerary();
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+      itinerariesRepository.getImagesByItineraryId.mockResolvedValue([
+        { id: 'img-a', photoPublicId: 'pub-a' },
+      ]);
+
+      const updateData = { ...baseUpdateData, keepImageIds: [] };
+      await service.updateItinerary('itin-1', updateData, null, [], 'user-1');
+
+      expect(cloudinaryService.deleteImage).toHaveBeenCalledWith('pub-a');
+      expect(itinerariesRepository.unlinkImage).toHaveBeenCalledWith('itin-1', 'img-a');
+    });
+
+    it('appends new images after the highest surviving order_index instead of keepImageIds.size, even when a non-trailing image was removed', async () => {
+      const itinerary = makeItinerary();
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+      itinerariesRepository.getImagesByItineraryId.mockResolvedValue([
+        { id: 'img-a', photoPublicId: 'pub-a', orderIndex: 0 },
+        { id: 'img-b', photoPublicId: 'pub-b', orderIndex: 1 },
+        { id: 'img-c', photoPublicId: 'pub-c', orderIndex: 2 },
+      ]);
+      cloudinaryService.uploadImageFromBuffer.mockResolvedValue({ secure_url: 'https://cloudinary.com/new.jpg', public_id: 'pub-new' });
+      itinerariesRepository.linkImage.mockResolvedValue({ id: 'img-new', photoUrl: 'https://cloudinary.com/new.jpg', photoPublicId: 'pub-new', orderIndex: 3 });
+
+      // remove the middle image (img-b), keep img-a and img-c
+      const updateData = { ...baseUpdateData, keepImageIds: ['img-a', 'img-c'] };
+      const newImages = [{ buffer: Buffer.from('new') }];
+      await service.updateItinerary('itin-1', updateData, null, newImages, 'user-1');
+
+      // keepImageIds.size (2) would collide with kept img-c's own order_index (2); must be 3 instead
+      expect(itinerariesRepository.linkImage).toHaveBeenCalledWith('itin-1', 'https://cloudinary.com/new.jpg', 'pub-new', 3);
+    });
   });
 
   describe('generateSmartItinerary()', () => {

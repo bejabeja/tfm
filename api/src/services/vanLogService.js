@@ -1,5 +1,4 @@
-import { AuthError } from '../errors/AuthError.js';
-import { NotFoundError } from '../errors/NotFoundError.js';
+import { getOwnedEntity } from '../utils/ownedEntity.js';
 
 export class VanLogService {
     constructor(vanLogRepository) {
@@ -37,13 +36,6 @@ export class VanLogService {
     }
 
     async _getOwnedEntry(id, userId) {
-        const entry = await this.vanLogRepository.findById(id);
-        if (!entry) {
-            throw new NotFoundError("Van log entry not found");
-        }
-        if (entry.userId !== userId) {
-            throw new AuthError();
-        }
-        return entry;
+        return getOwnedEntity(this.vanLogRepository, id, userId, "Van log entry not found");
     }
 }

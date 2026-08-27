@@ -1,5 +1,4 @@
-import { AuthError } from '../errors/AuthError.js';
-import { NotFoundError } from '../errors/NotFoundError.js';
+import { getOwnedEntity } from '../utils/ownedEntity.js';
 
 const CLOUDINARY_FOLDER = 'life-diary';
 
@@ -30,17 +29,29 @@ export class LifeDiaryService {
         const entry = await this._getOwnedEntry(id, userId);
 
         const currentImages = await this.lifeDiaryRepository.getImagesByEntryIds([entry.id]);
-        const keepImageIds = new Set(data.keepImageIds || []);
-        for (const image of currentImages) {
-            if (!keepImageIds.has(image.id)) {
-                if (image.photoPublicId) {
-                    await this.cloudinaryService.deleteImage(image.photoPublicId);
+        // No keepImageIds at all means "leave the gallery as is" (not "delete everything");
+        // only an explicit array, even empty, is a real diff.
+        let nextOrderIndex = currentImages.reduce((max, image) => Math.max(max, image.orderIndex ?? 0), -1) + 1;
+
+        if (data.keepImageIds !== undefined) {
+            const keepImageIds = new Set(data.keepImageIds);
+            const keptImages = [];
+
+            for (const image of currentImages) {
+                if (keepImageIds.has(image.id)) {
+                    keptImages.push(image);
+                } else {
+                    if (image.photoPublicId) {
+                        await this.cloudinaryService.deleteImage(image.photoPublicId);
+                    }
+                    await this.lifeDiaryRepository.unlinkImage(entry.id, image.id);
                 }
-                await this.lifeDiaryRepository.unlinkImage(entry.id, image.id);
             }
+
+            nextOrderIndex = keptImages.reduce((max, image) => Math.max(max, image.orderIndex ?? 0), -1) + 1;
         }
 
-        await this._addImages(entry, files ?? [], keepImageIds.size);
+        await this._addImages(entry, files ?? [], nextOrderIndex);
 
         const updated = await this.lifeDiaryRepository.update(entry.id, data);
         updated.images = await this.lifeDiaryRepository.getImagesByEntryIds([entry.id]);
@@ -69,13 +80,6 @@ export class LifeDiaryService {
     }
 
     async _getOwnedEntry(id, userId) {
-        const entry = await this.lifeDiaryRepository.findById(id);
-        if (!entry) {
-            throw new NotFoundError("Life diary entry not found");
-        }
-        if (entry.userId !== userId) {
-            throw new AuthError();
-        }
-        return entry;
+        return getOwnedEntity(this.lifeDiaryRepository, id, userId, "Life diary entry not found");
     }
 }

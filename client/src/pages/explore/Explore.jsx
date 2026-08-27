@@ -64,6 +64,7 @@ const Explore = () => {
   const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   useEffect(() => {
+    setHasLoadedOnce(false);
     dispatch(initExploreItineraries({ page: 1, ...filters, sortBy })).then(() => setHasLoadedOnce(true));
   }, [dispatch, filters, sortBy]);
 

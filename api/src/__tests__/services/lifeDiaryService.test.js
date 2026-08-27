@@ -119,6 +119,18 @@ describe('LifeDiaryService', () => {
             expect(unlinkCalled).toBe(false);
         });
 
+        it('leaves every image untouched when keepImageIds is not sent at all', async () => {
+            repository.getImagesByEntryIds = async () => ([{ id: 'img-1', entryId: 'entry-1', photoUrl: 'x', photoPublicId: 'pub-1' }]);
+            let unlinkCalled = false, deleteCalled = false;
+            repository.unlinkImage = async () => { unlinkCalled = true; };
+            cloudinaryService.deleteImage = async () => { deleteCalled = true; };
+
+            await service.updateEntry('entry-1', { bestMoment: 'Updated text' }, [], 'user-1');
+
+            expect(unlinkCalled).toBe(false);
+            expect(deleteCalled).toBe(false);
+        });
+
         it('deletes the entry when the requester owns it', async () => {
             let deletedId;
             repository.delete = async (id) => { deletedId = id; };

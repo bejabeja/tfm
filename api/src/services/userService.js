@@ -31,7 +31,7 @@ export class UserService {
             location: location || null,
             avatarUrl: generateAvatar(username),
             termsAcceptedAt: termsAccepted ? new Date() : null,
-            signupCountryCode: countryCodeFromIp(ip),
+            signupCountryCode: await countryCodeFromIp(ip),
             signupUserAgent: userAgent || null,
         };
 

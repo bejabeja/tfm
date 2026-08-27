@@ -22,6 +22,10 @@ const GlobalSearch = ({ isOpen, onClose }) => {
   const [loading, setLoading] = useState(false);
   const [searched, setSearched] = useState(false);
   const isDefaultView = query.trim().length < MIN_QUERY_LENGTH;
+  // Guards against a slower, earlier request's response overwriting a newer one's
+  // (e.g. typing "par" then quickly "paris") by only applying a response if no
+  // later request has started since it was fired.
+  const requestIdRef = useRef(0);
 
   const close = () => {
     onClose();
@@ -32,18 +36,23 @@ const GlobalSearch = ({ isOpen, onClose }) => {
   };
 
   const loadFeatured = () => {
+    const requestId = ++requestIdRef.current;
     setSearched(false);
     setLoading(true);
     Promise.all([getfeaturedItineraries(), getfeaturedUsers()])
       .then(([featuredItineraries, featuredUsers]) => {
+        if (requestId !== requestIdRef.current) return;
         setItineraries(featuredItineraries || []);
         setPeople(featuredUsers || []);
       })
       .catch(() => {
+        if (requestId !== requestIdRef.current) return;
         setItineraries([]);
         setPeople([]);
       })
-      .finally(() => setLoading(false));
+      .finally(() => {
+        if (requestId === requestIdRef.current) setLoading(false);
+      });
   };
 
   useEffect(() => {
@@ -72,6 +81,7 @@ const GlobalSearch = ({ isOpen, onClose }) => {
       loadFeatured();
       return;
     }
+    const requestId = ++requestIdRef.current;
     setSearched(false);
     setLoading(true);
     Promise.all([
@@ -79,14 +89,17 @@ const GlobalSearch = ({ isOpen, onClose }) => {
       getAllUsers({ searchName: query, limit: RESULTS_LIMIT }),
     ])
       .then(([itinerariesRes, usersRes]) => {
+        if (requestId !== requestIdRef.current) return;
         setItineraries(itinerariesRes.itineraries || []);
         setPeople(usersRes.users || []);
       })
       .catch(() => {
+        if (requestId !== requestIdRef.current) return;
         setItineraries([]);
         setPeople([]);
       })
       .finally(() => {
+        if (requestId !== requestIdRef.current) return;
         setLoading(false);
         setSearched(true);
       });

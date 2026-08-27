@@ -1,3 +1,5 @@
+// Keep in sync with client/src/utils/cloudinaryUrl.js (api/ doesn't depend on
+// client/ or shared/, so this transformation logic is duplicated by necessity).
 const UPLOAD_MARKER = "/upload/";
 
 export const optimizedCloudinaryUrl = (url, { width } = {}) => {

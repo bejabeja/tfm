@@ -1,11 +1,10 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import { MdClose, MdOutlineAddPhotoAlternate } from "react-icons/md";
 import "./GalleryUpload.scss";
 
 const MAX_GALLERY_IMAGES = 6;
 
-const toPreview = (item) => (item instanceof File ? URL.createObjectURL(item) : item.photoUrl);
 const toKey = (item, index) => (item instanceof File ? `file-${item.name}-${index}` : item.id);
 
 const GalleryUpload = ({ images, onChange }) => {
@@ -13,6 +12,31 @@ const GalleryUpload = ({ images, onChange }) => {
   const f = (key) => t(`itineraryForm.${key}`);
   const inputRef = useRef(null);
   const [isDragging, setIsDragging] = useState(false);
+  // One object URL per File, memoized instead of recreated every render, and
+  // revoked once its File is no longer in `images` (or the component unmounts).
+  const previewUrls = useRef(new Map());
+
+  const toPreview = (item) => {
+    if (!(item instanceof File)) return item.photoUrl;
+    if (!previewUrls.current.has(item)) {
+      previewUrls.current.set(item, URL.createObjectURL(item));
+    }
+    return previewUrls.current.get(item);
+  };
+
+  useEffect(() => {
+    const currentFiles = new Set(images.filter((item) => item instanceof File));
+    for (const [file, url] of previewUrls.current) {
+      if (!currentFiles.has(file)) {
+        URL.revokeObjectURL(url);
+        previewUrls.current.delete(file);
+      }
+    }
+  }, [images]);
+
+  useEffect(() => () => {
+    previewUrls.current.forEach((url) => URL.revokeObjectURL(url));
+  }, []);
 
   const addFiles = (fileList) => {
     const newFiles = Array.from(fileList).filter((file) => file.type.startsWith("image/"));

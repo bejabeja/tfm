@@ -172,6 +172,20 @@ describe('SuppliesService', () => {
             expect(updateCalled).toBe(false);
         });
 
+        it('clamps purchasedAmount to what was actually on the list instead of fabricating extra stock', async () => {
+            shoppingListRepository.findById = async () => makeShoppingListItem({ name: 'Manzanas', amount: 3, unit: 'units' });
+            inventoryRepository.findByNameAndUnit = async () => null;
+            let createArgs;
+            inventoryRepository.create = async (data) => { createArgs = data; return makeInventoryItem({ ...data, id: 'inv-new' }); };
+            let deletedId;
+            shoppingListRepository.delete = async (id) => { deletedId = id; };
+
+            await service.markPurchased('sl-1', 'user-1', 10);
+
+            expect(createArgs.amount).toBe(3); // clamped to the 3 that were actually on the list
+            expect(deletedId).toBe('sl-1');
+        });
+
         it('removes the shopping list item once purchased', async () => {
             let deletedId;
             shoppingListRepository.delete = async (id) => { deletedId = id; };

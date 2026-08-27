@@ -57,6 +57,18 @@ const PackingChecklist = () => {
 
   useEffect(() => { loadData(); }, []);
 
+  // A pending undo-delete's setTimeout isn't cancelled by React on unmount, so
+  // without this it can outlive the page (navigate away and back within the undo
+  // window) and complete the delete against a component instance nobody sees
+  // anymore, desyncing the UI. Flushing immediately on unmount keeps the outcome
+  // deterministic: either you see the undo option, or leaving finalizes it.
+  useEffect(() => () => {
+    Object.entries(pendingDeletes.current).forEach(([itemId, timeoutId]) => {
+      clearTimeout(timeoutId);
+      deletePackingChecklistItem(itemId).catch(() => {});
+    });
+  }, []);
+
   const restoreDefaults = async () => {
     setRestoring(true);
     try {

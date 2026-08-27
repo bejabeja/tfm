@@ -1,6 +1,5 @@
-import { AuthError } from '../errors/AuthError.js';
 import { ConflictError } from '../errors/ConflictError.js';
-import { NotFoundError } from '../errors/NotFoundError.js';
+import { getOwnedEntity } from '../utils/ownedEntity.js';
 
 export class PackingChecklistService {
     constructor(packingChecklistRepository) {
@@ -62,9 +61,6 @@ export class PackingChecklistService {
     }
 
     async _getOwnedItem(id, userId) {
-        const item = await this.packingChecklistRepository.findById(id);
-        if (!item) throw new NotFoundError("Packing checklist item not found");
-        if (item.userId !== userId) throw new AuthError();
-        return item;
+        return getOwnedEntity(this.packingChecklistRepository, id, userId, "Packing checklist item not found");
     }
 }

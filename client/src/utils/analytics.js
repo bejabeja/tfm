@@ -41,6 +41,9 @@ export const grantCookieConsent = () => {
 
 export const denyCookieConsent = () => {
   localStorage.setItem(CONSENT_KEY, "denied");
+  // If PostHog was already loaded (consent was granted earlier this session),
+  // stop it from continuing to capture instead of just flipping the stored flag.
+  posthogPromise?.then((posthog) => posthog.opt_out_capturing());
 };
 
 export const identifyUser = (user) => {

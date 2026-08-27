@@ -24,7 +24,8 @@ export class LifeDiaryEntry {
     }
 
     static fromDb(row) {
-        const hasLocation = row.location_name || row.location_label;
+        const hasLocation = row.location_name || row.location_label || row.location_country
+            || row.latitude !== null || row.longitude !== null;
         return new LifeDiaryEntry({
             id: row.id,
             userId: row.user_id,

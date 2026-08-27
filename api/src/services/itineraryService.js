@@ -99,7 +99,10 @@ export class ItineraryService {
             throw new ConflictError("It was not possible to clone the itinerary");
         }
 
-        for (const place of places) {
+        // Each place's insert+link pair must stay sequential (linkPlace needs the id
+        // insertPlace returns), but different places don't depend on each other, so
+        // run them concurrently instead of one full round trip at a time.
+        const newPlaces = await Promise.all(places.map(async (place) => {
             const placeData = {
                 infoPlace: { name: place.name, label: place.label, lat: place.latitude, lon: place.longitude },
                 category: place.category,
@@ -109,8 +112,9 @@ export class ItineraryService {
             };
             const newPlace = await this.placesRepository.insertPlace(placeData);
             await this.itinerariesRepository.linkPlace(itinerary.id, newPlace.id, placeData.orderIndex, placeData.dayNumber, placeData.description);
-            itinerary.addPlace(newPlace);
-        }
+            return newPlace;
+        }));
+        newPlaces.forEach(newPlace => itinerary.addPlace(newPlace));
 
         return itinerary.toDTO();
     }
@@ -178,18 +182,30 @@ export class ItineraryService {
         }
 
         const currentImages = await this.itinerariesRepository.getImagesByItineraryId(itinerary.id);
-        const keepImageIds = new Set(itineraryData.keepImageIds || []);
+        // A caller that doesn't send keepImageIds at all (e.g. EditExperience, which
+        // never touches the gallery) means "leave the gallery as is", not "delete
+        // everything" - only an explicit array (including an empty one) is a real diff.
+        let nextOrderIndex = currentImages.reduce((max, image) => Math.max(max, image.orderIndex ?? 0), -1) + 1;
 
-        for (const image of currentImages) {
-            if (!keepImageIds.has(image.id)) {
-                if (image.photoPublicId) {
-                    await this.cloudinaryService.deleteImage(image.photoPublicId);
+        if (itineraryData.keepImageIds !== undefined) {
+            const keepImageIds = new Set(itineraryData.keepImageIds);
+            const keptImages = [];
+
+            for (const image of currentImages) {
+                if (keepImageIds.has(image.id)) {
+                    keptImages.push(image);
+                } else {
+                    if (image.photoPublicId) {
+                        await this.cloudinaryService.deleteImage(image.photoPublicId);
+                    }
+                    await this.itinerariesRepository.unlinkImage(itinerary.id, image.id);
                 }
-                await this.itinerariesRepository.unlinkImage(itinerary.id, image.id);
             }
+
+            nextOrderIndex = keptImages.reduce((max, image) => Math.max(max, image.orderIndex ?? 0), -1) + 1;
         }
 
-        await this._addGalleryImages(itinerary, images ?? [], keepImageIds.size);
+        await this._addGalleryImages(itinerary, images ?? [], nextOrderIndex);
 
         await this.itinerariesRepository.update(id, itineraryData);
     }

@@ -1,5 +1,4 @@
-import { AuthError } from '../errors/AuthError.js';
-import { NotFoundError } from '../errors/NotFoundError.js';
+import { getOwnedEntity } from '../utils/ownedEntity.js';
 
 // Wraps a freshly-typed note with the quantity it came with (e.g. "2x for the pie"),
 // so once several contributions of the same item get merged together, each one's
@@ -62,7 +61,7 @@ export class SuppliesService {
     // stays on the shopping list instead of disappearing.
     async markPurchased(id, userId, purchasedAmount) {
         const item = await this._getOwnedShoppingListItem(id, userId);
-        const boughtAmount = purchasedAmount != null ? purchasedAmount : item.amount;
+        const boughtAmount = purchasedAmount != null ? Math.min(purchasedAmount, item.amount) : item.amount;
 
         const existing = await this.inventoryRepository.findByNameAndUnit(userId, item.name, item.unit);
         const inventoryItem = existing
@@ -160,16 +159,10 @@ export class SuppliesService {
 
     // ─── Ownership guards ───────────────────────────────────────────────
     async _getOwnedShoppingListItem(id, userId) {
-        const item = await this.shoppingListRepository.findById(id);
-        if (!item) throw new NotFoundError("Shopping list item not found");
-        if (item.userId !== userId) throw new AuthError();
-        return item;
+        return getOwnedEntity(this.shoppingListRepository, id, userId, "Shopping list item not found");
     }
 
     async _getOwnedInventoryItem(id, userId) {
-        const item = await this.inventoryRepository.findById(id);
-        if (!item) throw new NotFoundError("Inventory item not found");
-        if (item.userId !== userId) throw new AuthError();
-        return item;
+        return getOwnedEntity(this.inventoryRepository, id, userId, "Inventory item not found");
     }
 }
