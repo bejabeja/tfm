@@ -270,6 +270,12 @@ const HeaderSection = ({
             {followsYou && <span className="profile__follows-you">{t("profile.followsYou")}</span>}
           </p>
 
+          {user?.activeTrip && (
+            <Link to={`/itinerary/${user.activeTrip.id}`} className="profile__traveling-badge">
+              ✈️ {t("profile.travelingNow", { destination: user.activeTrip.location?.name })}
+            </Link>
+          )}
+
           {user?.bio ? (
             <p className="profile__bio">{user.bio}</p>
           ) : isMyProfile ? (

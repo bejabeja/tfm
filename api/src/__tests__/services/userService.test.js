@@ -19,7 +19,7 @@ describe('UserService.getUserById()', () => {
 
     beforeEach(() => {
         userRepository = { getUserById: async () => makeUser() };
-        itinerariesRepository = { findPublicByUserId: async () => [] };
+        itinerariesRepository = { findPublicByUserId: async () => [], findActiveByUserId: async () => null };
         followRepository = { getFollowers: async () => [], getFollowing: async () => [] };
         service = new UserService(userRepository, itinerariesRepository, followRepository);
     });
@@ -40,6 +40,22 @@ describe('UserService.getUserById()', () => {
         const result = await service.getUserById('user-1', undefined);
 
         expect(result.email).toBeUndefined();
+    });
+
+    it('sets activeTrip to null when the user has no trip in progress', async () => {
+        const result = await service.getUserById('user-1', 'user-1');
+
+        expect(result.activeTrip).toBeNull();
+    });
+
+    it('includes the in-progress trip as activeTrip', async () => {
+        itinerariesRepository.findActiveByUserId = async () => ({
+            toSimpleDTO: () => ({ id: 'trip-1', title: 'Roman holiday' }),
+        });
+
+        const result = await service.getUserById('user-1', 'user-1');
+
+        expect(result.activeTrip).toEqual({ id: 'trip-1', title: 'Roman holiday' });
     });
 });
 

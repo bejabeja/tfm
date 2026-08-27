@@ -94,15 +94,17 @@ export class UserService {
             throw new NotFoundError("User not found");
         }
 
-        const [itineraries, followersListIds, followingListIds] = await Promise.all([
+        const [itineraries, followersListIds, followingListIds, activeTrip] = await Promise.all([
             this.itinerariesRepository.findPublicByUserId(id),
             this.followRepository.getFollowers(id),
             this.followRepository.getFollowing(id),
+            this.itinerariesRepository.findActiveByUserId(id),
         ]);
 
         user.itineraries = itineraries.map(itinerary => itinerary.toDTO());
         user.followersListIds = followersListIds;
         user.followingListIds = followingListIds;
+        user.activeTrip = activeTrip ? activeTrip.toSimpleDTO() : null;
 
         return requestingUserId === id ? user.toDTO() : user.toPublicDTO();
     }

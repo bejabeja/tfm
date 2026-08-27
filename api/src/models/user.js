@@ -85,6 +85,7 @@ export class User {
             following: this.totalFollowing(),
             bio: this.bio,
             about: this.about,
+            activeTrip: this.activeTrip || null,
         };
     }
 

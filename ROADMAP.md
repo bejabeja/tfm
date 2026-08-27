@@ -22,9 +22,7 @@ Todos los items de esta lista están hechos (ver "Hecho" abajo). Antes de sumar 
 
 ### Esperar a tener tracción (dependen de masa crítica de usuarios/contenido)
 
-- [ ] **Sugerencias de personas a seguir**: "Personas que quizás conozcas" en el sidebar del perfil o en Community; el endpoint `/users/suggested` ya existe y se usa en el onboarding inicial, falta un widget persistente fuera de esa pantalla única. Con pocos usuarios las sugerencias no tienen de dónde salir.
 - [ ] **Respuestas en comentarios**: reply threads con @mención para que haya conversaciones reales en los itinerarios. Necesita volumen de comentarios para justificarse.
-- [ ] **Itinerario "en curso"**: marcar un viaje como activo para mostrar un badge "✈️ viajando ahora" en el perfil; efecto efímero que da vida a la plataforma, pero solo si hay suficientes usuarios activos a la vez.
 - [ ] **Itinerarios similares/relacionados** al fondo del detalle de un itinerario. Necesita suficiente volumen de itinerarios para que la similitud tenga sentido.
 - [ ] **Actividad social en el feed**: mezclar entre los viajes eventos como "Ana empezó a seguir a Luis" o "3 personas guardaron este viaje". Con pocos usuarios se siente vacío o falso, puede transmitir lo contrario de lo que busca.
 
@@ -75,6 +73,7 @@ Todos los items de esta lista están hechos (ver "Hecho" abajo). Antes de sumar 
 - [x] Clonar itinerario: copiar un itinerario público (propio o ajeno) como borrador privado de partida
 - [x] Galería de imágenes por itinerario: fotos adicionales a la portada, carrusel propio (sin librería) en el detalle, subida/borrado múltiple en crear y editar
 - [x] Búsqueda global en navbar: overlay que busca itinerarios y usuarios a la vez (ranking de usuarios verificados primero), con contenido destacado por defecto al abrirse vacío. Sustituye a Community en la navegación principal (sidebar y bottom-nav); la ruta `/community` se mantiene viva como browse completo
+- [x] Sugerencias de personas a seguir: widget persistente "People to follow" en el sidebar del perfil propio, reutiliza el endpoint `/users/suggested` ya usado en el onboarding
 
 ---
 

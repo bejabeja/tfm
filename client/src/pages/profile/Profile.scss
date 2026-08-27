@@ -125,6 +125,29 @@ $avatar-overlap: 44px;
     vertical-align: middle;
   }
 
+  &__traveling-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3rem;
+    width: fit-content;
+    margin-top: 0.5rem;
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: var(--white-color);
+    background: var(--accent-color);
+    border-radius: 999px;
+    padding: 0.3rem 0.7rem;
+    text-decoration: none;
+    animation: profile-traveling-pulse 2.4s ease-in-out infinite;
+
+    &:hover { background: var(--accent-color-dark); }
+  }
+
+  @keyframes profile-traveling-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(26, 83, 92, 0.35); }
+    50%      { box-shadow: 0 0 0 5px rgba(26, 83, 92, 0); }
+  }
+
   &__bio {
     margin-top: 0.5rem;
     font-size: 0.9375rem;
