@@ -3,10 +3,19 @@ import { User } from '../models/user.js';
 
 export class UserRepository {
     async save(user) {
-        const { uuid, username, email, password, location, avatarUrl, termsAcceptedAt } = user;
+        const {
+            uuid, username, email, password, location, avatarUrl, termsAcceptedAt,
+            signupCountryCode, signupUserAgent,
+        } = user;
         const result = await db.query(
-            "INSERT INTO users (id, username, email, password, location, avatar_url, terms_accepted_at) VALUES ($1, $2, $3, $4, $5, $6, $7) RETURNING *",
-            [uuid, username, email.trim().toLowerCase(), password, location, avatarUrl, termsAcceptedAt ?? null]
+            `INSERT INTO users (
+                id, username, email, password, location, avatar_url, terms_accepted_at,
+                signup_country_code, signup_user_agent
+            ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING *`,
+            [
+                uuid, username, email.trim().toLowerCase(), password, location, avatarUrl, termsAcceptedAt ?? null,
+                signupCountryCode ?? null, signupUserAgent ?? null,
+            ]
         );
 
         return User.fromDb(result.rows[0]);

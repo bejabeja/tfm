@@ -17,7 +17,10 @@ export class AuthController {
             return next(new ValidationError(message));
         }
         try {
-            await this.userService.create(result.data);
+            await this.userService.create(result.data, {
+                ip: req.ip,
+                userAgent: req.headers['user-agent'],
+            });
             return res.status(201).json({ message: "User created successfully" });
         } catch (error) {
             next(error);

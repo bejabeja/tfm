@@ -815,7 +815,8 @@
       "<strong>Profile data:</strong> display name, biography, location, profile photo, and \"about\" text that you optionally provide.",
       "<strong>Content you create:</strong> travel itineraries (title, destination, dates, places, budget, photos), comments, likes, and saved trips.",
       "<strong>Social data:</strong> who you follow and who follows you.",
-      "<strong>Technical data:</strong> session tokens used to keep you logged in. We do not collect IP addresses, device fingerprints, or analytics data beyond what is strictly necessary to operate the service."
+      "<strong>Technical data:</strong> session tokens used to keep you logged in.",
+      "<strong>Sign-up data:</strong> when you create an account, we record the country your request came from (derived from your IP address, which we do not otherwise store) and your browser/device type. This helps us understand where our community is growing from and does not require cookie consent, as it is read directly from the sign-up request rather than stored on your device."
     ],
     "s3Title": "3. How we use your data",
     "s3Intro": "We use your personal data exclusively to:",
@@ -826,7 +827,7 @@
       "Send you account-related communications if necessary (e.g. account deletion confirmation)."
     ],
     "s3Body2": "We do not use your data for advertising, profiling, or selling to third parties. We do not send marketing emails.",
-    "s3Body3": "The legal basis for processing is the performance of a contract (Art. 6(1)(b) GDPR), i.e., providing the service you signed up for.",
+    "s3Body3": "The legal basis for processing is the performance of a contract (Art. 6(1)(b) GDPR), i.e., providing the service you signed up for. For sign-up country and device data, the legal basis is our legitimate interest (Art. 6(1)(f) GDPR) in understanding where our community comes from.",
     "s4Title": "4. Third-party services",
     "s4Intro": "We use the following external services that may process your data:",
     "s4Items": [

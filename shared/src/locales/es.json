@@ -815,7 +815,8 @@
       "<strong>Datos de perfil:</strong> nombre visible, biografía, ubicación, foto de perfil y el texto \"sobre mí\" que proporciones opcionalmente.",
       "<strong>Contenido que creas:</strong> itinerarios de viaje (título, destino, fechas, lugares, presupuesto, fotos), comentarios, me gusta y viajes guardados.",
       "<strong>Datos sociales:</strong> a quién sigues y quién te sigue.",
-      "<strong>Datos técnicos:</strong> tokens de sesión usados para mantener tu sesión iniciada. No recopilamos direcciones IP, huellas de dispositivo ni datos analíticos más allá de lo estrictamente necesario para operar el servicio."
+      "<strong>Datos técnicos:</strong> tokens de sesión usados para mantener tu sesión iniciada.",
+      "<strong>Datos de registro:</strong> cuando creás una cuenta, registramos el país desde el que llegó la solicitud (a partir de tu dirección IP, que no guardamos de otra forma) y el tipo de navegador/dispositivo. Esto nos ayuda a entender de dónde crece nuestra comunidad y no requiere consentimiento de cookies, porque se lee directamente de la solicitud de registro y no se guarda nada en tu dispositivo."
     ],
     "s3Title": "3. Cómo usamos tus datos",
     "s3Intro": "Usamos tus datos personales exclusivamente para:",
@@ -826,7 +827,7 @@
       "Enviarte comunicaciones relacionadas con tu cuenta cuando sea necesario (p. ej. confirmación de eliminación de cuenta)."
     ],
     "s3Body2": "No usamos tus datos para publicidad, elaboración de perfiles ni venta a terceros. No enviamos correos de marketing.",
-    "s3Body3": "La base legal para el tratamiento es la ejecución de un contrato (art. 6.1.b RGPD), es decir, prestar el servicio al que te has suscrito.",
+    "s3Body3": "La base legal para el tratamiento es la ejecución de un contrato (art. 6.1.b RGPD), es decir, prestar el servicio al que te has suscrito. Para el país y dispositivo de registro, la base legal es nuestro interés legítimo (art. 6.1.f RGPD) en entender de dónde viene nuestra comunidad.",
     "s4Title": "4. Servicios de terceros",
     "s4Intro": "Usamos los siguientes servicios externos que pueden tratar tus datos:",
     "s4Items": [

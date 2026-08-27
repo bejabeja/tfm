@@ -42,3 +42,40 @@ describe('UserService.getUserById()', () => {
         expect(result.email).toBeUndefined();
     });
 });
+
+describe('UserService.create()', () => {
+    let userRepository;
+    let service;
+
+    beforeEach(() => {
+        userRepository = {
+            findByName: async () => null,
+            findByEmail: async () => null,
+            save: async (user) => makeUser(user),
+        };
+        service = new UserService(userRepository, { findPublicByUserId: async () => [] }, {});
+    });
+
+    it('resolves the signup country from the request IP', async () => {
+        let savedUser;
+        userRepository.save = async (user) => { savedUser = user; return makeUser(user); };
+
+        await service.create(
+            { username: 'jane', email: 'jane@example.com', password: 'secret1' },
+            { ip: '8.8.8.8', userAgent: 'Mozilla/5.0 (test)' }
+        );
+
+        expect(savedUser.signupCountryCode).toBe('US');
+        expect(savedUser.signupUserAgent).toBe('Mozilla/5.0 (test)');
+    });
+
+    it('stores null signup metadata when no request context is given', async () => {
+        let savedUser;
+        userRepository.save = async (user) => { savedUser = user; return makeUser(user); };
+
+        await service.create({ username: 'jane', email: 'jane@example.com', password: 'secret1' });
+
+        expect(savedUser.signupCountryCode).toBeNull();
+        expect(savedUser.signupUserAgent).toBeNull();
+    });
+});

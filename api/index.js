@@ -23,6 +23,10 @@ import { createSitemapRouter } from './src/routes/sitemapRouter.js';
 
 const app = express();
 
+// Behind Vercel's edge network, so req.ip needs the first X-Forwarded-For hop
+// to reflect the real visitor instead of Vercel's own infra address.
+app.set('trust proxy', true);
+
 app.use(corsMiddleware());
 app.use(express.json());
 app.disable('x-powered-by');

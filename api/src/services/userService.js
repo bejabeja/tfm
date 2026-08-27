@@ -4,6 +4,7 @@ import db from '../db/clientPostgres.js';
 import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { generateAvatar } from "../utils/avatar.js";
+import { countryCodeFromIp } from "../utils/geoLookup.js";
 import { logger } from "../utils/logger.js";
 
 export class UserService {
@@ -14,7 +15,7 @@ export class UserService {
         this.emailService = emailService;
     }
 
-    async create(userData) {
+    async create(userData, { ip, userAgent } = {}) {
         const { password, username, email, location, termsAccepted } = userData;
 
         await this._ensureUsernameAvailable(username);
@@ -30,6 +31,8 @@ export class UserService {
             location: location || null,
             avatarUrl: generateAvatar(username),
             termsAcceptedAt: termsAccepted ? new Date() : null,
+            signupCountryCode: countryCodeFromIp(ip),
+            signupUserAgent: userAgent || null,
         };
 
         const savedUser = await this.userRepository.save(userToSave);

@@ -37,6 +37,22 @@ describe('UserRepository email case-insensitivity', () => {
         const params = db.query.mock.calls[0][1];
         expect(params[2]).toBe('jane@example.com');
     });
+
+    it('save() persists the signup country and user agent', async () => {
+        db.query.mockResolvedValue({ rows: [{ id: 'u1' }] });
+
+        await repo.save({
+            uuid: 'u1', username: 'jane', email: 'jane@example.com', password: 'hashed',
+            location: null, avatarUrl: null, termsAcceptedAt: null,
+            signupCountryCode: 'US', signupUserAgent: 'Mozilla/5.0 (test)',
+        });
+
+        const [query, params] = db.query.mock.calls[0];
+        expect(query).toMatch(/signup_country_code/);
+        expect(query).toMatch(/signup_user_agent/);
+        expect(params).toContain('US');
+        expect(params).toContain('Mozilla/5.0 (test)');
+    });
 });
 
 // Regression coverage: findSuggested used to return users the caller already follows,

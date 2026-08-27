@@ -1,0 +1,2 @@
+ALTER TABLE users ADD COLUMN IF NOT EXISTS signup_country_code VARCHAR(2);
+ALTER TABLE users ADD COLUMN IF NOT EXISTS signup_user_agent TEXT;
