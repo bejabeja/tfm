@@ -816,7 +816,8 @@
       "<strong>Contenido que creas:</strong> itinerarios de viaje (título, destino, fechas, lugares, presupuesto, fotos), comentarios, me gusta y viajes guardados.",
       "<strong>Datos sociales:</strong> a quién sigues y quién te sigue.",
       "<strong>Datos técnicos:</strong> tokens de sesión usados para mantener tu sesión iniciada.",
-      "<strong>Datos de registro:</strong> cuando creás una cuenta, registramos el país desde el que llegó la solicitud (a partir de tu dirección IP, que no guardamos de otra forma) y el tipo de navegador/dispositivo. Esto nos ayuda a entender de dónde crece nuestra comunidad y no requiere consentimiento de cookies, porque se lee directamente de la solicitud de registro y no se guarda nada en tu dispositivo."
+      "<strong>Datos de registro:</strong> cuando creás una cuenta, registramos el país desde el que llegó la solicitud (a partir de tu dirección IP, que no guardamos de otra forma) y el tipo de navegador/dispositivo. Esto nos ayuda a entender de dónde crece nuestra comunidad y no requiere consentimiento de cookies, porque se lee directamente de la solicitud de registro y no se guarda nada en tu dispositivo.",
+      "<strong>Datos analíticos (solo si aceptas las cookies):</strong> si aceptas las cookies analíticas en el aviso de cookies, recopilamos ubicación aproximada (a partir de tu dirección IP), tipo de dispositivo y navegador, y qué páginas visitas, mediante PostHog. Nunca se recopila si lo rechazas, y la grabación de sesión está desactivada."
     ],
     "s3Title": "3. Cómo usamos tus datos",
     "s3Intro": "Usamos tus datos personales exclusivamente para:",
@@ -833,7 +834,8 @@
     "s4Items": [
       "<strong>Cloudinary</strong>: usado para almacenar y servir fotos de perfil e imágenes de portada de itinerarios. Las imágenes que subes se almacenan en los servidores de Cloudinary. Consulta su <a href=\"https://cloudinary.com/privacy\">Política de Privacidad</a>.",
       "<strong>Geoapify</strong>: usado para buscar destinos y lugares de interés al crear un itinerario. Las búsquedas (nombres de lugares) se envían a su API. Consulta su <a href=\"https://www.geoapify.com/privacy-policy\">Política de Privacidad</a>.",
-      "<strong>Generación de itinerarios con IA</strong>: cuando usas la función \"Generar con IA\", el destino, la duración del viaje y la categoría se envían a un servicio de IA para generar sugerencias de lugares. No se incluye información personal identificable en estas peticiones."
+      "<strong>Generación de itinerarios con IA</strong>: cuando usas la función \"Generar con IA\", el destino, la duración del viaje y la categoría se envían a un servicio de IA para generar sugerencias de lugares. No se incluye información personal identificable en estas peticiones.",
+      "<strong>PostHog</strong>: usado para analítica de producto (qué páginas se usan, ubicación aproximada, tipo de dispositivo), solo si aceptas las cookies analíticas en el aviso de cookies. La grabación de sesión está desactivada. Consulta su <a href=\"https://posthog.com/privacy\">Política de Privacidad</a>."
     ],
     "s5Title": "5. Conservación de datos",
     "s5Body": "Conservamos tus datos personales mientras tu cuenta esté activa. Si eliminas tu cuenta, todos tus datos personales (perfil, itinerarios, comentarios y conexiones sociales) se eliminan permanentemente de nuestros sistemas. Las copias en caché o de respaldo pueden persistir hasta 30 días antes de ser purgadas.",
@@ -851,7 +853,8 @@
     "s6Body3": "También tienes derecho a presentar una reclamación ante tu autoridad nacional de protección de datos (en España: <a href=\"https://www.aepd.es\">AEPD</a>).",
     "s7Title": "7. Cookies y almacenamiento de sesión",
     "s7Body": [
-      "Usamos una única cookie de sesión para mantener tu sesión iniciada. Esta cookie es estrictamente necesaria para el funcionamiento del servicio y no requiere consentimiento según las normas de ePrivacy. No usamos cookies publicitarias, píxeles de seguimiento ni cookies analíticas.",
+      "Usamos una única cookie de sesión para mantener tu sesión iniciada. Esta cookie es estrictamente necesaria para el funcionamiento del servicio y no requiere consentimiento según las normas de ePrivacy.",
+      "Si aceptas las cookies analíticas en el aviso que aparece en tu primera visita, también cargamos PostHog para recopilar los datos analíticos descritos en la sección 4. Nada relacionado con analítica se carga hasta que aceptas, y podés cambiar tu elección en cualquier momento desde \"Preferencias de cookies\" en el pie de página. No usamos cookies publicitarias ni píxeles de seguimiento.",
       "En mobile, los tokens de autenticación se almacenan en el almacenamiento seguro del dispositivo en vez de en cookies."
     ],
     "s8Title": "8. Seguridad de los datos",
@@ -873,6 +876,14 @@
     "legal": "Legal",
     "contact": "Contacto",
     "getInTouch": "Ponerse en contacto",
-    "rightsReserved": "Todos los derechos reservados."
+    "rightsReserved": "Todos los derechos reservados.",
+    "cookiePreferences": "Preferencias de cookies"
+  },
+  "cookieConsent": {
+    "title": "Preferencias de cookies",
+    "description": "Nos gustaría usar cookies de analítica para entender cómo se usa ToBeATraveller, nunca para publicidad ni para vender tus datos. No las activamos a menos que nos digas que está bien.",
+    "learnMore": "Más información",
+    "accept": "Aceptar",
+    "decline": "Rechazar"
   }
 }

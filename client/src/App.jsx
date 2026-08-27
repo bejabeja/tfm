@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Route, Routes, useLocation } from "react-router-dom";
 import "./App.scss";
+import CookieConsentBanner from "./components/cookieConsent/CookieConsentBanner";
 import Footer from "./components/footer/Footer";
 import Navbar from "./components/navbar/Navbar";
 import Spinner from "./components/spinner/Spinner";
@@ -10,6 +11,7 @@ import Home from "./pages/home/Home";
 import { clearError, initAuthUser } from "./store/auth/authActions";
 import { refreshUnreadCount } from "@tobeatraveller/shared";
 import { useCanonicalUrl } from "./hooks/useCanonicalUrl";
+import { identifyUser, initAnalyticsIfConsented } from "./utils/analytics";
 
 import CustomToaster from "./components/toast/CustomToaster";
 import {
@@ -55,6 +57,7 @@ const App = () => {
   useCanonicalUrl(location.pathname);
 
   useEffect(() => {
+    initAnalyticsIfConsented();
     dispatch(initAuthUser());
     dispatch(initFilters());
   }, []);
@@ -62,8 +65,9 @@ const App = () => {
   useEffect(() => {
     if (isAuthenticated && userAuthenticated?.id) {
       dispatch(loadMyUserInfo(userAuthenticated.id));
+      identifyUser(userAuthenticated);
     }
-  }, [dispatch, isAuthenticated, userAuthenticated?.id]);
+  }, [dispatch, isAuthenticated, userAuthenticated]);
 
   useEffect(() => {
     dispatch(clearError());
@@ -96,6 +100,7 @@ const App = () => {
   return (
     <div className="App ">
       <CustomToaster />
+      <CookieConsentBanner />
       <div className={`side-content${isAuthRoute ? " side-content--hidden" : ""}`}>
         <Navbar />
       </div>

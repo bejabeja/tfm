@@ -19,6 +19,7 @@
     "i18next-browser-languagedetector": "^8.2.1",
     "leaflet": "^1.9.4",
     "lodash": "^4.17.21",
+    "posthog-js": "^1.420.0",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-hook-form": "^7.55.0",

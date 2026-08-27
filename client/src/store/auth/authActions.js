@@ -3,6 +3,7 @@ import { translateAuthError } from "@tobeatraveller/shared";
 import i18n from "../../i18n";
 import { createNewUser, login, logout } from "../../services/auth";
 import { getUserForAuth } from "../../services/users";
+import { resetAnalytics } from "../../utils/analytics";
 import { resetUserInfo } from "../user/userInfoActions";
 
 const saveHint = (user) => {
@@ -59,6 +60,7 @@ export const logoutUser = () => {
         try {
             await logout();
             saveHint(null);
+            resetAnalytics();
             dispatch({ type: "@auth/logout" });
             dispatch(resetUserInfo());
             toast.success(i18n.t("auth.sessionClosed"));

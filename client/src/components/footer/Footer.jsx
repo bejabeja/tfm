@@ -1,6 +1,7 @@
 import { IoEarthOutline } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
 import { Link } from "react-router-dom";
+import { REOPEN_COOKIE_PREFERENCES_EVENT } from "../../utils/analytics";
 import "./Footer.scss";
 
 const Footer = () => {
@@ -27,6 +28,13 @@ const Footer = () => {
             <span className="footer__nav-label">{t("footer.legal")}</span>
             <Link to="/privacy-policy">{t("auth.privacyPolicy")}</Link>
             <Link to="/terms">{t("auth.termsOfService")}</Link>
+            <button
+              type="button"
+              className="footer__cookie-preferences"
+              onClick={() => window.dispatchEvent(new Event(REOPEN_COOKIE_PREFERENCES_EVENT))}
+            >
+              {t("footer.cookiePreferences")}
+            </button>
           </div>
           <div className="footer__nav-group">
             <span className="footer__nav-label">{t("footer.contact")}</span>

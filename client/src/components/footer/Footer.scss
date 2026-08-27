@@ -87,7 +87,8 @@
     width: auto;
     min-width: max-content;
 
-    a {
+    a,
+    .footer__cookie-preferences {
       color: #94a3b8;
       text-decoration: none;
       font-size: 0.825rem;
@@ -97,6 +98,15 @@
       &:hover {
         color: #fff;
       }
+    }
+
+    .footer__cookie-preferences {
+      background: none;
+      border: none;
+      padding: 0;
+      font-family: inherit;
+      cursor: pointer;
+      text-align: left;
     }
   }
 
