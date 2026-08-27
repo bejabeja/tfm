@@ -18,10 +18,7 @@ Home (discovery + feed)  |  Explore (buscar itinerarios)  |  + Crear  |  Mi espa
 
 ### Hacer ya (alto impacto ahora, o bloquean crecimiento)
 
-- [ ] **Open Graph / preview al compartir (bug, no solo pendiente)**: es lo más urgente de todo el roadmap. `usePageMeta.js` ya setea `og:title`/`og:image` dinámicos, pero lo hace en un `useEffect` del lado del cliente. WhatsApp, Twitter e iMessage no ejecutan JS al generar la preview: leen el HTML crudo, que solo trae los OG tags genéricos de `index.html` (misma imagen para cualquier link). Esto mata el loop viral justo cuando lo que más importa es de dónde vienen los signups. Necesita SSR o inyección de meta tags server-side según user-agent de bot.
-- [ ] **Búsqueda por texto libre en Explore**: buscar por título o descripción, no solo por destino y categoría. Barato de implementar, mejora discovery ya mismo.
-- [ ] **Clonar itinerario**: copiar un itinerario de otro usuario como punto de partida para el propio. Baja fricción para que el primer itinerario de un usuario nuevo no sea una hoja en blanco, ayuda a activación.
-- [ ] **Galería de imágenes por itinerario**: ahora solo hay imagen de portada. El contenido es visual por naturaleza, una sola foto infrarrepresenta el producto; vale más que las features sociales de abajo.
+Todos los items de esta lista están hechos (ver "Hecho" abajo). Antes de sumar algo nuevo aquí, revisar si alguno de "Esperar a tener tracción" ya tiene sentido dado el crecimiento real.
 
 ### Esperar a tener tracción (dependen de masa crítica de usuarios/contenido)
 
@@ -55,7 +52,7 @@ Home (discovery + feed)  |  Explore (buscar itinerarios)  |  + Crear  |  Mi espa
 - [x] Perfiles de usuario con follow/unfollow
 - [x] Crear, editar y eliminar itinerarios
 - [x] Creación de itinerario con estructura día a día (form con Day 1, Day 2...)
-- [x] Generación de itinerario con IA (Groq / llama-3.1) con contexto de días, categoría, presupuesto y viajeros
+- [x] Generación de itinerario con IA (Groq / openai/gpt-oss-120b) con contexto de días, categoría, presupuesto y viajeros; extracción de JSON robusta a razonamiento filtrado en la respuesta
 - [x] Detalle de itinerario con mapa, comentarios y favoritos
 - [x] Botón de compartir en detalle (navigator.share + fallback a clipboard)
 - [x] Likes en itinerarios: toggle optimista, persistido en BD, contador sincronizado al montar
@@ -78,6 +75,10 @@ Home (discovery + feed)  |  Explore (buscar itinerarios)  |  + Crear  |  Mi espa
 - [x] Vista día a día en el detalle del itinerario: places agrupados visualmente por Día 1, Día 2...
 - [x] Destinos dinámicos en Home: los más populares según datos reales de la BD, sin hardcodear
 - [x] JSON-LD structured data para itinerarios, perfiles y home (SEO)
+- [x] Open Graph / preview al compartir: metatags dinámicos servidos server-side a bots (WhatsApp, Twitter, iMessage) vía Vercel Edge Middleware + endpoints `/og/itinerary/:id` y `/og/profile/:id`
+- [x] Búsqueda por texto libre en Explore: filtro por título o descripción, combinable con categoría y destino
+- [x] Clonar itinerario: copiar un itinerario público (propio o ajeno) como borrador privado de partida
+- [x] Galería de imágenes por itinerario: fotos adicionales a la portada, carrusel propio (sin librería) en el detalle, subida/borrado múltiple en crear y editar
 
 ---
 

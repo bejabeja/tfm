@@ -37,9 +37,9 @@ export const createItinerariesRouter = () => {
 
     // ── Single itinerary CRUD ─────────────────────────────────────────────────
     router.get("/:id",          optionalAuthenticate, itineraryController.getItineraryById.bind(itineraryController));
-    router.post("/",            authenticate, upload.single("file"), itineraryController.createItinerary.bind(itineraryController));
+    router.post("/",            authenticate, upload.fields([{ name: 'file', maxCount: 1 }, { name: 'images', maxCount: 6 }]), itineraryController.createItinerary.bind(itineraryController));
     router.post("/generate-smart", authenticate, itineraryController.generateSmartItinerary.bind(itineraryController));
-    router.patch("/:id",        authenticate, upload.single("file"), itineraryController.updateItinerary.bind(itineraryController));
+    router.patch("/:id",        authenticate, upload.fields([{ name: 'file', maxCount: 1 }, { name: 'images', maxCount: 6 }]), itineraryController.updateItinerary.bind(itineraryController));
     router.delete("/:id",       authenticate, itineraryController.deleteItinerary.bind(itineraryController));
     router.post("/:id/clone",   authenticate, itineraryController.cloneItinerary.bind(itineraryController));
 

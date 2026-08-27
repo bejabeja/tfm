@@ -20,11 +20,15 @@ export class ItineraryService {
         for (const place of places) {
             itinerary.addPlace(place);
         }
+        const images = await this.itinerariesRepository.getImagesByItineraryId(itinerary.id);
+        for (const image of images) {
+            itinerary.addImage(image);
+        }
 
         return itinerary.toDTO();
     }
 
-    async createItinerary(data, file, userId) {
+    async createItinerary(data, file, images, userId) {
         let imageUrl = "";
         let imagePublicId = "";
 
@@ -52,7 +56,18 @@ export class ItineraryService {
             await this.itinerariesRepository.linkPlace(itinerary.id, place.id, placeData.orderIndex, placeData.dayNumber ?? 1, placeData.description ?? null);
             itinerary.addPlace(place);
         }
+
+        await this._addGalleryImages(itinerary, images ?? []);
+
         return itinerary.toDTO();
+    }
+
+    async _addGalleryImages(itinerary, files, startIndex = 0) {
+        for (let i = 0; i < files.length; i++) {
+            const result = await this.cloudinaryService.uploadImageFromBuffer(files[i].buffer);
+            const image = await this.itinerariesRepository.linkImage(itinerary.id, result.secure_url, result.public_id, startIndex + i);
+            itinerary.addImage(image);
+        }
     }
 
     async cloneItinerary(sourceId, userId) {
@@ -111,10 +126,17 @@ export class ItineraryService {
             await this.cloudinaryService.deleteImage(itinerary.photoPublicId);
         }
 
+        const galleryImages = await this.itinerariesRepository.getImagesByItineraryId(id);
+        for (const image of galleryImages) {
+            if (image.photoPublicId) {
+                await this.cloudinaryService.deleteImage(image.photoPublicId);
+            }
+        }
+
         await this.itinerariesRepository.delete(id);
     }
 
-    async updateItinerary(id, itineraryData, file, userId) {
+    async updateItinerary(id, itineraryData, file, images, userId) {
         const itinerary = await this.itinerariesRepository.findById(id);
         if (!itinerary) {
             throw new NotFoundError("Itinerary not found");
@@ -154,6 +176,20 @@ export class ItineraryService {
                 await this.itinerariesRepository.linkPlace(itinerary.id, newPlace.id, placeData.orderIndex, placeData.dayNumber ?? 1, placeData.description ?? null);
             }
         }
+
+        const currentImages = await this.itinerariesRepository.getImagesByItineraryId(itinerary.id);
+        const keepImageIds = new Set(itineraryData.keepImageIds || []);
+
+        for (const image of currentImages) {
+            if (!keepImageIds.has(image.id)) {
+                if (image.photoPublicId) {
+                    await this.cloudinaryService.deleteImage(image.photoPublicId);
+                }
+                await this.itinerariesRepository.unlinkImage(itinerary.id, image.id);
+            }
+        }
+
+        await this._addGalleryImages(itinerary, images ?? [], keepImageIds.size);
 
         await this.itinerariesRepository.update(id, itineraryData);
     }

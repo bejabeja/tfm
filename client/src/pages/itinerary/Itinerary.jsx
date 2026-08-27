@@ -33,6 +33,7 @@ import {
 
 import toast from "react-hot-toast";
 import Comments from "../../components/itineraries/comments/Comments.jsx";
+import HeroCarousel from "../../components/itineraries/HeroCarousel.jsx";
 import Map from "../../components/itineraries/map/Map.jsx";
 import JsonLd from "../../components/seo/JsonLd.jsx";
 import { usePageMeta } from "../../hooks/usePageMeta.js";
@@ -257,10 +258,13 @@ const Hero = ({
   };
 
   return (
-    <div
-      className="itinerary__hero"
-      style={{ backgroundImage: `url(${optimizedCloudinaryUrl(itinerary?.photoUrl, { width: 1600 }) || "/images/hero.jpg"})` }}
-    >
+    <div className="itinerary__hero">
+      <HeroCarousel
+        images={[
+          optimizedCloudinaryUrl(itinerary?.photoUrl, { width: 1600 }) || "/images/hero.jpg",
+          ...(itinerary?.images ?? []).map((image) => optimizedCloudinaryUrl(image.photoUrl, { width: 1600 })),
+        ]}
+      />
       <div className="itinerary__hero-overlay" />
 
       <div className="itinerary__hero-back">

@@ -15,9 +15,10 @@ export class ItineraryController {
 
     async createItinerary(req, res, next) {
         try {
-            const { file } = req;
+            const file = req.files?.file?.[0];
+            const images = req.files?.images || [];
             const itineraryData = JSON.parse(req.body.itinerary);
-            const newItinerary = await this.itineraryService.createItinerary(itineraryData, file, req.user.id);
+            const newItinerary = await this.itineraryService.createItinerary(itineraryData, file, images, req.user.id);
             res.status(201).json(newItinerary);
         } catch (error) {
             next(error);
@@ -47,9 +48,10 @@ export class ItineraryController {
     async updateItinerary(req, res, next) {
         try {
             const { id } = req.params;
-            const { file } = req;
+            const file = req.files?.file?.[0];
+            const images = req.files?.images || [];
             const itineraryData = JSON.parse(req.body.itinerary);
-            await this.itineraryService.updateItinerary(id, itineraryData, file, req.user.id);
+            await this.itineraryService.updateItinerary(id, itineraryData, file, images, req.user.id);
             res.status(200).json({ message: "Itinerary updated successfully" });
 
         } catch (error) {

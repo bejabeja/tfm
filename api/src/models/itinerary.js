@@ -22,6 +22,7 @@ export class Itinerary {
         this.isPublic = isPublic ?? true;
         this.source = source ?? 'itinerary';
         this.places = [];
+        this.images = [];
         this.user = null;
     }
 
@@ -58,6 +59,10 @@ export class Itinerary {
         this.places.push(place);
     }
 
+    addImage(image) {
+        this.images.push(image);
+    }
+
     addUser(user) {
         this.user = user
     }
@@ -73,6 +78,7 @@ export class Itinerary {
             tripTotalDays: this.getTotalDays(),
             photoUrl: this.photoUrl,
             photoPublicId: this.photoPublicId,
+            images: this.images,
             budget: this.budget,
             numberOfPeople: this.numberOfPeople,
             likesCount: this.likesCount,

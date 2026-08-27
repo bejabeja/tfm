@@ -578,6 +578,8 @@
     "orBrowse": "or",
     "changePhoto": "Change",
     "removePhoto": "Remove",
+    "galleryTitle": "Gallery (optional)",
+    "addMorePhotos": "Add photos",
     "titleLabel": "Title",
     "titlePlaceholderForm": "A weekend in Rome…",
     "destinationLabel": "Destination",

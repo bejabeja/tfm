@@ -19,7 +19,9 @@ const makeItinerary = (overrides = {}) => ({
   photoUrl: 'https://example.com/photo.jpg',
   photoPublicId: 'public-id-123',
   places: [],
+  images: [],
   addPlace: vi.fn(),
+  addImage: vi.fn(),
   toDTO: vi.fn(() => ({ id: 'itin-1', title: 'My trip', places: [] })),
   ...overrides,
 });
@@ -41,9 +43,12 @@ describe('ItineraryService', () => {
       linkPlace: vi.fn(),
       unlinkPlace: vi.fn(),
       updatePlaceOrder: vi.fn(),
+      linkImage: vi.fn(),
+      unlinkImage: vi.fn(),
+      getImagesByItineraryId: vi.fn().mockResolvedValue([]),
     };
     placesRepository = {
-      getPlacesByItineraryId: vi.fn(),
+      getPlacesByItineraryId: vi.fn().mockResolvedValue([]),
       findByPlaceAttributes: vi.fn(),
       insertPlace: vi.fn(),
       updatePlace: vi.fn(),
@@ -111,6 +116,19 @@ describe('ItineraryService', () => {
       placesRepository.getPlacesByItineraryId.mockResolvedValue([]);
 
       await expect(service.getItineraryById('itin-1', 'user-1')).resolves.toBeDefined();
+    });
+
+    it('attaches gallery images to the itinerary', async () => {
+      const itinerary = makeItinerary();
+      const image = { id: 'img-1', photoUrl: 'https://cloudinary.com/a.jpg', photoPublicId: 'pub-a', orderIndex: 0 };
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+      placesRepository.getPlacesByItineraryId.mockResolvedValue([]);
+      itinerariesRepository.getImagesByItineraryId.mockResolvedValue([image]);
+
+      await service.getItineraryById('itin-1', 'user-1');
+
+      expect(itinerariesRepository.getImagesByItineraryId).toHaveBeenCalledWith('itin-1');
+      expect(itinerary.addImage).toHaveBeenCalledWith(image);
     });
   });
 
@@ -199,7 +217,7 @@ describe('ItineraryService', () => {
       const itinerary = makeItinerary();
       itinerariesRepository.create.mockResolvedValue(itinerary);
 
-      await service.createItinerary(baseData, null, 'user-1');
+      await service.createItinerary(baseData, null, [], 'user-1');
 
       expect(cloudinaryService.uploadImageFromBuffer).not.toHaveBeenCalled();
       expect(itinerariesRepository.create).toHaveBeenCalledWith(
@@ -211,7 +229,7 @@ describe('ItineraryService', () => {
       const itinerary = makeItinerary();
       itinerariesRepository.create.mockResolvedValue(itinerary);
 
-      await service.createItinerary({ ...baseData, userId: 'attacker-id' }, null, 'user-1');
+      await service.createItinerary({ ...baseData, userId: 'attacker-id' }, null, [], 'user-1');
 
       expect(itinerariesRepository.create).toHaveBeenCalledWith(
         expect.objectContaining({ userId: 'user-1' })
@@ -227,7 +245,7 @@ describe('ItineraryService', () => {
       itinerariesRepository.create.mockResolvedValue(itinerary);
 
       const file = { buffer: Buffer.from('img'), originalname: 'photo.jpg' };
-      await service.createItinerary(baseData, file, 'user-1');
+      await service.createItinerary(baseData, file, [], 'user-1');
 
       expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalledWith(file.buffer);
       expect(itinerariesRepository.create).toHaveBeenCalledWith(
@@ -249,7 +267,7 @@ describe('ItineraryService', () => {
       placesRepository.insertPlace.mockResolvedValueOnce({ id: 'place-1', toDTO: () => ({}) })
         .mockResolvedValueOnce({ id: 'place-2', toDTO: () => ({}) });
 
-      await service.createItinerary(dataWithPlaces, null, 'user-1');
+      await service.createItinerary(dataWithPlaces, null, [], 'user-1');
 
       expect(placesRepository.insertPlace).toHaveBeenCalledTimes(2);
       expect(itinerariesRepository.linkPlace).toHaveBeenCalledTimes(2);
@@ -263,7 +281,7 @@ describe('ItineraryService', () => {
       itinerariesRepository.create.mockResolvedValue(itinerary);
       placesRepository.insertPlace.mockResolvedValue({ id: 'place-1', toDTO: () => ({}) });
 
-      await service.createItinerary(dataWithPlaces, null, 'user-1');
+      await service.createItinerary(dataWithPlaces, null, [], 'user-1');
 
       expect(placesRepository.insertPlace).toHaveBeenCalledTimes(1);
       expect(itinerariesRepository.linkPlace).toHaveBeenCalledWith('itin-1', 'place-1', 0, 1, null);
@@ -272,8 +290,27 @@ describe('ItineraryService', () => {
     it('throws ConflictError when repository fails to create', async () => {
       itinerariesRepository.create.mockResolvedValue(null);
 
-      await expect(service.createItinerary(baseData, null, 'user-1'))
+      await expect(service.createItinerary(baseData, null, [], 'user-1'))
         .rejects.toThrow(ConflictError);
+    });
+
+    it('uploads and links each gallery image, in order', async () => {
+      const itinerary = makeItinerary();
+      itinerariesRepository.create.mockResolvedValue(itinerary);
+      cloudinaryService.uploadImageFromBuffer
+        .mockResolvedValueOnce({ secure_url: 'https://cloudinary.com/a.jpg', public_id: 'pub-a' })
+        .mockResolvedValueOnce({ secure_url: 'https://cloudinary.com/b.jpg', public_id: 'pub-b' });
+      itinerariesRepository.linkImage
+        .mockResolvedValueOnce({ id: 'img-a', photoUrl: 'https://cloudinary.com/a.jpg', photoPublicId: 'pub-a', orderIndex: 0 })
+        .mockResolvedValueOnce({ id: 'img-b', photoUrl: 'https://cloudinary.com/b.jpg', photoPublicId: 'pub-b', orderIndex: 1 });
+
+      const images = [{ buffer: Buffer.from('a') }, { buffer: Buffer.from('b') }];
+      await service.createItinerary(baseData, null, images, 'user-1');
+
+      expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalledTimes(2);
+      expect(itinerariesRepository.linkImage).toHaveBeenNthCalledWith(1, 'itin-1', 'https://cloudinary.com/a.jpg', 'pub-a', 0);
+      expect(itinerariesRepository.linkImage).toHaveBeenNthCalledWith(2, 'itin-1', 'https://cloudinary.com/b.jpg', 'pub-b', 1);
+      expect(itinerary.addImage).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -313,6 +350,21 @@ describe('ItineraryService', () => {
       expect(cloudinaryService.deleteImage).not.toHaveBeenCalled();
       expect(itinerariesRepository.delete).toHaveBeenCalledWith('itin-1');
     });
+
+    it('deletes every gallery image from cloudinary before deleting the itinerary', async () => {
+      const itinerary = makeItinerary({ photoPublicId: null });
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+      itinerariesRepository.getImagesByItineraryId.mockResolvedValue([
+        { id: 'img-a', photoPublicId: 'pub-a' },
+        { id: 'img-b', photoPublicId: 'pub-b' },
+      ]);
+
+      await service.deleteItinerary('itin-1', 'user-1');
+
+      expect(cloudinaryService.deleteImage).toHaveBeenCalledWith('pub-a');
+      expect(cloudinaryService.deleteImage).toHaveBeenCalledWith('pub-b');
+      expect(itinerariesRepository.delete).toHaveBeenCalledWith('itin-1');
+    });
   });
 
   describe('updateItinerary()', () => {
@@ -324,7 +376,7 @@ describe('ItineraryService', () => {
     it('throws NotFoundError when itinerary does not exist', async () => {
       itinerariesRepository.findById.mockResolvedValue(null);
 
-      await expect(service.updateItinerary('nonexistent', baseUpdateData, null, 'user-1'))
+      await expect(service.updateItinerary('nonexistent', baseUpdateData, null, [], 'user-1'))
         .rejects.toThrow(NotFoundError);
     });
 
@@ -332,7 +384,7 @@ describe('ItineraryService', () => {
       const itinerary = makeItinerary();
       itinerariesRepository.findById.mockResolvedValue(itinerary);
 
-      await expect(service.updateItinerary('itin-1', { ...baseUpdateData }, null, 'someone-else'))
+      await expect(service.updateItinerary('itin-1', { ...baseUpdateData }, null, [], 'someone-else'))
         .rejects.toThrow(AuthError);
       expect(itinerariesRepository.update).not.toHaveBeenCalled();
     });
@@ -342,7 +394,7 @@ describe('ItineraryService', () => {
       itinerariesRepository.findById.mockResolvedValue(itinerary);
       placesRepository.getPlacesByItineraryId.mockResolvedValue([]);
 
-      await service.updateItinerary('itin-1', { ...baseUpdateData }, null, 'user-1');
+      await service.updateItinerary('itin-1', { ...baseUpdateData }, null, [], 'user-1');
 
       expect(cloudinaryService.uploadImageFromBuffer).not.toHaveBeenCalled();
       expect(cloudinaryService.deleteImage).not.toHaveBeenCalled();
@@ -365,7 +417,7 @@ describe('ItineraryService', () => {
       });
 
       const file = { buffer: Buffer.from('img'), originalname: 'new.jpg' };
-      await service.updateItinerary('itin-1', { ...baseUpdateData }, file, 'user-1');
+      await service.updateItinerary('itin-1', { ...baseUpdateData }, file, [], 'user-1');
 
       expect(cloudinaryService.deleteImage).toHaveBeenCalledWith('old-public-id');
       expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalledWith(file.buffer);
@@ -388,7 +440,7 @@ describe('ItineraryService', () => {
       });
 
       const file = { buffer: Buffer.from('img'), originalname: 'first.jpg' };
-      await service.updateItinerary('itin-1', { ...baseUpdateData }, file, 'user-1');
+      await service.updateItinerary('itin-1', { ...baseUpdateData }, file, [], 'user-1');
 
       expect(cloudinaryService.deleteImage).not.toHaveBeenCalled();
       expect(cloudinaryService.uploadImageFromBuffer).toHaveBeenCalled();
@@ -403,7 +455,7 @@ describe('ItineraryService', () => {
 
       // Only place-1 remains in the update
       const updateData = { ...baseUpdateData, places: [{ id: 'place-1', orderIndex: 0 }] };
-      await service.updateItinerary('itin-1', updateData, null, 'user-1');
+      await service.updateItinerary('itin-1', updateData, null, [], 'user-1');
 
       expect(itinerariesRepository.unlinkPlace).toHaveBeenCalledWith('itin-1', 'place-2');
       expect(itinerariesRepository.unlinkPlace).not.toHaveBeenCalledWith('itin-1', 'place-1');
@@ -417,7 +469,7 @@ describe('ItineraryService', () => {
 
       const placeUpdate = { id: 'place-1', orderIndex: 2 };
       const updateData = { ...baseUpdateData, places: [placeUpdate] };
-      await service.updateItinerary('itin-1', updateData, null, 'user-1');
+      await service.updateItinerary('itin-1', updateData, null, [], 'user-1');
 
       expect(placesRepository.updatePlace).toHaveBeenCalledWith(placeUpdate);
       expect(itinerariesRepository.updatePlaceOrder).toHaveBeenCalledWith('itin-1', { ...placeUpdate, description: null });
@@ -431,10 +483,43 @@ describe('ItineraryService', () => {
 
       const newPlace = { id: undefined, orderIndex: 0, infoPlace: { lat: 1, lon: 2 } };
       const updateData = { ...baseUpdateData, places: [newPlace] };
-      await service.updateItinerary('itin-1', updateData, null, 'user-1');
+      await service.updateItinerary('itin-1', updateData, null, [], 'user-1');
 
       expect(placesRepository.insertPlace).toHaveBeenCalledWith(newPlace);
       expect(itinerariesRepository.linkPlace).toHaveBeenCalledWith('itin-1', 'new-place', 0, 1, null);
+    });
+
+    it('deletes from cloudinary and unlinks gallery images not in keepImageIds', async () => {
+      const itinerary = makeItinerary();
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+      itinerariesRepository.getImagesByItineraryId.mockResolvedValue([
+        { id: 'img-a', photoPublicId: 'pub-a' },
+        { id: 'img-b', photoPublicId: 'pub-b' },
+      ]);
+
+      const updateData = { ...baseUpdateData, keepImageIds: ['img-a'] };
+      await service.updateItinerary('itin-1', updateData, null, [], 'user-1');
+
+      expect(cloudinaryService.deleteImage).toHaveBeenCalledWith('pub-b');
+      expect(cloudinaryService.deleteImage).not.toHaveBeenCalledWith('pub-a');
+      expect(itinerariesRepository.unlinkImage).toHaveBeenCalledWith('itin-1', 'img-b');
+      expect(itinerariesRepository.unlinkImage).not.toHaveBeenCalledWith('itin-1', 'img-a');
+    });
+
+    it('uploads and links new gallery images after the kept ones, without colliding order', async () => {
+      const itinerary = makeItinerary();
+      itinerariesRepository.findById.mockResolvedValue(itinerary);
+      itinerariesRepository.getImagesByItineraryId.mockResolvedValue([
+        { id: 'img-a', photoPublicId: 'pub-a' },
+      ]);
+      cloudinaryService.uploadImageFromBuffer.mockResolvedValue({ secure_url: 'https://cloudinary.com/new.jpg', public_id: 'pub-new' });
+      itinerariesRepository.linkImage.mockResolvedValue({ id: 'img-new', photoUrl: 'https://cloudinary.com/new.jpg', photoPublicId: 'pub-new', orderIndex: 1 });
+
+      const updateData = { ...baseUpdateData, keepImageIds: ['img-a'] };
+      const newImages = [{ buffer: Buffer.from('new') }];
+      await service.updateItinerary('itin-1', updateData, null, newImages, 'user-1');
+
+      expect(itinerariesRepository.linkImage).toHaveBeenCalledWith('itin-1', 'https://cloudinary.com/new.jpg', 'pub-new', 1);
     });
   });
 

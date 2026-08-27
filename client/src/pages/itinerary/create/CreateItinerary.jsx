@@ -15,6 +15,7 @@ import { createItinerarySchema, NEW_ITINERARY_DEFAULT_VISIBILITY } from "../../.
 import BasicInfoForm from "../sectionsForm/BasicInfoForm";
 import BudgetForm from "../sectionsForm/BudgetForm";
 import DatesForm from "../sectionsForm/DatesForm";
+import GalleryUpload from "../sectionsForm/GalleryUpload";
 import ImageUpload from "../sectionsForm/ImageUpload";
 import PlacesForm from "../sectionsForm/PlacesForm";
 import TravellersForm from "../sectionsForm/TravellersForm";
@@ -38,6 +39,7 @@ const CreateItinerary = () => {
 
   const [step, setStep] = useState(0);
   const [imageFile, setImageFile] = useState(null);
+  const [galleryImages, setGalleryImages] = useState([]);
   const [days, setDays] = useState([1]);
   const [pace, setPace] = useState(DEFAULT_AI_PACE);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
@@ -143,6 +145,7 @@ const CreateItinerary = () => {
 
     const formData = new FormData();
     formData.append("file", imageFile);
+    galleryImages.forEach((image) => formData.append("images", image));
     formData.append("itinerary", JSON.stringify(body));
 
     try {
@@ -216,6 +219,7 @@ const CreateItinerary = () => {
         {step === 4 && (
           <>
             <ImageUpload onUpload={(file) => setImageFile(file)} isComplete={!!imageFile} imageUrl="" />
+            <GalleryUpload images={galleryImages} onChange={setGalleryImages} />
             <VisibilityForm control={control} />
           </>
         )}

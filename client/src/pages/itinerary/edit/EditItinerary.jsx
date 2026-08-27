@@ -17,6 +17,7 @@ import { createItinerarySchema, EXISTING_ITINERARY_VISIBILITY_FALLBACK } from ".
 import BasicInfoForm from "../sectionsForm/BasicInfoForm";
 import BudgetForm from "../sectionsForm/BudgetForm";
 import DatesForm from "../sectionsForm/DatesForm";
+import GalleryUpload from "../sectionsForm/GalleryUpload";
 import ImageUpload from "../sectionsForm/ImageUpload";
 import PlacesForm from "../sectionsForm/PlacesForm";
 import TravellersForm from "../sectionsForm/TravellersForm";
@@ -34,6 +35,8 @@ const EditItinerary = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [showExitConfirm, setShowExitConfirm] = useState(false);
   const [imageFile, setImageFile] = useState(null);
+  const [galleryImages, setGalleryImages] = useState([]);
+  const [initialGalleryImageIds, setInitialGalleryImageIds] = useState([]);
   const [days, setDays] = useState([1]);
 
   const isMyItinerary = () => {
@@ -133,6 +136,8 @@ const EditItinerary = () => {
       };
       reset(resetValues);
       setItineraryData(response);
+      setGalleryImages(response.images ?? []);
+      setInitialGalleryImageIds((response.images ?? []).map((image) => image.id));
       const existingDays = response.places.length > 0
         ? [...new Set(response.places.map((p) => p.dayNumber ?? 1))].sort((a, b) => a - b)
         : [1];
@@ -184,10 +189,12 @@ const EditItinerary = () => {
       })),
       category: data.category,
       isPublic: data.isPublic,
+      keepImageIds: galleryImages.filter((image) => !(image instanceof File)).map((image) => image.id),
     };
 
     const formData = new FormData();
     formData.append("file", imageFile);
+    galleryImages.filter((image) => image instanceof File).forEach((file) => formData.append("images", file));
     formData.append("itinerary", JSON.stringify(body));
 
     await toast.promise(updateItinerary(id, formData), {
@@ -200,8 +207,14 @@ const EditItinerary = () => {
     navigate(`/profile/${userMe.id}`);
   };
 
+  const galleryChanged = () => {
+    const keptIds = galleryImages.filter((image) => !(image instanceof File)).map((image) => image.id);
+    const hasNewFiles = galleryImages.some((image) => image instanceof File);
+    return hasNewFiles || keptIds.length !== initialGalleryImageIds.length;
+  };
+
   const handleCancel = () => {
-    if (isDirty || imageFile) setShowExitConfirm(true);
+    if (isDirty || imageFile || galleryChanged()) setShowExitConfirm(true);
     else navigate("/my-itineraries");
   };
 
@@ -229,6 +242,7 @@ const EditItinerary = () => {
           onUpload={(file) => setImageFile(file)}
           imageUrl={watch("imageUrl")}
         />
+        <GalleryUpload images={galleryImages} onChange={setGalleryImages} />
         <PlacesForm
           control={control}
           errors={errors}

@@ -555,6 +555,8 @@
     "orBrowse": "o",
     "changePhoto": "Cambiar",
     "removePhoto": "Eliminar",
+    "galleryTitle": "Galería (opcional)",
+    "addMorePhotos": "Añadir fotos",
     "titleLabel": "Título",
     "titlePlaceholderForm": "Un fin de semana en Roma…",
     "destinationLabel": "Destino",

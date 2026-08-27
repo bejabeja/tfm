@@ -125,6 +125,35 @@ export class ItineraryRepository {
     );
   }
 
+  async linkImage(itineraryId, photoUrl, photoPublicId, orderIndex = 0) {
+    const id = uuidv4();
+    await client.query(
+      `INSERT INTO itinerary_images (id, itinerary_id, photo_url, photo_public_id, order_index) VALUES ($1, $2, $3, $4, $5)`,
+      [id, itineraryId, photoUrl, photoPublicId, orderIndex]
+    );
+    return { id, photoUrl, photoPublicId, orderIndex };
+  }
+
+  async unlinkImage(itineraryId, imageId) {
+    await client.query(
+      `DELETE FROM itinerary_images WHERE itinerary_id = $1 AND id = $2`,
+      [itineraryId, imageId]
+    );
+  }
+
+  async getImagesByItineraryId(itineraryId) {
+    const result = await client.query(
+      `SELECT * FROM itinerary_images WHERE itinerary_id = $1 ORDER BY order_index`,
+      [itineraryId]
+    );
+    return result.rows.map(row => ({
+      id: row.id,
+      photoUrl: row.photo_url,
+      photoPublicId: row.photo_public_id,
+      orderIndex: row.order_index,
+    }));
+  }
+
   async findTopByLikes(limit = 3) {
     const query = `
       SELECT itineraries.*
