@@ -1,4 +1,5 @@
 import Groq from 'groq-sdk';
+import { extractJsonObject } from '../utils/extractJson.js';
 
 // Keep in sync with shared/src/utils/constants/constants.js#aiPaceOptions (api/ has no
 // dependency on shared/, so this mapping is duplicated by necessity, not oversight).
@@ -88,12 +89,13 @@ Output ONLY this JSON structure:
         ],
         temperature: 0.4,
         max_tokens: maxTokens,
+        reasoning_effort: 'low',
       });
 
       const text = response.choices[0]?.message?.content;
-      const jsonMatch = text?.match(/\{[\s\S]*\}/);
-      if (!jsonMatch) throw new Error('No valid JSON found in response');
-      return jsonMatch[0];
+      const json = extractJsonObject(text);
+      if (!json) throw new Error('No valid JSON found in response');
+      return json;
     } catch (error) {
       // error propagates to errorHandler, no need to log here
       throw error;
