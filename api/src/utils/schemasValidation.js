@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { VAN_LOG_CATEGORIES } from "../models/vanLogEntry.js";
 
 export const updateUserSchema = z.object({
     username: z.string()
@@ -84,4 +85,22 @@ export const contactSchema = z.object({
 
 export const commentSchema = z.object({
     text: z.string().min(1, "Comment cannot be empty").max(COMMENT_MAX_LENGTH, `Comment must be at most ${COMMENT_MAX_LENGTH} characters`),
+});
+
+const vanLogLocationSchema = z.object({
+    name: z.string().max(255).nullable().optional(),
+    country: z.string().max(255).nullable().optional(),
+    label: z.string().max(500).nullable().optional(),
+    lat: z.number().nullable().optional(),
+    lon: z.number().nullable().optional(),
+}).nullable().optional();
+
+export const vanLogEntrySchema = z.object({
+    category: z.enum(VAN_LOG_CATEGORIES, { errorMap: () => ({ message: "Invalid category" }) }),
+    title: z.string().max(255, "Title must be less than 255 characters").nullable().optional(),
+    amount: z.number().nonnegative("Amount cannot be negative").nullable().optional(),
+    currency: z.string().length(3, "Currency must be a 3-letter code").nullable().optional(),
+    location: vanLogLocationSchema,
+    notes: z.string().max(1000, "Notes must be less than 1000 characters").nullable().optional(),
+    entryDate: z.string().min(1, "Date is required"),
 });

@@ -43,6 +43,7 @@ const MyItineraries = lazy(() => import("./pages/myItineraries/MyItineraries"));
 const Favorites = lazy(() => import("./pages/favorites/Favorites"));
 const EditProfile = lazy(() => import("./pages/profile/EditProfile"));
 const Settings = lazy(() => import("./pages/settings/Settings"));
+const VanLog = lazy(() => import("./pages/vanLog/VanLog"));
 const CreateItinerary = lazy(() => import("./pages/itinerary/create/CreateItinerary"));
 const CreateExperience = lazy(() => import("./pages/experience/CreateExperience"));
 const EditExperience = lazy(() => import("./pages/experience/EditExperience"));
@@ -133,6 +134,7 @@ const App = () => {
                 <Route path="/notifications" element={<Notifications />} />
                 <Route path="/my-itineraries" element={<MyItineraries />} />
                 <Route path="/itineraries/saved" element={<Favorites />} />
+                <Route path="/van-log" element={<VanLog />} />
                 <Route path="/profile/:id" element={<Profile />} />
                 <Route path="/profile/edit/:id" element={<EditProfile />} />
                 <Route path="/settings" element={<Settings />} />

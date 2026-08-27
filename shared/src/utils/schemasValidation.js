@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { vanLogCategories } from "./constants/constants.js";
 
 // Single source of truth for itinerary/experience visibility defaults,
 // shared by web and mobile create/edit screens.
@@ -163,4 +164,26 @@ export const contactSchema = z.object({
     email: z.string().email("Invalid email address"),
     subject: z.string().min(2, "Subject must be at least 2 characters").max(CONTACT_SUBJECT_MAX_LENGTH, `Subject must be less than ${CONTACT_SUBJECT_MAX_LENGTH} characters`),
     message: z.string().min(10, "Message must be at least 10 characters").max(CONTACT_MESSAGE_MAX_LENGTH, `Message must be less than ${CONTACT_MESSAGE_MAX_LENGTH} characters`),
+});
+
+const VAN_LOG_CATEGORY_VALUES = vanLogCategories.map(c => c.value);
+
+export const vanLogEntrySchema = z.object({
+    category: z.enum(VAN_LOG_CATEGORY_VALUES, { errorMap: () => ({ message: "Please choose a category" }) }),
+    title: z.string().max(255, "Title must be less than 255 characters").optional().or(z.literal("")),
+    amount: z.string()
+        .optional()
+        .transform(val => (val && !isNaN(Number(val)) ? parseFloat(val) : null)),
+    currency: z.string().max(3, "Currency code too long").optional().or(z.literal("")),
+    location: z.object({
+        name: z.string().optional(),
+        country: z.string().optional(),
+        label: z.string().optional(),
+        coordinates: z.object({
+            lat: z.number(),
+            lon: z.number(),
+        }).optional(),
+    }).optional(),
+    notes: z.string().max(1000, "Notes must be less than 1000 characters").optional().or(z.literal("")),
+    entryDate: z.string().min(1, "Date is required"),
 });

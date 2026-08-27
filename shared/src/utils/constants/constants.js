@@ -43,6 +43,23 @@ export const itineraryCategories = [
   { value: "other", label: "Other" },
 ];
 
+// Keep values in sync with api/src/models/vanLogEntry.js#VAN_LOG_CATEGORIES
+// (api/ doesn't depend on shared/, so this list is duplicated by necessity).
+export const vanLogCategories = [
+  { value: "gas_bottle", label: "Gas bottle" },
+  { value: "water_fresh", label: "Fresh water" },
+  { value: "water_grey", label: "Grey water" },
+  { value: "water_black", label: "Black water" },
+  { value: "trash", label: "Trash" },
+  { value: "fuel", label: "Fuel" },
+  { value: "groceries", label: "Groceries" },
+  { value: "laundry", label: "Laundry" },
+  { value: "parking", label: "Parking" },
+  { value: "overnight_stay", label: "Overnight stay" },
+  { value: "maintenance", label: "Maintenance" },
+  { value: "other", label: "Other" },
+];
+
 export const DEFAULT_AI_PACE = "normal";
 
 // placesPerDay here is UI copy only; the actual generation limit lives in

@@ -6,6 +6,7 @@ export {
     resetPasswordSchema,
     createItinerarySchema,
     contactSchema,
+    vanLogEntrySchema,
     CONTACT_NAME_MAX_LENGTH,
     CONTACT_SUBJECT_MAX_LENGTH,
     CONTACT_MESSAGE_MAX_LENGTH,

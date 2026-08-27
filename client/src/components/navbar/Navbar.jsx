@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { GoHome, GoPerson, GoSignIn, GoSignOut } from "react-icons/go";
 import {
   IoAddOutline,
+  IoBookOutline,
   IoChevronBack,
   IoChevronForward,
   IoChevronForward as IoChevronForwardOutline,
@@ -114,6 +115,10 @@ const Navbar = () => {
               <IoSaveOutline className="nav-icon" />
               <span>{t("nav.savedTrips")}</span>
             </NavLink>
+            <NavLink to="/van-log" className="nav-item" title={t("nav.vanLog")}>
+              <IoBookOutline className="nav-icon" />
+              <span>{t("nav.vanLog")}</span>
+            </NavLink>
           </div>
         )}
 
@@ -164,6 +169,10 @@ const Navbar = () => {
             <NavLink to="/itineraries/saved" className="me-panel__item">
               <IoSaveOutline className="me-panel__icon" />
               <span>{t("nav.savedTrips")}</span>
+            </NavLink>
+            <NavLink to="/van-log" className="me-panel__item">
+              <IoBookOutline className="me-panel__icon" />
+              <span>{t("nav.vanLog")}</span>
             </NavLink>
             <div className="me-panel__divider" />
             <NavLink to="/logout" className="me-panel__item me-panel__item--danger">

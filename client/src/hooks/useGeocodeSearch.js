@@ -28,6 +28,7 @@ export const useGeocodeSearch = () => {
             const p = item.properties;
             return {
                 name: p.city ?? p.county ?? p.state ?? p.country ?? p.name,
+                country: p.country,
                 label: p.formatted,
                 coordinates: { lat: p.lat, lon: p.lon },
             };

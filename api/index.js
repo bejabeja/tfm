@@ -20,6 +20,7 @@ import { createItinerariesRouter } from "./src/routes/itinerariesRouter.js";
 import { createUsersRouter } from './src/routes/usersRouter.js';
 import { createOgRouter } from './src/routes/ogRouter.js';
 import { createSitemapRouter } from './src/routes/sitemapRouter.js';
+import { createVanLogsRouter } from './src/routes/vanLogsRouter.js';
 
 const app = express();
 
@@ -40,6 +41,7 @@ app.use('/favorites', authenticate, createFavoritesRouter());
 app.use('/likes', authenticate, createLikesRouter());
 app.use('/comments', createCommentsRouter());
 app.use('/notifications', authenticate, createNotificationsRouter());
+app.use('/van-logs', authenticate, createVanLogsRouter());
 
 app.use('/', createEmailRouter());
 if (config.nodeEnv !== 'production') {
