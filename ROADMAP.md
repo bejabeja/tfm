@@ -22,7 +22,6 @@ Todos los items de esta lista están hechos (ver "Hecho" abajo). Antes de sumar 
 
 ### Esperar a tener tracción (dependen de masa crítica de usuarios/contenido)
 
-- [ ] **Barra de búsqueda global en navbar**: un input que busca itinerarios y usuarios a la vez, con dropdown de resultados rápidos. Con pocos itinerarios/usuarios no resuelve un problema real todavía.
 - [ ] **Sugerencias de personas a seguir**: "Personas que quizás conozcas" en el sidebar del perfil o en Community; el endpoint `/users/suggested` ya existe y se usa en el onboarding inicial, falta un widget persistente fuera de esa pantalla única. Con pocos usuarios las sugerencias no tienen de dónde salir.
 - [ ] **Respuestas en comentarios**: reply threads con @mención para que haya conversaciones reales en los itinerarios. Necesita volumen de comentarios para justificarse.
 - [ ] **Itinerario "en curso"**: marcar un viaje como activo para mostrar un badge "✈️ viajando ahora" en el perfil; efecto efímero que da vida a la plataforma, pero solo si hay suficientes usuarios activos a la vez.
@@ -38,10 +37,6 @@ Todos los items de esta lista están hechos (ver "Hecho" abajo). Antes de sumar 
 - [ ] **Exportar itinerario como PDF**: descargar el planning completo para consultar offline o imprimir. Utilidad de nicho, no afecta crecimiento ni retención.
 - [ ] **Desglose de presupuesto por día o categoría**: asignar parte del budget a alojamiento, comida, transporte, actividades. Feature de nicho.
 - [ ] **Modo lectura offline / PWA**: ya hay `manifest.json` (instalable a pantalla de inicio) pero no hay service worker, así que no hay caché ni lectura offline real. La parte cara (service worker) da valor a usuarios frecuentes que todavía no existen; prematuro pre-lanzamiento.
-
-### Decisión de producto pendiente (no es un build, es decidir)
-
-- [ ] **Eliminar o fusionar Community**: los usuarios se descubren mejor desde las tarjetas de itinerarios o desde el buscador global; valorar si la tab separada aporta suficiente. Con onboarding + suggested users + perfiles, una tab separada de "buscar gente" es probablemente redundante. Conviene decidirlo ahora que hay pocos usuarios y cambiar nav/URLs es barato, no cuando ya haya gente acostumbrada a la tab.
 
 ---
 
@@ -79,6 +74,7 @@ Todos los items de esta lista están hechos (ver "Hecho" abajo). Antes de sumar 
 - [x] Búsqueda por texto libre en Explore: filtro por título o descripción, combinable con categoría y destino
 - [x] Clonar itinerario: copiar un itinerario público (propio o ajeno) como borrador privado de partida
 - [x] Galería de imágenes por itinerario: fotos adicionales a la portada, carrusel propio (sin librería) en el detalle, subida/borrado múltiple en crear y editar
+- [x] Búsqueda global en navbar: overlay que busca itinerarios y usuarios a la vez (ranking de usuarios verificados primero), con contenido destacado por defecto al abrirse vacío. Sustituye a Community en la navegación principal (sidebar y bottom-nav); la ruta `/community` se mantiene viva como browse completo
 
 ---
 
