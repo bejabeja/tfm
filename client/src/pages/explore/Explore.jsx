@@ -92,7 +92,7 @@ const Explore = () => {
   const hasMore = page < totalPages;
   const locationLabel = filters.destination;
   const hasActiveFilters =
-    locationLabel || filters.category || filters.budgetMin || filters.budgetMax ||
+    locationLabel || filters.category || filters.search || filters.budgetMin || filters.budgetMax ||
     filters.durationMin || filters.durationMax || filters.travelersCount || filters.currency;
 
   return (
@@ -110,6 +110,7 @@ const Explore = () => {
           key={filterResetKey}
           onChange={setFilters}
           defaultValues={defaultDestination ? { destination: defaultDestination } : {}}
+          showSearch
         />
       </div>
 
@@ -145,6 +146,9 @@ const Explore = () => {
                 <span className="explore__filter-tag explore__filter-tag--category">
                   {filters.category}
                 </span>
+              )}
+              {filters.search && (
+                <span className="explore__filter-tag">🔎 {filters.search}</span>
               )}
               {(filters.budgetMin || filters.budgetMax) && (
                 <span className="explore__filter-tag">

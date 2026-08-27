@@ -171,6 +171,7 @@
     "createAccount": "Create account",
     "logIn": "Log in",
     "searchByDestination": "Search by destination…",
+    "searchByKeyword": "Search by title or description…",
     "filters": "⚙️ Filters",
     "clearFilters": "Clear ✕",
     "budget": "Budget",

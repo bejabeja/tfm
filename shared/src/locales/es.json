@@ -171,6 +171,7 @@
     "createAccount": "Crear cuenta",
     "logIn": "Iniciar sesión",
     "searchByDestination": "Buscar por destino…",
+    "searchByKeyword": "Buscar por título o descripción…",
     "filters": "⚙️ Filtros",
     "clearFilters": "Limpiar ✕",
     "budget": "Presupuesto",

@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { IoSearchOutline } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
 import { itineraryCategories } from "../../../utils/constants/constants";
+import "./Filters.scss";
 
 const categoryEmojis = {
   adventure: "⛰️", relax: "🏖️", culture: "🏛️", romantic: "❤️",
@@ -12,11 +13,11 @@ const categoryEmojis = {
 const TRAVELERS_OPTIONS = ["solo", "couple", "group", "large"];
 
 const initialState = {
-  destination: "", category: "",
+  destination: "", category: "", search: "",
   budgetMin: "", budgetMax: "", durationMin: "", durationMax: "", travelersCount: "",
 };
 
-const Filters = ({ onChange, defaultValues = {} }) => {
+const Filters = ({ onChange, defaultValues = {}, showSearch = false }) => {
   const { t } = useTranslation();
   const [filters, setFilters] = useState({ ...initialState, ...defaultValues });
   const [debounced, setDebounced] = useState(filters);
@@ -31,6 +32,7 @@ const Filters = ({ onChange, defaultValues = {} }) => {
 
   const setField = (key) => (v) => setFilters((p) => ({ ...p, [key]: v }));
   const setDestination = setField("destination");
+  const setSearch = setField("search");
   const toggleCategory = (v) =>
     setFilters((p) => ({ ...p, category: p.category === v ? "" : v }));
   const toggleTravelers = (v) =>
@@ -64,6 +66,27 @@ const Filters = ({ onChange, defaultValues = {} }) => {
             >✕</button>
           )}
         </div>
+
+        {showSearch && (
+          <div className="filters__search">
+            <IoSearchOutline className="filters__search-icon" />
+            <input
+              type="text"
+              name="search"
+              placeholder={t("explore.searchByKeyword")}
+              value={filters.search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+            {filters.search && (
+              <button
+                type="button"
+                className="filters__search-clear"
+                onClick={() => setSearch("")}
+                aria-label="Clear"
+              >✕</button>
+            )}
+          </div>
+        )}
 
         <button
           type="button"

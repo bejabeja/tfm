@@ -203,6 +203,12 @@ export class ItineraryRepository {
       values.push(`%${filters.destination}%`);
     }
 
+    if (filters.search) {
+      conditions.push(`(LOWER(title) LIKE LOWER($${i}) OR LOWER(description) LIKE LOWER($${i}))`);
+      values.push(`%${filters.search}%`);
+      i++;
+    }
+
     if (filters.budgetMin !== undefined) {
       conditions.push(`budget >= $${i++}`);
       values.push(filters.budgetMin);

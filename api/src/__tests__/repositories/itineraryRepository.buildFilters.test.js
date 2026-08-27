@@ -44,6 +44,26 @@ describe('ItineraryRepository.buildFilters()', () => {
         expect(values).toContain('%Paris%');
     });
 
+    it('adds a title/description search condition when search is present', () => {
+        const { conditions, values } = repo.buildFilters({ search: 'volcano' });
+
+        const searchCondition = conditions.find(c => c.includes('title') && c.includes('description'));
+        expect(searchCondition).toBeDefined();
+        expect(values).toContain('%volcano%');
+    });
+
+    it('does NOT add a search condition when search is absent or empty', () => {
+        expect(repo.buildFilters({}).conditions.some(c => c.includes('title'))).toBe(false);
+        expect(repo.buildFilters({ search: '' }).conditions.some(c => c.includes('title'))).toBe(false);
+    });
+
+    it('reuses a single parameter index for the search OR clause', () => {
+        const { conditions, nextIndex } = repo.buildFilters({ search: 'beach' }, 3);
+
+        expect(conditions.some(c => c.includes('$3'))).toBe(true);
+        expect(nextIndex).toBe(4);
+    });
+
     it('adds budgetMin condition', () => {
         const { conditions, values } = repo.buildFilters({ budgetMin: 500 });
 
