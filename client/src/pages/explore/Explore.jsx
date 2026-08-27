@@ -61,9 +61,10 @@ const Explore = () => {
   );
   const [sortBy, setSortBy] = useState("recent");
   const [filterResetKey, setFilterResetKey] = useState(0);
+  const [hasLoadedOnce, setHasLoadedOnce] = useState(false);
 
   useEffect(() => {
-    dispatch(initExploreItineraries({ page: 1, ...filters, sortBy }));
+    dispatch(initExploreItineraries({ page: 1, ...filters, sortBy })).then(() => setHasLoadedOnce(true));
   }, [dispatch, filters, sortBy]);
 
   const loadMore = () => {
@@ -203,7 +204,7 @@ const Explore = () => {
           <>
             <ItinerariesSection
               itineraries={itineraries}
-              isLoading={loading && itineraries.length === 0}
+              isLoading={loading && (itineraries.length === 0 || !hasLoadedOnce)}
             />
             {!isAuthenticated && itineraries.length > 0 && (
               <div className="explore__guest-banner">
