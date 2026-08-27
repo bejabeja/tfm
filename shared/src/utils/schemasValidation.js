@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { vanLogCategories } from "./constants/constants.js";
+import { vanLogCategories, supplyCategories, supplyUnits } from "./constants/constants.js";
 
 // Single source of truth for itinerary/experience visibility defaults,
 // shared by web and mobile create/edit screens.
@@ -186,4 +186,22 @@ export const vanLogEntrySchema = z.object({
     }).optional(),
     notes: z.string().max(1000, "Notes must be less than 1000 characters").optional().or(z.literal("")),
     entryDate: z.string().min(1, "Date is required"),
+});
+
+const SUPPLY_CATEGORY_VALUES = supplyCategories.map(c => c.value);
+const SUPPLY_UNIT_VALUES = supplyUnits.map(u => u.value);
+const SUPPLY_WHOLE_UNITS = supplyUnits.filter(u => !u.allowsDecimals).map(u => u.value);
+
+export const supplyItemSchema = z.object({
+    name: z.string().min(1, "Name is required").max(255, "Name must be less than 255 characters"),
+    category: z.enum(SUPPLY_CATEGORY_VALUES, { errorMap: () => ({ message: "Please choose a category" }) }),
+    amount: z.string()
+        .min(1, "Amount is required")
+        .refine(val => !isNaN(Number(val)) && Number(val) > 0, "Amount must be greater than zero")
+        .transform(val => parseFloat(val)),
+    unit: z.enum(SUPPLY_UNIT_VALUES, { errorMap: () => ({ message: "Please choose a unit" }) }),
+    notes: z.string().max(500, "Notes must be less than 500 characters").optional().or(z.literal("")),
+}).refine(data => !SUPPLY_WHOLE_UNITS.includes(data.unit) || Number.isInteger(data.amount), {
+    message: "This unit can't have decimals",
+    path: ["amount"],
 });

@@ -1,0 +1,223 @@
+.supplies {
+  &__header {
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+
+    .btn {
+      width: fit-content;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+  }
+
+  &__title {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-color);
+  }
+
+  &__tabs {
+    width: auto;
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  &__tab {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-secondary-color);
+    background: none;
+    border: none;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 0.6rem 0.25rem;
+    cursor: pointer;
+    white-space: nowrap;
+
+    &:not(:first-child) { margin-left: 1rem; }
+
+    &--active {
+      color: var(--primary-color);
+      border-bottom-color: var(--primary-color);
+    }
+  }
+
+  &__tab-count {
+    width: fit-content;
+    font-size: 0.7rem;
+    font-weight: 700;
+    background: var(--surface-color);
+    color: var(--text-secondary-color);
+    border-radius: 999px;
+    padding: 0.1rem 0.45rem;
+  }
+
+  &__list {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  &__item {
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 0.9rem 1.25rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  &__item-main {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+  }
+
+  &__item-category {
+    width: fit-content;
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--primary-color);
+    background: rgba(232, 116, 59, 0.1);
+    border-radius: 999px;
+    padding: 0.2rem 0.6rem;
+  }
+
+  &__item-name {
+    width: auto;
+    font-weight: 700;
+    color: var(--text-color);
+    overflow-wrap: anywhere;
+  }
+
+  &__item-amount {
+    width: auto;
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+    white-space: nowrap;
+  }
+
+  &__item-notes {
+    width: 100%;
+    font-size: 0.82rem;
+    color: var(--text-secondary-color);
+    overflow-wrap: anywhere;
+  }
+
+  &__item-actions {
+    width: fit-content;
+    display: flex;
+    gap: 0.4rem;
+    flex-shrink: 0;
+  }
+
+  &__item-action-btn {
+    width: fit-content;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border: none;
+    color: var(--text-secondary-color);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0.4rem;
+    border-radius: 8px;
+
+    &:hover {
+      background: var(--surface-color);
+      color: var(--text-color);
+    }
+
+    &--primary {
+      color: var(--primary-color);
+
+      &:hover {
+        background: rgba(232, 116, 59, 0.1);
+        color: var(--primary-color);
+      }
+    }
+  }
+
+  &__item-skeleton {
+    width: 100%;
+    height: 64px;
+    border-radius: 14px;
+  }
+
+  &__empty {
+    width: auto;
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary-color);
+  }
+
+  &__purchase-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: rgba(15, 23, 42, 0.55);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+  }
+
+  &__purchase-panel {
+    width: 100%;
+    max-width: 360px;
+    background: var(--white-color);
+    border-radius: 16px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+
+    h2 {
+      width: auto;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text-color);
+    }
+  }
+
+  &__purchase-hint {
+    width: auto;
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+    margin-bottom: 0.5rem;
+  }
+
+  &__purchase-actions {
+    width: auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    margin-top: 1rem;
+
+    .btn { width: fit-content; }
+  }
+}

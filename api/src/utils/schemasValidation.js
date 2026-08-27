@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { VAN_LOG_CATEGORIES } from "../models/vanLogEntry.js";
+import { SUPPLY_CATEGORIES, SUPPLY_UNITS, SUPPLY_WHOLE_UNITS } from "./supplyConstants.js";
 
 export const updateUserSchema = z.object({
     username: z.string()
@@ -103,4 +104,19 @@ export const vanLogEntrySchema = z.object({
     location: vanLogLocationSchema,
     notes: z.string().max(1000, "Notes must be less than 1000 characters").nullable().optional(),
     entryDate: z.string().min(1, "Date is required"),
+});
+
+export const supplyItemSchema = z.object({
+    name: z.string().min(1, "Name is required").max(255, "Name must be less than 255 characters"),
+    category: z.enum(SUPPLY_CATEGORIES, { errorMap: () => ({ message: "Invalid category" }) }).optional().default('other'),
+    amount: z.number().positive("Amount must be greater than zero"),
+    unit: z.enum(SUPPLY_UNITS, { errorMap: () => ({ message: "Invalid unit" }) }),
+    notes: z.string().max(500, "Notes must be less than 500 characters").nullable().optional(),
+}).refine(data => !SUPPLY_WHOLE_UNITS.includes(data.unit) || Number.isInteger(data.amount), {
+    message: "This unit can't have decimals",
+    path: ["amount"],
+});
+
+export const purchaseAmountSchema = z.object({
+    purchasedAmount: z.number().positive("Purchased amount must be greater than zero").optional(),
 });

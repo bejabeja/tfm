@@ -60,6 +60,27 @@ export const vanLogCategories = [
   { value: "other", label: "Other" },
 ];
 
+// Keep values in sync with api/src/utils/supplyConstants.js
+// (api/ doesn't depend on shared/, so this list is duplicated by necessity).
+export const supplyCategories = [
+  { value: "food", label: "Food" },
+  { value: "hygiene", label: "Hygiene" },
+  { value: "cleaning", label: "Cleaning" },
+  { value: "vehicle", label: "Vehicle" },
+  { value: "other", label: "Other" },
+];
+
+export const supplyUnits = [
+  { value: "g", label: "g", allowsDecimals: true },
+  { value: "kg", label: "kg", allowsDecimals: true },
+  { value: "ml", label: "ml", allowsDecimals: true },
+  { value: "l", label: "l", allowsDecimals: true },
+  { value: "units", label: "units", allowsDecimals: false },
+  { value: "packs", label: "packs", allowsDecimals: false },
+  { value: "cans", label: "cans", allowsDecimals: false },
+  { value: "other", label: "other", allowsDecimals: true },
+];
+
 export const DEFAULT_AI_PACE = "normal";
 
 // placesPerDay here is UI copy only; the actual generation limit lives in

@@ -3,6 +3,7 @@ import { GoHome, GoPerson, GoSignIn, GoSignOut } from "react-icons/go";
 import {
   IoAddOutline,
   IoBookOutline,
+  IoCartOutline,
   IoChevronBack,
   IoChevronForward,
   IoChevronForward as IoChevronForwardOutline,
@@ -119,6 +120,10 @@ const Navbar = () => {
               <IoBookOutline className="nav-icon" />
               <span>{t("nav.vanLog")}</span>
             </NavLink>
+            <NavLink to="/supplies" className="nav-item" title={t("nav.supplies")}>
+              <IoCartOutline className="nav-icon" />
+              <span>{t("nav.supplies")}</span>
+            </NavLink>
           </div>
         )}
 
@@ -173,6 +178,10 @@ const Navbar = () => {
             <NavLink to="/van-log" className="me-panel__item">
               <IoBookOutline className="me-panel__icon" />
               <span>{t("nav.vanLog")}</span>
+            </NavLink>
+            <NavLink to="/supplies" className="me-panel__item">
+              <IoCartOutline className="me-panel__icon" />
+              <span>{t("nav.supplies")}</span>
             </NavLink>
             <div className="me-panel__divider" />
             <NavLink to="/logout" className="me-panel__item me-panel__item--danger">

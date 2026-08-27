@@ -1,0 +1,240 @@
+import { describe, it, expect, beforeEach } from 'vitest';
+import { SuppliesService } from '../../services/suppliesService.js';
+
+const makeShoppingListItem = (overrides = {}) => ({
+    id: 'sl-1', userId: 'user-1', name: 'Pasta', category: 'food', amount: 500, unit: 'g', notes: null,
+    toDTO() { return { id: this.id, name: this.name, amount: this.amount, unit: this.unit }; },
+    ...overrides,
+});
+
+const makeInventoryItem = (overrides = {}) => ({
+    id: 'inv-1', userId: 'user-1', name: 'Pasta', category: 'food', amount: 100, unit: 'g', notes: null,
+    toDTO() { return { id: this.id, name: this.name, amount: this.amount, unit: this.unit }; },
+    ...overrides,
+});
+
+describe('SuppliesService', () => {
+    let inventoryRepository;
+    let shoppingListRepository;
+    let service;
+
+    beforeEach(() => {
+        inventoryRepository = {
+            findByNameAndUnit: async () => null,
+            create: async (data) => makeInventoryItem({ ...data, id: 'inv-new' }),
+            update: async (id, data) => makeInventoryItem({ id, ...data }),
+            findById: async () => makeInventoryItem(),
+            delete: async () => {},
+        };
+        shoppingListRepository = {
+            findById: async () => makeShoppingListItem(),
+            findByNameAndUnit: async () => null,
+            delete: async () => {},
+            create: async (data) => makeShoppingListItem({ ...data, id: 'sl-new' }),
+            update: async (id, data) => makeShoppingListItem({ id, ...data }),
+        };
+        service = new SuppliesService(inventoryRepository, shoppingListRepository);
+    });
+
+    describe('addShoppingListItem()', () => {
+        it('sums the amount into an existing shopping list item with the same name and unit', async () => {
+            shoppingListRepository.findByNameAndUnit = async () => makeShoppingListItem({ amount: 2 });
+            let updateArgs;
+            shoppingListRepository.update = async (id, data) => { updateArgs = { id, data }; return makeShoppingListItem({ id, ...data }); };
+
+            const result = await service.addShoppingListItem({ name: 'Manzanas', category: 'food', amount: 3, unit: 'units' }, 'user-1');
+
+            expect(updateArgs.data.amount).toBe(5); // 2 existing + 3 added
+            expect(result.amount).toBe(5);
+        });
+
+        it('creates a new shopping list item when none matches by name and unit', async () => {
+            shoppingListRepository.findByNameAndUnit = async () => null;
+            let createArgs;
+            shoppingListRepository.create = async (data) => { createArgs = data; return makeShoppingListItem({ ...data, id: 'sl-new' }); };
+
+            const result = await service.addShoppingListItem({ name: 'Manzanas', category: 'food', amount: 3, unit: 'units' }, 'user-1');
+
+            expect(createArgs.amount).toBe(3);
+            expect(result.id).toBe('sl-new');
+        });
+
+        it('wraps a fresh note with its quantity instead of storing it bare', async () => {
+            shoppingListRepository.findByNameAndUnit = async () => null;
+            let createArgs;
+            shoppingListRepository.create = async (data) => { createArgs = data; return makeShoppingListItem({ ...data, id: 'sl-new' }); };
+
+            await service.addShoppingListItem({ name: 'Manzanas', category: 'food', amount: 2, unit: 'units', notes: 'para tarta' }, 'user-1');
+
+            expect(createArgs.notes).toBe('2x para tarta');
+        });
+
+        it('appends the new note to the existing one instead of overwriting it', async () => {
+            shoppingListRepository.findByNameAndUnit = async () => makeShoppingListItem({ amount: 2, notes: '2x para tarta' });
+            let updateArgs;
+            shoppingListRepository.update = async (id, data) => { updateArgs = { id, data }; return makeShoppingListItem({ id, ...data }); };
+
+            await service.addShoppingListItem({ name: 'Manzanas', category: 'food', amount: 2, unit: 'units', notes: 'desayuno' }, 'user-1');
+
+            expect(updateArgs.data.notes).toBe('2x para tarta, 2x desayuno');
+        });
+
+        it('leaves the existing note untouched when the new contribution has no note', async () => {
+            shoppingListRepository.findByNameAndUnit = async () => makeShoppingListItem({ amount: 2, notes: '2x para tarta' });
+            let updateArgs;
+            shoppingListRepository.update = async (id, data) => { updateArgs = { id, data }; return makeShoppingListItem({ id, ...data }); };
+
+            await service.addShoppingListItem({ name: 'Manzanas', category: 'food', amount: 1, unit: 'units' }, 'user-1');
+
+            expect(updateArgs.data.notes).toBe('2x para tarta');
+            expect(updateArgs.data.amount).toBe(3);
+        });
+    });
+
+    describe('markPurchased()', () => {
+        it('sums the amount into an existing inventory item with the same name and unit', async () => {
+            inventoryRepository.findByNameAndUnit = async () => makeInventoryItem({ amount: 100 });
+            let updateArgs;
+            inventoryRepository.update = async (id, data) => { updateArgs = { id, data }; return makeInventoryItem({ id, ...data }); };
+
+            const result = await service.markPurchased('sl-1', 'user-1');
+
+            expect(updateArgs.data.amount).toBe(600); // 100 existing + 500 bought
+            expect(result.amount).toBe(600);
+        });
+
+        it('creates a new inventory item when none matches by name and unit', async () => {
+            inventoryRepository.findByNameAndUnit = async () => null;
+            let createArgs;
+            inventoryRepository.create = async (data) => { createArgs = data; return makeInventoryItem({ ...data, id: 'inv-new' }); };
+
+            const result = await service.markPurchased('sl-1', 'user-1');
+
+            expect(createArgs.amount).toBe(500);
+            expect(createArgs.name).toBe('Pasta');
+            expect(result.id).toBe('inv-new');
+        });
+
+        it('moves only the purchased amount to inventory and leaves the rest on the list when the store had less than planned', async () => {
+            shoppingListRepository.findById = async () => makeShoppingListItem({ name: 'Manzanas', amount: 6, unit: 'units' });
+            inventoryRepository.findByNameAndUnit = async () => null;
+            let createArgs;
+            inventoryRepository.create = async (data) => { createArgs = data; return makeInventoryItem({ ...data, id: 'inv-new' }); };
+            let updateArgs;
+            shoppingListRepository.update = async (id, data) => { updateArgs = { id, data }; return makeShoppingListItem({ id, ...data }); };
+            let deletedId;
+            shoppingListRepository.delete = async (id) => { deletedId = id; };
+
+            await service.markPurchased('sl-1', 'user-1', 3);
+
+            expect(createArgs.amount).toBe(3);
+            expect(updateArgs.data.amount).toBe(3); // 6 planned - 3 bought = 3 still needed
+            expect(deletedId).toBeUndefined(); // not fully purchased, stays on the list
+        });
+
+        it('removes the shopping list item when the purchased amount covers everything planned', async () => {
+            shoppingListRepository.findById = async () => makeShoppingListItem({ amount: 6, unit: 'units' });
+            let deletedId;
+            shoppingListRepository.delete = async (id) => { deletedId = id; };
+            let updateCalled = false;
+            shoppingListRepository.update = async () => { updateCalled = true; };
+
+            await service.markPurchased('sl-1', 'user-1', 6);
+
+            expect(deletedId).toBe('sl-1');
+            expect(updateCalled).toBe(false);
+        });
+
+        it('removes the shopping list item once purchased', async () => {
+            let deletedId;
+            shoppingListRepository.delete = async (id) => { deletedId = id; };
+
+            await service.markPurchased('sl-1', 'user-1');
+
+            expect(deletedId).toBe('sl-1');
+        });
+
+        it('does not merge items with different units even if the name matches', async () => {
+            inventoryRepository.findByNameAndUnit = async (userId, name, unit) => {
+                // simulates the repository's exact-unit-match query: a 1kg item never matches a "g" lookup
+                return unit === 'g' ? null : makeInventoryItem({ amount: 1, unit: 'kg' });
+            };
+            let createArgs;
+            inventoryRepository.create = async (data) => { createArgs = data; return makeInventoryItem({ ...data, id: 'inv-new' }); };
+
+            await service.markPurchased('sl-1', 'user-1');
+
+            expect(createArgs).toBeDefined();
+            expect(createArgs.unit).toBe('g');
+        });
+
+        it('appends the shopping list note block onto the existing inventory note as-is', async () => {
+            shoppingListRepository.findById = async () => makeShoppingListItem({ amount: 500, notes: '500g para lasaña' });
+            inventoryRepository.findByNameAndUnit = async () => makeInventoryItem({ amount: 100, notes: '100g sobrante' });
+            let updateArgs;
+            inventoryRepository.update = async (id, data) => { updateArgs = { id, data }; return makeInventoryItem({ id, ...data }); };
+
+            await service.markPurchased('sl-1', 'user-1');
+
+            expect(updateArgs.data.notes).toBe('100g sobrante, 500g para lasaña');
+        });
+
+        it('throws NotFoundError when the shopping list item does not exist', async () => {
+            shoppingListRepository.findById = async () => null;
+
+            await expect(service.markPurchased('missing', 'user-1')).rejects.toThrow('Shopping list item not found');
+        });
+
+        it('throws AuthError when the shopping list item belongs to another user', async () => {
+            shoppingListRepository.findById = async () => makeShoppingListItem({ userId: 'someone-else' });
+
+            await expect(service.markPurchased('sl-1', 'user-1')).rejects.toThrow('Unauthorized');
+        });
+    });
+
+    describe('markUsedUp()', () => {
+        it('moves the inventory item back to the shopping list with the same details', async () => {
+            inventoryRepository.findById = async () => makeInventoryItem({ name: 'Peppers', category: 'food', amount: 1, unit: 'units' });
+            let createArgs;
+            shoppingListRepository.create = async (data) => { createArgs = data; return makeShoppingListItem({ ...data, id: 'sl-new' }); };
+
+            const result = await service.markUsedUp('inv-1', 'user-1');
+
+            expect(createArgs).toMatchObject({ name: 'Peppers', category: 'food', amount: 1, unit: 'units' });
+            expect(result.name).toBe('Peppers');
+        });
+
+        it('merges into an existing shopping list entry for the same name and unit instead of duplicating it', async () => {
+            inventoryRepository.findById = async () => makeInventoryItem({ name: 'Manzanas', category: 'food', amount: 2, unit: 'units', notes: '2x last batch' });
+            shoppingListRepository.findByNameAndUnit = async () => makeShoppingListItem({ name: 'Manzanas', amount: 3, unit: 'units', notes: '3x for pie' });
+            let updateArgs;
+            shoppingListRepository.update = async (id, data) => { updateArgs = { id, data }; return makeShoppingListItem({ id, ...data }); };
+
+            await service.markUsedUp('inv-1', 'user-1');
+
+            expect(updateArgs.data.amount).toBe(5); // 3 existing on the list + 2 just used up
+            expect(updateArgs.data.notes).toBe('3x for pie, 2x last batch');
+        });
+
+        it('deletes the inventory item after moving it to the shopping list', async () => {
+            let deletedId;
+            inventoryRepository.delete = async (id) => { deletedId = id; };
+
+            await service.markUsedUp('inv-1', 'user-1');
+
+            expect(deletedId).toBe('inv-1');
+        });
+
+        it('throws NotFoundError when the inventory item does not exist', async () => {
+            inventoryRepository.findById = async () => null;
+
+            await expect(service.markUsedUp('missing', 'user-1')).rejects.toThrow('Inventory item not found');
+        });
+
+        it('throws AuthError when the inventory item belongs to another user', async () => {
+            inventoryRepository.findById = async () => makeInventoryItem({ userId: 'someone-else' });
+
+            await expect(service.markUsedUp('inv-1', 'user-1')).rejects.toThrow('Unauthorized');
+        });
+    });
+});

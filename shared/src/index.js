@@ -8,6 +8,7 @@ export * from './services/followers.js';
 export * from './services/likes.js';
 export * from './services/users.js';
 export * from './services/vanLogs.js';
+export * from './services/supplies.js';
 
 // Store
 export * from './store/store.js';
