@@ -9,6 +9,7 @@ import {
   IoChevronForward,
   IoChevronForward as IoChevronForwardOutline,
   IoFlashOutline,
+  IoJournalOutline,
   IoListOutline,
   IoNotificationsOutline,
   IoSaveOutline,
@@ -129,6 +130,10 @@ const Navbar = () => {
               <IoBriefcaseOutline className="nav-icon nav-icon--briefcase" />
               <span>{t("nav.packingChecklist")}</span>
             </NavLink>
+            <NavLink to="/life-diary" className="nav-item" title={t("nav.lifeDiary")}>
+              <IoJournalOutline className="nav-icon" />
+              <span>{t("nav.lifeDiary")}</span>
+            </NavLink>
           </div>
         )}
 
@@ -191,6 +196,10 @@ const Navbar = () => {
             <NavLink to="/packing-checklist" className="me-panel__item">
               <IoBriefcaseOutline className="me-panel__icon nav-icon--briefcase" />
               <span>{t("nav.packingChecklist")}</span>
+            </NavLink>
+            <NavLink to="/life-diary" className="me-panel__item">
+              <IoJournalOutline className="me-panel__icon" />
+              <span>{t("nav.lifeDiary")}</span>
             </NavLink>
             <div className="me-panel__divider" />
             <NavLink to="/logout" className="me-panel__item me-panel__item--danger">

@@ -8,6 +8,7 @@ export {
     contactSchema,
     vanLogEntrySchema,
     supplyItemSchema,
+    lifeDiaryEntrySchema,
     CONTACT_NAME_MAX_LENGTH,
     CONTACT_SUBJECT_MAX_LENGTH,
     CONTACT_MESSAGE_MAX_LENGTH,

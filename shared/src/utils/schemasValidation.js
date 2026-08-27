@@ -188,6 +188,24 @@ export const vanLogEntrySchema = z.object({
     entryDate: z.string().min(1, "Date is required"),
 });
 
+export const lifeDiaryEntrySchema = z.object({
+    location: z.object({
+        name: z.string().optional(),
+        country: z.string().optional(),
+        label: z.string().optional(),
+        coordinates: z.object({
+            lat: z.number(),
+            lon: z.number(),
+        }).optional(),
+    }).optional(),
+    entryDate: z.string().min(1, "Date is required"),
+    bestMoment: z.string().max(500, "Best moment must be less than 500 characters").optional().or(z.literal("")),
+    lessonLearned: z.string().max(500, "Lesson learned must be less than 500 characters").optional().or(z.literal("")),
+    memories: z.string().max(3000, "Memories must be less than 3000 characters").optional().or(z.literal("")),
+    peopleMet: z.string().max(500, "People met must be less than 500 characters").optional().or(z.literal("")),
+    wouldReturn: z.boolean().nullable().optional(),
+});
+
 const SUPPLY_CATEGORY_VALUES = supplyCategories.map(c => c.value);
 const SUPPLY_UNIT_VALUES = supplyUnits.map(u => u.value);
 const SUPPLY_WHOLE_UNITS = supplyUnits.filter(u => !u.allowsDecimals).map(u => u.value);

@@ -1,0 +1,199 @@
+.life-diary {
+  &__header {
+    width: auto;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  &__title {
+    width: auto;
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--text-color);
+  }
+
+  &__entries {
+    width: auto;
+    max-width: 640px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  &__entry {
+    width: auto;
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 1.25rem 1.4rem;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+  }
+
+  &__entry-top {
+    width: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+
+  &__entry-place {
+    width: auto;
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+  }
+
+  &__entry-location {
+    width: auto;
+    display: flex;
+    align-items: center;
+    gap: 0.3rem;
+    font-weight: 700;
+    color: var(--text-color);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__entry-location-icon {
+    width: fit-content;
+    flex-shrink: 0;
+  }
+
+  &__entry-date {
+    width: auto;
+    font-family: "Caveat", "DM Sans", system-ui, sans-serif;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-secondary-color);
+  }
+
+  &__entry-actions {
+    width: fit-content;
+    flex-shrink: 0;
+    display: flex;
+    gap: 0.2rem;
+
+    button {
+      width: fit-content;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: none;
+      border: none;
+      color: var(--text-secondary-color);
+      font-size: 0.9rem;
+      cursor: pointer;
+      padding: 0.3rem;
+      border-radius: 8px;
+
+      &:hover {
+        background: var(--surface-color);
+        color: var(--text-color);
+      }
+    }
+  }
+
+  &__entry-photos {
+    width: auto;
+    display: flex;
+    gap: 0.5rem;
+    overflow-x: auto;
+    margin: 0.6rem 0;
+  }
+
+  &__entry-photo {
+    width: 96px;
+    height: 96px;
+    flex-shrink: 0;
+    object-fit: cover;
+    border-radius: 10px;
+    background: var(--surface-color);
+  }
+
+  &__entry-excerpt {
+    width: auto;
+    font-family: "Caveat", "DM Sans", system-ui, sans-serif;
+    font-size: 1.35rem;
+    font-weight: 600;
+    line-height: 1.4;
+    color: var(--text-color);
+    background: #fdf6e9;
+    border-radius: 10px;
+    padding: 0.6rem 0.9rem;
+    margin: 0.5rem 0;
+  }
+
+  &__badge {
+    width: fit-content;
+    display: inline-block;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 0.2rem 0.65rem;
+    margin-bottom: 0.4rem;
+
+    &--yes {
+      color: var(--success-color);
+      background: var(--success-light);
+    }
+
+    &--no {
+      color: var(--text-secondary-color);
+      background: var(--surface-color);
+    }
+  }
+
+  &__entry-details {
+    width: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+    border-top: 1px dashed var(--border-color);
+    padding-top: 0.6rem;
+    margin-top: 0.4rem;
+  }
+
+  &__entry-memories {
+    width: auto;
+    white-space: pre-wrap;
+    line-height: 1.5;
+  }
+
+  &__read-more {
+    width: fit-content;
+    display: block;
+    background: none;
+    border: none;
+    color: var(--primary-color);
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+    padding: 0.2rem 0;
+    margin-top: 0.5rem;
+  }
+
+  &__empty {
+    width: auto;
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-secondary-color);
+  }
+
+  &__entry-skeleton {
+    width: 100%;
+    max-width: 640px;
+    height: 140px;
+    border-radius: 14px;
+  }
+}

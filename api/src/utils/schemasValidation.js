@@ -107,6 +107,17 @@ export const vanLogEntrySchema = z.object({
     entryDate: z.string().min(1, "Date is required"),
 });
 
+export const lifeDiaryEntrySchema = z.object({
+    location: vanLogLocationSchema,
+    entryDate: z.string().min(1, "Date is required"),
+    bestMoment: z.string().max(500, "Best moment must be less than 500 characters").nullable().optional(),
+    lessonLearned: z.string().max(500, "Lesson learned must be less than 500 characters").nullable().optional(),
+    memories: z.string().max(3000, "Memories must be less than 3000 characters").nullable().optional(),
+    peopleMet: z.string().max(500, "People met must be less than 500 characters").nullable().optional(),
+    wouldReturn: z.boolean().nullable().optional(),
+    keepImageIds: z.array(z.string()).optional(),
+});
+
 export const supplyItemSchema = z.object({
     name: z.string().min(1, "Name is required").max(255, "Name must be less than 255 characters"),
     category: z.enum(SUPPLY_CATEGORIES, { errorMap: () => ({ message: "Invalid category" }) }).optional().default('other'),

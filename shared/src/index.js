@@ -10,6 +10,7 @@ export * from './services/users.js';
 export * from './services/vanLogs.js';
 export * from './services/supplies.js';
 export * from './services/packingChecklist.js';
+export * from './services/lifeDiary.js';
 
 // Store
 export * from './store/store.js';
