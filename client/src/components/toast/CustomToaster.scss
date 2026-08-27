@@ -1,3 +1,12 @@
 .go2358747891 {
   width: fit-content;
 }
+
+// The default ~16px bottom gap is close to the screen edge, matching common
+// snackbar conventions. Below 480px the fixed bottom-nav bar (60px) would
+// otherwise sit under the toast, so push it up just on that breakpoint.
+.app-toaster {
+  @media (max-width: 479px) {
+    bottom: 76px !important;
+  }
+}

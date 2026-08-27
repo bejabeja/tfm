@@ -9,6 +9,7 @@ export * from './services/likes.js';
 export * from './services/users.js';
 export * from './services/vanLogs.js';
 export * from './services/supplies.js';
+export * from './services/packingChecklist.js';
 
 // Store
 export * from './store/store.js';
@@ -38,6 +39,7 @@ export { getDestinations } from './services/itineraries.js';
 export { setApiUrl } from './utils/apiConfig.js';
 export { setTokenStorage } from './utils/tokenStorage.js';
 export { parseError } from './utils/parseError.js';
+export { normalizeSearchText } from './utils/normalizeSearchText.js';
 export { translateAuthError } from './utils/authErrorMessages.js';
 export * from './utils/schemasValidation.js';
 export * from './utils/constants/colors.js';

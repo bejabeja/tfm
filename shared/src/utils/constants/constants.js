@@ -81,6 +81,45 @@ export const supplyUnits = [
   { value: "other", label: "other", allowsDecimals: true },
 ];
 
+// Keep values in sync with api/src/utils/packingConstants.js
+// (api/ doesn't depend on shared/, so this list is duplicated by necessity).
+export const packingCategories = [
+  { value: "clothing", label: "Clothing" },
+  { value: "accessories", label: "Accessories" },
+  { value: "textiles", label: "Textiles" },
+  { value: "electronics", label: "Electronics" },
+  { value: "documents", label: "Documents" },
+  { value: "toiletries", label: "Toiletries" },
+  { value: "first_aid", label: "First aid kit" },
+  { value: "cleaning", label: "Cleaning supplies" },
+  { value: "other", label: "Other" },
+];
+
+// Seeded once per user (only when their checklist is empty, see PackingChecklist.jsx)
+// as a starting point for the standard van-life packing list; freely editable afterwards.
+export const defaultPackingItems = {
+  en: {
+    clothing: ["Waterproof jacket", "Fleece / warm jacket", "T-shirts", "Long trousers", "Shorts", "Underwear", "Socks", "Pyjamas", "Swimsuit", "Hiking shoes", "Flip-flops", "Cap or hat"],
+    accessories: ["Sunglasses", "Belt", "Small backpack", "Multitool knife", "Head torch", "Umbrella"],
+    textiles: ["Bed sheets / duvet cover", "Pillows", "Blankets", "Bath towels", "Beach towels", "Sleeping bag"],
+    electronics: ["Phone and charger", "Power bank", "12V car charger / adapter", "4G router / portable WiFi", "Portable solar panel", "Power strip", "Plug adapters", "Camera"],
+    documents: ["ID / passport", "Driving licence", "Vehicle registration", "Vehicle insurance", "MOT / roadworthiness certificate", "Health insurance card", "Cash", "Bank cards"],
+    toiletries: ["Toothbrush and toothpaste", "Shampoo and shower gel", "Deodorant", "Toilet paper", "Wet wipes", "Razor", "Nail clippers", "Hair dryer"],
+    first_aid: ["Plasters", "Gauze and bandages", "Antiseptic / alcohol", "Ibuprofen / paracetamol", "Thermometer", "Tweezers", "Scissors", "Insect repellent", "Sunscreen", "Personal medication"],
+    cleaning: ["Dish soap", "Sponge / cloth", "Bin bags", "Small broom and dustpan", "All-purpose cleaner", "Rubber gloves", "Chemical toilet fluid"],
+  },
+  es: {
+    clothing: ["Chaqueta impermeable", "Forro polar / chaqueta de abrigo", "Camisetas", "Pantalones largos", "Pantalones cortos", "Ropa interior", "Calcetines", "Pijama", "Bañador", "Calzado de senderismo", "Chanclas", "Gorra o sombrero"],
+    accessories: ["Gafas de sol", "Cinturón", "Mochila pequeña", "Navaja multiusos", "Linterna frontal", "Paraguas"],
+    textiles: ["Sábanas / funda nórdica", "Almohadas", "Mantas", "Toallas de baño", "Toallas de playa", "Saco de dormir"],
+    electronics: ["Móvil y cargador", "Batería externa (power bank)", "Cargador de coche / adaptador 12V", "Router 4G / WiFi portátil", "Panel solar portátil", "Regleta / ladrón eléctrico", "Adaptadores de enchufe", "Cámara"],
+    documents: ["DNI / pasaporte", "Carnet de conducir", "Permiso de circulación", "Seguro del vehículo", "ITV", "Tarjeta sanitaria / seguro médico", "Efectivo", "Tarjetas bancarias"],
+    toiletries: ["Cepillo y pasta de dientes", "Champú y gel", "Desodorante", "Papel higiénico", "Toallitas húmedas", "Maquinilla de afeitar", "Cortaúñas", "Secador de pelo"],
+    first_aid: ["Tiritas", "Gasas y vendas", "Alcohol / antiséptico", "Ibuprofeno / paracetamol", "Termómetro", "Pinzas", "Tijeras", "Repelente de insectos", "Protector solar", "Medicación personal"],
+    cleaning: ["Jabón lavavajillas", "Estropajo / bayeta", "Bolsas de basura", "Escoba y recogedor pequeños", "Producto multiusos", "Guantes de goma", "Líquido para el váter químico"],
+  },
+};
+
 export const DEFAULT_AI_PACE = "normal";
 
 // placesPerDay here is UI copy only; the actual generation limit lives in

@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { VAN_LOG_CATEGORIES } from "../models/vanLogEntry.js";
 import { SUPPLY_CATEGORIES, SUPPLY_UNITS, SUPPLY_WHOLE_UNITS } from "./supplyConstants.js";
+import { PACKING_CATEGORIES } from "./packingConstants.js";
 
 export const updateUserSchema = z.object({
     username: z.string()
@@ -123,4 +124,17 @@ export const purchaseAmountSchema = z.object({
 
 export const consumeAmountSchema = z.object({
     consumedAmount: z.number().positive("Consumed amount must be greater than zero").optional(),
+});
+
+export const packingItemSchema = z.object({
+    category: z.enum(PACKING_CATEGORIES, { errorMap: () => ({ message: "Invalid category" }) }),
+    name: z.string().min(1, "Name is required").max(255, "Name must be less than 255 characters"),
+    checked: z.boolean().optional(),
+});
+
+export const packingSeedSchema = z.object({
+    items: z.array(z.object({
+        category: z.enum(PACKING_CATEGORIES, { errorMap: () => ({ message: "Invalid category" }) }),
+        name: z.string().min(1).max(255),
+    })).min(1, "At least one item is required").max(200, "Too many items"),
 });

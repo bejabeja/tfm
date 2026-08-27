@@ -150,6 +150,11 @@
   overflow: hidden;
   white-space: nowrap;
   margin-bottom: 0.5rem;
+  // Without this, "overflow: hidden" makes this flex item's automatic
+  // min-height resolve to 0 per the flexbox spec, so once the sidebar's
+  // nav items grow past the viewport height, the logo (not the nav items)
+  // is what gets crushed to nothing instead of the column just scrolling.
+  flex-shrink: 0;
 }
 
 .nav-search-trigger {
@@ -220,6 +225,16 @@
     width: 1em;
     height: 1em;
     flex-shrink: 0;
+  }
+}
+
+/* The briefcase-outline glyph's inner divider line and clasp detail are too
+   thin to read at nav-icon size (16-19px); thicken just those shapes rather
+   than switching to a filled icon, which would look inconsistent next to the
+   rest of the outline nav icons. */
+.nav-icon--briefcase {
+  rect, path {
+    stroke-width: 40px;
   }
 }
 

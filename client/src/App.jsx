@@ -45,6 +45,7 @@ const EditProfile = lazy(() => import("./pages/profile/EditProfile"));
 const Settings = lazy(() => import("./pages/settings/Settings"));
 const VanLog = lazy(() => import("./pages/vanLog/VanLog"));
 const Supplies = lazy(() => import("./pages/supplies/Supplies"));
+const PackingChecklist = lazy(() => import("./pages/packingChecklist/PackingChecklist"));
 const CreateItinerary = lazy(() => import("./pages/itinerary/create/CreateItinerary"));
 const CreateExperience = lazy(() => import("./pages/experience/CreateExperience"));
 const EditExperience = lazy(() => import("./pages/experience/EditExperience"));
@@ -137,6 +138,7 @@ const App = () => {
                 <Route path="/itineraries/saved" element={<Favorites />} />
                 <Route path="/van-log" element={<VanLog />} />
                 <Route path="/supplies" element={<Supplies />} />
+                <Route path="/packing-checklist" element={<PackingChecklist />} />
                 <Route path="/profile/:id" element={<Profile />} />
                 <Route path="/profile/edit/:id" element={<EditProfile />} />
                 <Route path="/settings" element={<Settings />} />

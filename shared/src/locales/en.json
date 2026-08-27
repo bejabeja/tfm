@@ -112,6 +112,7 @@
     "savedTrips": "Saved trips",
     "vanLog": "Van log",
     "supplies": "Shopping list",
+    "packingChecklist": "Packing checklist",
     "collapse": "Collapse",
     "expandSidebar": "Expand sidebar",
     "collapseSidebar": "Collapse sidebar",
@@ -515,6 +516,37 @@
       "packs": "packs",
       "cans": "cans",
       "other": "other"
+    }
+  },
+  "packingChecklist": {
+    "title": "Packing checklist",
+    "progress": "{{checked}}/{{total}} packed",
+    "errorMsg": "Could not load your packing checklist. Please try again.",
+    "saveError": "Could not save. Please try again.",
+    "deleteError": "Could not delete the item. Please try again.",
+    "addItemPlaceholder": "Add item...",
+    "addToShoppingList": "Add to shopping list",
+    "addedToShoppingList": "{{name}} added to the shopping list",
+    "restoreDefaults": "Restore defaults",
+    "defaultsRestored_one": "{{count}} item restored",
+    "defaultsRestored_other": "{{count}} items restored",
+    "nothingToRestore": "You already have every default item",
+    "startNewTrip": "Start new trip",
+    "tripReset": "Checklist reset, nothing was deleted",
+    "searchPlaceholder": "Search by name...",
+    "noSearchResults": "No items match \"{{query}}\".",
+    "itemDeleted": "{{name}} deleted",
+    "undo": "Undo",
+    "category": {
+      "clothing": "Clothing",
+      "accessories": "Accessories",
+      "textiles": "Textiles",
+      "electronics": "Electronics",
+      "documents": "Documents",
+      "toiletries": "Toiletries",
+      "first_aid": "First aid kit",
+      "cleaning": "Cleaning supplies",
+      "other": "Other"
     }
   },
   "notifications": {

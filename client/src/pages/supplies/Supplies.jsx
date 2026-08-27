@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { IoAddOutline, IoBagCheckOutline, IoCartOutline, IoCloseOutline, IoPencilOutline, IoRefreshOutline, IoSearchOutline, IoTrashOutline } from "react-icons/io5";
-import { supplyCategories, supplyUnits } from "@tobeatraveller/shared";
+import { normalizeSearchText, supplyCategories, supplyUnits } from "@tobeatraveller/shared";
 import Modal from "../../components/modal/Modal";
 import {
   addInventoryItem, addShoppingListItem, deleteInventoryItem, deleteShoppingListItem, getInventory, getShoppingList,
@@ -126,8 +126,8 @@ const Supplies = () => {
   }
 
   const tabItems = tab === "shopping" ? shoppingList : inventory;
-  const query = search.trim().toLowerCase();
-  const items = query ? tabItems.filter(item => item.name.toLowerCase().includes(query)) : tabItems;
+  const query = normalizeSearchText(search.trim());
+  const items = query ? tabItems.filter(item => normalizeSearchText(item.name).includes(query)) : tabItems;
 
   const knownItems = Object.values(
     [...inventory, ...shoppingList].reduce((byKey, current) => {

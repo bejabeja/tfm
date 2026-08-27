@@ -16,9 +16,11 @@ Home (discovery + feed)  |  Explore (buscar itinerarios)  |  + Crear  |  Mi espa
 
 > Priorizado para el momento actual: app en producción pero sin usuarios todavía. El criterio es qué mueve signups/activación ahora vs. qué solo aporta con masa crítica de usuarios y contenido.
 
-### Hacer ya (alto impacto ahora, o bloquean crecimiento)
+### Pivote: vida en furgo/camper
 
-Todos los items de esta lista están hechos (ver "Hecho" abajo). Antes de sumar algo nuevo aquí, revisar si alguno de "Esperar a tener tracción" ya tiene sentido dado el crecimiento real.
+> Decisión (ver contexto en memoria del proyecto): tobeatraveller se está redirigiendo hacia una app social de vida en movimiento en furgo/camper. Se mantiene el código y features actuales; las nuevas features se construyen pensando en esto, no en "esperar tracción" del producto genérico de antes.
+
+- [ ] **Recetas ligadas al inventario**: espacio para ver y añadir recetas propias, con indicador de "con lo que tienes en inventario puedes hacer esto". Empezar privado (recetas propias del usuario), no público/UGC compartido todavía (eso necesita moderación que hoy no existe en ningún sitio de la app).
 
 ### Esperar a tener tracción (dependen de masa crítica de usuarios/contenido)
 
@@ -38,45 +40,6 @@ Todos los items de esta lista están hechos (ver "Hecho" abajo). Antes de sumar 
 
 ---
 
-## Hecho
-
-- [x] Auth con JWT (login, registro, logout)
-- [x] Login por email (migrado desde username)
-- [x] Perfiles de usuario con follow/unfollow
-- [x] Crear, editar y eliminar itinerarios
-- [x] Creación de itinerario con estructura día a día (form con Day 1, Day 2...)
-- [x] Generación de itinerario con IA (Groq / openai/gpt-oss-120b) con contexto de días, categoría, presupuesto y viajeros; extracción de JSON robusta a razonamiento filtrado en la respuesta
-- [x] Detalle de itinerario con mapa, comentarios y favoritos
-- [x] Botón de compartir en detalle (navigator.share + fallback a clipboard)
-- [x] Likes en itinerarios: toggle optimista, persistido en BD, contador sincronizado al montar
-- [x] Comentarios en itinerarios: contador actualizado en tiempo real en las cards
-- [x] Subida de imagen de portada (drag & drop, preview, Cloudinary)
-- [x] Páginas My Trips y Saved Trips
-- [x] Explore con filtros de categoría y destino + paginación
-- [x] Community: búsqueda y listado de usuarios
-- [x] Botón Crear siempre visible en la navbar
-- [x] Diseño responsive con menú hamburguesa
-- [x] Skeleton loaders en listas de itinerarios y usuarios
-- [x] Sistema de botones unificado (4 variantes, pill shape)
-- [x] Split de vendor bundles para reducir tamaño del chunk principal
-- [x] Feed personalizado en Home: tabs "Descubrir" y "Siguiendo" para usuarios autenticados
-- [x] Onboarding social al registrarse: pantalla de bienvenida con usuarios sugeridos, foto de su último viaje, contador de progreso y CTA dinámico
-- [x] Notificaciones automáticas: polling cada 30s + refresh al volver a la pestaña/app; badge en navbar siempre actualizado sin entrar en la página
-- [x] Filtro público/privado en Mis Viajes y en el perfil: toggle All / Público / Privado; endpoint `/mine` autenticado que devuelve todos los viajes del usuario
-- [x] Seguidores/Siguiendo como modal: se abre sobre el perfil sin cambiar de página; dos tabs con carga lazy; en mobile sube como bottom sheet nativa
-- [x] i18n completo: español e inglés con detección automática y selector en perfil
-- [x] Vista día a día en el detalle del itinerario: places agrupados visualmente por Día 1, Día 2...
-- [x] Destinos dinámicos en Home: los más populares según datos reales de la BD, sin hardcodear
-- [x] JSON-LD structured data para itinerarios, perfiles y home (SEO)
-- [x] Open Graph / preview al compartir: metatags dinámicos servidos server-side a bots (WhatsApp, Twitter, iMessage) vía Vercel Edge Middleware + endpoints `/og/itinerary/:id` y `/og/profile/:id`
-- [x] Búsqueda por texto libre en Explore: filtro por título o descripción, combinable con categoría y destino
-- [x] Clonar itinerario: copiar un itinerario público (propio o ajeno) como borrador privado de partida
-- [x] Galería de imágenes por itinerario: fotos adicionales a la portada, carrusel propio (sin librería) en el detalle, subida/borrado múltiple en crear y editar
-- [x] Búsqueda global en navbar: overlay que busca itinerarios y usuarios a la vez (ranking de usuarios verificados primero), con contenido destacado por defecto al abrirse vacío. Sustituye a Community en la navegación principal (sidebar y bottom-nav); la ruta `/community` se mantiene viva como browse completo
-- [x] Sugerencias de personas a seguir: widget persistente "People to follow" en el sidebar del perfil propio, reutiliza el endpoint `/users/suggested` ya usado en el onboarding
-
----
-
 ## Contexto para Claude
 
 > Copia y pega esto al inicio de cada sesión nueva:
@@ -88,5 +51,5 @@ Stack: React + Redux (cliente web), React Native / Expo (mobile), Node.js + Expr
 
 La app tiene: auth, perfiles con follows, crear/editar/eliminar itinerarios (con destinos, fechas, presupuesto, viajeros, imagen de portada, estructura día a día y generación con IA), comentarios, likes, favoritos, explorar con filtros, community de usuarios, feed social con tabs Descubrir/Siguiendo, onboarding social al registrarse, notificaciones con polling automático, filtro público/privado en mis viajes, modal de seguidores/siguiendo, i18n ES/EN.
 
-El roadmap está en ROADMAP.md. Lee ese archivo para ver qué hay hecho, qué está pendiente y cuál es la visión del producto.
+El roadmap está en ROADMAP.md. Lee ese archivo para ver qué está pendiente y cuál es la visión del producto (el historial de lo ya construido no vive ahí; usa git log/el código para eso).
 ```
