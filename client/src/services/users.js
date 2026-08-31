@@ -8,7 +8,10 @@ export {
     getUserById,
     updateUser,
     deleteMyAccount,
+    deleteUserById,
     getAllUsers,
+    getAllUsersForAdmin,
+    updateUserRole,
 } from "@tobeatraveller/shared";
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/users`;

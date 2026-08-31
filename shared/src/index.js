@@ -11,6 +11,7 @@ export * from './services/vanLogs.js';
 export * from './services/supplies.js';
 export * from './services/packingChecklist.js';
 export * from './services/lifeDiary.js';
+export * from './services/auditLog.js';
 
 // Store
 export * from './store/store.js';
@@ -46,3 +47,4 @@ export * from './utils/schemasValidation.js';
 export * from './utils/constants/colors.js';
 export * from './utils/constants/constants.js';
 export * from './utils/constants/currencies.js';
+export * from './utils/roles.js';

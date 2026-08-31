@@ -74,6 +74,16 @@ export const deleteMyAccount = async () => {
     return response.json();
 };
 
+export const deleteUserById = async (id) => {
+    const response = await authFetch(`${baseUrl()}/${id}`, {
+        method: 'DELETE',
+    });
+    if (!response.ok) {
+        await parseError(response, 'Failed to delete user');
+    }
+    return response.json();
+};
+
 export const exportMyData = async () => {
     const response = await authFetch(`${baseUrl()}/me/export`);
     if (!response.ok) {
@@ -107,6 +117,35 @@ export const getAllUsers = async ({ searchName = '', page = 1, limit = 9, sortBy
     });
     if (!response.ok) {
         await parseError(response, "Failed to get users");
+    }
+    return response.json();
+};
+
+export const getAllUsersForAdmin = async ({ searchName = '', page = 1, limit = 20, sortBy = 'username' } = {}) => {
+    const params = new URLSearchParams();
+    if (searchName) params.append("searchName", searchName);
+    params.append('page', page);
+    params.append('limit', limit);
+    params.append('sortBy', sortBy);
+
+    const response = await authFetch(`${baseUrl()}/admin?${params.toString()}`, {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+    });
+    if (!response.ok) {
+        await parseError(response, "Failed to get users");
+    }
+    return response.json();
+};
+
+export const updateUserRole = async (id, role) => {
+    const response = await authFetch(`${baseUrl()}/${id}/role`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ role }),
+    });
+    if (!response.ok) {
+        await parseError(response, 'Failed to update role');
     }
     return response.json();
 };

@@ -1,11 +1,12 @@
 import { lazy, Suspense, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Route, Routes, useLocation } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./App.scss";
 import CookieConsentBanner from "./components/cookieConsent/CookieConsentBanner";
 import Footer from "./components/footer/Footer";
 import Navbar from "./components/navbar/Navbar";
 import Spinner from "./components/spinner/Spinner";
+import InternalGuard from "./pages/InternalGuard";
 import PrivateLayout from "./pages/PrivateLayout";
 import Home from "./pages/home/Home";
 import { clearError, initAuthUser } from "./store/auth/authActions";
@@ -51,6 +52,9 @@ const CreateItinerary = lazy(() => import("./pages/itinerary/create/CreateItiner
 const CreateExperience = lazy(() => import("./pages/experience/CreateExperience"));
 const EditExperience = lazy(() => import("./pages/experience/EditExperience"));
 const EditItinerary = lazy(() => import("./pages/itinerary/edit/EditItinerary"));
+const InternalDashboard = lazy(() => import("./pages/internal/InternalDashboard"));
+const InternalUsers = lazy(() => import("./pages/internal/InternalUsers"));
+const InternalAuditLog = lazy(() => import("./pages/internal/InternalAuditLog"));
 
 const App = () => {
   const dispatch = useDispatch();
@@ -148,6 +152,14 @@ const App = () => {
                 <Route path="/create-experience" element={<CreateExperience />} />
                 <Route path="/experience/edit/:id" element={<EditExperience />} />
                 <Route path="/itinerary/edit/:id" element={<EditItinerary />} />
+
+                <Route element={<InternalGuard />}>
+                  <Route path="/internal" element={<InternalDashboard />}>
+                    <Route index element={<Navigate to="/internal/users" replace />} />
+                    <Route path="users" element={<InternalUsers />} />
+                    <Route path="audit-log" element={<InternalAuditLog />} />
+                  </Route>
+                </Route>
               </Route>
             </Routes>
           </Suspense>

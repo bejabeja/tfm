@@ -8,7 +8,7 @@ import { resetUserInfo } from "../user/userInfoActions";
 
 const saveHint = (user) => {
     if (user) {
-        localStorage.setItem('user_hint', JSON.stringify({ id: user.id, username: user.username, avatarUrl: user.avatarUrl }));
+        localStorage.setItem('user_hint', JSON.stringify({ id: user.id, username: user.username, avatarUrl: user.avatarUrl, role: user.role }));
     } else {
         localStorage.removeItem('user_hint');
     }
