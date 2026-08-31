@@ -14,7 +14,7 @@ import {
 } from '@tobeatraveller/shared';
 import {
   BudgetSection, Card, CategorySection, DatesSection,
-  Field, PlacesSection, TravellersSection, VisibilitySection, s,
+  Field, GallerySection, PlacesSection, TravellersSection, useGalleryPicker, VisibilitySection, s,
 } from './ItineraryFormShared';
 import { shadow } from '../../utils/styles';
 import { GEOAPIFY_KEY } from '../../utils/config';
@@ -32,6 +32,7 @@ const CreateItineraryScreen = ({ navigation }) => {
 
   // Form state
   const [photoUri, setPhotoUri] = useState(null);
+  const [newPhotos, setNewPhotos] = useState([]);
   const [title, setTitle] = useState('');
   const [destination, setDestination] = useState(null); // { name, label, coordinates: {lat,lon} }
   const [destQuery, setDestQuery] = useState('');
@@ -50,6 +51,7 @@ const CreateItineraryScreen = ({ navigation }) => {
   const [errors, setErrors] = useState({});
 
   const destTimer = useRef(null);
+  const pickGalleryPhotos = useGalleryPicker([], newPhotos, setNewPhotos);
 
   const tripDays = (() => {
     if (!startDate || !endDate) return 1;
@@ -163,6 +165,7 @@ const CreateItineraryScreen = ({ navigation }) => {
         const ext = filename.split('.').pop().toLowerCase();
         formData.append('file', { uri: photoUri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' });
       }
+      newPhotos.forEach(photo => formData.append('images', photo));
       formData.append('itinerary', JSON.stringify(body));
       await createItinerary(formData);
       if (me?.id) {
@@ -252,6 +255,14 @@ const CreateItineraryScreen = ({ navigation }) => {
               </View>
             )}
           </TouchableOpacity>
+
+          <GallerySection
+            existingImages={[]}
+            newPhotos={newPhotos}
+            onPickPhotos={pickGalleryPhotos}
+            onRemoveExisting={() => {}}
+            onRemoveNew={uri => setNewPhotos(prev => prev.filter(p => p.uri !== uri))}
+          />
 
           {/* Basic Info */}
           <Card title={t('createItinerary.basicInfo')} badge={isBasicComplete}>

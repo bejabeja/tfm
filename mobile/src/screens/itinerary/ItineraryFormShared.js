@@ -1,6 +1,7 @@
+import * as ImagePicker from 'expo-image-picker';
 import { useState } from 'react';
 import {
-  Alert, ActivityIndicator, FlatList, Modal, ScrollView, StyleSheet,
+  Alert, ActivityIndicator, FlatList, Image, Modal, ScrollView, StyleSheet,
   Text, TextInput, TouchableOpacity, View,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -45,6 +46,72 @@ export const Field = ({ label, error, hint, hintWarn, children, style }) => (
     {error && <Text style={s.fieldError}>{error}</Text>}
   </View>
 );
+
+// ─── GallerySection ──────────────────────────────────────────────────────────
+export const MAX_GALLERY_IMAGES = 6;
+
+export const useGalleryPicker = (existingImages, newPhotos, setNewPhotos, onDirty) => {
+  const { t } = useTranslation();
+
+  const pickPhotos = async () => {
+    const { status } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (status !== 'granted') {
+      Alert.alert(t('editProfile.permissionNeeded'), t('editProfile.permissionNeededDesc'));
+      return;
+    }
+    const remaining = MAX_GALLERY_IMAGES - (existingImages.length + newPhotos.length);
+    if (remaining <= 0) return;
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ['images'],
+      allowsMultipleSelection: true,
+      selectionLimit: remaining,
+      quality: 0.8,
+    });
+    if (result.canceled || !result.assets?.length) return;
+    const picked = result.assets.slice(0, remaining).map(asset => {
+      const filename = asset.uri.split('/').pop();
+      const ext = filename.split('.').pop().toLowerCase();
+      return { uri: asset.uri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' };
+    });
+    setNewPhotos(prev => [...prev, ...picked]);
+    onDirty?.();
+  };
+
+  return pickPhotos;
+};
+
+export const GallerySection = ({ existingImages, newPhotos, onPickPhotos, onRemoveExisting, onRemoveNew, complete }) => {
+  const { t } = useTranslation();
+  const total = existingImages.length + newPhotos.length;
+  return (
+    <Card title={t('itineraryForm.galleryTitle')} badge={complete}>
+      <View style={s.gallery}>
+        {existingImages.map(img => (
+          <View key={img.id} style={s.photoWrapper}>
+            <Image source={{ uri: img.photoUrl }} style={s.photo} resizeMode="cover" />
+            <TouchableOpacity style={s.photoRemove} onPress={() => onRemoveExisting(img.id)}>
+              <Ionicons name="close" size={13} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        ))}
+        {newPhotos.map(photo => (
+          <View key={photo.uri} style={s.photoWrapper}>
+            <Image source={{ uri: photo.uri }} style={s.photo} resizeMode="cover" />
+            <TouchableOpacity style={s.photoRemove} onPress={() => onRemoveNew(photo.uri)}>
+              <Ionicons name="close" size={13} color="#fff" />
+            </TouchableOpacity>
+          </View>
+        ))}
+        {total < MAX_GALLERY_IMAGES && (
+          <TouchableOpacity style={s.photoAdd} onPress={onPickPhotos}>
+            <Ionicons name="add" size={22} color="#9ca3af" />
+            <Text style={s.photoAddText}>{t('itineraryForm.addMorePhotos')}</Text>
+          </TouchableOpacity>
+        )}
+      </View>
+    </Card>
+  );
+};
 
 // ─── PlaceCard ───────────────────────────────────────────────────────────────
 export const PlaceCard = ({
@@ -780,4 +847,19 @@ export const s = StyleSheet.create({
   currencyItemText: { fontSize: 14, color: '#374151' },
   currencyItemTextSelected: { color: COLORS.primary, fontWeight: '600' },
   currencyCheck: { color: COLORS.primary, fontSize: 14, fontWeight: '700' },
+
+  gallery: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  photoWrapper: { width: 76, height: 76, borderRadius: 10, overflow: 'visible' },
+  photo: { width: 76, height: 76, borderRadius: 10, backgroundColor: '#f3f4f6' },
+  photoRemove: {
+    position: 'absolute', top: -6, right: -6,
+    width: 20, height: 20, borderRadius: 10,
+    backgroundColor: '#111827', alignItems: 'center', justifyContent: 'center',
+  },
+  photoAdd: {
+    width: 76, height: 76, borderRadius: 10,
+    borderWidth: 1.5, borderColor: '#dde3ec', borderStyle: 'dashed',
+    alignItems: 'center', justifyContent: 'center', backgroundColor: '#f7f9fc',
+  },
+  photoAddText: { fontSize: 9, color: '#9ca3af', marginTop: 2, textAlign: 'center' },
 });

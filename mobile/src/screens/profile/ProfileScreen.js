@@ -332,6 +332,30 @@ const ProfileScreen = ({ route, navigation }) => {
           <>
             <TouchableOpacity
               style={styles.contactBtn}
+              onPress={() => navigation.navigate('VanLog')}
+            >
+              <Text style={styles.contactText}>🚐 {t('vanLog.title')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.contactBtn}
+              onPress={() => navigation.navigate('Supplies')}
+            >
+              <Text style={styles.contactText}>🛒 {t('supplies.title')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.contactBtn}
+              onPress={() => navigation.navigate('PackingChecklist')}
+            >
+              <Text style={styles.contactText}>🎒 {t('packingChecklist.title')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.contactBtn}
+              onPress={() => navigation.navigate('LifeDiary')}
+            >
+              <Text style={styles.contactText}>📔 {t('lifeDiary.title')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.contactBtn}
               onPress={() => navigation.navigate('Contact')}
             >
               <Text style={styles.contactText}>{t('profile.contactUs')}</Text>

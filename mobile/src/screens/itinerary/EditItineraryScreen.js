@@ -14,7 +14,7 @@ import {
 } from '@tobeatraveller/shared';
 import {
   BudgetSection, Card, CategorySection, DatesSection,
-  Field, PlacesSection, TravellersSection, VisibilitySection, s,
+  Field, GallerySection, PlacesSection, TravellersSection, useGalleryPicker, VisibilitySection, s,
 } from './ItineraryFormShared';
 import { shadow } from '../../utils/styles';
 
@@ -31,6 +31,8 @@ const EditItineraryScreen = ({ route, navigation }) => {
   const [saving, setSaving] = useState(false);
   const [itinerary, setItinerary] = useState(null);
   const [photoUri, setPhotoUri] = useState(null);
+  const [existingImages, setExistingImages] = useState([]);
+  const [newPhotos, setNewPhotos] = useState([]);
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('other');
@@ -58,6 +60,7 @@ const EditItineraryScreen = ({ route, navigation }) => {
         setCurrency(data.currency ?? 'EUR');
         setTravellers(data.numberOfPeople ?? 1);
         setIsPublic(data.isPublic ?? EXISTING_ITINERARY_VISIBILITY_FALLBACK);
+        setExistingImages(data.images ?? []);
         const loaded = (data.places ?? []).map((p, i) => ({
           _key: String(i), id: p.id,
           name: p.name ?? '', label: p.label ?? p.name ?? '',
@@ -81,6 +84,8 @@ const EditItineraryScreen = ({ route, navigation }) => {
     if (!startDate || !endDate) return 1;
     return Math.max(1, Math.round((new Date(endDate) - new Date(startDate)) / 86400000) + 1);
   })();
+
+  const pickGalleryPhotos = useGalleryPicker(existingImages, newPhotos, setNewPhotos);
 
   const validate = () => {
     const e = {};
@@ -124,6 +129,7 @@ const EditItineraryScreen = ({ route, navigation }) => {
           category: p.category || 'other', orderIndex: i, dayNumber: p.dayNumber,
           infoPlace: { name: p.name, label: p.label || p.name, lat: p.lat, lon: p.lon },
         })),
+        keepImageIds: existingImages.map(img => img.id),
       };
       const formData = new FormData();
       if (photoUri) {
@@ -131,6 +137,7 @@ const EditItineraryScreen = ({ route, navigation }) => {
         const ext = filename.split('.').pop().toLowerCase();
         formData.append('file', { uri: photoUri, name: filename, type: ext === 'png' ? 'image/png' : 'image/jpeg' });
       }
+      newPhotos.forEach(photo => formData.append('images', photo));
       formData.append('itinerary', JSON.stringify(body));
       await updateItinerary(id, formData);
       if (me?.id) dispatch(setUserInfo(me.id));
@@ -193,6 +200,14 @@ const EditItineraryScreen = ({ route, navigation }) => {
               <Text style={ls.photoOverlayText}>{t('createItinerary.changePhoto')}</Text>
             </View>
           </TouchableOpacity>
+
+          <GallerySection
+            existingImages={existingImages}
+            newPhotos={newPhotos}
+            onPickPhotos={pickGalleryPhotos}
+            onRemoveExisting={imgId => setExistingImages(prev => prev.filter(img => img.id !== imgId))}
+            onRemoveNew={uri => setNewPhotos(prev => prev.filter(p => p.uri !== uri))}
+          />
 
           {/* Basic Info */}
           <Card title={t('createItinerary.basicInfo')}>
