@@ -2,17 +2,21 @@ import bcrypt from "bcrypt";
 import { v4 as uuidv4 } from 'uuid';
 import db from '../db/clientPostgres.js';
 import { ConflictError } from "../errors/ConflictError.js";
+import { ForbiddenError } from "../errors/ForbiddenError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
 import { generateAvatar } from "../utils/avatar.js";
 import { countryCodeFromIp } from "../utils/geoLookup.js";
 import { logger } from "../utils/logger.js";
+import { ROLES } from "../utils/roles.js";
 
 export class UserService {
-    constructor(userRepository, itinerariesRepository, followRepository, emailService = null) {
+    constructor(userRepository, itinerariesRepository, followRepository, emailService = null, lifeDiaryRepository = null, auditLogRepository = null) {
         this.userRepository = userRepository;
         this.itinerariesRepository = itinerariesRepository;
         this.followRepository = followRepository;
         this.emailService = emailService;
+        this.lifeDiaryRepository = lifeDiaryRepository;
+        this.auditLogRepository = auditLogRepository;
     }
 
     async create(userData, { ip, userAgent } = {}) {
@@ -62,12 +66,10 @@ export class UserService {
             sortBy,
         });
 
+        // totalItineraries already comes from findByFilters' SQL; only
+        // lastItinerary still needs a per-user follow-up query.
         await Promise.all(users.map(async (user) => {
-            const [totalItineraries, lastItinerary] = await Promise.all([
-                this.itinerariesRepository.getTotalByUserId(user.id),
-                this.itinerariesRepository.findLastByUserId(user.id),
-            ]);
-            user.totalItineraries = totalItineraries;
+            const lastItinerary = await this.itinerariesRepository.findLastByUserId(user.id);
             user.lastItinerary = lastItinerary ? lastItinerary.toSimpleDTO() : null;
         }));
 
@@ -77,6 +79,54 @@ export class UserService {
             currentPage: page,
             totalCount: total,
         };
+    }
+
+    async getFilteredAllUsersForAdmin({ searchName, page, limit, sortBy }) {
+        const offset = (page - 1) * limit;
+
+        const { users, total } = await this.userRepository.findByFilters({
+            searchName,
+            offset,
+            limit,
+            sortBy,
+        });
+
+        return {
+            users: users.map(user => user.toAdminDTO()),
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            totalCount: total,
+        };
+    }
+
+    async updateUserRole(targetId, newRole, actingUser) {
+        if (targetId === actingUser.id) {
+            throw new ForbiddenError("You cannot change your own role");
+        }
+        if (newRole === ROLES.SUPERADMIN && actingUser.role !== ROLES.SUPERADMIN) {
+            throw new ForbiddenError("Only a superadmin can grant the superadmin role");
+        }
+
+        const previousUser = await this.userRepository.getUserById(targetId);
+        if (!previousUser) throw new NotFoundError("User not found");
+
+        const user = await this.userRepository.updateRole(targetId, newRole);
+
+        this._logAudit(actingUser, 'update_role', targetId, user.username, { previousRole: previousUser.role, newRole });
+
+        return user;
+    }
+
+    // Fire-and-forget: an admin action must not fail because the audit log write did.
+    _logAudit(actingUser, action, targetUserId, targetUsername, metadata = {}) {
+        this.auditLogRepository?.log({
+            actorId: actingUser.id,
+            actorUsername: actingUser.username,
+            action,
+            targetUserId,
+            targetUsername,
+            metadata,
+        }).catch(err => logger.error(`[audit] failed to log ${action}:`, err));
     }
 
     async getUserForAuth(id) {
@@ -160,15 +210,29 @@ export class UserService {
         return users.map(u => u.toFeaturedDTO());
     }
 
-    async deleteUser(id) {
+    async deleteUser(id, actingUser = null) {
         const user = await this.userRepository.getUserById(id);
         if (!user) throw new NotFoundError("User not found");
+
+        // Collected before the delete cascades, since itinerary/diary rows
+        // (and their photo_public_id columns) won't exist to query afterwards.
+        const [itineraryImagePublicIds, lifeDiaryImagePublicIds] = await Promise.all([
+            this.itinerariesRepository.findImagePublicIdsByUserId(id),
+            this.lifeDiaryRepository ? this.lifeDiaryRepository.findImagePublicIdsByUserId(id) : [],
+        ]);
 
         this.emailService?.sendAccountDeleted({ username: user.username, email: user.email })
             .catch(err => logger.error('[email] account deleted failed:', err));
 
         await this.userRepository.deleteUser(id);
-        return user;
+
+        // Only an admin deleting someone else's account is an auditable admin
+        // action; a user deleting their own account isn't.
+        if (actingUser && actingUser.id !== id) {
+            this._logAudit(actingUser, 'delete_user', id, user.username);
+        }
+
+        return { user, imagePublicIds: [...itineraryImagePublicIds, ...lifeDiaryImagePublicIds] };
     }
 
     async exportUserData(id) {

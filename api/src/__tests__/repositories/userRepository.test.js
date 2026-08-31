@@ -99,3 +99,60 @@ describe('UserRepository.findAllForSitemap()', () => {
         expect(entries).toEqual([{ id: 'user-1', updatedAt: '2026-01-01T00:00:00.000Z' }]);
     });
 });
+
+describe('UserRepository.updateRole()', () => {
+    const repo = new UserRepository();
+
+    beforeEach(() => {
+        db.query.mockReset();
+    });
+
+    it('updates the role and returns the updated user', async () => {
+        db.query.mockResolvedValue({ rows: [{ id: 'user-1', username: 'jane', role: 'admin' }] });
+
+        const user = await repo.updateRole('user-1', 'admin');
+
+        expect(db.query.mock.calls[0][1]).toEqual(['admin', 'user-1']);
+        expect(user.role).toBe('admin');
+    });
+
+    it('returns null when the user does not exist', async () => {
+        db.query.mockResolvedValue({ rows: [] });
+
+        const user = await repo.updateRole('missing', 'admin');
+
+        expect(user).toBeNull();
+    });
+});
+
+describe('UserRepository.findByFilters() sort options', () => {
+    const repo = new UserRepository();
+
+    beforeEach(() => {
+        db.query.mockReset();
+    });
+
+    it('orders by created_at DESC for the "newest" sort', async () => {
+        db.query.mockImplementation((query) =>
+            query.includes('ORDER BY') ? { rows: [] } : { rows: [{ count: '0' }] }
+        );
+
+        await repo.findByFilters({ searchName: '', sortBy: 'newest' });
+
+        const listQuery = db.query.mock.calls.find(([q]) => q.includes('ORDER BY'))[0];
+        expect(listQuery).toMatch(/ORDER BY created_at DESC/);
+    });
+
+    // Regression: the admin users list used to fire one extra query per row
+    // to count each user's itineraries; it's now computed in this one query.
+    it('computes each user\'s itinerary count in the same query, as total_itineraries', async () => {
+        db.query.mockImplementation((query) =>
+            query.includes('ORDER BY') ? { rows: [] } : { rows: [{ count: '0' }] }
+        );
+
+        await repo.findByFilters({ searchName: '' });
+
+        const listQuery = db.query.mock.calls.find(([q]) => q.includes('ORDER BY'))[0];
+        expect(listQuery).toMatch(/AS total_itineraries/);
+    });
+});

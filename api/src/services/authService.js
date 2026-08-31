@@ -29,11 +29,11 @@ export class AuthService {
     }
 
     generateAccessToken(user) {
-        return jwt.sign({ id: user.id, username: user.username }, config.jwtSecret, { expiresIn: '1h' });
+        return jwt.sign({ id: user.id, username: user.username, role: user.role }, config.jwtSecret, { expiresIn: '1h' });
     }
 
     generateRefreshToken(user) {
-        return jwt.sign({ id: user.id, username: user.username }, config.jwtRefreshSecret, { expiresIn: '7d' });
+        return jwt.sign({ id: user.id, username: user.username, role: user.role }, config.jwtRefreshSecret, { expiresIn: '7d' });
     }
 
     verifyAccessToken(token) {
@@ -52,7 +52,7 @@ export class AuthService {
     refreshAccessTokenFromToken(refreshToken) {
         try {
             const decoded = jwt.verify(refreshToken, config.jwtRefreshSecret);
-            return this.generateAccessToken({ id: decoded.id, username: decoded.username });
+            return this.generateAccessToken({ id: decoded.id, username: decoded.username, role: decoded.role });
         } catch {
             throw new AuthError('Unauthorized: Invalid refresh token');
         }
@@ -61,7 +61,7 @@ export class AuthService {
     async refreshAccessToken(refreshToken, res, req) {
         try {
             const decodedRefresh = jwt.verify(refreshToken, config.jwtRefreshSecret);
-            const newAccessToken = this.generateAccessToken({ id: decodedRefresh.id, username: decodedRefresh.username });
+            const newAccessToken = this.generateAccessToken({ id: decodedRefresh.id, username: decodedRefresh.username, role: decodedRefresh.role });
 
             res.cookie('access_token', newAccessToken, {
                 httpOnly: true,
@@ -70,7 +70,7 @@ export class AuthService {
                 maxAge: 60 * 60 * 1000, // 1 hour
             });
 
-            req.user = { id: decodedRefresh.id, username: decodedRefresh.username };
+            req.user = { id: decodedRefresh.id, username: decodedRefresh.username, role: decodedRefresh.role };
         } catch (error) {
             throw new AuthError('Unauthorized: Invalid refresh token');
         }

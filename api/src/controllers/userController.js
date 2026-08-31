@@ -1,5 +1,5 @@
 import { ValidationError } from "../errors/ValidationError.js";
-import { updateUserSchema } from "../utils/schemasValidation.js";
+import { updateUserRoleSchema, updateUserSchema } from "../utils/schemasValidation.js";
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5 MB
 
@@ -112,15 +112,28 @@ export class UserController {
     }
 
     async deleteUserMe(req, res, next) {
-        const { id } = req.user;
         try {
-            const user = await this.userService.deleteUser(id);
-            const publicId = extractCloudinaryPublicId(user.avatarUrl);
-            if (publicId) await this.cloudinaryService.deleteImage(publicId).catch(() => {});
+            await this._deleteUserAndCleanupImages(req.user.id);
             res.status(200).json({ message: "Account deleted" });
         } catch (error) {
             next(error);
         }
+    }
+
+    async deleteUserById(req, res, next) {
+        try {
+            await this._deleteUserAndCleanupImages(req.params.id, req.user);
+            res.status(200).json({ message: "User deleted" });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async _deleteUserAndCleanupImages(id, actingUser = null) {
+        const { user, imagePublicIds } = await this.userService.deleteUser(id, actingUser);
+        const avatarPublicId = extractCloudinaryPublicId(user.avatarUrl);
+        const publicIds = avatarPublicId ? [avatarPublicId, ...imagePublicIds] : imagePublicIds;
+        await Promise.all(publicIds.map(publicId => this.cloudinaryService.deleteImage(publicId).catch(() => {})));
     }
 
     async getSuggestedUsers(req, res, next) {
@@ -143,6 +156,35 @@ export class UserController {
             };
             const { users, totalPages, currentPage, totalCount } = await this.userService.getFilteredAllUsers(filters);
             res.status(200).json({ users, totalPages, currentPage, totalCount });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async getAllUsersForAdmin(req, res, next) {
+        try {
+            const { searchName = '', page = 1, limit = 20, sortBy = 'username' } = req.query;
+            const filters = {
+                searchName,
+                page: parseInt(page),
+                limit: parseInt(limit),
+                sortBy,
+            };
+            const { users, totalPages, currentPage, totalCount } = await this.userService.getFilteredAllUsersForAdmin(filters);
+            res.status(200).json({ users, totalPages, currentPage, totalCount });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async updateUserRole(req, res, next) {
+        const result = updateUserRoleSchema.safeParse(req.body);
+        if (!result.success) {
+            return next(new ValidationError(result.error.errors[0]?.message || "Invalid role"));
+        }
+        try {
+            const user = await this.userService.updateUserRole(req.params.id, result.data.role, req.user);
+            res.status(200).json({ id: user.id, role: user.role });
         } catch (error) {
             next(error);
         }

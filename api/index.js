@@ -5,9 +5,14 @@ import config from "./src/config/config.js";
 import './src/config/instrument.js';
 import { testConnection } from "./src/db/clientPostgres.js";
 import { authenticate } from "./src/middlewares/authenticate.js";
+import { requirePremium } from './src/middlewares/requirePremium.js';
+import { requireRole } from './src/middlewares/requireRole.js';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
+import { UserRepository } from './src/repositories/userRepository.js';
+import { STAFF_ROLES } from './src/utils/roles.js';
 import { createAuthRouter } from './src/routes/authRouter.js';
+import { createAuditLogRouter } from './src/routes/auditLogRouter.js';
 
 import { createEmailRouter } from './src/routes/emailRouter.js';
 import { createCommentsRouter } from "./src/routes/commentsRouter.js";
@@ -26,6 +31,8 @@ import { createPackingChecklistRouter } from './src/routes/packingChecklistRoute
 import { createLifeDiaryRouter } from './src/routes/lifeDiaryRouter.js';
 
 const app = express();
+const premiumOnly = requirePremium(new UserRepository());
+const staffOnly = requireRole(...STAFF_ROLES);
 
 // Behind Vercel's edge network, so req.ip needs the first X-Forwarded-For hop
 // to reflect the real visitor instead of Vercel's own infra address.
@@ -44,10 +51,11 @@ app.use('/favorites', authenticate, createFavoritesRouter());
 app.use('/likes', authenticate, createLikesRouter());
 app.use('/comments', createCommentsRouter());
 app.use('/notifications', authenticate, createNotificationsRouter());
-app.use('/van-logs', authenticate, createVanLogsRouter());
-app.use('/supplies', authenticate, createSuppliesRouter());
-app.use('/packing-checklist', authenticate, createPackingChecklistRouter());
-app.use('/life-diary', authenticate, createLifeDiaryRouter());
+app.use('/van-logs', authenticate, premiumOnly, createVanLogsRouter());
+app.use('/supplies', authenticate, premiumOnly, createSuppliesRouter());
+app.use('/packing-checklist', authenticate, premiumOnly, createPackingChecklistRouter());
+app.use('/life-diary', authenticate, premiumOnly, createLifeDiaryRouter());
+app.use('/audit-log', authenticate, staffOnly, createAuditLogRouter());
 
 app.use('/', createEmailRouter());
 if (config.nodeEnv !== 'production') {

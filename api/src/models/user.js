@@ -5,7 +5,7 @@ export class User {
     constructor({
         id, username, email, password, location, avatarUrl, avatarPublicId,
         createdAt, updatedAt, name, followersListIds,
-        followingListIds, itineraries, bio, about, totalItineraries, role
+        followingListIds, itineraries, bio, about, totalItineraries, role, premiumUntil
     }) {
         this.id = id;
         this.username = username;
@@ -15,6 +15,7 @@ export class User {
         this.avatarUrl = avatarUrl || generateAvatar(username);
         this.avatarPublicId = avatarPublicId || null;
         this.role = role || 'user';
+        this.premiumUntil = premiumUntil || null;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.name = name || null;
@@ -36,11 +37,15 @@ export class User {
             avatarUrl: row.avatar_url,
             avatarPublicId: row.avatar_public_id,
             role: row.role,
+            premiumUntil: row.premium_until,
             createdAt: row.created_at,
             updatedAt: row.updated_at,
             name: row.name,
             bio: row.bio,
             about: row.about,
+            // Only present on queries that compute it in SQL (e.g. findByFilters);
+            // undefined elsewhere, which User already defaults to 0.
+            totalItineraries: row.total_itineraries != null ? parseInt(row.total_itineraries, 10) : undefined,
         });
     }
 
@@ -66,6 +71,10 @@ export class User {
         return this.followingListIds.length;
     }
 
+    isPremium() {
+        return !!this.premiumUntil && new Date(this.premiumUntil) > new Date();
+    }
+
     toDTO() {
         return {
             id: this.id,
@@ -75,6 +84,8 @@ export class User {
             avatarUrl: this.avatarUrl,
             avatarPublicId: this.avatarPublicId,
             role: this.role,
+            premiumUntil: this.premiumUntil,
+            isPremium: this.isPremium(),
             createdAt: formatDate(this.createdAt),
             updatedAt: formatDate(this.updatedAt),
             name: this.name,
@@ -90,7 +101,7 @@ export class User {
     }
 
     toPublicDTO() {
-        const { email, ...publicFields } = this.toDTO();
+        const { email, premiumUntil, ...publicFields } = this.toDTO();
         return publicFields;
     }
 
@@ -100,6 +111,7 @@ export class User {
             username: this.username,
             avatarUrl: this.avatarUrl,
             role: this.role,
+            isPremium: this.isPremium(),
         };
     }
 
@@ -112,6 +124,23 @@ export class User {
             avatarUrl: this.avatarUrl,
             lastItinerary: this.lastItinerary || null,
             role: this.role,
+            isPremium: this.isPremium(),
+        };
+    }
+
+    // For the internal admin panel: exposes email/createdAt that are stripped
+    // from the public-facing DTOs, with the real createdAt instead of the
+    // month/year-only string that toDTO() renders via formatDate().
+    toAdminDTO() {
+        return {
+            id: this.id,
+            username: this.username,
+            email: this.email,
+            avatarUrl: this.avatarUrl,
+            role: this.role,
+            isPremium: this.isPremium(),
+            createdAt: this.createdAt,
+            totalItineraries: this.countItineraries(),
         };
     }
 }

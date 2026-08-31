@@ -118,6 +118,14 @@ export class UserRepository {
         await db.query("DELETE FROM users WHERE id = $1", [id]);
     }
 
+    async updateRole(id, role) {
+        const result = await db.query(
+            "UPDATE users SET role = $1, updated_at = NOW() WHERE id = $2 RETURNING *",
+            [role, id]
+        );
+        return result.rows.length ? User.fromDb(result.rows[0]) : null;
+    }
+
     async updatePassword(id, hashedPassword) {
         await db.query(
             "UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2",
@@ -128,13 +136,17 @@ export class UserRepository {
     async findByFilters({ searchName, offset = 0, limit = 9, sortBy = 'username' }) {
         const searchTerm = `%${searchName}%`;
 
-        const orderClause = sortBy === 'itineraries'
-            ? '(SELECT COUNT(*) FROM itineraries WHERE itineraries.user_id = users.id) DESC, username ASC'
-            : 'username ASC';
+        const ORDER_CLAUSES = {
+            itineraries: '(SELECT COUNT(*) FROM itineraries WHERE itineraries.user_id = users.id) DESC, username ASC',
+            newest: 'created_at DESC',
+            username: 'username ASC',
+        };
+        const orderClause = ORDER_CLAUSES[sortBy] ?? ORDER_CLAUSES.username;
 
         const result = await db.query(
             `
-            SELECT * FROM users
+            SELECT users.*, (SELECT COUNT(*) FROM itineraries WHERE itineraries.user_id = users.id) AS total_itineraries
+            FROM users
             WHERE username ILIKE $1 AND role != 'test'
             ORDER BY ${orderClause}
             LIMIT $2 OFFSET $3

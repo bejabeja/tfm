@@ -59,6 +59,135 @@ describe('UserService.getUserById()', () => {
     });
 });
 
+describe('UserService.deleteUser()', () => {
+    let service;
+    let userRepository;
+    let itinerariesRepository;
+    let lifeDiaryRepository;
+
+    beforeEach(() => {
+        userRepository = { getUserById: async () => makeUser(), deleteUser: async () => {} };
+        itinerariesRepository = { findImagePublicIdsByUserId: async () => ['cover-1', 'gallery-1'] };
+        lifeDiaryRepository = { findImagePublicIdsByUserId: async () => ['diary-1'] };
+        service = new UserService(userRepository, itinerariesRepository, {}, null, lifeDiaryRepository);
+    });
+
+    it('throws NotFoundError when the user does not exist', async () => {
+        userRepository.getUserById = async () => null;
+
+        await expect(service.deleteUser('missing')).rejects.toThrow('User not found');
+    });
+
+    it('collects the deleted user\'s itinerary and life diary image public ids', async () => {
+        const result = await service.deleteUser('user-1');
+
+        expect(result.user.id).toBe('user-1');
+        expect(result.imagePublicIds).toEqual(['cover-1', 'gallery-1', 'diary-1']);
+    });
+
+    it('collects itinerary images even when no lifeDiaryRepository is wired', async () => {
+        service = new UserService(userRepository, itinerariesRepository, {});
+
+        const result = await service.deleteUser('user-1');
+
+        expect(result.imagePublicIds).toEqual(['cover-1', 'gallery-1']);
+    });
+
+    it('gathers image ids before deleting the user, so the cascade can\'t remove them first', async () => {
+        const callOrder = [];
+        itinerariesRepository.findImagePublicIdsByUserId = async () => { callOrder.push('collect'); return []; };
+        userRepository.deleteUser = async () => { callOrder.push('delete'); };
+
+        await service.deleteUser('user-1');
+
+        expect(callOrder).toEqual(['collect', 'delete']);
+    });
+
+    it('logs the deletion when an admin deletes someone else\'s account', async () => {
+        let loggedEntry;
+        const auditLogRepository = { log: async (entry) => { loggedEntry = entry; } };
+        service = new UserService(userRepository, itinerariesRepository, {}, null, lifeDiaryRepository, auditLogRepository);
+
+        await service.deleteUser('user-1', { id: 'admin-1', username: 'root' });
+
+        expect(loggedEntry).toEqual({
+            actorId: 'admin-1',
+            actorUsername: 'root',
+            action: 'delete_user',
+            targetUserId: 'user-1',
+            targetUsername: 'jane',
+            metadata: {},
+        });
+    });
+
+    it('does not log when a user deletes their own account', async () => {
+        let logCalled = false;
+        const auditLogRepository = { log: async () => { logCalled = true; } };
+        service = new UserService(userRepository, itinerariesRepository, {}, null, lifeDiaryRepository, auditLogRepository);
+
+        await service.deleteUser('user-1', { id: 'user-1', username: 'jane' });
+
+        expect(logCalled).toBe(false);
+    });
+});
+
+describe('UserService.updateUserRole()', () => {
+    let service;
+    let userRepository;
+    let auditLogRepository;
+
+    beforeEach(() => {
+        userRepository = {
+            getUserById: async (id) => makeUser({ id, role: 'user' }),
+            updateRole: async (id, role) => makeUser({ id, role }),
+        };
+        auditLogRepository = { log: async () => {} };
+        service = new UserService(userRepository, {}, {}, null, null, auditLogRepository);
+    });
+
+    it('updates the target user role when a superadmin grants superadmin', async () => {
+        const result = await service.updateUserRole('user-2', 'superadmin', { id: 'admin-1', role: 'superadmin' });
+
+        expect(result.role).toBe('superadmin');
+    });
+
+    it('throws ForbiddenError when a plain admin tries to grant superadmin', async () => {
+        await expect(
+            service.updateUserRole('user-2', 'superadmin', { id: 'admin-1', role: 'admin' })
+        ).rejects.toThrow('Only a superadmin can grant the superadmin role');
+    });
+
+    it('throws ForbiddenError when an admin tries to change their own role', async () => {
+        await expect(
+            service.updateUserRole('admin-1', 'user', { id: 'admin-1', role: 'admin' })
+        ).rejects.toThrow('You cannot change your own role');
+    });
+
+    it('throws NotFoundError when the target user does not exist', async () => {
+        userRepository.getUserById = async () => null;
+
+        await expect(
+            service.updateUserRole('missing', 'admin', { id: 'admin-1', role: 'superadmin' })
+        ).rejects.toThrow('User not found');
+    });
+
+    it('logs the role change with the previous and new role', async () => {
+        let loggedEntry;
+        auditLogRepository.log = async (entry) => { loggedEntry = entry; };
+
+        await service.updateUserRole('user-2', 'admin', { id: 'admin-1', username: 'root', role: 'superadmin' });
+
+        expect(loggedEntry).toEqual({
+            actorId: 'admin-1',
+            actorUsername: 'root',
+            action: 'update_role',
+            targetUserId: 'user-2',
+            targetUsername: 'jane',
+            metadata: { previousRole: 'user', newRole: 'admin' },
+        });
+    });
+});
+
 describe('UserService.create()', () => {
     let userRepository;
     let service;

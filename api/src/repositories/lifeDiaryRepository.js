@@ -86,6 +86,17 @@ export class LifeDiaryRepository {
         await client.query(`DELETE FROM life_diary_images WHERE entry_id = $1 AND id = $2`, [entryId, imageId]);
     }
 
+    async findImagePublicIdsByUserId(userId) {
+        const result = await client.query(
+            `SELECT ldi.photo_public_id
+             FROM life_diary_images ldi
+             JOIN life_diary_entries lde ON lde.id = ldi.entry_id
+             WHERE lde.user_id = $1 AND ldi.photo_public_id IS NOT NULL`,
+            [userId]
+        );
+        return result.rows.map(row => row.photo_public_id);
+    }
+
     // Batched so listing every entry doesn't fire one query per entry for its images.
     async getImagesByEntryIds(entryIds) {
         if (entryIds.length === 0) return [];

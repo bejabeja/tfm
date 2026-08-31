@@ -2,6 +2,11 @@ import { z } from "zod";
 import { VAN_LOG_CATEGORIES } from "../models/vanLogEntry.js";
 import { SUPPLY_CATEGORIES, SUPPLY_UNITS, SUPPLY_WHOLE_UNITS } from "./supplyConstants.js";
 import { PACKING_CATEGORIES } from "./packingConstants.js";
+import { ROLES } from "./roles.js";
+
+export const updateUserRoleSchema = z.object({
+    role: z.enum([ROLES.USER, ROLES.ADMIN, ROLES.SUPERADMIN]),
+});
 
 export const updateUserSchema = z.object({
     username: z.string()

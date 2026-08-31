@@ -114,4 +114,19 @@ describe('LifeDiaryRepository', () => {
             expect(params).toEqual([['entry-1']]);
         });
     });
+
+    describe('findImagePublicIdsByUserId()', () => {
+        it('returns the public ids of every image across all of the user\'s entries', async () => {
+            client.query.mockResolvedValue({
+                rows: [{ photo_public_id: 'pub-1' }, { photo_public_id: 'pub-2' }],
+            });
+
+            const publicIds = await repo.findImagePublicIdsByUserId('user-1');
+
+            expect(publicIds).toEqual(['pub-1', 'pub-2']);
+            const [queryText, params] = client.query.mock.calls[0];
+            expect(queryText).toMatch(/JOIN life_diary_entries/);
+            expect(params).toEqual(['user-1']);
+        });
+    });
 });

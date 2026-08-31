@@ -36,6 +36,16 @@ describe('User model', () => {
             expect(user.avatarUrl).toContain('ui-avatars.com');
             expect(user.avatarUrl).toContain('johndoe');
         });
+
+        it('parses total_itineraries when the query computed it (e.g. findByFilters)', () => {
+            const user = User.fromDb({ ...baseRow, total_itineraries: '5' });
+            expect(user.countItineraries()).toBe(5);
+        });
+
+        it('defaults totalItineraries to 0 when the query did not compute it', () => {
+            const user = User.fromDb(baseRow);
+            expect(user.countItineraries()).toBe(0);
+        });
     });
 
     describe('constructor defaults', () => {
@@ -82,6 +92,25 @@ describe('User model', () => {
         });
     });
 
+    describe('isPremium()', () => {
+        it('returns false when premiumUntil is null', () => {
+            const user = new User({ id: '1', username: 'test' });
+            expect(user.isPremium()).toBe(false);
+        });
+
+        it('returns true when premiumUntil is in the future', () => {
+            const futureDate = new Date(Date.now() + 24 * 60 * 60 * 1000);
+            const user = new User({ id: '1', username: 'test', premiumUntil: futureDate });
+            expect(user.isPremium()).toBe(true);
+        });
+
+        it('returns false when premiumUntil is in the past', () => {
+            const pastDate = new Date(Date.now() - 24 * 60 * 60 * 1000);
+            const user = new User({ id: '1', username: 'test', premiumUntil: pastDate });
+            expect(user.isPremium()).toBe(false);
+        });
+    });
+
     describe('totalFollowers() / totalFollowing()', () => {
         it('returns the count of followersListIds', () => {
             const user = new User({ id: '1', username: 'test', followersListIds: ['a', 'b', 'c'] });
@@ -117,6 +146,8 @@ describe('User model', () => {
             expect(dto).toHaveProperty('following');
             expect(dto).toHaveProperty('followersListIds');
             expect(dto).toHaveProperty('followingListIds');
+            expect(dto).toHaveProperty('premiumUntil');
+            expect(dto).toHaveProperty('isPremium', false);
         });
 
         it('does NOT expose the password', () => {
@@ -126,12 +157,23 @@ describe('User model', () => {
         });
     });
 
+    describe('toPublicDTO()', () => {
+        it('does NOT expose email or the exact premiumUntil date', () => {
+            const user = User.fromDb({ ...baseRow, premium_until: new Date(Date.now() + 86400000) });
+            const dto = user.toPublicDTO();
+
+            expect(dto).not.toHaveProperty('email');
+            expect(dto).not.toHaveProperty('premiumUntil');
+            expect(dto).toHaveProperty('isPremium', true);
+        });
+    });
+
     describe('toSimpleDTO()', () => {
-        it('returns only id, username, and avatarUrl', () => {
+        it('returns only id, username, avatarUrl, role, and isPremium', () => {
             const user = User.fromDb(baseRow);
             const dto = user.toSimpleDTO();
 
-            expect(Object.keys(dto)).toEqual(['id', 'username', 'avatarUrl', 'role']);
+            expect(Object.keys(dto)).toEqual(['id', 'username', 'avatarUrl', 'role', 'isPremium']);
         });
     });
 

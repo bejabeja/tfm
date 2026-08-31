@@ -32,7 +32,7 @@ const mockUser = {
     id: 'user-1',
     username: 'johndoe',
     password: 'hashed_password',
-    toSimpleDTO: () => ({ id: 'user-1', username: 'johndoe', avatarUrl: 'https://...' }),
+    toSimpleDTO: () => ({ id: 'user-1', username: 'johndoe', avatarUrl: 'https://...', role: 'user' }),
 };
 
 describe('AuthService', () => {
@@ -56,7 +56,7 @@ describe('AuthService', () => {
 
             expect(mockUserRepository.findByEmail).toHaveBeenCalledWith('johndoe@example.com');
             expect(bcrypt.compare).toHaveBeenCalledWith('correctpassword', 'hashed_password');
-            expect(result).toEqual({ id: 'user-1', username: 'johndoe', avatarUrl: 'https://...' });
+            expect(result).toEqual({ id: 'user-1', username: 'johndoe', avatarUrl: 'https://...', role: 'user' });
         });
 
         it('throws NotFoundError when user does not exist', async () => {
@@ -79,10 +79,10 @@ describe('AuthService', () => {
         it('calls jwt.sign with correct arguments and returns token', () => {
             jwt.sign.mockReturnValue('access-token-xyz');
 
-            const token = authService.generateAccessToken({ id: 'user-1', username: 'johndoe' });
+            const token = authService.generateAccessToken({ id: 'user-1', username: 'johndoe', role: 'user' });
 
             expect(jwt.sign).toHaveBeenCalledWith(
-                { id: 'user-1', username: 'johndoe' },
+                { id: 'user-1', username: 'johndoe', role: 'user' },
                 'test-secret',
                 { expiresIn: '1h' }
             );
@@ -94,10 +94,10 @@ describe('AuthService', () => {
         it('calls jwt.sign with refresh secret and 7d expiry', () => {
             jwt.sign.mockReturnValue('refresh-token-xyz');
 
-            const token = authService.generateRefreshToken({ id: 'user-1', username: 'johndoe' });
+            const token = authService.generateRefreshToken({ id: 'user-1', username: 'johndoe', role: 'user' });
 
             expect(jwt.sign).toHaveBeenCalledWith(
-                { id: 'user-1', username: 'johndoe' },
+                { id: 'user-1', username: 'johndoe', role: 'user' },
                 'test-refresh-secret',
                 { expiresIn: '7d' }
             );
@@ -140,18 +140,31 @@ describe('AuthService', () => {
 
     describe('refreshAccessTokenFromToken()', () => {
         it('mints a new access token from a valid refresh token', () => {
-            jwt.verify.mockReturnValue({ id: 'user-1', username: 'johndoe' });
+            jwt.verify.mockReturnValue({ id: 'user-1', username: 'johndoe', role: 'user' });
             jwt.sign.mockReturnValue('new-access-token');
 
             const token = authService.refreshAccessTokenFromToken('valid-refresh-token');
 
             expect(jwt.verify).toHaveBeenCalledWith('valid-refresh-token', 'test-refresh-secret');
             expect(jwt.sign).toHaveBeenCalledWith(
-                { id: 'user-1', username: 'johndoe' },
+                { id: 'user-1', username: 'johndoe', role: 'user' },
                 'test-secret',
                 { expiresIn: '1h' }
             );
             expect(token).toBe('new-access-token');
+        });
+
+        it('carries the role from the refresh token so an admin does not lose access after a refresh', () => {
+            jwt.verify.mockReturnValue({ id: 'user-1', username: 'johndoe', role: 'admin' });
+            jwt.sign.mockReturnValue('new-access-token');
+
+            authService.refreshAccessTokenFromToken('valid-refresh-token');
+
+            expect(jwt.sign).toHaveBeenCalledWith(
+                expect.objectContaining({ role: 'admin' }),
+                'test-secret',
+                { expiresIn: '1h' }
+            );
         });
 
         it('throws AuthError when the refresh token is invalid or expired', () => {

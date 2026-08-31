@@ -19,6 +19,20 @@ export class ItineraryRepository {
     return result.rows.map(Itinerary.fromDb);
   }
 
+  // Covers both the itinerary cover photo and its gallery images, so a user
+  // deletion can clean up every Cloudinary asset before the DB cascade removes the rows.
+  async findImagePublicIdsByUserId(userId) {
+    const result = await client.query(
+      `SELECT photo_public_id FROM itineraries WHERE user_id = $1 AND photo_public_id IS NOT NULL
+       UNION ALL
+       SELECT ii.photo_public_id FROM itinerary_images ii
+       JOIN itineraries i ON i.id = ii.itinerary_id
+       WHERE i.user_id = $1 AND ii.photo_public_id IS NOT NULL`,
+      [userId]
+    );
+    return result.rows.map(row => row.photo_public_id);
+  }
+
   async findById(itineraryId) {
     const query = `SELECT * FROM itineraries WHERE id = $1`;
     const result = await client.query(query, [itineraryId]);
