@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { IoAddOutline, IoBagCheckOutline, IoCartOutline, IoCloseOutline, IoPencilOutline, IoRefreshOutline, IoSearchOutline, IoTrashOutline } from "react-icons/io5";
-import { normalizeSearchText, supplyCategories, supplyUnits } from "@tobeatraveller/shared";
+import { isPremiumRequiredError, normalizeSearchText, supplyCategories, supplyUnits } from "@tobeatraveller/shared";
+import FeatureLoadState from "../../components/featureLoadState/FeatureLoadState";
 import Modal from "../../components/modal/Modal";
 import {
   addInventoryItem, addShoppingListItem, deleteInventoryItem, deleteShoppingListItem, getInventory, getShoppingList,
@@ -36,7 +37,7 @@ const Supplies = () => {
         setInventory(inventoryRes);
         setError(null);
       })
-      .catch((err) => setError(err.message || "An error occurred"))
+      .catch((err) => setError(isPremiumRequiredError(err) ? "premium" : "error"))
       .finally(() => setLoading(false));
   };
 
@@ -120,7 +121,7 @@ const Supplies = () => {
   if (error) {
     return (
       <section className="section__container">
-        <p className="error-message">{s("errorMsg")}</p>
+        <FeatureLoadState status={error} onRetry={loadData} />
       </section>
     );
   }

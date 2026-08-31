@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { MdClose, MdKeyboardArrowDown, MdKeyboardArrowUp, MdOutlineExplore } from "react-icons/md";
 import { RiSparklingLine } from "react-icons/ri";
 import toast from "react-hot-toast";
-import { aiPaceOptions, DEFAULT_AI_PACE } from "@tobeatraveller/shared";
+import { aiPaceOptions, DEFAULT_AI_PACE, isPremiumRequiredError } from "@tobeatraveller/shared";
 import { getCategoryIcon } from "../../../assets/icons";
 import AutocompletePlaceInput from "../../../components/form/AutocompletePlaceInput";
 import Modal from "../../../components/modal/Modal";
@@ -116,7 +116,11 @@ const PlacesForm = ({
       setDays(uniqueDays);
       toast.success(f("generated"));
     } catch (error) {
-      toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? f("generateTimeout") : (error.message || f("errorGenerate")));
+      if (isPremiumRequiredError(error)) {
+        toast.error(t("premium.requiredDesc"));
+      } else {
+        toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? f("generateTimeout") : (error.message || f("errorGenerate")));
+      }
     } finally {
       setIsGenerating(false);
     }

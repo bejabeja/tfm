@@ -233,6 +233,11 @@
     "following": "Siguiendo",
     "follow": "Seguir"
   },
+  "premium": {
+    "requiredTitle": "Función premium",
+    "requiredDesc": "Esta función está disponible para miembros Premium. Muy pronto podrás suscribirte.",
+    "loadErrorDesc": "No se pudieron cargar tus datos. Inténtalo de nuevo."
+  },
   "profile": {
     "metaDescriptionFallback": "Los itinerarios de viaje de {{username}} en ToBeATraveller",
     "followers": "Seguidores",
@@ -397,7 +402,6 @@
   },
   "vanLog": {
     "title": "Cuaderno de furgo",
-    "errorMsg": "No se pudo cargar el cuaderno. Por favor, inténtalo más tarde.",
     "addEntry": "Añadir apunte",
     "editEntry": "Editar apunte",
     "categoryLabel": "Categoría",
@@ -444,7 +448,6 @@
   },
   "supplies": {
     "title": "Lista de la compra",
-    "errorMsg": "No se pudo cargar la lista. Por favor, inténtalo más tarde.",
     "addItem": "Añadir producto",
     "editItem": "Editar producto",
     "shoppingListTab": "Lista de la compra",
@@ -499,7 +502,6 @@
   "packingChecklist": {
     "title": "Lista de equipaje",
     "progress": "{{checked}}/{{total}} empaquetados",
-    "errorMsg": "No se pudo cargar la lista de equipaje. Por favor, inténtalo más tarde.",
     "saveError": "No se pudo guardar. Por favor, inténtalo más tarde.",
     "deleteError": "No se pudo eliminar el producto. Por favor, inténtalo más tarde.",
     "addItemPlaceholder": "Añadir producto...",
@@ -529,7 +531,6 @@
   },
   "lifeDiary": {
     "title": "Diario de vida",
-    "errorMsg": "No se pudo cargar tu diario. Por favor, inténtalo más tarde.",
     "addEntry": "Añadir entrada",
     "editEntry": "Editar entrada",
     "dateLabel": "Fecha",

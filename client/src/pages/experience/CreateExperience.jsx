@@ -26,7 +26,7 @@ import {
 } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { aiPaceOptions, DEFAULT_AI_PACE } from "@tobeatraveller/shared";
+import { aiPaceOptions, DEFAULT_AI_PACE, isPremiumRequiredError } from "@tobeatraveller/shared";
 import Modal from "../../components/modal/Modal";
 import ImageUpload from "../itinerary/sectionsForm/ImageUpload";
 import { GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary } from "../../services/itineraries";
@@ -211,7 +211,11 @@ const CreateExperience = () => {
       setTitle(`My trip to ${destination.name}`);
       setPhase("review");
     } catch (error) {
-      toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? ce("generateTimeout") : (error.message || ce("generateError")));
+      if (isPremiumRequiredError(error)) {
+        toast.error(t("premium.requiredDesc"));
+      } else {
+        toast.error(error.message === GENERATE_TIMEOUT_MESSAGE ? ce("generateTimeout") : (error.message || ce("generateError")));
+      }
     } finally {
       setGenerating(false);
     }

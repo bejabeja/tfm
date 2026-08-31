@@ -11,7 +11,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   aiPaceOptions, createItinerary, DEFAULT_AI_PACE, GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary,
-  itineraryCategories, NEW_ITINERARY_DEFAULT_VISIBILITY, placeCategories,
+  isPremiumRequiredError, itineraryCategories, NEW_ITINERARY_DEFAULT_VISIBILITY, placeCategories,
   selectAuthUser, selectMe,
   setUserInfo, setUserInfoItineraries,
 } from '@tobeatraveller/shared';
@@ -147,7 +147,11 @@ const PlanExperienceScreen = ({ navigation }) => {
       setTitle(`My trip to ${destination.name}`);
       setPhase('review');
     } catch (error) {
-      Alert.alert('Oops', error.message === GENERATE_TIMEOUT_MESSAGE ? ce('generateTimeout') : (error.message || ce('generateError')));
+      if (isPremiumRequiredError(error)) {
+        Alert.alert(t('premium.requiredTitle'), t('premium.requiredDesc'));
+      } else {
+        Alert.alert('Oops', error.message === GENERATE_TIMEOUT_MESSAGE ? ce('generateTimeout') : (error.message || ce('generateError')));
+      }
     } finally {
       setGenerating(false);
     }

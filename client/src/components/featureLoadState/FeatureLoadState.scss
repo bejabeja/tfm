@@ -1,0 +1,23 @@
+.feature-load-state {
+  padding: 2rem;
+  margin: 2rem auto;
+  max-width: 500px;
+  text-align: center;
+
+  &__icon {
+    width: auto;
+    font-size: 2.5rem;
+    color: var(--text-secondary-color, #666);
+    margin-bottom: 0.75rem;
+  }
+
+  &__title {
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  &__desc {
+    color: var(--text-secondary-color, #666);
+    margin-bottom: 1.5rem;
+  }
+}

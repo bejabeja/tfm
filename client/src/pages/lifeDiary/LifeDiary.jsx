@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { IoAddOutline, IoLocationOutline, IoPencilOutline, IoTrashOutline } from "react-icons/io5";
+import { isPremiumRequiredError } from "@tobeatraveller/shared";
+import FeatureLoadState from "../../components/featureLoadState/FeatureLoadState";
 import Modal from "../../components/modal/Modal";
 import { deleteLifeDiaryEntry, getLifeDiaryEntries } from "../../services/lifeDiary";
 import LifeDiaryFormModal from "./LifeDiaryFormModal";
@@ -24,7 +26,7 @@ const LifeDiary = () => {
     setLoading(true);
     getLifeDiaryEntries()
       .then((res) => { setEntries(res); setError(null); })
-      .catch((err) => setError(err.message || "An error occurred"))
+      .catch((err) => setError(isPremiumRequiredError(err) ? "premium" : "error"))
       .finally(() => setLoading(false));
   };
 
@@ -58,7 +60,7 @@ const LifeDiary = () => {
   if (error) {
     return (
       <section className="section__container">
-        <p className="error-message">{d("errorMsg")}</p>
+        <FeatureLoadState status={error} onRetry={loadEntries} />
       </section>
     );
   }

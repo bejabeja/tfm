@@ -5,7 +5,8 @@ import {
   IoAddOutline, IoCartOutline, IoCloseOutline, IoRefreshOutline,
   IoRepeatOutline, IoSearchOutline, IoTrashOutline,
 } from "react-icons/io5";
-import { defaultPackingItems, normalizeSearchText, packingCategories } from "@tobeatraveller/shared";
+import { defaultPackingItems, isPremiumRequiredError, normalizeSearchText, packingCategories } from "@tobeatraveller/shared";
+import FeatureLoadState from "../../components/featureLoadState/FeatureLoadState";
 import { addShoppingListItem } from "../../services/supplies";
 import {
   addPackingChecklistItem, deletePackingChecklistItem, getPackingChecklist,
@@ -51,7 +52,7 @@ const PackingChecklist = () => {
         setItems(res);
         setError(null);
       })
-      .catch((err) => setError(err.message || "An error occurred"))
+      .catch((err) => setError(isPremiumRequiredError(err) ? "premium" : "error"))
       .finally(() => setLoading(false));
   };
 
@@ -179,7 +180,7 @@ const PackingChecklist = () => {
   if (error) {
     return (
       <section className="section__container">
-        <p className="error-message">{p("errorMsg")}</p>
+        <FeatureLoadState status={error} onRetry={loadData} />
       </section>
     );
   }

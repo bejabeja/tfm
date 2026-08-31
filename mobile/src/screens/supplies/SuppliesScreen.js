@@ -8,9 +8,10 @@ import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import {
-  deleteInventoryItem, deleteShoppingListItem, getInventory, getShoppingList,
+  deleteInventoryItem, deleteShoppingListItem, getInventory, getShoppingList, isPremiumRequiredError,
   markInventoryItemUsedUp, markShoppingListItemPurchased, normalizeSearchText, supplyUnits,
 } from '@tobeatraveller/shared';
+import FeatureLoadState from '../../components/FeatureLoadState';
 import { shadow } from '../../utils/styles';
 
 const CATEGORY_EMOJI = { food: '🍎', hygiene: '🧴', cleaning: '🧽', vehicle: '🚗', other: '📦' };
@@ -29,6 +30,7 @@ const SuppliesScreen = ({ navigation }) => {
   const [quantityPrompt, setQuantityPrompt] = useState(null); // { type: 'purchase' | 'consume', item }
   const [quantityValue, setQuantityValue] = useState('');
   const [confirmingQuantity, setConfirmingQuantity] = useState(false);
+  const [loadError, setLoadError] = useState(null); // null | 'premium' | 'error'
 
   const categoryLabel = (value) => s(`category.${value}`, value);
   const unitLabel = (value) => s(`unit.${value}`, value);
@@ -38,9 +40,11 @@ const SuppliesScreen = ({ navigation }) => {
       const [shoppingRes, inventoryRes] = await Promise.all([getShoppingList(), getInventory()]);
       setShoppingList(Array.isArray(shoppingRes) ? shoppingRes : []);
       setInventory(Array.isArray(inventoryRes) ? inventoryRes : []);
-    } catch {
+      setLoadError(null);
+    } catch (err) {
       setShoppingList([]);
       setInventory([]);
+      setLoadError(isPremiumRequiredError(err) ? 'premium' : 'error');
     }
   };
 
@@ -133,12 +137,14 @@ const SuppliesScreen = ({ navigation }) => {
             <Text style={styles.backText}>←</Text>
           </TouchableOpacity>
           <Text style={styles.title}>{s('title')}</Text>
-          <TouchableOpacity
-            style={styles.newBtn}
-            onPress={() => navigation.navigate('SupplyForm', { listType: tab, existingItems: knownItems })}
-          >
-            <Text style={styles.newBtnText}>+ {s('addItem')}</Text>
-          </TouchableOpacity>
+          {loadError !== 'premium' && (
+            <TouchableOpacity
+              style={styles.newBtn}
+              onPress={() => navigation.navigate('SupplyForm', { listType: tab, existingItems: knownItems })}
+            >
+              <Text style={styles.newBtnText}>+ {s('addItem')}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         <View style={styles.tabsRow}>
@@ -197,12 +203,16 @@ const SuppliesScreen = ({ navigation }) => {
         }
         ListEmptyComponent={
           !loading ? (
-            <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>{tab === 'shopping' ? '🛒' : '📦'}</Text>
-              <Text style={styles.emptyTitle}>
-                {query ? s('noSearchResults', { query: search.trim() }) : s(tab === 'shopping' ? 'noShoppingItems' : 'noInventoryItems')}
-              </Text>
-            </View>
+            loadError ? (
+              <FeatureLoadState status={loadError} onRetry={fetchData} />
+            ) : (
+              <View style={styles.empty}>
+                <Text style={styles.emptyEmoji}>{tab === 'shopping' ? '🛒' : '📦'}</Text>
+                <Text style={styles.emptyTitle}>
+                  {query ? s('noSearchResults', { query: search.trim() }) : s(tab === 'shopping' ? 'noShoppingItems' : 'noInventoryItems')}
+                </Text>
+              </View>
+            )
           ) : null
         }
         renderItem={({ item }) => item._skeleton ? (

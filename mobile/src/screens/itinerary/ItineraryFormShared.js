@@ -8,7 +8,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useTranslation } from 'react-i18next';
 import {
   aiPaceOptions, currencyOptions, DEFAULT_AI_PACE, GENERATE_TIMEOUT_MESSAGE, generateSmartItinerary,
-  getCurrencySymbol, itineraryCategories, placeCategories,
+  getCurrencySymbol, isPremiumRequiredError, itineraryCategories, placeCategories,
 } from '@tobeatraveller/shared';
 import { COLORS, shadow } from '../../utils/styles';
 import { STEP_CONFIG, STEP_NAME_HINT, getStepConfig } from '../../utils/stepConfig';
@@ -544,10 +544,14 @@ export const PlacesSection = ({
       const uniqueDays = [...new Set(generated.map(p => p.dayNumber))].sort((a, b) => a - b);
       setDays(uniqueDays.length > 0 ? uniqueDays : [1]);
     } catch (error) {
-      Alert.alert(
-        t('errors.somethingWrong'),
-        error.message === GENERATE_TIMEOUT_MESSAGE ? t('itineraryForm.generateTimeout') : (error.message || t('itineraryForm.errorGenerate'))
-      );
+      if (isPremiumRequiredError(error)) {
+        Alert.alert(t('premium.requiredTitle'), t('premium.requiredDesc'));
+      } else {
+        Alert.alert(
+          t('errors.somethingWrong'),
+          error.message === GENERATE_TIMEOUT_MESSAGE ? t('itineraryForm.generateTimeout') : (error.message || t('itineraryForm.errorGenerate'))
+        );
+      }
     } finally {
       setGenerating(false);
     }

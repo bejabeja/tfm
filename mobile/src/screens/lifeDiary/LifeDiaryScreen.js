@@ -7,7 +7,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { deleteLifeDiaryEntry, getLifeDiaryEntries } from '@tobeatraveller/shared';
+import { deleteLifeDiaryEntry, getLifeDiaryEntries, isPremiumRequiredError } from '@tobeatraveller/shared';
+import FeatureLoadState from '../../components/FeatureLoadState';
 import { shadow } from '../../utils/styles';
 
 const LifeDiaryScreen = ({ navigation }) => {
@@ -19,13 +20,16 @@ const LifeDiaryScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
+  const [loadError, setLoadError] = useState(null); // null | 'premium' | 'error'
 
   const fetchEntries = async () => {
     try {
       const data = await getLifeDiaryEntries();
       setEntries(Array.isArray(data) ? data : []);
-    } catch {
+      setLoadError(null);
+    } catch (err) {
       setEntries([]);
+      setLoadError(isPremiumRequiredError(err) ? 'premium' : 'error');
     }
   };
 
@@ -73,12 +77,14 @@ const LifeDiaryScreen = ({ navigation }) => {
           <Text style={styles.backText}>←</Text>
         </TouchableOpacity>
         <Text style={styles.title}>{d('title')}</Text>
-        <TouchableOpacity
-          style={styles.newBtn}
-          onPress={() => navigation.navigate('LifeDiaryEntryForm')}
-        >
-          <Text style={styles.newBtnText}>+ {d('addEntry')}</Text>
-        </TouchableOpacity>
+        {loadError !== 'premium' && (
+          <TouchableOpacity
+            style={styles.newBtn}
+            onPress={() => navigation.navigate('LifeDiaryEntryForm')}
+          >
+            <Text style={styles.newBtnText}>+ {d('addEntry')}</Text>
+          </TouchableOpacity>
+        )}
       </View>
 
       <FlatList
@@ -94,10 +100,14 @@ const LifeDiaryScreen = ({ navigation }) => {
         }
         ListEmptyComponent={
           !loading ? (
-            <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>📔</Text>
-              <Text style={styles.emptyTitle}>{d('noEntries')}</Text>
-            </View>
+            loadError ? (
+              <FeatureLoadState status={loadError} onRetry={fetchEntries} />
+            ) : (
+              <View style={styles.empty}>
+                <Text style={styles.emptyEmoji}>📔</Text>
+                <Text style={styles.emptyTitle}>{d('noEntries')}</Text>
+              </View>
+            )
           ) : null
         }
         renderItem={({ item }) => {

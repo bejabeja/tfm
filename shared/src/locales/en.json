@@ -233,6 +233,11 @@
     "following": "Following",
     "follow": "Follow"
   },
+  "premium": {
+    "requiredTitle": "Premium feature",
+    "requiredDesc": "This feature is available to Premium members. Upgrading is coming soon.",
+    "loadErrorDesc": "Could not load your data. Please try again."
+  },
   "profile": {
     "metaDescriptionFallback": "{{username}}'s travel itineraries on ToBeATraveller",
     "followers": "Followers",
@@ -420,7 +425,6 @@
   },
   "vanLog": {
     "title": "Van log",
-    "errorMsg": "Could not load your van log. Please try again.",
     "addEntry": "Add entry",
     "editEntry": "Edit entry",
     "categoryLabel": "Category",
@@ -467,7 +471,6 @@
   },
   "supplies": {
     "title": "Shopping list",
-    "errorMsg": "Could not load your supplies. Please try again.",
     "addItem": "Add item",
     "editItem": "Edit item",
     "shoppingListTab": "Shopping list",
@@ -522,7 +525,6 @@
   "packingChecklist": {
     "title": "Packing checklist",
     "progress": "{{checked}}/{{total}} packed",
-    "errorMsg": "Could not load your packing checklist. Please try again.",
     "saveError": "Could not save. Please try again.",
     "deleteError": "Could not delete the item. Please try again.",
     "addItemPlaceholder": "Add item...",
@@ -552,7 +554,6 @@
   },
   "lifeDiary": {
     "title": "Life diary",
-    "errorMsg": "Could not load your diary. Please try again.",
     "addEntry": "Add entry",
     "editEntry": "Edit entry",
     "dateLabel": "Date",

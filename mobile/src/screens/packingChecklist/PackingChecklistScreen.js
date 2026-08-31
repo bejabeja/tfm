@@ -9,9 +9,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
 import {
   addPackingChecklistItem, addShoppingListItem, defaultPackingItems, deletePackingChecklistItem,
-  getPackingChecklist, normalizeSearchText, packingCategories,
+  getPackingChecklist, isPremiumRequiredError, normalizeSearchText, packingCategories,
   resetPackingChecklistTrip, seedPackingChecklistDefaults, updatePackingChecklistItem,
 } from '@tobeatraveller/shared';
+import FeatureLoadState from '../../components/FeatureLoadState';
 import { shadow } from '../../utils/styles';
 
 // No supply category maps cleanly onto every packing category, anything without
@@ -40,6 +41,7 @@ const PackingChecklistScreen = ({ navigation }) => {
   const [resetting, setResetting] = useState(false);
   const [search, setSearch] = useState('');
   const [pendingDeletes, setPendingDeletes] = useState([]); // [{ item, timeoutId }]
+  const [loadError, setLoadError] = useState(null); // null | 'premium' | 'error'
 
   const pendingDeletesRef = useRef([]);
   useEffect(() => { pendingDeletesRef.current = pendingDeletes; }, [pendingDeletes]);
@@ -58,8 +60,10 @@ const PackingChecklistScreen = ({ navigation }) => {
         res = await seedPackingChecklistDefaults(localizedDefaultItems(i18n));
       }
       setItems(Array.isArray(res) ? res : []);
-    } catch {
+      setLoadError(null);
+    } catch (err) {
       setItems([]);
+      setLoadError(isPremiumRequiredError(err) ? 'premium' : 'error');
     }
   };
 
@@ -242,6 +246,8 @@ const PackingChecklistScreen = ({ navigation }) => {
         >
           {loading ? (
             <ActivityIndicator size="small" color="#E8743B" style={{ marginTop: 40 }} />
+          ) : loadError ? (
+            <FeatureLoadState status={loadError} onRetry={fetchData} />
           ) : !hasSearchResults ? (
             <View style={styles.empty}>
               <Text style={styles.emptyEmoji}>🎒</Text>

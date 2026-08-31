@@ -7,7 +7,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTranslation } from 'react-i18next';
-import { deleteVanLogEntry, getVanLogEntries, getVanLogStats, vanLogCategories } from '@tobeatraveller/shared';
+import { deleteVanLogEntry, getVanLogEntries, getVanLogStats, isPremiumRequiredError, vanLogCategories } from '@tobeatraveller/shared';
+import FeatureLoadState from '../../components/FeatureLoadState';
 import { shadow } from '../../utils/styles';
 
 const CATEGORY_EMOJI = {
@@ -36,6 +37,7 @@ const VanLogScreen = ({ navigation }) => {
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [filters, setFilters] = useState(EMPTY_FILTERS);
+  const [loadError, setLoadError] = useState(null); // null | 'premium' | 'error'
 
   const daysSinceLabel = (dateStr) => {
     const days = daysSince(dateStr);
@@ -58,8 +60,10 @@ const VanLogScreen = ({ navigation }) => {
     try {
       const data = await getVanLogEntries(filters);
       setEntries(Array.isArray(data) ? data : []);
-    } catch {
+      setLoadError(null);
+    } catch (err) {
       setEntries([]);
+      setLoadError(isPremiumRequiredError(err) ? 'premium' : 'error');
     }
   };
 
@@ -115,12 +119,14 @@ const VanLogScreen = ({ navigation }) => {
             <Text style={styles.backText}>←</Text>
           </TouchableOpacity>
           <Text style={styles.title}>{t('vanLog.title')}</Text>
-          <TouchableOpacity
-            style={styles.newBtn}
-            onPress={() => navigation.navigate('VanLogEntryForm')}
-          >
-            <Text style={styles.newBtnText}>+ {t('vanLog.addEntry')}</Text>
-          </TouchableOpacity>
+          {loadError !== 'premium' && (
+            <TouchableOpacity
+              style={styles.newBtn}
+              onPress={() => navigation.navigate('VanLogEntryForm')}
+            >
+              <Text style={styles.newBtnText}>+ {t('vanLog.addEntry')}</Text>
+            </TouchableOpacity>
+          )}
         </View>
 
         {/* Stats */}
@@ -246,17 +252,21 @@ const VanLogScreen = ({ navigation }) => {
         }
         ListEmptyComponent={
           !loading ? (
-            <View style={styles.empty}>
-              <Text style={styles.emptyEmoji}>🚐</Text>
-              <Text style={styles.emptyTitle}>
-                {hasActiveFilters ? t('vanLog.noEntriesFiltered') : t('vanLog.noEntries')}
-              </Text>
-              {hasActiveFilters && (
-                <TouchableOpacity onPress={clearFilters}>
-                  <Text style={styles.emptyLink}>{t('common.reset')}</Text>
-                </TouchableOpacity>
-              )}
-            </View>
+            loadError ? (
+              <FeatureLoadState status={loadError} onRetry={fetchEntries} />
+            ) : (
+              <View style={styles.empty}>
+                <Text style={styles.emptyEmoji}>🚐</Text>
+                <Text style={styles.emptyTitle}>
+                  {hasActiveFilters ? t('vanLog.noEntriesFiltered') : t('vanLog.noEntries')}
+                </Text>
+                {hasActiveFilters && (
+                  <TouchableOpacity onPress={clearFilters}>
+                    <Text style={styles.emptyLink}>{t('common.reset')}</Text>
+                  </TouchableOpacity>
+                )}
+              </View>
+            )
           ) : null
         }
         renderItem={({ item }) => item._skeleton ? (
