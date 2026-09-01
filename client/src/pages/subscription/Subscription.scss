@@ -1,11 +1,14 @@
 .subscription {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: 48px 20px 64px;
+  // Width/padding come from .section__container (index.scss), matching
+  // Explore/Home/Community so the page's edges line up with the nav above it
+  // instead of using a narrower width of its own.
+  padding-top: 48px;
+  padding-bottom: 64px;
 
   &__header {
+    max-width: 640px;
+    margin: 0 auto 32px;
     text-align: center;
-    margin-bottom: 32px;
   }
 
   &__hero-icon {
@@ -110,28 +113,68 @@
 
   &__features {
     list-style: none;
-    margin: 0 0 28px;
+    margin: 0 auto 28px;
     padding: 0;
-    text-align: left;
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
+    max-width: 960px;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 14px;
 
-    li {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 15px;
-      color: var(--text-color);
+    @media (min-width: 480px) {
+      grid-template-columns: 1fr 1fr;
     }
+
+    @media (min-width: 800px) {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+
+  &__feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    text-align: left;
+    background: var(--white-color);
+    border: 1px solid var(--border-color);
+    border-radius: 14px;
+    padding: 16px;
+  }
+
+  &__feature-icon-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    flex-shrink: 0;
+    border-radius: 10px;
+    background: var(--primary-light);
   }
 
   &__feature-icon {
     width: 1em;
     height: 1em;
-    color: var(--success-color);
-    flex-shrink: 0;
-    font-size: 18px;
+    color: var(--primary-color);
+    font-size: 20px;
+  }
+
+  &__feature-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+
+    strong {
+      font-size: 14px;
+      color: var(--text-color);
+    }
+
+    span {
+      font-size: 13px;
+      color: var(--text-secondary-color);
+      line-height: 1.45;
+    }
   }
 
   &__cta {

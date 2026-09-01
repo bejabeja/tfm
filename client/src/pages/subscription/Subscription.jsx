@@ -1,5 +1,13 @@
 import toast from "react-hot-toast";
-import { IoCheckmarkCircle, IoSparkles } from "react-icons/io5";
+import {
+  IoBookOutline,
+  IoBriefcaseOutline,
+  IoCartOutline,
+  IoCheckmarkCircle,
+  IoFlashOutline,
+  IoJournalOutline,
+  IoSparkles,
+} from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -7,7 +15,15 @@ import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
 import "./Subscription.scss";
 
-const PREMIUM_FEATURE_KEYS = ["nav.vanLog", "nav.supplies", "nav.packingChecklist", "nav.lifeDiary"];
+// Same icons already used for these features elsewhere (Navbar, Account), so
+// a premium feature reads as the same thing wherever it shows up in the app.
+const PREMIUM_FEATURES = [
+  { key: "nav.vanLog", descriptionKey: "subscription.featureVanLogDesc", Icon: IoBookOutline },
+  { key: "nav.supplies", descriptionKey: "subscription.featureSuppliesDesc", Icon: IoCartOutline },
+  { key: "nav.packingChecklist", descriptionKey: "subscription.featurePackingChecklistDesc", Icon: IoBriefcaseOutline },
+  { key: "nav.lifeDiary", descriptionKey: "subscription.featureLifeDiaryDesc", Icon: IoJournalOutline },
+  { key: "subscription.featureAiItineraries", descriptionKey: "subscription.featureAiItinerariesDesc", Icon: IoFlashOutline },
+];
 
 const PLANS = [
   {
@@ -35,7 +51,7 @@ const Subscription = () => {
   const handleSubscribeClick = () => toast(t("subscription.comingSoonToast"));
 
   return (
-    <section className="subscription">
+    <section className="subscription section__container">
       <header className="subscription__header">
         <IoSparkles className="subscription__hero-icon" aria-hidden="true" />
         <h1 className="subscription__title">{t("subscription.title")}</h1>
@@ -50,6 +66,21 @@ const Subscription = () => {
         </div>
       ) : (
         <>
+          <p className="subscription__features-title">{t("subscription.featuresTitle")}</p>
+          <ul className="subscription__features">
+            {PREMIUM_FEATURES.map(({ key, descriptionKey, Icon }) => (
+              <li key={key} className="subscription__feature">
+                <span className="subscription__feature-icon-badge">
+                  <Icon className="subscription__feature-icon" aria-hidden="true" />
+                </span>
+                <span className="subscription__feature-text">
+                  <strong>{t(key)}</strong>
+                  <span>{t(descriptionKey)}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+
           <div className="subscription__plans">
             {PLANS.map((plan) => (
               <div
@@ -75,20 +106,6 @@ const Subscription = () => {
               </div>
             ))}
           </div>
-
-          <p className="subscription__features-title">{t("subscription.featuresTitle")}</p>
-          <ul className="subscription__features">
-            {PREMIUM_FEATURE_KEYS.map((key) => (
-              <li key={key}>
-                <IoCheckmarkCircle className="subscription__feature-icon" aria-hidden="true" />
-                {t(key)}
-              </li>
-            ))}
-            <li>
-              <IoCheckmarkCircle className="subscription__feature-icon" aria-hidden="true" />
-              {t("subscription.featureAiItineraries")}
-            </li>
-          </ul>
         </>
       )}
     </section>
