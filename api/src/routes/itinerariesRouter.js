@@ -3,11 +3,13 @@ import { ItinerariesController } from "../controllers/itinerariesController.js";
 import { ItineraryController } from "../controllers/itineraryController.js";
 import { upload } from "../middlewares/uploadImage.js";
 import { authenticate, optionalAuthenticate } from "../middlewares/authenticate.js";
+import { globalAiRateLimit, perUserAiRateLimit } from "../middlewares/aiGenerationRateLimit.js";
 import { requirePremium } from "../middlewares/requirePremium.js";
 import { PlacesRepository } from "../repositories/placesRepository.js";
 import { ItineraryRepository } from "../repositories/itineraryRepository.js";
 import { UserRepository } from "../repositories/userRepository.js";
 import { AIService } from "../services/AIService.js";
+import { auditLogService } from "../services/sharedAuditLogService.js";
 import { CloudinaryService } from "../services/cloudinaryService.js";
 import { ItineraryService } from "../services/itineraryService.js";
 import { ItinerariesService } from "../services/itinerariesService.js";
@@ -21,7 +23,7 @@ export const createItinerariesRouter = () => {
     const cloudinaryService = new CloudinaryService();
     const aiService = new AIService();
 
-    const itineraryService = new ItineraryService(itinerariesRepository, placesRepository, userRepository, cloudinaryService, aiService);
+    const itineraryService = new ItineraryService(itinerariesRepository, placesRepository, userRepository, cloudinaryService, aiService, auditLogService);
     const itinerariesService = new ItinerariesService(itinerariesRepository, userRepository, placesRepository);
 
     const itineraryController = new ItineraryController(itineraryService);
@@ -39,7 +41,7 @@ export const createItinerariesRouter = () => {
     // ── Single itinerary CRUD ─────────────────────────────────────────────────
     router.get("/:id",          optionalAuthenticate, itineraryController.getItineraryById.bind(itineraryController));
     router.post("/",            authenticate, upload.fields([{ name: 'file', maxCount: 1 }, { name: 'images', maxCount: 6 }]), itineraryController.createItinerary.bind(itineraryController));
-    router.post("/generate-smart", authenticate, requirePremium(userRepository), itineraryController.generateSmartItinerary.bind(itineraryController));
+    router.post("/generate-smart", authenticate, requirePremium(userRepository), globalAiRateLimit, perUserAiRateLimit, itineraryController.generateSmartItinerary.bind(itineraryController));
     router.patch("/:id",        authenticate, upload.fields([{ name: 'file', maxCount: 1 }, { name: 'images', maxCount: 6 }]), itineraryController.updateItinerary.bind(itineraryController));
     router.delete("/:id",       authenticate, itineraryController.deleteItinerary.bind(itineraryController));
     router.post("/:id/clone",   authenticate, itineraryController.cloneItinerary.bind(itineraryController));

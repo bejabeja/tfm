@@ -14,4 +14,5 @@ export const AUDIT_EVENTS = Object.freeze({
     ROLE_UPDATED: 'role_updated',
     TIER_UPDATED: 'tier_updated',
     AUDIT_LOG_PURGED: 'audit_log_purged',
+    AI_ITINERARY_GENERATED: 'ai_itinerary_generated',
 });

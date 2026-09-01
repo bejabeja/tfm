@@ -1,14 +1,24 @@
 import { ConflictError } from "../errors/ConflictError.js";
 import { NotFoundError } from "../errors/NotFoundError.js";
+import { TooManyRequestsError } from "../errors/TooManyRequestsError.js";
 import { assertItineraryOwner, assertItineraryVisible } from "../utils/itineraryAccess.js";
+import { AUDIT_EVENTS } from "../utils/auditEvents.js";
+
+// Each generation call costs real money (Groq). Not a real bill risk at
+// current usage (well under a cent each), but with no other cap on this
+// route a single compromised account could otherwise generate indefinitely;
+// this is a generous ceiling no genuine trip-planning user would hit, even
+// while iterating on a trip (regenerating with different dates/budget/pace).
+const MONTHLY_AI_GENERATION_LIMIT = 50;
 
 export class ItineraryService {
-    constructor(itinerariesRepository, placesRepository, userRepository, cloudinaryService, aiService) {
+    constructor(itinerariesRepository, placesRepository, userRepository, cloudinaryService, aiService, auditLogService = null) {
         this.itinerariesRepository = itinerariesRepository;
         this.placesRepository = placesRepository;
         this.userRepository = userRepository;
         this.cloudinaryService = cloudinaryService;
         this.aiService = aiService;
+        this.auditLogService = auditLogService;
     }
     async getItineraryById(id, requestingUserId) {
         const itinerary = await this.itinerariesRepository.findById(id);
@@ -210,12 +220,41 @@ export class ItineraryService {
         await this.itinerariesRepository.update(id, itineraryData);
     }
 
-    async generateSmartItinerary(destination, totalDays, context = {}) {
+    async generateSmartItinerary(destination, totalDays, context = {}, actingUser = null) {
+        if (actingUser && this.auditLogService) {
+            const startOfMonth = new Date();
+            startOfMonth.setDate(1);
+            startOfMonth.setHours(0, 0, 0, 0);
+
+            const { total } = await this.auditLogService.getFiltered({
+                actorId: actingUser.id,
+                action: AUDIT_EVENTS.AI_ITINERARY_GENERATED,
+                dateFrom: startOfMonth.toISOString(),
+                limit: 1,
+            });
+            if (total >= MONTHLY_AI_GENERATION_LIMIT) {
+                throw new TooManyRequestsError(
+                    `Monthly AI itinerary limit reached (${MONTHLY_AI_GENERATION_LIMIT}/month). It resets at the start of next month.`
+                );
+            }
+        }
+
         const rawText = await this.aiService.generateTextPrompt(destination, totalDays, context)
+        let itinerary;
         try {
-            return JSON.parse(rawText)
+            itinerary = JSON.parse(rawText)
         } catch {
             throw new Error(`AI returned invalid JSON for destination "${destination}"`)
         }
+
+        if (actingUser) {
+            this.auditLogService?.log({
+                actorId: actingUser.id, actorUsername: actingUser.username,
+                action: AUDIT_EVENTS.AI_ITINERARY_GENERATED,
+                metadata: { destination, totalDays },
+            });
+        }
+
+        return itinerary;
     }
 }

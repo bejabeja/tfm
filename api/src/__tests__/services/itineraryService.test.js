@@ -589,5 +589,62 @@ describe('ItineraryService', () => {
       await expect(service.generateSmartItinerary('Paris', 2))
         .rejects.toThrow('AI returned invalid JSON for destination "Paris"');
     });
+
+    describe('monthly quota (via the audit log)', () => {
+      let auditLogService;
+      let serviceWithQuota;
+      const actingUser = { id: 'user-1', username: 'jane' };
+
+      beforeEach(() => {
+        auditLogService = {
+          getFiltered: vi.fn().mockResolvedValue({ entries: [], total: 0 }),
+          log: vi.fn(),
+        };
+        serviceWithQuota = new ItineraryService(
+          itinerariesRepository, placesRepository, userRepository, cloudinaryService, aiService, auditLogService
+        );
+      });
+
+      it('generates normally and logs the event when under the monthly limit', async () => {
+        aiService.generateTextPrompt.mockResolvedValue(JSON.stringify({ day: 1 }));
+
+        const result = await serviceWithQuota.generateSmartItinerary('Rome', 3, {}, actingUser);
+
+        expect(result).toEqual({ day: 1 });
+        expect(auditLogService.log).toHaveBeenCalledWith({
+          actorId: 'user-1', actorUsername: 'jane',
+          action: 'ai_itinerary_generated',
+          metadata: { destination: 'Rome', totalDays: 3 },
+        });
+      });
+
+      it('checks usage since the start of the current month for that user only', async () => {
+        aiService.generateTextPrompt.mockResolvedValue(JSON.stringify({ day: 1 }));
+
+        await serviceWithQuota.generateSmartItinerary('Rome', 3, {}, actingUser);
+
+        const filters = auditLogService.getFiltered.mock.calls[0][0];
+        expect(filters.actorId).toBe('user-1');
+        expect(filters.action).toBe('ai_itinerary_generated');
+        expect(new Date(filters.dateFrom).getDate()).toBe(1);
+      });
+
+      it('throws TooManyRequestsError once the monthly limit is reached, without calling the AI', async () => {
+        auditLogService.getFiltered.mockResolvedValue({ entries: [], total: 50 });
+
+        await expect(serviceWithQuota.generateSmartItinerary('Rome', 3, {}, actingUser))
+          .rejects.toThrow('Monthly AI itinerary limit reached');
+        expect(aiService.generateTextPrompt).not.toHaveBeenCalled();
+      });
+
+      it('does not check or log usage when no acting user is given (e.g. system/internal calls)', async () => {
+        aiService.generateTextPrompt.mockResolvedValue(JSON.stringify({ day: 1 }));
+
+        await serviceWithQuota.generateSmartItinerary('Rome', 3);
+
+        expect(auditLogService.getFiltered).not.toHaveBeenCalled();
+        expect(auditLogService.log).not.toHaveBeenCalled();
+      });
+    });
   });
 });
