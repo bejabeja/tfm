@@ -1,13 +1,5 @@
 import toast from "react-hot-toast";
-import {
-  IoBookOutline,
-  IoBriefcaseOutline,
-  IoCartOutline,
-  IoCheckmarkCircle,
-  IoFlashOutline,
-  IoJournalOutline,
-  IoSparkles,
-} from "react-icons/io5";
+import { IoCheckmarkCircle, IoSparkles } from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -15,14 +7,15 @@ import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
 import "./Subscription.scss";
 
-// Same icons already used for these features elsewhere (Navbar, Account), so
-// a premium feature reads as the same thing wherever it shows up in the app.
+// The emoji itself is the icon (in the colored badge), so titles here are
+// plain text, separate from the nav.* labels used in the sidebar/account
+// page (a nav item shouldn't be this playful, but a pricing page can be).
 const PREMIUM_FEATURES = [
-  { key: "nav.vanLog", descriptionKey: "subscription.featureVanLogDesc", Icon: IoBookOutline },
-  { key: "nav.supplies", descriptionKey: "subscription.featureSuppliesDesc", Icon: IoCartOutline },
-  { key: "nav.packingChecklist", descriptionKey: "subscription.featurePackingChecklistDesc", Icon: IoBriefcaseOutline },
-  { key: "nav.lifeDiary", descriptionKey: "subscription.featureLifeDiaryDesc", Icon: IoJournalOutline },
-  { key: "subscription.featureAiItineraries", descriptionKey: "subscription.featureAiItinerariesDesc", Icon: IoFlashOutline },
+  { key: "subscription.featureVanLogTitle", descriptionKey: "subscription.featureVanLogDesc", emoji: "🚐", color: "#E8743B" },
+  { key: "subscription.featureSuppliesTitle", descriptionKey: "subscription.featureSuppliesDesc", emoji: "🛒", color: "#2E86AB" },
+  { key: "subscription.featurePackingChecklistTitle", descriptionKey: "subscription.featurePackingChecklistDesc", emoji: "🎒", color: "#6B4C9A" },
+  { key: "subscription.featureLifeDiaryTitle", descriptionKey: "subscription.featureLifeDiaryDesc", emoji: "📖", color: "#C2447B" },
+  { key: "subscription.featureAiItineraries", descriptionKey: "subscription.featureAiItinerariesDesc", emoji: "✨", color: "#1A535C" },
 ];
 
 const PLANS = [
@@ -51,13 +44,28 @@ const Subscription = () => {
   const handleSubscribeClick = () => toast(t("subscription.comingSoonToast"));
 
   return (
-    <section className="subscription section__container">
-      <header className="subscription__header">
+    <div className="subscription">
+      {/* Full-bleed hero band, same pattern as Explore's/Home's, so this page
+          gets the same "arrival moment" instead of just being plain text. */}
+      <header className="subscription__hero">
         <IoSparkles className="subscription__hero-icon" aria-hidden="true" />
         <h1 className="subscription__title">{t("subscription.title")}</h1>
         <p className="subscription__subtitle">{t("subscription.subtitle")}</p>
+
+        {!isPremium && (
+          isAuthenticated ? (
+            <button type="button" className="btn btn--primary subscription__trial-cta" onClick={handleSubscribeClick}>
+              {t("subscription.ctaFreeTrial")}
+            </button>
+          ) : (
+            <Link to="/register" className="btn btn--primary subscription__trial-cta">
+              {t("subscription.ctaFreeTrial")}
+            </Link>
+          )
+        )}
       </header>
 
+      <section className="subscription__content section__container">
       {isPremium ? (
         <div className="subscription__already-premium">
           <IoCheckmarkCircle className="subscription__already-premium-icon" aria-hidden="true" />
@@ -68,10 +76,10 @@ const Subscription = () => {
         <>
           <p className="subscription__features-title">{t("subscription.featuresTitle")}</p>
           <ul className="subscription__features">
-            {PREMIUM_FEATURES.map(({ key, descriptionKey, Icon }) => (
+            {PREMIUM_FEATURES.map(({ key, descriptionKey, emoji, color }) => (
               <li key={key} className="subscription__feature">
-                <span className="subscription__feature-icon-badge">
-                  <Icon className="subscription__feature-icon" aria-hidden="true" />
+                <span className="subscription__feature-icon-badge" style={{ background: `${color}1A` }} aria-hidden="true">
+                  {emoji}
                 </span>
                 <span className="subscription__feature-text">
                   <strong>{t(key)}</strong>
@@ -106,9 +114,12 @@ const Subscription = () => {
               </div>
             ))}
           </div>
+
+          <p className="subscription__disclaimer">{t("subscription.disclaimer")}</p>
         </>
       )}
-    </section>
+      </section>
+    </div>
   );
 };
 

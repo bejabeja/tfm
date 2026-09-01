@@ -4,6 +4,7 @@ import {
   IoAddOutline,
   IoCardOutline,
   IoChevronBack,
+  IoChevronDownOutline,
   IoChevronForward,
   IoChevronForward as IoChevronForwardOutline,
   IoFlashOutline,
@@ -23,8 +24,15 @@ import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl";
 import GlobalSearch from "./GlobalSearch";
 import "./Navbar.scss";
 
+// A dropdown (instead of a fixed ES/EN toggle) so adding a language later is
+// just one more entry here, not a UI redesign.
+const LANGUAGES = [
+  { code: "es", flag: "🇪🇸", label: "Español" },
+  { code: "en", flag: "🇬🇧", label: "English" },
+];
+
 const Navbar = () => {
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const dispatch   = useDispatch();
   const navigate   = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -35,6 +43,7 @@ const Navbar = () => {
   const [meOpen, setMeOpen]             = useState(false);
   const [createOpen, setCreateOpen]     = useState(false);
   const [searchOpen, setSearchOpen]     = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
   const [isCollapsed, setIsCollapsed]   = useState(
     () => localStorage.getItem("sidebar-collapsed") === "true"
   );
@@ -46,6 +55,7 @@ const Navbar = () => {
     setMeOpen(false);
     setCreateOpen(false);
     setSearchOpen(false);
+    setLangMenuOpen(false);
   }, [location]);
 
   // Home's hero photo runs full-bleed behind the marketing nav (see
@@ -60,6 +70,7 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHomePage]);
   const isTransparentNav = isHomePage && !isScrolledPastHero;
+  const currentLanguage = LANGUAGES.find((lang) => i18n.language?.startsWith(lang.code)) ?? LANGUAGES[0];
 
   // Anonymous visitors get the horizontal marketing nav (see the ternary
   // below), never the collapsible sidebar, so this class must not linger on
@@ -191,6 +202,41 @@ const Navbar = () => {
             </div>
 
             <div className="marketing-navbar__auth">
+              <div className="marketing-navbar__lang">
+                <button
+                  type="button"
+                  className="marketing-navbar__lang-trigger"
+                  onClick={() => setLangMenuOpen((v) => !v)}
+                  aria-haspopup="listbox"
+                  aria-expanded={langMenuOpen}
+                  aria-label={t("settings.language")}
+                >
+                  <span aria-hidden="true">{currentLanguage.flag}</span>
+                  <IoChevronDownOutline className="marketing-navbar__lang-chevron" aria-hidden="true" />
+                </button>
+
+                {langMenuOpen && (
+                  <>
+                    <div className="marketing-navbar__lang-backdrop" onClick={() => setLangMenuOpen(false)} />
+                    <ul className="marketing-navbar__lang-menu" role="listbox">
+                      {LANGUAGES.map((lang) => (
+                        <li key={lang.code}>
+                          <button
+                            type="button"
+                            className={`marketing-navbar__lang-option${lang.code === currentLanguage.code ? " marketing-navbar__lang-option--active" : ""}`}
+                            role="option"
+                            aria-selected={lang.code === currentLanguage.code}
+                            onClick={() => { i18n.changeLanguage(lang.code); setLangMenuOpen(false); }}
+                          >
+                            <span aria-hidden="true">{lang.flag}</span>
+                            <span>{lang.label}</span>
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </>
+                )}
+              </div>
               <Link to="/login" className="marketing-navbar__login">{t("nav.login")}</Link>
               <Link to="/register" className="btn btn--primary marketing-navbar__register">{t("nav.createAccountBtn")}</Link>
             </div>

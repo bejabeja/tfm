@@ -1,56 +1,71 @@
 .subscription {
-  // Width/padding come from .section__container (index.scss), matching
-  // Explore/Home/Community so the page's edges line up with the nav above it
-  // instead of using a narrower width of its own.
-  padding-top: 48px;
-  padding-bottom: 64px;
-
-  &__header {
-    max-width: 640px;
-    margin: 0 auto 32px;
+  // No colored band here on purpose (unlike Explore's hero): a pricing page
+  // sells trust through clarity, not decoration. The "fun" personality lives
+  // in the features section below instead; this just needs room to breathe.
+  &__hero {
+    padding: 96px 24px 56px;
     text-align: center;
+  }
+
+  &__title {
+    max-width: 700px;
+    margin: 0 auto 16px;
+    font-size: 44px;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    color: var(--text-color);
+  }
+
+  &__subtitle {
+    max-width: 560px;
+    margin: 0 auto;
+    color: var(--text-secondary-color);
+    font-size: 17px;
+    line-height: 1.7;
   }
 
   &__hero-icon {
     width: 1em;
     height: 1em;
-    font-size: 32px;
+    font-size: 44px;
     color: var(--primary-color);
-    margin-bottom: 8px;
+    margin-bottom: 16px;
   }
 
-  &__title {
-    margin: 0 0 8px;
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--text-color);
+  &__trial-cta {
+    width: fit-content;
+    display: inline-flex;
+    margin: 32px auto 0;
+    padding: 0.85rem 1.75rem;
   }
 
-  &__subtitle {
-    margin: 0;
-    color: var(--text-secondary-color);
-    font-size: 15px;
-    line-height: 1.6;
+  // Width/padding come from .section__container (index.scss), matching
+  // Explore/Home/Community so the page's edges line up with the nav above it
+  // instead of using a narrower width of its own.
+  &__content {
+    padding-top: 24px;
+    padding-bottom: 88px;
   }
 
   &__plans {
     display: flex;
     flex-wrap: wrap;
-    gap: 20px;
+    gap: 28px;
     justify-content: center;
-    margin-bottom: 32px;
+    margin: 72px 0 40px;
   }
 
   &__plan {
     position: relative;
-    flex: 1 1 220px;
-    max-width: 260px;
+    flex: 1 1 240px;
+    max-width: 280px;
     background: var(--white-color);
     border: 1px solid var(--border-color);
-    border-radius: 16px;
-    padding: 32px 24px;
+    border-radius: 20px;
+    padding: 40px 28px;
     text-align: center;
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s ease;
 
     &--highlighted {
       border: 2px solid var(--primary-color);
@@ -91,12 +106,10 @@
 
   &__features-title {
     text-align: center;
-    margin: 0 0 16px;
-    font-size: 13px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--text-secondary-color);
+    margin: 0 0 36px;
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--text-color);
   }
 
   &__price-amount {
@@ -113,12 +126,11 @@
 
   &__features {
     list-style: none;
-    margin: 0 auto 28px;
+    margin: 0;
     padding: 0;
-    max-width: 960px;
     display: grid;
     grid-template-columns: 1fr;
-    gap: 14px;
+    gap: 24px;
 
     @media (min-width: 480px) {
       grid-template-columns: 1fr 1fr;
@@ -132,49 +144,47 @@
   &__feature {
     display: flex;
     align-items: flex-start;
-    gap: 14px;
+    gap: 16px;
     text-align: left;
-    background: var(--white-color);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    padding: 16px;
+    padding: 24px;
   }
 
   &__feature-icon-badge {
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 40px;
-    height: 40px;
+    width: 76px;
+    height: 76px;
     flex-shrink: 0;
-    border-radius: 10px;
-    background: var(--primary-light);
-  }
-
-  &__feature-icon {
-    width: 1em;
-    height: 1em;
-    color: var(--primary-color);
-    font-size: 20px;
+    border-radius: 20px;
+    font-size: 40px;
+    line-height: 1;
   }
 
   &__feature-text {
     display: flex;
     flex-direction: column;
-    gap: 2px;
+    gap: 4px;
     flex: 1;
     min-width: 0;
 
     strong {
-      font-size: 14px;
+      font-size: 15px;
       color: var(--text-color);
     }
 
     span {
-      font-size: 13px;
+      font-size: 13.5px;
       color: var(--text-secondary-color);
-      line-height: 1.45;
+      line-height: 1.5;
     }
+  }
+
+  &__disclaimer {
+    text-align: center;
+    margin: 16px 0 0;
+    color: var(--text-secondary-color);
+    font-size: 13px;
   }
 
   &__cta {
