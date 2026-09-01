@@ -52,5 +52,16 @@
     padding-top: 0;
     padding-bottom: 0;
   }
+
+  // Anonymous/marketing layout: a horizontal top nav (full width) instead
+  // of the app's left sidebar, so the App row becomes a column.
+  .App--marketing {
+    flex-direction: column;
+
+    .side-content {
+      width: 100%;
+      min-width: 0;
+    }
+  }
 }
 

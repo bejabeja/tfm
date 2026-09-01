@@ -1,6 +1,6 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
@@ -15,10 +15,61 @@ const createDestinationMarker = (count) =>
     iconAnchor: [18, 18],
   });
 
+// Destinations close enough to visually overlap at the map's low default
+// zoom get grouped into clusters (transitively: A-close-to-B and B-close-to-C
+// join the same cluster even if A and C aren't close enough on their own),
+// then spread evenly around their cluster's centroid so nearby pins stay
+// individually clickable instead of stacking exactly on top of each other.
+const OVERLAP_THRESHOLD_DEG = 7;
+const OVERLAP_RADIUS_DEG = 6;
+
+const spreadOverlappingDestinations = (destinations) => {
+  const points = destinations.map((dest) => ({
+    ...dest,
+    lat: parseFloat(dest.lat),
+    lon: parseFloat(dest.lon),
+  }));
+
+  const clusterOf = points.map((_, i) => i);
+  const find = (i) => (clusterOf[i] === i ? i : (clusterOf[i] = find(clusterOf[i])));
+  const union = (a, b) => { clusterOf[find(a)] = find(b); };
+
+  for (let i = 0; i < points.length; i++) {
+    for (let j = i + 1; j < points.length; j++) {
+      const closeEnough = Math.abs(points[i].lat - points[j].lat) < OVERLAP_THRESHOLD_DEG
+        && Math.abs(points[i].lon - points[j].lon) < OVERLAP_THRESHOLD_DEG;
+      if (closeEnough) union(i, j);
+    }
+  }
+
+  const clusterMembers = {};
+  points.forEach((_, i) => {
+    const root = find(i);
+    (clusterMembers[root] ??= []).push(i);
+  });
+
+  return points.map((point, i) => {
+    const members = clusterMembers[find(i)];
+    if (members.length === 1) return point;
+
+    const centroid = members.reduce(
+      (acc, idx) => ({ lat: acc.lat + points[idx].lat / members.length, lon: acc.lon + points[idx].lon / members.length }),
+      { lat: 0, lon: 0 }
+    );
+    const angle = (members.indexOf(i) / members.length) * 2 * Math.PI;
+    return {
+      ...point,
+      lat: centroid.lat + Math.sin(angle) * OVERLAP_RADIUS_DEG,
+      lon: centroid.lon + Math.cos(angle) * OVERLAP_RADIUS_DEG,
+    };
+  });
+};
+
 const WorldMap = () => {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [destinations, setDestinations] = useState([]);
+  const spreadDestinations = useMemo(() => spreadOverlappingDestinations(destinations), [destinations]);
 
   useEffect(() => {
     getDestinations()
@@ -42,10 +93,10 @@ const WorldMap = () => {
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           maxZoom={10}
         />
-        {destinations.map((dest, i) => (
+        {spreadDestinations.map((dest, i) => (
           <Marker
             key={i}
-            position={[parseFloat(dest.lat), parseFloat(dest.lon)]}
+            position={[dest.lat, dest.lon]}
             icon={createDestinationMarker(dest.count)}
             eventHandlers={{
               click: () => navigate(`/explore?location=${encodeURIComponent(dest.name)}`),

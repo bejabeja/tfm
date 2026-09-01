@@ -13,6 +13,14 @@
       height: 100%;
       font-family: inherit;
     }
+
+    // The default OSM tiles are free/keyless but visually dated; desaturating
+    // and lightening them (rather than switching provider, which tends to
+    // require an API key) gives a cleaner backdrop that makes the brand-orange
+    // pins stand out more.
+    .leaflet-tile-pane {
+      filter: grayscale(65%) brightness(1.1) contrast(0.9);
+    }
   }
 
 }
@@ -39,7 +47,17 @@
   }
 }
 
+// Leaflet's own control-positioning wrappers (and the zoom control itself)
+// don't set their own width, so the app-wide `* { width: 100% }` reset (see
+// index.scss) stretches them to the full map width instead of hugging the
+// button cluster's actual size.
+.leaflet-top,
+.leaflet-bottom {
+  width: fit-content;
+}
+
 .leaflet-control-zoom {
+  width: fit-content;
   border: none !important;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
   border-radius: 8px !important;

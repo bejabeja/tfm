@@ -1,0 +1,138 @@
+.account {
+  max-width: 560px;
+  margin: 0 auto;
+  padding: 32px 20px 64px;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  &__avatar {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  &__username {
+    margin: 0 0 4px;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-color);
+  }
+
+  &__premium-badge {
+    display: inline-block;
+    width: fit-content;
+    background: var(--primary-light);
+    color: var(--primary-color);
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    padding: 3px 8px;
+    border-radius: 999px;
+  }
+
+  &__upsell {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    background: var(--accent-color);
+    color: var(--white-color);
+    border-radius: 14px;
+    padding: 16px 18px;
+    margin-bottom: 24px;
+    text-decoration: none;
+
+    &--premium {
+      background: var(--surface-color);
+      color: var(--text-color);
+      border: 1px solid var(--border-color);
+    }
+  }
+
+  &__upsell-icon {
+    width: 1em;
+    height: 1em;
+    font-size: 24px;
+    flex-shrink: 0;
+  }
+
+  &__upsell-title {
+    margin: 0;
+    font-weight: 700;
+    font-size: 15px;
+  }
+
+  &__upsell-desc {
+    margin: 2px 0 0;
+    font-size: 13px;
+    opacity: 0.85;
+  }
+
+  &__upsell-arrow {
+    width: 1em;
+    height: 1em;
+    margin-left: auto;
+    flex-shrink: 0;
+  }
+
+  &__links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__link {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 14px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    text-decoration: none;
+    color: var(--text-color);
+    background: var(--white-color);
+  }
+
+  &__link-icon {
+    width: 1em;
+    height: 1em;
+    font-size: 20px;
+    color: var(--primary-color);
+    flex-shrink: 0;
+  }
+
+  &__link-label {
+    width: auto;
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  &__link-badge {
+    width: fit-content;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--primary-color);
+    background: var(--primary-light);
+    padding: 2px 7px;
+    border-radius: 999px;
+  }
+
+  &__link-arrow {
+    width: 1em;
+    height: 1em;
+    margin-left: auto;
+    color: var(--text-secondary-color);
+    flex-shrink: 0;
+  }
+}

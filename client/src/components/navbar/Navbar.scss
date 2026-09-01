@@ -29,7 +29,9 @@
   height: 56px;
   background-color: var(--white-color);
   border-bottom: 1px solid var(--border-color);
-  z-index: 100;
+  // Above Leaflet's own panes/controls (z-index up to 1000, see WorldMap),
+  // so the map never paints over the nav while scrolling past it.
+  z-index: 1500;
 
   @media (min-width: 480px) {
     display: none;
@@ -140,7 +142,8 @@
     gap: 1.5rem;
     overflow-y: auto;
     overflow-x: hidden;
-    z-index: 100;
+    // Above Leaflet's own panes/controls (z-index up to 1000, see WorldMap).
+    z-index: 1500;
     transition: width 0.2s ease, padding 0.2s ease;
   }
 }
@@ -320,6 +323,120 @@
     &__username {
       display: none;
     }
+  }
+}
+
+/* ── Desktop: horizontal top nav for anonymous, marketing-facing pages ── */
+.marketing-navbar {
+  display: none;
+
+  @media (min-width: 480px) {
+    display: flex;
+    position: sticky;
+    top: 0;
+    width: 100%;
+    background-color: var(--white-color);
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.25s ease, border-color 0.25s ease;
+    // Above Leaflet's own panes/controls (z-index up to 1000, see WorldMap),
+    // so the map never paints over the nav while scrolling past it.
+    z-index: 1500;
+  }
+
+  // Home only: floats over the full-bleed hero photo instead of sitting
+  // above it in normal flow (removing it from .side-content's layout lets
+  // the hero slide up to fill that space, starting at the true viewport top).
+  &--overlay {
+    @media (min-width: 480px) {
+      position: fixed;
+      top: 0;
+      left: 0;
+    }
+  }
+
+  &--transparent {
+    @media (min-width: 480px) {
+      background-color: transparent;
+      border-bottom-color: transparent;
+    }
+
+    .marketing-navbar__link,
+    .marketing-navbar__login {
+      color: rgba(255, 255, 255, 0.92);
+    }
+
+    .marketing-navbar__link:hover,
+    .marketing-navbar__link.active {
+      color: var(--white-color);
+    }
+  }
+
+  // Matches .section__container (index.scss) exactly, so the logo/links line
+  // up with the page content's left/right edges instead of the nav having
+  // its own, different horizontal padding.
+  &__inner {
+    position: relative;
+    display: flex;
+    align-items: center;
+    width: 100%;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.35rem 1rem;
+
+    @media (min-width: 600px) {
+      padding: 1.35rem 2rem;
+    }
+  }
+
+  // Centered independently of the logo/auth widths, so it's truly centered
+  // in the bar instead of just sitting right after the logo.
+  &__links {
+    position: absolute;
+    width: fit-content;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    align-items: center;
+    gap: 1.75rem;
+  }
+
+  &__link {
+    width: auto;
+    color: var(--text-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95rem;
+    transition: color 0.2s;
+
+    &:hover,
+    &.active {
+      color: var(--primary-color);
+    }
+  }
+
+  &__auth {
+    display: flex;
+    align-items: center;
+    width: fit-content;
+    gap: 1rem;
+    margin-left: auto;
+  }
+
+  &__login {
+    width: auto;
+    color: var(--text-secondary-color);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+
+    &:hover {
+      color: var(--primary-color);
+    }
+  }
+
+  &__register {
+    padding: 0.55rem 1.1rem;
   }
 }
 
@@ -543,7 +660,8 @@
   height: 60px;
   background-color: var(--white-color);
   border-top: 1px solid var(--border-color);
-  z-index: 100;
+  // Above Leaflet's own panes/controls (z-index up to 1000, see WorldMap).
+  z-index: 1500;
   padding-bottom: env(safe-area-inset-bottom);
 
   @media (min-width: 480px) {
@@ -683,39 +801,6 @@
   }
 }
 
-.nav-auth {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.6rem;
-  width: 100%;
-  padding: 0.75rem;
-  border-top: 1px solid var(--border-color);
-
-  &__register {
-    width: 100%;
-  }
-
-  &__login {
-    font-size: 0.8rem;
-    color: var(--text-secondary-color);
-    text-decoration: none;
-    width: auto;
-
-    span {
-      color: var(--primary-color);
-      font-weight: 600;
-    }
-
-    &:hover span {
-      text-decoration: underline;
-    }
-  }
-}
-
-:root.sidebar-collapsed .nav-auth {
-  display: none;
-}
 
 .loading-placeholder {
   gap: 1.5rem;

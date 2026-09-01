@@ -44,6 +44,8 @@ const MyItineraries = lazy(() => import("./pages/myItineraries/MyItineraries"));
 const Favorites = lazy(() => import("./pages/favorites/Favorites"));
 const EditProfile = lazy(() => import("./pages/profile/EditProfile"));
 const Settings = lazy(() => import("./pages/settings/Settings"));
+const Subscription = lazy(() => import("./pages/subscription/Subscription"));
+const Account = lazy(() => import("./pages/account/Account"));
 const VanLog = lazy(() => import("./pages/vanLog/VanLog"));
 const Supplies = lazy(() => import("./pages/supplies/Supplies"));
 const PackingChecklist = lazy(() => import("./pages/packingChecklist/PackingChecklist"));
@@ -96,7 +98,7 @@ const App = () => {
     };
   }, [dispatch, isAuthenticated]);
 
-  const publicRoutes = ["/", "/explore", "/community", "/privacy-policy", "/terms", "/contact"];
+  const publicRoutes = ["/", "/explore", "/community", "/subscription", "/privacy-policy", "/terms", "/contact"];
 
   const isAuthRoute = ["/login", "/register", "/forgot-password", "/reset-password"].includes(location.pathname);
 
@@ -105,8 +107,13 @@ const App = () => {
     return regex.test(location.pathname);
   });
 
+  // Anonymous visitors get a horizontal top nav (marketing site layout)
+  // instead of the logged-in app's left sidebar; not on auth routes, which
+  // hide the nav entirely and always render full-width.
+  const showMarketingNav = !isAuthenticated && !isAuthRoute;
+
   return (
-    <div className="App ">
+    <div className={`App${showMarketingNav ? " App--marketing" : ""}`}>
       <CustomToaster />
       <CookieConsentBanner />
       <div className={`side-content${isAuthRoute ? " side-content--hidden" : ""}`}>
@@ -125,6 +132,7 @@ const App = () => {
               <Route path="/" element={<Home />} />
               <Route path="/explore" element={<Explore />} />
               <Route path="/community" element={<Community />} />
+              <Route path="/subscription" element={<Subscription />} />
               <Route path="/privacy-policy" element={<PrivacyPolicy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/contact" element={<Contact />} />
@@ -139,6 +147,7 @@ const App = () => {
               <Route element={<PrivateLayout />}>
                 <Route path="/welcome" element={<Onboarding />} />
                 <Route path="/notifications" element={<Notifications />} />
+                <Route path="/account" element={<Account />} />
                 <Route path="/my-itineraries" element={<MyItineraries />} />
                 <Route path="/itineraries/saved" element={<Favorites />} />
                 <Route path="/van-log" element={<VanLog />} />
