@@ -4,6 +4,7 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 vi.mock('bcrypt', () => ({
     default: {
         compare: vi.fn(),
+        hash: vi.fn().mockResolvedValue('hashed_new_password'),
     },
 }));
 
@@ -27,6 +28,7 @@ import jwt from 'jsonwebtoken';
 import { AuthService } from '../../services/authService.js';
 import { AuthError } from '../../errors/AuthError.js';
 import { NotFoundError } from '../../errors/NotFoundError.js';
+import { AUDIT_EVENTS } from '../../utils/auditEvents.js';
 
 const mockUser = {
     id: 'user-1',
@@ -72,6 +74,61 @@ describe('AuthService', () => {
 
             await expect(authService.login({ email: 'johndoe@example.com', password: 'wrongpassword' }))
                 .rejects.toThrow(AuthError);
+        });
+
+        it('logs a login_success event on valid credentials', async () => {
+            const mockAuditLogService = { log: vi.fn() };
+            authService = new AuthService(mockUserRepository, null, null, mockAuditLogService);
+            mockUserRepository.findByEmail.mockResolvedValue(mockUser);
+            bcrypt.compare.mockResolvedValue(true);
+
+            await authService.login({ email: 'johndoe@example.com', password: 'correctpassword' });
+
+            expect(mockAuditLogService.log).toHaveBeenCalledWith({
+                actorId: 'user-1', actorUsername: 'johndoe', action: AUDIT_EVENTS.LOGIN_SUCCESS,
+            });
+        });
+
+        it('logs a login_failed event with the actor when the password is wrong', async () => {
+            const mockAuditLogService = { log: vi.fn() };
+            authService = new AuthService(mockUserRepository, null, null, mockAuditLogService);
+            mockUserRepository.findByEmail.mockResolvedValue(mockUser);
+            bcrypt.compare.mockResolvedValue(false);
+
+            await expect(authService.login({ email: 'johndoe@example.com', password: 'wrong' })).rejects.toThrow();
+
+            expect(mockAuditLogService.log).toHaveBeenCalledWith({
+                actorId: 'user-1', actorUsername: 'johndoe',
+                action: AUDIT_EVENTS.LOGIN_FAILED, metadata: { reason: 'invalid_password' },
+            });
+        });
+
+        it('logs a login_failed event with the attempted email when the account does not exist', async () => {
+            const mockAuditLogService = { log: vi.fn() };
+            authService = new AuthService(mockUserRepository, null, null, mockAuditLogService);
+            mockUserRepository.findByEmail.mockResolvedValue(null);
+
+            await expect(authService.login({ email: 'unknown@example.com', password: 'pass' })).rejects.toThrow();
+
+            expect(mockAuditLogService.log).toHaveBeenCalledWith({
+                action: AUDIT_EVENTS.LOGIN_FAILED, metadata: { email: 'unknown@example.com', reason: 'user_not_found' },
+            });
+        });
+
+        it('forwards the caller\'s ip and user agent to the login_success log, for forensic traceability', async () => {
+            const mockAuditLogService = { log: vi.fn() };
+            authService = new AuthService(mockUserRepository, null, null, mockAuditLogService);
+            mockUserRepository.findByEmail.mockResolvedValue(mockUser);
+            bcrypt.compare.mockResolvedValue(true);
+
+            await authService.login(
+                { email: 'johndoe@example.com', password: 'correctpassword' },
+                { ip: '203.0.113.1', userAgent: 'Mozilla/5.0' }
+            );
+
+            expect(mockAuditLogService.log).toHaveBeenCalledWith(expect.objectContaining({
+                ipAddress: '203.0.113.1', userAgent: 'Mozilla/5.0',
+            }));
         });
     });
 
@@ -172,6 +229,79 @@ describe('AuthService', () => {
 
             expect(() => authService.refreshAccessTokenFromToken('bad-refresh-token'))
                 .toThrow(AuthError);
+        });
+    });
+
+    describe('forgotPassword()', () => {
+        let mockPasswordResetRepository;
+        let mockAuditLogService;
+
+        beforeEach(() => {
+            mockPasswordResetRepository = { save: vi.fn() };
+            mockAuditLogService = { log: vi.fn() };
+            authService = new AuthService(mockUserRepository, null, mockPasswordResetRepository, mockAuditLogService);
+        });
+
+        it('logs a password_reset_requested event for a known account', async () => {
+            mockUserRepository.findByEmail.mockResolvedValue(mockUser);
+
+            await authService.forgotPassword('johndoe@example.com');
+
+            expect(mockAuditLogService.log).toHaveBeenCalledWith({
+                actorId: 'user-1', actorUsername: 'johndoe', action: AUDIT_EVENTS.PASSWORD_RESET_REQUESTED,
+            });
+        });
+
+        it('does not log (or reveal the account exists) when the email is unknown', async () => {
+            mockUserRepository.findByEmail.mockResolvedValue(null);
+
+            await authService.forgotPassword('unknown@example.com');
+
+            expect(mockAuditLogService.log).not.toHaveBeenCalled();
+        });
+
+        it('forwards the caller\'s ip and user agent to the log', async () => {
+            mockUserRepository.findByEmail.mockResolvedValue(mockUser);
+
+            await authService.forgotPassword('johndoe@example.com', { ip: '203.0.113.1', userAgent: 'Mozilla/5.0' });
+
+            expect(mockAuditLogService.log).toHaveBeenCalledWith(expect.objectContaining({
+                ipAddress: '203.0.113.1', userAgent: 'Mozilla/5.0',
+            }));
+        });
+    });
+
+    describe('resetPassword()', () => {
+        it('logs a password_reset_completed event for the token\'s user', async () => {
+            const mockAuditLogService = { log: vi.fn() };
+            const mockPasswordResetRepository = {
+                findByTokenHash: vi.fn().mockResolvedValue({ id: 'reset-1', user_id: 'user-1' }),
+                markAsUsed: vi.fn(),
+            };
+            mockUserRepository.updatePassword = vi.fn();
+            authService = new AuthService(mockUserRepository, null, mockPasswordResetRepository, mockAuditLogService);
+
+            await authService.resetPassword('raw-token', 'newpassword123');
+
+            expect(mockAuditLogService.log).toHaveBeenCalledWith({
+                actorId: 'user-1', action: AUDIT_EVENTS.PASSWORD_RESET_COMPLETED,
+            });
+        });
+
+        it('forwards the caller\'s ip and user agent to the log', async () => {
+            const mockAuditLogService = { log: vi.fn() };
+            const mockPasswordResetRepository = {
+                findByTokenHash: vi.fn().mockResolvedValue({ id: 'reset-1', user_id: 'user-1' }),
+                markAsUsed: vi.fn(),
+            };
+            mockUserRepository.updatePassword = vi.fn();
+            authService = new AuthService(mockUserRepository, null, mockPasswordResetRepository, mockAuditLogService);
+
+            await authService.resetPassword('raw-token', 'newpassword123', { ip: '203.0.113.1', userAgent: 'Mozilla/5.0' });
+
+            expect(mockAuditLogService.log).toHaveBeenCalledWith(expect.objectContaining({
+                ipAddress: '203.0.113.1', userAgent: 'Mozilla/5.0',
+            }));
         });
     });
 });

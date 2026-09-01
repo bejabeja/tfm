@@ -1,6 +1,12 @@
-import { beforeEach, describe, expect, it } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+
+vi.mock('../../db/clientPostgres.js', () => ({
+    default: { query: vi.fn().mockResolvedValue({ rows: [] }) },
+}));
+
 import { User } from '../../models/user.js';
 import { UserService } from '../../services/userService.js';
+import { AUDIT_EVENTS } from '../../utils/auditEvents.js';
 
 const makeUser = (overrides = {}) => new User({
     id: 'user-1',
@@ -105,44 +111,54 @@ describe('UserService.deleteUser()', () => {
 
     it('logs the deletion when an admin deletes someone else\'s account', async () => {
         let loggedEntry;
-        const auditLogRepository = { log: async (entry) => { loggedEntry = entry; } };
-        service = new UserService(userRepository, itinerariesRepository, {}, null, lifeDiaryRepository, auditLogRepository);
+        const auditLogService = { log: (entry) => { loggedEntry = entry; } };
+        service = new UserService(userRepository, itinerariesRepository, {}, null, lifeDiaryRepository, auditLogService);
 
         await service.deleteUser('user-1', { id: 'admin-1', username: 'root' });
 
         expect(loggedEntry).toEqual({
             actorId: 'admin-1',
             actorUsername: 'root',
-            action: 'delete_user',
+            action: AUDIT_EVENTS.ACCOUNT_DELETED_BY_ADMIN,
             targetUserId: 'user-1',
             targetUsername: 'jane',
-            metadata: {},
         });
     });
 
-    it('does not log when a user deletes their own account', async () => {
-        let logCalled = false;
-        const auditLogRepository = { log: async () => { logCalled = true; } };
-        service = new UserService(userRepository, itinerariesRepository, {}, null, lifeDiaryRepository, auditLogRepository);
+    it('logs a self-delete under a different action than an admin-initiated one', async () => {
+        let loggedEntry;
+        const auditLogService = { log: (entry) => { loggedEntry = entry; } };
+        service = new UserService(userRepository, itinerariesRepository, {}, null, lifeDiaryRepository, auditLogService);
 
         await service.deleteUser('user-1', { id: 'user-1', username: 'jane' });
 
-        expect(logCalled).toBe(false);
+        expect(loggedEntry.action).toBe(AUDIT_EVENTS.ACCOUNT_DELETED_BY_SELF);
+    });
+
+    it('forwards the caller\'s ip and user agent to the log', async () => {
+        let loggedEntry;
+        const auditLogService = { log: (entry) => { loggedEntry = entry; } };
+        service = new UserService(userRepository, itinerariesRepository, {}, null, lifeDiaryRepository, auditLogService);
+
+        await service.deleteUser('user-1', { id: 'admin-1', username: 'root' }, { ip: '203.0.113.1', userAgent: 'Mozilla/5.0' });
+
+        expect(loggedEntry.ipAddress).toBe('203.0.113.1');
+        expect(loggedEntry.userAgent).toBe('Mozilla/5.0');
     });
 });
 
 describe('UserService.updateUserRole()', () => {
     let service;
     let userRepository;
-    let auditLogRepository;
+    let auditLogService;
 
     beforeEach(() => {
         userRepository = {
             getUserById: async (id) => makeUser({ id, role: 'user' }),
             updateRole: async (id, role) => makeUser({ id, role }),
         };
-        auditLogRepository = { log: async () => {} };
-        service = new UserService(userRepository, {}, {}, null, null, auditLogRepository);
+        auditLogService = { log: () => {} };
+        service = new UserService(userRepository, {}, {}, null, null, auditLogService);
     });
 
     it('updates the target user role when a superadmin grants superadmin', async () => {
@@ -173,18 +189,31 @@ describe('UserService.updateUserRole()', () => {
 
     it('logs the role change with the previous and new role', async () => {
         let loggedEntry;
-        auditLogRepository.log = async (entry) => { loggedEntry = entry; };
+        auditLogService.log = (entry) => { loggedEntry = entry; };
 
         await service.updateUserRole('user-2', 'admin', { id: 'admin-1', username: 'root', role: 'superadmin' });
 
         expect(loggedEntry).toEqual({
             actorId: 'admin-1',
             actorUsername: 'root',
-            action: 'update_role',
+            action: AUDIT_EVENTS.ROLE_UPDATED,
             targetUserId: 'user-2',
             targetUsername: 'jane',
             metadata: { previousRole: 'user', newRole: 'admin' },
         });
+    });
+
+    it('forwards the caller\'s ip and user agent to the log', async () => {
+        let loggedEntry;
+        auditLogService.log = (entry) => { loggedEntry = entry; };
+
+        await service.updateUserRole(
+            'user-2', 'admin', { id: 'admin-1', username: 'root', role: 'superadmin' },
+            { ip: '203.0.113.1', userAgent: 'Mozilla/5.0' }
+        );
+
+        expect(loggedEntry.ipAddress).toBe('203.0.113.1');
+        expect(loggedEntry.userAgent).toBe('Mozilla/5.0');
     });
 });
 
@@ -222,5 +251,101 @@ describe('UserService.create()', () => {
 
         expect(savedUser.signupCountryCode).toBeNull();
         expect(savedUser.signupUserAgent).toBeNull();
+    });
+});
+
+describe('UserService.exportUserData()', () => {
+    it('logs a data_exported event for the requesting user, a GDPR data-subject request', async () => {
+        let loggedEntry;
+        const userRepository = { getUserById: async () => makeUser() };
+        const itinerariesRepository = { findByUserId: async () => [] };
+        const followRepository = { getFollowers: async () => [], getFollowing: async () => [] };
+        const auditLogService = { log: (entry) => { loggedEntry = entry; } };
+        const service = new UserService(userRepository, itinerariesRepository, followRepository, null, null, auditLogService);
+
+        await service.exportUserData('user-1', { id: 'user-1', username: 'jane' });
+
+        expect(loggedEntry).toEqual({
+            actorId: 'user-1', actorUsername: 'jane',
+            action: AUDIT_EVENTS.DATA_EXPORTED, targetUserId: 'user-1', targetUsername: 'jane',
+        });
+    });
+
+    it('forwards the caller\'s ip and user agent to the log', async () => {
+        let loggedEntry;
+        const userRepository = { getUserById: async () => makeUser() };
+        const itinerariesRepository = { findByUserId: async () => [] };
+        const followRepository = { getFollowers: async () => [], getFollowing: async () => [] };
+        const auditLogService = { log: (entry) => { loggedEntry = entry; } };
+        const service = new UserService(userRepository, itinerariesRepository, followRepository, null, null, auditLogService);
+
+        await service.exportUserData('user-1', { id: 'user-1', username: 'jane' }, { ip: '203.0.113.1', userAgent: 'Mozilla/5.0' });
+
+        expect(loggedEntry.ipAddress).toBe('203.0.113.1');
+        expect(loggedEntry.userAgent).toBe('Mozilla/5.0');
+    });
+
+    // Regression: data_exported used to be logged before the export data was
+    // actually assembled, so a failure here still left a false "succeeded"
+    // record in the audit trail.
+    it('does not log data_exported when assembling the export data fails', async () => {
+        let loggedEntry;
+        const userRepository = { getUserById: async () => makeUser() };
+        const itinerariesRepository = { findByUserId: async () => { throw new Error('db down'); } };
+        const followRepository = { getFollowers: async () => [], getFollowing: async () => [] };
+        const auditLogService = { log: (entry) => { loggedEntry = entry; } };
+        const service = new UserService(userRepository, itinerariesRepository, followRepository, null, null, auditLogService);
+
+        await expect(
+            service.exportUserData('user-1', { id: 'user-1', username: 'jane' })
+        ).rejects.toThrow('db down');
+
+        expect(loggedEntry).toBeUndefined();
+    });
+
+    // Regression: the export used to omit van-log, supplies, packing-checklist,
+    // and life-diary content entirely, so a GDPR data-portability request
+    // (the "Download data" button) didn't actually return everything the user
+    // had created in the app.
+    it('includes van-log, supplies, packing-checklist, and life-diary (with images) content', async () => {
+        const userRepository = { getUserById: async () => makeUser() };
+        const itinerariesRepository = { findByUserId: async () => [] };
+        const followRepository = { getFollowers: async () => [], getFollowing: async () => [] };
+        const lifeDiaryRepository = {
+            findByUserId: async () => [{ id: 'entry-1', images: [], toDTO() { return { id: this.id, images: this.images }; } }],
+            getImagesByEntryIds: async () => [{ id: 'img-1', entryId: 'entry-1', photoUrl: 'https://cloudinary/img.jpg' }],
+        };
+        const vanLogRepository = { findByUserId: async () => [{ toDTO: () => ({ id: 'van-1' }) }] };
+        const inventoryRepository = { findByUserId: async () => [{ toDTO: () => ({ id: 'inv-1' }) }] };
+        const shoppingListRepository = { findByUserId: async () => [{ toDTO: () => ({ id: 'shop-1' }) }] };
+        const packingChecklistRepository = { findByUserId: async () => [{ toDTO: () => ({ id: 'pack-1' }) }] };
+        const service = new UserService(
+            userRepository, itinerariesRepository, followRepository, null,
+            lifeDiaryRepository, null, vanLogRepository,
+            inventoryRepository, shoppingListRepository, packingChecklistRepository
+        );
+
+        const result = await service.exportUserData('user-1', { id: 'user-1', username: 'jane' });
+
+        expect(result.vanLogEntries).toEqual([{ id: 'van-1' }]);
+        expect(result.supplies).toEqual({ inventory: [{ id: 'inv-1' }], shoppingList: [{ id: 'shop-1' }] });
+        expect(result.packingChecklist).toEqual([{ id: 'pack-1' }]);
+        expect(result.lifeDiaryEntries).toEqual([{
+            id: 'entry-1', images: [{ id: 'img-1', entryId: 'entry-1', photoUrl: 'https://cloudinary/img.jpg' }],
+        }]);
+    });
+
+    it('omits van-log, supplies, packing-checklist, and life-diary content when those repositories are not wired', async () => {
+        const userRepository = { getUserById: async () => makeUser() };
+        const itinerariesRepository = { findByUserId: async () => [] };
+        const followRepository = { getFollowers: async () => [], getFollowing: async () => [] };
+        const service = new UserService(userRepository, itinerariesRepository, followRepository);
+
+        const result = await service.exportUserData('user-1', { id: 'user-1', username: 'jane' });
+
+        expect(result.vanLogEntries).toEqual([]);
+        expect(result.supplies).toEqual({ inventory: [], shoppingList: [] });
+        expect(result.packingChecklist).toEqual([]);
+        expect(result.lifeDiaryEntries).toEqual([]);
     });
 });

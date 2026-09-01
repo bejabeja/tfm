@@ -5,25 +5,41 @@ import config from '../config/config.js';
 import { AuthError } from '../errors/AuthError.js';
 import { logger } from '../utils/logger.js';
 import { NotFoundError } from '../errors/NotFoundError.js';
+import { AUDIT_EVENTS } from '../utils/auditEvents.js';
 
 const isProduction = config.nodeEnv === 'production';
 export class AuthService {
-    constructor(userRepository, emailService = null, passwordResetRepository = null) {
+    constructor(userRepository, emailService = null, passwordResetRepository = null, auditLogService = null) {
         this.userRepository = userRepository;
         this.emailService = emailService;
         this.passwordResetRepository = passwordResetRepository;
+        this.auditLogService = auditLogService;
     }
 
-    async login({ email, password }) {
+    async login({ email, password }, { ip, userAgent } = {}) {
         const user = await this.userRepository.findByEmail(email);
         if (!user) {
+            this.auditLogService?.log({
+                action: AUDIT_EVENTS.LOGIN_FAILED, metadata: { email, reason: 'user_not_found' },
+                ipAddress: ip, userAgent,
+            });
             throw new NotFoundError("User not found");
         }
 
         const isPasswordValid = await bcrypt.compare(password, user.password);
         if (!isPasswordValid) {
+            this.auditLogService?.log({
+                actorId: user.id, actorUsername: user.username,
+                action: AUDIT_EVENTS.LOGIN_FAILED, metadata: { reason: 'invalid_password' },
+                ipAddress: ip, userAgent,
+            });
             throw new AuthError("Invalid password");
         }
+
+        this.auditLogService?.log({
+            actorId: user.id, actorUsername: user.username, action: AUDIT_EVENTS.LOGIN_SUCCESS,
+            ipAddress: ip, userAgent,
+        });
 
         return user.toSimpleDTO();
     }
@@ -105,7 +121,7 @@ export class AuthService {
         });
     }
 
-    async forgotPassword(email) {
+    async forgotPassword(email, { ip, userAgent } = {}) {
         const user = await this.userRepository.findByEmail(email);
         // Return silently if user not found, do not reveal whether the email exists
         if (!user) return;
@@ -118,9 +134,15 @@ export class AuthService {
 
         this.emailService?.sendPasswordReset({ username: user.username, email: user.email, token })
             .catch(err => logger.error('[email] password reset failed:', err));
+
+        this.auditLogService?.log({
+            actorId: user.id, actorUsername: user.username,
+            action: AUDIT_EVENTS.PASSWORD_RESET_REQUESTED,
+            ipAddress: ip, userAgent,
+        });
     }
 
-    async resetPassword(token, newPassword) {
+    async resetPassword(token, newPassword, { ip, userAgent } = {}) {
         const tokenHash = crypto.createHash('sha256').update(token).digest('hex');
         const record = await this.passwordResetRepository.findByTokenHash(tokenHash);
 
@@ -132,5 +154,10 @@ export class AuthService {
 
         await this.userRepository.updatePassword(record.user_id, hashedPassword);
         await this.passwordResetRepository.markAsUsed(record.id);
+
+        this.auditLogService?.log({
+            actorId: record.user_id, action: AUDIT_EVENTS.PASSWORD_RESET_COMPLETED,
+            ipAddress: ip, userAgent,
+        });
     }
 }

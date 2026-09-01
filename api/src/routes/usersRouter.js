@@ -4,11 +4,15 @@ import { authenticate, optionalAuthenticate } from "../middlewares/authenticate.
 import { requireRole } from "../middlewares/requireRole.js";
 import { upload } from "../middlewares/uploadImage.js";
 import { STAFF_ROLES } from "../utils/roles.js";
-import { AuditLogRepository } from "../repositories/auditLogRepository.js";
 import { FollowRepository } from "../repositories/followRepository.js";
+import { InventoryRepository } from "../repositories/inventoryRepository.js";
 import { ItineraryRepository } from "../repositories/itineraryRepository.js";
 import { LifeDiaryRepository } from "../repositories/lifeDiaryRepository.js";
+import { PackingChecklistRepository } from "../repositories/packingChecklistRepository.js";
+import { ShoppingListRepository } from "../repositories/shoppingListRepository.js";
 import { UserRepository } from "../repositories/userRepository.js";
+import { VanLogRepository } from "../repositories/vanLogRepository.js";
+import { auditLogService } from "../services/sharedAuditLogService.js";
 import { CloudinaryService } from "../services/cloudinaryService.js";
 import { UserService } from "../services/userService.js";
 
@@ -18,8 +22,15 @@ export const createUsersRouter = () => {
     const userRepository = new UserRepository();
     const followRepository = new FollowRepository()
     const lifeDiaryRepository = new LifeDiaryRepository();
-    const auditLogRepository = new AuditLogRepository();
-    const userService = new UserService(userRepository, itinerariesRepository, followRepository, null, lifeDiaryRepository, auditLogRepository);
+    const vanLogRepository = new VanLogRepository();
+    const inventoryRepository = new InventoryRepository();
+    const shoppingListRepository = new ShoppingListRepository();
+    const packingChecklistRepository = new PackingChecklistRepository();
+    const userService = new UserService(
+        userRepository, itinerariesRepository, followRepository, null,
+        lifeDiaryRepository, auditLogService, vanLogRepository,
+        inventoryRepository, shoppingListRepository, packingChecklistRepository
+    );
     const cloudinaryService = new CloudinaryService();
     const userController = new UserController(userService, cloudinaryService);
     const staffOnly = requireRole(...STAFF_ROLES);

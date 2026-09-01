@@ -1,5 +1,6 @@
 import config from '../config/config.js';
 import { accountDeletedTemplate } from '../emails/templates/accountDeleted.js';
+import { auditLogFailureTemplate } from '../emails/templates/auditLogFailure.js';
 import { contactConfirmationTemplate } from '../emails/templates/contactConfirmation.js';
 import { contactTemplate } from '../emails/templates/contact.js';
 import { passwordResetTemplate } from '../emails/templates/passwordReset.js';
@@ -66,5 +67,10 @@ export class EmailService {
     async sendAccountDeleted({ username, email }) {
         const { subject, html } = accountDeletedTemplate({ username });
         await this._send({ to: email, subject, html });
+    }
+
+    async sendAuditLogFailureAlert({ to, action, errorMessage, occurredAt }) {
+        const { subject, html } = auditLogFailureTemplate({ action, errorMessage, occurredAt });
+        await this._send({ to, subject, html });
     }
 }

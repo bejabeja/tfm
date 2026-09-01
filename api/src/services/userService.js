@@ -7,16 +7,25 @@ import { NotFoundError } from "../errors/NotFoundError.js";
 import { generateAvatar } from "../utils/avatar.js";
 import { countryCodeFromIp } from "../utils/geoLookup.js";
 import { logger } from "../utils/logger.js";
+import { AUDIT_EVENTS } from "../utils/auditEvents.js";
 import { ROLES } from "../utils/roles.js";
 
 export class UserService {
-    constructor(userRepository, itinerariesRepository, followRepository, emailService = null, lifeDiaryRepository = null, auditLogRepository = null) {
+    constructor(
+        userRepository, itinerariesRepository, followRepository, emailService = null,
+        lifeDiaryRepository = null, auditLogService = null, vanLogRepository = null,
+        inventoryRepository = null, shoppingListRepository = null, packingChecklistRepository = null
+    ) {
         this.userRepository = userRepository;
         this.itinerariesRepository = itinerariesRepository;
         this.followRepository = followRepository;
         this.emailService = emailService;
         this.lifeDiaryRepository = lifeDiaryRepository;
-        this.auditLogRepository = auditLogRepository;
+        this.auditLogService = auditLogService;
+        this.vanLogRepository = vanLogRepository;
+        this.inventoryRepository = inventoryRepository;
+        this.shoppingListRepository = shoppingListRepository;
+        this.packingChecklistRepository = packingChecklistRepository;
     }
 
     async create(userData, { ip, userAgent } = {}) {
@@ -99,7 +108,7 @@ export class UserService {
         };
     }
 
-    async updateUserRole(targetId, newRole, actingUser) {
+    async updateUserRole(targetId, newRole, actingUser, { ip, userAgent } = {}) {
         if (targetId === actingUser.id) {
             throw new ForbiddenError("You cannot change your own role");
         }
@@ -112,21 +121,15 @@ export class UserService {
 
         const user = await this.userRepository.updateRole(targetId, newRole);
 
-        this._logAudit(actingUser, 'update_role', targetId, user.username, { previousRole: previousUser.role, newRole });
+        this.auditLogService?.log({
+            actorId: actingUser.id, actorUsername: actingUser.username,
+            action: AUDIT_EVENTS.ROLE_UPDATED,
+            targetUserId: targetId, targetUsername: user.username,
+            metadata: { previousRole: previousUser.role, newRole },
+            ipAddress: ip, userAgent,
+        });
 
         return user;
-    }
-
-    // Fire-and-forget: an admin action must not fail because the audit log write did.
-    _logAudit(actingUser, action, targetUserId, targetUsername, metadata = {}) {
-        this.auditLogRepository?.log({
-            actorId: actingUser.id,
-            actorUsername: actingUser.username,
-            action,
-            targetUserId,
-            targetUsername,
-            metadata,
-        }).catch(err => logger.error(`[audit] failed to log ${action}:`, err));
     }
 
     async getUserForAuth(id) {
@@ -210,7 +213,7 @@ export class UserService {
         return users.map(u => u.toFeaturedDTO());
     }
 
-    async deleteUser(id, actingUser = null) {
+    async deleteUser(id, actingUser = null, { ip, userAgent } = {}) {
         const user = await this.userRepository.getUserById(id);
         if (!user) throw new NotFoundError("User not found");
 
@@ -226,20 +229,26 @@ export class UserService {
 
         await this.userRepository.deleteUser(id);
 
-        // Only an admin deleting someone else's account is an auditable admin
-        // action; a user deleting their own account isn't.
-        if (actingUser && actingUser.id !== id) {
-            this._logAudit(actingUser, 'delete_user', id, user.username);
+        if (actingUser) {
+            const action = actingUser.id === id ? AUDIT_EVENTS.ACCOUNT_DELETED_BY_SELF : AUDIT_EVENTS.ACCOUNT_DELETED_BY_ADMIN;
+            this.auditLogService?.log({
+                actorId: actingUser.id, actorUsername: actingUser.username,
+                action, targetUserId: id, targetUsername: user.username,
+                ipAddress: ip, userAgent,
+            });
         }
 
         return { user, imagePublicIds: [...itineraryImagePublicIds, ...lifeDiaryImagePublicIds] };
     }
 
-    async exportUserData(id) {
+    async exportUserData(id, actingUser, { ip, userAgent } = {}) {
         const user = await this.userRepository.getUserById(id);
         if (!user) throw new NotFoundError("User not found");
 
-        const [itineraries, followers, following, commentsResult, likesResult, favoritesResult] = await Promise.all([
+        const [
+            itineraries, followers, following, commentsResult, likesResult, favoritesResult,
+            lifeDiaryEntries, vanLogEntries, inventoryItems, shoppingListItems, packingChecklistItems,
+        ] = await Promise.all([
             this.itinerariesRepository.findByUserId(id),
             this.followRepository.getFollowers(id),
             this.followRepository.getFollowing(id),
@@ -261,7 +270,30 @@ export class UserService {
                  JOIN itineraries i ON f.itinerary_id = i.id
                  WHERE f.user_id = $1 ORDER BY f.created_at DESC`, [id]
             ),
+            this.lifeDiaryRepository ? this.lifeDiaryRepository.findByUserId(id) : [],
+            this.vanLogRepository ? this.vanLogRepository.findByUserId(id) : [],
+            this.inventoryRepository ? this.inventoryRepository.findByUserId(id) : [],
+            this.shoppingListRepository ? this.shoppingListRepository.findByUserId(id) : [],
+            this.packingChecklistRepository ? this.packingChecklistRepository.findByUserId(id) : [],
         ]);
+
+        // Same batched entry+images composition as LifeDiaryService.getEntriesByUser.
+        if (this.lifeDiaryRepository && lifeDiaryEntries.length) {
+            const images = await this.lifeDiaryRepository.getImagesByEntryIds(lifeDiaryEntries.map(entry => entry.id));
+            const imagesByEntryId = images.reduce((acc, image) => {
+                (acc[image.entryId] ??= []).push(image);
+                return acc;
+            }, {});
+            lifeDiaryEntries.forEach(entry => { entry.images = imagesByEntryId[entry.id] ?? []; });
+        }
+
+        // Logged only once the export data is actually assembled, so the
+        // audit trail never claims a success that a later failure undoes.
+        this.auditLogService?.log({
+            actorId: actingUser.id, actorUsername: actingUser.username,
+            action: AUDIT_EVENTS.DATA_EXPORTED, targetUserId: id, targetUsername: user.username,
+            ipAddress: ip, userAgent,
+        });
 
         return {
             exportedAt: new Date().toISOString(),
@@ -280,6 +312,13 @@ export class UserService {
             comments: commentsResult.rows,
             likes: likesResult.rows,
             savedTrips: favoritesResult.rows,
+            lifeDiaryEntries: lifeDiaryEntries.map(entry => entry.toDTO()),
+            vanLogEntries: vanLogEntries.map(entry => entry.toDTO()),
+            supplies: {
+                inventory: inventoryItems.map(item => item.toDTO()),
+                shoppingList: shoppingListItems.map(item => item.toDTO()),
+            },
+            packingChecklist: packingChecklistItems.map(item => item.toDTO()),
             followers: followers.map(f => ({ id: f.id, username: f.username })),
             following: following.map(f => ({ id: f.id, username: f.username })),
         };

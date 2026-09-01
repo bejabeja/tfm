@@ -259,8 +259,21 @@
     "grantSuperadminDesc": "{{username}} tendrá acceso completo al panel interno, incluyendo borrar cuentas y conceder roles.",
     "auditLogTitle": "Registro de actividad",
     "auditNoEntries": "Todavía no hay actividad de administradores.",
-    "auditDeleteUser": "{{actor}} eliminó la cuenta de {{target}}",
-    "auditUpdateRole": "{{actor}} cambió el rol de {{target}} de {{previousRole}} a {{newRole}}"
+    "auditAccountDeletedByAdmin": "{{actor}} eliminó la cuenta de {{target}}",
+    "auditAccountDeletedBySelf": "{{target}} eliminó su propia cuenta",
+    "auditRoleUpdated": "{{actor}} cambió el rol de {{target}} de {{previousRole}} a {{newRole}}",
+    "auditLoginSuccess": "{{actor}} inició sesión",
+    "auditLoginFailed": "Intento de inicio de sesión fallido para {{who}}",
+    "auditPasswordResetRequested": "{{actor}} solicitó restablecer su contraseña",
+    "auditPasswordResetCompleted": "Se completó el restablecimiento de contraseña de {{actor}}",
+    "auditDataExported": "{{actor}} exportó sus datos",
+    "auditLogPurged": "{{actor}} purgó {{deletedCount}} entradas del registro con más de {{months}} meses ({{trigger}})",
+    "auditFilterActionLabel": "Acción",
+    "auditFilterAllActions": "Todas las acciones",
+    "auditFilterDateFromLabel": "Desde",
+    "auditFilterDateToLabel": "Hasta",
+    "auditLoadMore": "Cargar más",
+    "auditShowingCount": "Mostrando {{shown}} de {{total}}"
   },
   "profile": {
     "metaDescriptionFallback": "Los itinerarios de viaje de {{username}} en ToBeATraveller",

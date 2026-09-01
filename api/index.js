@@ -6,11 +6,9 @@ import './src/config/instrument.js';
 import { testConnection } from "./src/db/clientPostgres.js";
 import { authenticate } from "./src/middlewares/authenticate.js";
 import { requirePremium } from './src/middlewares/requirePremium.js';
-import { requireRole } from './src/middlewares/requireRole.js';
 import { corsMiddleware } from './src/middlewares/cors.js';
 import { errorHandler } from './src/middlewares/errorHandler.js';
 import { UserRepository } from './src/repositories/userRepository.js';
-import { STAFF_ROLES } from './src/utils/roles.js';
 import { createAuthRouter } from './src/routes/authRouter.js';
 import { createAuditLogRouter } from './src/routes/auditLogRouter.js';
 
@@ -32,7 +30,6 @@ import { createLifeDiaryRouter } from './src/routes/lifeDiaryRouter.js';
 
 const app = express();
 const premiumOnly = requirePremium(new UserRepository());
-const staffOnly = requireRole(...STAFF_ROLES);
 
 // Behind Vercel's edge network, so req.ip needs the first X-Forwarded-For hop
 // to reflect the real visitor instead of Vercel's own infra address.
@@ -55,7 +52,10 @@ app.use('/van-logs', authenticate, premiumOnly, createVanLogsRouter());
 app.use('/supplies', authenticate, premiumOnly, createSuppliesRouter());
 app.use('/packing-checklist', authenticate, premiumOnly, createPackingChecklistRouter());
 app.use('/life-diary', authenticate, premiumOnly, createLifeDiaryRouter());
-app.use('/audit-log', authenticate, staffOnly, createAuditLogRouter());
+// Auth/role checks live inside the router itself: the scheduled-purge route
+// is triggered by Vercel Cron with a shared secret instead of a user JWT, so
+// it can't sit behind a blanket authenticate() at the mount point.
+app.use('/audit-log', createAuditLogRouter());
 
 app.use('/', createEmailRouter());
 if (config.nodeEnv !== 'production') {

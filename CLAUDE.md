@@ -67,6 +67,7 @@ Stack: React 19, Redux Toolkit-style con **thunks manuales** (no slices de RTK, 
 
 ## Reglas generales (todo el repo)
 
+- Toda feature nueva o modificada debe cumplir con el RGPD y demás normativa europea de protección de datos aplicable (minimización de datos, base legal para tratar datos personales, derecho de acceso/portabilidad/supresión, trazabilidad de quién accede o modifica qué dato y cuándo, retención acotada en vez de indefinida). Antes de guardar un dato personal nuevo (email, IP, user-agent, ubicación, etc.) o de exponer un endpoint que lea/modifique datos de usuarios, evalúa si hace falta: registrar el evento en `auditLogService` (`api/src/utils/auditEvents.js`), acotar quién puede leerlo (rol), y si necesita una política de retención/purga en vez de guardarse para siempre.
 - No introducir TypeScript, tsoa ni Drizzle en `api/` salvo que el usuario lo pida explícitamente como migración; mantener consistencia con el JS plano existente.
 - No añadir abstracciones, capas o "por si acaso" que el código actual no tiene (ej. no crear un IoC container, no envolver `fetch` en una librería nueva).
 - Antes de tocar `mobile/`, lee `mobile/AGENTS.md`: Expo SDK 56 cambió respecto a versiones previas, no asumas comportamiento de versiones anteriores.

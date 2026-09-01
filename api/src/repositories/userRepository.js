@@ -133,6 +133,14 @@ export class UserRepository {
         );
     }
 
+    async findByRole(role) {
+        const result = await db.query(
+            "SELECT * FROM users WHERE role = $1",
+            [role]
+        );
+        return result.rows.map(row => User.fromDb(row));
+    }
+
     async findByFilters({ searchName, offset = 0, limit = 9, sortBy = 'username' }) {
         const searchTerm = `%${searchName}%`;
 

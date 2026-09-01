@@ -2,6 +2,7 @@ import { AuthError } from '../errors/AuthError.js';
 import { ValidationError } from '../errors/ValidationError.js';
 import { loginSchema, signupSchema, forgotPasswordSchema, resetPasswordSchema } from '../utils/schemasValidation.js';
 import { logger } from '../utils/logger.js';
+import { getRequestContext } from '../utils/requestContext.js';
 
 export class AuthController {
     constructor(userService, authService) {
@@ -17,10 +18,7 @@ export class AuthController {
             return next(new ValidationError(message));
         }
         try {
-            await this.userService.create(result.data, {
-                ip: req.ip,
-                userAgent: req.headers['user-agent'],
-            });
+            await this.userService.create(result.data, getRequestContext(req));
             return res.status(201).json({ message: "User created successfully" });
         } catch (error) {
             next(error);
@@ -34,7 +32,7 @@ export class AuthController {
         }
         try {
             const { email, password } = result.data;
-            const user = await this.authService.login({ email, password });
+            const user = await this.authService.login({ email, password }, getRequestContext(req));
             const accessToken = this.authService.generateAccessToken(user);
             const refreshToken = this.authService.generateRefreshToken(user);
             this.authService.setAuthCookies(res, accessToken, refreshToken);
@@ -73,7 +71,7 @@ export class AuthController {
             return next(new ValidationError("Please provide a valid email address"));
         }
         try {
-            await this.authService.forgotPassword(result.data.email);
+            await this.authService.forgotPassword(result.data.email, getRequestContext(req));
             // Always return 200, do not reveal whether the email exists
             return res.status(200).json({ message: "If an account with that email exists, a reset link has been sent." });
         } catch (error) {
@@ -87,7 +85,7 @@ export class AuthController {
             return next(new ValidationError("Invalid token or password too short"));
         }
         try {
-            await this.authService.resetPassword(result.data.token, result.data.newPassword);
+            await this.authService.resetPassword(result.data.token, result.data.newPassword, getRequestContext(req));
             return res.status(200).json({ message: "Password updated successfully" });
         } catch (error) {
             next(error);

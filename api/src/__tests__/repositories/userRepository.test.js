@@ -125,6 +125,25 @@ describe('UserRepository.updateRole()', () => {
     });
 });
 
+describe('UserRepository.findByRole()', () => {
+    const repo = new UserRepository();
+
+    beforeEach(() => {
+        db.query.mockReset();
+    });
+
+    it('queries users filtered by the given role', async () => {
+        db.query.mockResolvedValue({ rows: [{ id: 'admin-1', username: 'root', role: 'superadmin' }] });
+
+        const users = await repo.findByRole('superadmin');
+
+        expect(db.query.mock.calls[0][0]).toMatch(/WHERE role = \$1/);
+        expect(db.query.mock.calls[0][1]).toEqual(['superadmin']);
+        expect(users).toHaveLength(1);
+        expect(users[0].role).toBe('superadmin');
+    });
+});
+
 describe('UserRepository.findByFilters() sort options', () => {
     const repo = new UserRepository();
 

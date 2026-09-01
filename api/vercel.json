@@ -11,5 +11,11 @@
             "src": "/(.*)",
             "dest": "/index.js"
         }
+    ],
+    "crons": [
+        {
+            "path": "/audit-log/scheduled-purge",
+            "schedule": "0 3 1 * *"
+        }
     ]
 }

@@ -259,8 +259,21 @@
     "grantSuperadminDesc": "{{username}} will get full access to the internal dashboard, including deleting accounts and granting roles.",
     "auditLogTitle": "Activity log",
     "auditNoEntries": "No admin activity yet.",
-    "auditDeleteUser": "{{actor}} deleted {{target}}'s account",
-    "auditUpdateRole": "{{actor}} changed {{target}}'s role from {{previousRole}} to {{newRole}}"
+    "auditAccountDeletedByAdmin": "{{actor}} deleted {{target}}'s account",
+    "auditAccountDeletedBySelf": "{{target}} deleted their own account",
+    "auditRoleUpdated": "{{actor}} changed {{target}}'s role from {{previousRole}} to {{newRole}}",
+    "auditLoginSuccess": "{{actor}} logged in",
+    "auditLoginFailed": "Failed login attempt for {{who}}",
+    "auditPasswordResetRequested": "{{actor}} requested a password reset",
+    "auditPasswordResetCompleted": "Password reset completed for {{actor}}",
+    "auditDataExported": "{{actor}} exported their data",
+    "auditLogPurged": "{{actor}} purged {{deletedCount}} log entries older than {{months}} months ({{trigger}})",
+    "auditFilterActionLabel": "Action",
+    "auditFilterAllActions": "All actions",
+    "auditFilterDateFromLabel": "From",
+    "auditFilterDateToLabel": "To",
+    "auditLoadMore": "Load more",
+    "auditShowingCount": "Showing {{shown}} of {{total}}"
   },
   "profile": {
     "metaDescriptionFallback": "{{username}}'s travel itineraries on ToBeATraveller",
