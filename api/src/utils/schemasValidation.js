@@ -8,6 +8,10 @@ export const updateUserRoleSchema = z.object({
     role: z.enum([ROLES.USER, ROLES.ADMIN, ROLES.SUPERADMIN]),
 });
 
+export const updateUserTierSchema = z.object({
+    tier: z.enum(['free', 'premium']),
+});
+
 export const updateUserSchema = z.object({
     username: z.string()
         .min(2, "Username is required")

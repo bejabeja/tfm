@@ -12,5 +12,6 @@ export const AUDIT_EVENTS = Object.freeze({
     ACCOUNT_DELETED_BY_SELF: 'account_deleted_by_self',
     ACCOUNT_DELETED_BY_ADMIN: 'account_deleted_by_admin',
     ROLE_UPDATED: 'role_updated',
+    TIER_UPDATED: 'tier_updated',
     AUDIT_LOG_PURGED: 'audit_log_purged',
 });

@@ -125,6 +125,40 @@ describe('UserRepository.updateRole()', () => {
     });
 });
 
+describe('UserRepository.updatePremiumUntil()', () => {
+    const repo = new UserRepository();
+
+    beforeEach(() => {
+        db.query.mockReset();
+    });
+
+    it('updates premium_until and returns the updated user', async () => {
+        const premiumUntil = new Date('2030-01-01');
+        db.query.mockResolvedValue({ rows: [{ id: 'user-1', username: 'jane', premium_until: premiumUntil }] });
+
+        const user = await repo.updatePremiumUntil('user-1', premiumUntil);
+
+        expect(db.query.mock.calls[0][1]).toEqual([premiumUntil, 'user-1']);
+        expect(user.premiumUntil).toEqual(premiumUntil);
+    });
+
+    it('accepts null to revoke premium access', async () => {
+        db.query.mockResolvedValue({ rows: [{ id: 'user-1', username: 'jane', premium_until: null }] });
+
+        await repo.updatePremiumUntil('user-1', null);
+
+        expect(db.query.mock.calls[0][1]).toEqual([null, 'user-1']);
+    });
+
+    it('returns null when the user does not exist', async () => {
+        db.query.mockResolvedValue({ rows: [] });
+
+        const user = await repo.updatePremiumUntil('missing', new Date());
+
+        expect(user).toBeNull();
+    });
+});
+
 describe('UserRepository.findByRole()', () => {
     const repo = new UserRepository();
 

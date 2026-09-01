@@ -149,3 +149,15 @@ export const updateUserRole = async (id, role) => {
     }
     return response.json();
 };
+
+export const updateUserTier = async (id, tier) => {
+    const response = await authFetch(`${baseUrl()}/${id}/tier`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ tier }),
+    });
+    if (!response.ok) {
+        await parseError(response, 'Failed to update tier');
+    }
+    return response.json();
+};

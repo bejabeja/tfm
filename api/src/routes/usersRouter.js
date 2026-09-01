@@ -47,6 +47,7 @@ export const createUsersRouter = () => {
     router.get("/suggested", authenticate, userController.getSuggestedUsers.bind(userController));
     router.get("/check-username", userController.checkUsernameAvailable.bind(userController));
     router.patch("/:id/role", authenticate, staffOnly, userController.updateUserRole.bind(userController));
+    router.patch("/:id/tier", authenticate, staffOnly, userController.updateUserTier.bind(userController));
     router.get("/:id", optionalAuthenticate, userController.getUserById.bind(userController));
 
     return router;

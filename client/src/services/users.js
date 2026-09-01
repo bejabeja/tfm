@@ -12,6 +12,7 @@ export {
     getAllUsers,
     getAllUsersForAdmin,
     updateUserRole,
+    updateUserTier,
 } from "@tobeatraveller/shared";
 
 const baseUrl = `${import.meta.env.VITE_API_URL}/users`;

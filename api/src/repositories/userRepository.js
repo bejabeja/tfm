@@ -126,6 +126,14 @@ export class UserRepository {
         return result.rows.length ? User.fromDb(result.rows[0]) : null;
     }
 
+    async updatePremiumUntil(id, premiumUntil) {
+        const result = await db.query(
+            "UPDATE users SET premium_until = $1, updated_at = NOW() WHERE id = $2 RETURNING *",
+            [premiumUntil, id]
+        );
+        return result.rows.length ? User.fromDb(result.rows[0]) : null;
+    }
+
     async updatePassword(id, hashedPassword) {
         await db.query(
             "UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2",

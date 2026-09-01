@@ -7,13 +7,14 @@ import FeatureLoadState from "../../components/featureLoadState/FeatureLoadState
 import Modal from "../../components/modal/Modal";
 import Spinner from "../../components/spinner/Spinner";
 import useDebouncedEffect from "../../hooks/useDebounced";
-import { deleteUserById, getAllUsersForAdmin, updateUserRole } from "../../services/users";
+import { deleteUserById, getAllUsersForAdmin, updateUserRole, updateUserTier } from "../../services/users";
 import { selectAuthUser } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
 import "./InternalUsers.scss";
 
 const PAGE_SIZE = 20;
 const ASSIGNABLE_ROLES = ["user", "admin", "superadmin"];
+const ASSIGNABLE_TIERS = ["free", "premium"];
 
 const InternalUsers = () => {
   const { t } = useTranslation();
@@ -29,6 +30,7 @@ const InternalUsers = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updatingRoleId, setUpdatingRoleId] = useState(null);
+  const [updatingTierId, setUpdatingTierId] = useState(null);
   // { kind: "delete" | "grantSuperadmin", user, newRole? }
   const [pendingAction, setPendingAction] = useState(null);
   const [confirmingAction, setConfirmingAction] = useState(false);
@@ -68,6 +70,22 @@ const InternalUsers = () => {
       return;
     }
     applyRoleChange(user, newRole);
+  };
+
+  const handleTierChange = async (user, newTier) => {
+    const currentTier = user.isPremium ? "premium" : "free";
+    if (newTier === currentTier) return;
+
+    setUpdatingTierId(user.id);
+    try {
+      await updateUserTier(user.id, newTier);
+      setUsers((prev) => prev.map((u) => (u.id === user.id ? { ...u, isPremium: newTier === "premium" } : u)));
+      toast.success(t("admin.tierUpdated"));
+    } catch (err) {
+      toast.error(err.message || t("admin.tierUpdateError"));
+    } finally {
+      setUpdatingTierId(null);
+    }
   };
 
   const confirmPendingAction = async () => {
@@ -159,6 +177,16 @@ const InternalUsers = () => {
                 >
                   {roleOptions.map((role) => (
                     <option key={role} value={role}>{role}</option>
+                  ))}
+                </select>
+                <select
+                  className="internal-users__tier-select"
+                  value={user.isPremium ? "premium" : "free"}
+                  disabled={updatingTierId === user.id}
+                  onChange={(e) => handleTierChange(user, e.target.value)}
+                >
+                  {ASSIGNABLE_TIERS.map((tier) => (
+                    <option key={tier} value={tier}>{t(`admin.${tier}`)}</option>
                   ))}
                 </select>
                 <button

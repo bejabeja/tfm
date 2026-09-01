@@ -217,6 +217,74 @@ describe('UserService.updateUserRole()', () => {
     });
 });
 
+describe('UserService.updateUserTier()', () => {
+    let service;
+    let userRepository;
+    let auditLogService;
+
+    beforeEach(() => {
+        userRepository = {
+            getUserById: async (id) => makeUser({ id, premiumUntil: null }),
+            updatePremiumUntil: async (id, premiumUntil) => makeUser({ id, premiumUntil }),
+        };
+        auditLogService = { log: () => {} };
+        service = new UserService(userRepository, {}, {}, null, null, auditLogService);
+    });
+
+    it('grants a far-future premiumUntil when moving a free user to premium', async () => {
+        const result = await service.updateUserTier('user-2', 'premium', { id: 'admin-1', username: 'root' });
+
+        expect(result.isPremium()).toBe(true);
+        expect(result.premiumUntil.getFullYear()).toBeGreaterThan(new Date().getFullYear() + 50);
+    });
+
+    it('clears premiumUntil when moving a premium user to free', async () => {
+        userRepository.getUserById = async (id) => makeUser({ id, premiumUntil: new Date('2099-01-01') });
+
+        const result = await service.updateUserTier('user-2', 'free', { id: 'admin-1', username: 'root' });
+
+        expect(result.isPremium()).toBe(false);
+    });
+
+    it('throws NotFoundError when the target user does not exist', async () => {
+        userRepository.getUserById = async () => null;
+
+        await expect(
+            service.updateUserTier('missing', 'premium', { id: 'admin-1', username: 'root' })
+        ).rejects.toThrow('User not found');
+    });
+
+    it('logs the tier change with the previous and new tier', async () => {
+        let loggedEntry;
+        auditLogService.log = (entry) => { loggedEntry = entry; };
+        userRepository.getUserById = async (id) => makeUser({ id, premiumUntil: null });
+
+        await service.updateUserTier('user-2', 'premium', { id: 'admin-1', username: 'root' });
+
+        expect(loggedEntry).toEqual({
+            actorId: 'admin-1',
+            actorUsername: 'root',
+            action: AUDIT_EVENTS.TIER_UPDATED,
+            targetUserId: 'user-2',
+            targetUsername: 'jane',
+            metadata: { previousTier: 'free', newTier: 'premium' },
+        });
+    });
+
+    it('forwards the caller\'s ip and user agent to the log', async () => {
+        let loggedEntry;
+        auditLogService.log = (entry) => { loggedEntry = entry; };
+
+        await service.updateUserTier(
+            'user-2', 'premium', { id: 'admin-1', username: 'root' },
+            { ip: '203.0.113.1', userAgent: 'Mozilla/5.0' }
+        );
+
+        expect(loggedEntry.ipAddress).toBe('203.0.113.1');
+        expect(loggedEntry.userAgent).toBe('Mozilla/5.0');
+    });
+});
+
 describe('UserService.create()', () => {
     let userRepository;
     let service;

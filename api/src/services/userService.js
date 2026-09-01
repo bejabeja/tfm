@@ -10,6 +10,11 @@ import { logger } from "../utils/logger.js";
 import { AUDIT_EVENTS } from "../utils/auditEvents.js";
 import { ROLES } from "../utils/roles.js";
 
+// A staff-granted premium override (no Stripe subscription behind it yet):
+// far enough out to behave as "indefinite" without a magic null/sentinel
+// value that isPremium() would need special-casing for.
+const MANUAL_PREMIUM_DURATION_MS = 100 * 365 * 24 * 60 * 60 * 1000;
+
 export class UserService {
     constructor(
         userRepository, itinerariesRepository, followRepository, emailService = null,
@@ -126,6 +131,24 @@ export class UserService {
             action: AUDIT_EVENTS.ROLE_UPDATED,
             targetUserId: targetId, targetUsername: user.username,
             metadata: { previousRole: previousUser.role, newRole },
+            ipAddress: ip, userAgent,
+        });
+
+        return user;
+    }
+
+    async updateUserTier(targetId, tier, actingUser, { ip, userAgent } = {}) {
+        const previousUser = await this.userRepository.getUserById(targetId);
+        if (!previousUser) throw new NotFoundError("User not found");
+
+        const premiumUntil = tier === 'premium' ? new Date(Date.now() + MANUAL_PREMIUM_DURATION_MS) : null;
+        const user = await this.userRepository.updatePremiumUntil(targetId, premiumUntil);
+
+        this.auditLogService?.log({
+            actorId: actingUser.id, actorUsername: actingUser.username,
+            action: AUDIT_EVENTS.TIER_UPDATED,
+            targetUserId: targetId, targetUsername: user.username,
+            metadata: { previousTier: previousUser.isPremium() ? 'premium' : 'free', newTier: tier },
             ipAddress: ip, userAgent,
         });
 

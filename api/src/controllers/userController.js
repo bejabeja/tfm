@@ -1,5 +1,5 @@
 import { ValidationError } from "../errors/ValidationError.js";
-import { updateUserRoleSchema, updateUserSchema } from "../utils/schemasValidation.js";
+import { updateUserRoleSchema, updateUserSchema, updateUserTierSchema } from "../utils/schemasValidation.js";
 import { getRequestContext } from "../utils/requestContext.js";
 
 const MAX_AVATAR_SIZE = 5 * 1024 * 1024; // 5 MB
@@ -186,6 +186,19 @@ export class UserController {
         try {
             const user = await this.userService.updateUserRole(req.params.id, result.data.role, req.user, getRequestContext(req));
             res.status(200).json({ id: user.id, role: user.role });
+        } catch (error) {
+            next(error);
+        }
+    }
+
+    async updateUserTier(req, res, next) {
+        const result = updateUserTierSchema.safeParse(req.body);
+        if (!result.success) {
+            return next(new ValidationError(result.error.errors[0]?.message || "Invalid tier"));
+        }
+        try {
+            const user = await this.userService.updateUserTier(req.params.id, result.data.tier, req.user, getRequestContext(req));
+            res.status(200).json({ id: user.id, isPremium: user.isPremium() });
         } catch (error) {
             next(error);
         }
