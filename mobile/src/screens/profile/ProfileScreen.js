@@ -356,6 +356,12 @@ const ProfileScreen = ({ route, navigation }) => {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.contactBtn}
+              onPress={() => navigation.navigate('Subscription')}
+            >
+              <Text style={styles.contactText}>✨ {t('nav.subscription')}</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={styles.contactBtn}
               onPress={() => navigation.navigate('Contact')}
             >
               <Text style={styles.contactText}>{t('profile.contactUs')}</Text>
