@@ -1,5 +1,5 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { useForm, useWatch } from "react-hook-form";
 import toast from "react-hot-toast";
 import { useTranslation } from "react-i18next";
 import { vanLogCategories } from "@tobeatraveller/shared";
@@ -18,6 +18,7 @@ const buildDefaultValues = (entry) => {
       title: "",
       amount: "",
       currency: "EUR",
+      pricePerLiter: "",
       location: { name: "", label: "", coordinates: { lat: 0, lon: 0 } },
       notes: "",
       entryDate: today,
@@ -28,6 +29,7 @@ const buildDefaultValues = (entry) => {
     title: entry.title || "",
     amount: entry.amount != null ? String(entry.amount) : "",
     currency: entry.currency || "",
+    pricePerLiter: entry.pricePerLiter != null ? String(entry.pricePerLiter) : "",
     location: entry.location
       ? {
           name: entry.location.name || "",
@@ -49,6 +51,7 @@ const VanLogFormModal = ({ entry, onClose, onSaved }) => {
     resolver: zodResolver(vanLogEntrySchema),
     defaultValues: buildDefaultValues(entry),
   });
+  const category = useWatch({ control, name: "category" });
 
   const categoryOptions = vanLogCategories.map(({ value, label }) => ({
     value, label: t(`vanLog.category.${value}`, label),
@@ -61,6 +64,7 @@ const VanLogFormModal = ({ entry, onClose, onSaved }) => {
       title: data.title || null,
       amount: data.amount,
       currency: data.currency || null,
+      pricePerLiter: data.category === "fuel" ? data.pricePerLiter : null,
       location: hasLocation
         ? {
             name: data.location.name,
@@ -131,6 +135,17 @@ const VanLogFormModal = ({ entry, onClose, onSaved }) => {
               inputProps={{ maxLength: 3 }}
             />
           </div>
+
+          {category === "fuel" && (
+            <InputForm
+              label={t("vanLog.pricePerLiterLabel")}
+              name="pricePerLiter"
+              control={control}
+              error={errors.pricePerLiter}
+              type="number"
+              inputProps={{ step: "0.001", min: "0" }}
+            />
+          )}
 
           <InputForm
             label={t("vanLog.dateLabel")}

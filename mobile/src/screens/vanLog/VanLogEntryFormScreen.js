@@ -12,7 +12,7 @@ import { GEOAPIFY_KEY } from '../../utils/config';
 const CATEGORY_EMOJI = {
   gas_bottle: '🔥', water_fresh: '💧', water_grey: '🚿', water_black: '🚽',
   trash: '🗑️', fuel: '⛽', groceries: '🛒', laundry: '🧺',
-  parking: '🅿️', overnight_stay: '🌙', maintenance: '🔧', other: '📍',
+  parking: '🅿️', tolls: '🛣️', overnight_stay: '🌙', maintenance: '🔧', other: '📍',
 };
 
 const today = () => new Date().toISOString().split('T')[0];
@@ -33,6 +33,7 @@ const VanLogEntryFormScreen = ({ navigation, route }) => {
   const [title, setTitle] = useState(entry?.title ?? '');
   const [amount, setAmount] = useState(entry?.amount != null ? String(entry.amount) : '');
   const [currency, setCurrency] = useState(entry?.currency ?? 'EUR');
+  const [pricePerLiter, setPricePerLiter] = useState(entry?.pricePerLiter != null ? String(entry.pricePerLiter) : '');
   const [entryDate, setEntryDate] = useState(entry?.entryDate ? entry.entryDate.slice(0, 10) : today());
   const [location, setLocation] = useState(() => normalizeLocation(entry?.location));
   const [locationQuery, setLocationQuery] = useState(entry?.location?.name ?? '');
@@ -100,6 +101,7 @@ const VanLogEntryFormScreen = ({ navigation, route }) => {
       title,
       amount,
       currency,
+      pricePerLiter: category === 'fuel' ? pricePerLiter : '',
       entryDate,
       location: location
         ? { name: location.name, country: location.country, label: location.label, coordinates: location.coordinates }
@@ -121,6 +123,7 @@ const VanLogEntryFormScreen = ({ navigation, route }) => {
       title: data.title || null,
       amount: data.amount,
       currency: data.currency || null,
+      pricePerLiter: data.pricePerLiter,
       location: location
         ? {
             name: location.name,
@@ -217,6 +220,19 @@ const VanLogEntryFormScreen = ({ navigation, route }) => {
                 />
               </Field>
             </View>
+
+            {category === 'fuel' && (
+              <Field label={t('vanLog.pricePerLiterLabel')} error={errors.pricePerLiter}>
+                <TextInput
+                  style={styles.input}
+                  value={pricePerLiter}
+                  onChangeText={v => { setPricePerLiter(v); setErrors(e => ({ ...e, pricePerLiter: null })); setIsDirty(true); }}
+                  placeholder="0.000"
+                  placeholderTextColor="#9ca3af"
+                  keyboardType="decimal-pad"
+                />
+              </Field>
+            )}
 
             <Field label={t('vanLog.dateLabel')} error={errors.entryDate}>
               <TextInput

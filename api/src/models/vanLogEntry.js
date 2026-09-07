@@ -1,6 +1,6 @@
 export const VAN_LOG_CATEGORIES = [
     'gas_bottle', 'water_fresh', 'water_grey', 'water_black', 'trash',
-    'fuel', 'groceries', 'laundry', 'parking', 'overnight_stay', 'maintenance', 'other',
+    'fuel', 'groceries', 'laundry', 'parking', 'tolls', 'overnight_stay', 'maintenance', 'other',
 ];
 
 // pg parses a DATE column into a Date at local midnight; JSON.stringify then calls
@@ -17,13 +17,14 @@ export const toDateOnlyString = (date) => {
 };
 
 export class VanLogEntry {
-    constructor({ id, userId, category, title, amount, currency, location, notes, entryDate, createdAt, updatedAt }) {
+    constructor({ id, userId, category, title, amount, currency, pricePerLiter, location, notes, entryDate, createdAt, updatedAt }) {
         this.id = id;
         this.userId = userId;
         this.category = category;
         this.title = title;
         this.amount = amount;
         this.currency = currency;
+        this.pricePerLiter = pricePerLiter;
         this.location = location || null;
         this.notes = notes;
         this.entryDate = entryDate;
@@ -40,6 +41,7 @@ export class VanLogEntry {
             title: row.title,
             amount: row.amount !== null ? Number(row.amount) : null,
             currency: row.currency,
+            pricePerLiter: row.price_per_liter !== null ? Number(row.price_per_liter) : null,
             location: hasLocation ? {
                 name: row.location_name,
                 country: row.location_country,
@@ -62,6 +64,7 @@ export class VanLogEntry {
             title: this.title,
             amount: this.amount,
             currency: this.currency,
+            pricePerLiter: this.pricePerLiter,
             location: this.location,
             notes: this.notes,
             entryDate: this.entryDate,

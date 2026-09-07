@@ -5,23 +5,23 @@ import { VanLogEntry, toDateOnlyString } from '../models/vanLogEntry.js';
 export class VanLogRepository {
     async create(data) {
         const {
-            userId, category, title, amount, currency,
+            userId, category, title, amount, currency, pricePerLiter,
             location, notes, entryDate,
         } = data;
         const id = uuidv4();
 
         const query = `
             INSERT INTO van_log_entries (
-                id, user_id, category, title, amount, currency,
+                id, user_id, category, title, amount, currency, price_per_liter,
                 location_name, location_country, location_label, latitude, longitude,
                 notes, entry_date
             )
-            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13)
+            VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14)
             RETURNING *;
         `;
 
         const result = await client.query(query, [
-            id, userId, category, title ?? null, amount ?? null, currency ?? null,
+            id, userId, category, title ?? null, amount ?? null, currency ?? null, pricePerLiter ?? null,
             location?.name ?? null, location?.country ?? null, location?.label ?? null,
             location?.lat ?? null, location?.lon ?? null,
             notes ?? null, entryDate,
@@ -77,22 +77,22 @@ export class VanLogRepository {
 
     async update(id, data) {
         const {
-            category, title, amount, currency,
+            category, title, amount, currency, pricePerLiter,
             location, notes, entryDate,
         } = data;
 
         const query = `
             UPDATE van_log_entries SET
-                category = $1, title = $2, amount = $3, currency = $4,
-                location_name = $5, location_country = $6, location_label = $7,
-                latitude = $8, longitude = $9, notes = $10, entry_date = $11,
+                category = $1, title = $2, amount = $3, currency = $4, price_per_liter = $5,
+                location_name = $6, location_country = $7, location_label = $8,
+                latitude = $9, longitude = $10, notes = $11, entry_date = $12,
                 updated_at = CURRENT_TIMESTAMP
-            WHERE id = $12
+            WHERE id = $13
             RETURNING *;
         `;
 
         const result = await client.query(query, [
-            category, title ?? null, amount ?? null, currency ?? null,
+            category, title ?? null, amount ?? null, currency ?? null, pricePerLiter ?? null,
             location?.name ?? null, location?.country ?? null, location?.label ?? null,
             location?.lat ?? null, location?.lon ?? null,
             notes ?? null, entryDate, id,

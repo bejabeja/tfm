@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { createItinerarySchema, updateUserSchema } from '../../utils/schemasValidation.js';
+import { createItinerarySchema, updateUserSchema, vanLogEntrySchema } from '../../utils/schemasValidation.js';
 
 // Regression coverage for the "can't save profile without a location" bug: the
 // signup flow never asks for a location, but this schema required at least 2
@@ -43,5 +43,29 @@ describe('createItinerarySchema budget', () => {
         const result = createItinerarySchema.safeParse({ ...baseItinerary, budget: '500' });
         expect(result.success).toBe(true);
         expect(result.data.budget).toBe(500);
+    });
+});
+
+describe('vanLogEntrySchema pricePerLiter', () => {
+    const baseEntry = { title: '', amount: '60', currency: 'EUR', entryDate: '2026-08-27' };
+
+    it('parses the string input into a number on a fuel entry', () => {
+        const result = vanLogEntrySchema.safeParse({ ...baseEntry, category: 'fuel', pricePerLiter: '1.799' });
+
+        expect(result.success).toBe(true);
+        expect(result.data.pricePerLiter).toBe(1.799);
+    });
+
+    it('rejects a pricePerLiter on a non-fuel entry', () => {
+        const result = vanLogEntrySchema.safeParse({ ...baseEntry, category: 'parking', pricePerLiter: '1.799' });
+
+        expect(result.success).toBe(false);
+    });
+
+    it('leaves pricePerLiter as null when left blank', () => {
+        const result = vanLogEntrySchema.safeParse({ ...baseEntry, category: 'fuel', pricePerLiter: '' });
+
+        expect(result.success).toBe(true);
+        expect(result.data.pricePerLiter).toBeNull();
     });
 });

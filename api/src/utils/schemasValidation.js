@@ -115,9 +115,13 @@ export const vanLogEntrySchema = z.object({
     title: z.string().max(255, "Title must be less than 255 characters").nullable().optional(),
     amount: z.number().nonnegative("Amount cannot be negative").nullable().optional(),
     currency: z.string().length(3, "Currency must be a 3-letter code").nullable().optional(),
+    pricePerLiter: z.number().positive("Price per liter must be greater than zero").nullable().optional(),
     location: vanLogLocationSchema,
     notes: z.string().max(1000, "Notes must be less than 1000 characters").nullable().optional(),
     entryDate: z.string().min(1, "Date is required"),
+}).refine((data) => data.category === 'fuel' || data.pricePerLiter == null, {
+    message: "Price per liter only applies to the fuel category",
+    path: ["pricePerLiter"],
 });
 
 export const lifeDiaryEntrySchema = z.object({

@@ -14,7 +14,7 @@ import { shadow } from '../../utils/styles';
 const CATEGORY_EMOJI = {
   gas_bottle: '🔥', water_fresh: '💧', water_grey: '🚿', water_black: '🚽',
   trash: '🗑️', fuel: '⛽', groceries: '🛒', laundry: '🧺',
-  parking: '🅿️', overnight_stay: '🌙', maintenance: '🔧', other: '📍',
+  parking: '🅿️', tolls: '🛣️', overnight_stay: '🌙', maintenance: '🔧', other: '📍',
 };
 
 const EMPTY_FILTERS = { category: '', country: '', dateFrom: '', dateTo: '' };
@@ -295,6 +295,9 @@ const VanLogScreen = ({ navigation }) => {
               {item.amount != null && (
                 <Text style={styles.entryAmount}>{item.amount.toFixed(2)} {item.currency || ''}</Text>
               )}
+              {item.category === 'fuel' && item.pricePerLiter != null && (
+                <Text style={styles.entryPricePerLiter}>{item.pricePerLiter.toFixed(3)} {item.currency || ''}/L</Text>
+              )}
               <View style={styles.entryActions}>
                 <TouchableOpacity
                   style={styles.entryActionBtn}
@@ -390,6 +393,7 @@ const styles = StyleSheet.create({
   entryNotes: { fontSize: 12, color: '#9ca3af', marginTop: 4 },
   entrySide: { alignItems: 'flex-end', justifyContent: 'space-between' },
   entryAmount: { fontSize: 14, fontWeight: '800', color: '#111827' },
+  entryPricePerLiter: { fontSize: 11, color: '#9ca3af', marginTop: 2 },
   entryActions: { flexDirection: 'row', gap: 10, marginTop: 8 },
   entryActionBtn: { padding: 2 },
 

@@ -37,6 +37,28 @@ describe('VanLogRepository', () => {
         expect(params[1]).toBe('user-1');
     });
 
+    it('passes price per liter through to the insert query', async () => {
+        client.query.mockResolvedValue({
+            rows: [{
+                id: 'mock-uuid', user_id: 'user-1', category: 'fuel', title: null,
+                amount: '60.00', currency: 'EUR', price_per_liter: '1.799',
+                location_name: null, location_country: null, location_label: null,
+                latitude: null, longitude: null, notes: null,
+                entry_date: '2026-08-27', created_at: null, updated_at: null,
+            }],
+        });
+
+        const entry = await repo.create({
+            userId: 'user-1', category: 'fuel', amount: 60, currency: 'EUR',
+            pricePerLiter: 1.799, entryDate: '2026-08-27',
+        });
+
+        expect(entry.pricePerLiter).toBe(1.799);
+        const [queryText, params] = client.query.mock.calls[0];
+        expect(queryText).toMatch(/price_per_liter/);
+        expect(params).toContain(1.799);
+    });
+
     it('only fetches entries belonging to the requested user', async () => {
         client.query.mockResolvedValue({ rows: [] });
 

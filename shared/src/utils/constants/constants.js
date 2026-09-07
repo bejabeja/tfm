@@ -55,6 +55,7 @@ export const vanLogCategories = [
   { value: "groceries", label: "Groceries" },
   { value: "laundry", label: "Laundry" },
   { value: "parking", label: "Parking" },
+  { value: "tolls", label: "Tolls" },
   { value: "overnight_stay", label: "Overnight stay" },
   { value: "maintenance", label: "Maintenance" },
   { value: "other", label: "Other" },

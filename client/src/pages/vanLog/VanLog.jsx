@@ -216,6 +216,11 @@ const VanLog = () => {
                     {entry.amount.toFixed(2)} {entry.currency || ""}
                   </strong>
                 )}
+                {entry.category === "fuel" && entry.pricePerLiter != null && (
+                  <span className="van-log__entry-price-per-liter">
+                    {entry.pricePerLiter.toFixed(3)} {entry.currency || ""}/L
+                  </span>
+                )}
                 <div className="van-log__entry-actions">
                   <button type="button" onClick={() => openEdit(entry)} aria-label={t("common.edit")}>
                     <IoPencilOutline />

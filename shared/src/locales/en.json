@@ -518,6 +518,7 @@
     "titlePlaceholder": "e.g. 11kg gas bottle refill",
     "amountLabel": "Amount",
     "currencyLabel": "Currency",
+    "pricePerLiterLabel": "Price per liter",
     "dateLabel": "Date",
     "locationLabel": "Location",
     "locationPlaceholder": "Search a city...",
@@ -550,6 +551,7 @@
       "groceries": "Groceries",
       "laundry": "Laundry",
       "parking": "Parking",
+      "tolls": "Tolls",
       "overnight_stay": "Overnight stay",
       "maintenance": "Maintenance",
       "other": "Other"

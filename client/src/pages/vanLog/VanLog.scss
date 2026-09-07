@@ -209,6 +209,13 @@
     white-space: nowrap;
   }
 
+  &__entry-price-per-liter {
+    width: auto;
+    font-size: 0.8rem;
+    color: var(--text-secondary-color);
+    white-space: nowrap;
+  }
+
   &__entry-actions {
     width: fit-content;
     display: flex;

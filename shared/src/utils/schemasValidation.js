@@ -175,6 +175,9 @@ export const vanLogEntrySchema = z.object({
         .optional()
         .transform(val => (val && !isNaN(Number(val)) ? parseFloat(val) : null)),
     currency: z.string().max(3, "Currency code too long").optional().or(z.literal("")),
+    pricePerLiter: z.string()
+        .optional()
+        .transform(val => (val && !isNaN(Number(val)) ? parseFloat(val) : null)),
     location: z.object({
         name: z.string().optional(),
         country: z.string().optional(),
@@ -186,6 +189,9 @@ export const vanLogEntrySchema = z.object({
     }).optional(),
     notes: z.string().max(1000, "Notes must be less than 1000 characters").optional().or(z.literal("")),
     entryDate: z.string().min(1, "Date is required"),
+}).refine((data) => data.category === 'fuel' || data.pricePerLiter == null, {
+    message: "Price per liter only applies to the fuel category",
+    path: ["pricePerLiter"],
 });
 
 export const lifeDiaryEntrySchema = z.object({
