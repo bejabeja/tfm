@@ -12,6 +12,10 @@ export const updateUserTierSchema = z.object({
     tier: z.enum(['free', 'premium']),
 });
 
+export const createCheckoutSessionSchema = z.object({
+    plan: z.enum(['monthly', 'annual']),
+});
+
 export const updateUserSchema = z.object({
     username: z.string()
         .min(2, "Username is required")

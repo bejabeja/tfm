@@ -1,10 +1,13 @@
+import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { IoCheckmarkCircle, IoSparkles } from "react-icons/io5";
-import { useSelector } from "react-redux";
-import { Link } from "react-router-dom";
+import { IoAlertCircleOutline, IoCheckmarkCircle, IoHourglassOutline, IoSparkles } from "react-icons/io5";
+import { useDispatch, useSelector } from "react-redux";
+import { Link, useSearchParams } from "react-router-dom";
 import { useTranslation } from "react-i18next";
-import { selectIsAuthenticated } from "../../store/auth/authSelectors";
+import { selectAuthUser, selectIsAuthenticated } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
+import { setUserInfo } from "../../store/user/userInfoActions";
+import { createCheckoutSession, createPortalSession, getMySubscription, resumeSubscription } from "../../services/subscription";
 import "./Subscription.scss";
 
 // The emoji itself is the icon (in the colored badge), so titles here are
@@ -37,11 +40,103 @@ const PLANS = [
 
 const Subscription = () => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const authUser = useSelector(selectAuthUser);
   const userMe = useSelector(selectMe);
   const isPremium = !!userMe?.isPremium;
+  const [loadingPlanId, setLoadingPlanId] = useState(null);
+  const [loadingPortal, setLoadingPortal] = useState(false);
+  const [subscription, setSubscription] = useState(null);
+  const [resuming, setResuming] = useState(false);
+  // Distinct from a canceled *paid* subscription: this user never got
+  // charged and has nothing to lose by resuming, so it's a retention moment
+  // worth a more persuasive treatment than the plain "already premium" card.
+  const isTrialCanceled = subscription?.cancelAtPeriodEnd && subscription?.status === "trialing";
+  // A failed renewal charge (Stripe status "past_due"): access isn't revoked
+  // yet (Stripe is still retrying), but the user needs to fix their payment
+  // method or they'll eventually lose Premium when retries run out.
+  const isPaymentFailed = subscription?.status === "past_due";
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const handleSubscribeClick = () => toast(t("subscription.comingSoonToast"));
+  // The `isPremium` flag alone can't tell a normal active subscription apart
+  // from a trial or one that's been canceled but hasn't run out yet, so the
+  // page needs the actual Stripe-backed subscription row to show the right
+  // status/CTA once premium.
+  useEffect(() => {
+    if (!isPremium) {
+      setSubscription(null);
+      return;
+    }
+    getMySubscription().then(setSubscription).catch(() => {});
+  }, [isPremium]);
+
+  // Stripe redirects back here with ?checkout=success|cancel once the
+  // customer leaves Checkout; the webhook (not this page) is what actually
+  // grants premium, so this just refreshes `me` to pick that up and gives
+  // the user feedback, then clears the param so it doesn't refire on reload.
+  useEffect(() => {
+    const checkoutResult = searchParams.get("checkout");
+    if (!checkoutResult) return;
+
+    const timeouts = [];
+    if (checkoutResult === "success") {
+      toast.success(t("subscription.checkoutSuccessToast"));
+      if (authUser?.id) {
+        const refreshMe = () => dispatch(setUserInfo(authUser.id));
+        refreshMe();
+        // The webhook that actually grants premium can land a few seconds
+        // after this redirect, so a single fetch can arrive too early and
+        // leave the page stuck showing the plans; retry a few times instead.
+        [2000, 4000, 8000].forEach((delay) => timeouts.push(setTimeout(refreshMe, delay)));
+      }
+    } else if (checkoutResult === "cancel") {
+      toast(t("subscription.checkoutCancelToast"));
+    }
+
+    setSearchParams((params) => {
+      params.delete("checkout");
+      return params;
+    }, { replace: true });
+
+    return () => timeouts.forEach(clearTimeout);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
+
+  const handleSubscribeClick = async (planId) => {
+    setLoadingPlanId(planId);
+    try {
+      const { url } = await createCheckoutSession(planId);
+      window.location.href = url;
+    } catch (error) {
+      toast.error(error.message || t("subscription.checkoutErrorToast"));
+      setLoadingPlanId(null);
+    }
+  };
+
+  const handleResumeClick = async () => {
+    setResuming(true);
+    try {
+      const updated = await resumeSubscription();
+      setSubscription(updated);
+      toast.success(t("subscription.resumeSuccessToast"));
+    } catch (error) {
+      toast.error(error.message || t("subscription.resumeErrorToast"));
+    } finally {
+      setResuming(false);
+    }
+  };
+
+  const handleManageSubscriptionClick = async () => {
+    setLoadingPortal(true);
+    try {
+      const { url } = await createPortalSession();
+      window.location.href = url;
+    } catch (error) {
+      toast.error(error.message || t("subscription.portalErrorToast"));
+      setLoadingPortal(false);
+    }
+  };
 
   return (
     <div className="subscription">
@@ -54,9 +149,9 @@ const Subscription = () => {
 
         {!isPremium && (
           isAuthenticated ? (
-            <button type="button" className="btn btn--primary subscription__trial-cta" onClick={handleSubscribeClick}>
+            <a href="#subscription-plans" className="btn btn--primary subscription__trial-cta">
               {t("subscription.ctaFreeTrial")}
-            </button>
+            </a>
           ) : (
             <Link to="/register" className="btn btn--primary subscription__trial-cta">
               {t("subscription.ctaFreeTrial")}
@@ -66,11 +161,71 @@ const Subscription = () => {
       </header>
 
       <section className="subscription__content section__container">
-      {isPremium ? (
+      {isTrialCanceled ? (
+        <div className="subscription__win-back">
+          <IoHourglassOutline className="subscription__win-back-icon" aria-hidden="true" />
+          <h2>{t("subscription.trialCanceledTitle")}</h2>
+          <p>{t("subscription.trialCanceledDesc", { date: new Date(subscription.currentPeriodEnd).toLocaleDateString() })}</p>
+          <p className="subscription__win-back-reminder">{t("subscription.trialCanceledReminder")}</p>
+
+          <button
+            type="button"
+            className="btn btn--primary subscription__win-back-cta"
+            disabled={resuming}
+            onClick={handleResumeClick}
+          >
+            {resuming ? t("subscription.ctaLoading") : t("subscription.ctaResumeTrial")}
+          </button>
+        </div>
+      ) : isPaymentFailed ? (
+        <div className="subscription__payment-failed">
+          <IoAlertCircleOutline className="subscription__payment-failed-icon" aria-hidden="true" />
+          <h2>{t("subscription.paymentFailedTitle")}</h2>
+          <p>{t("subscription.paymentFailedDesc")}</p>
+
+          <button
+            type="button"
+            className="btn btn--primary subscription__payment-failed-cta"
+            disabled={loadingPortal}
+            onClick={handleManageSubscriptionClick}
+          >
+            {loadingPortal ? t("subscription.ctaLoading") : t("subscription.manageLink")}
+          </button>
+        </div>
+      ) : isPremium ? (
         <div className="subscription__already-premium">
           <IoCheckmarkCircle className="subscription__already-premium-icon" aria-hidden="true" />
           <h2>{t("subscription.alreadyPremiumTitle")}</h2>
-          <p>{t("subscription.alreadyPremiumDesc")}</p>
+
+          {subscription?.cancelAtPeriodEnd ? (
+            <p>{t("subscription.canceledDesc", { date: new Date(subscription.currentPeriodEnd).toLocaleDateString() })}</p>
+          ) : subscription?.status === "trialing" ? (
+            <p>{t("subscription.trialActiveDesc", { date: new Date(subscription.currentPeriodEnd).toLocaleDateString() })}</p>
+          ) : (
+            <p>{t("subscription.alreadyPremiumDesc")}</p>
+          )}
+
+          <div className="subscription__already-premium-actions">
+            {subscription?.cancelAtPeriodEnd && (
+              <button
+                type="button"
+                className="btn btn--primary"
+                disabled={resuming}
+                onClick={handleResumeClick}
+              >
+                {resuming ? t("subscription.ctaLoading") : t("subscription.ctaResume")}
+              </button>
+            )}
+
+            <button
+              type="button"
+              className="btn btn--secondary"
+              disabled={loadingPortal}
+              onClick={handleManageSubscriptionClick}
+            >
+              {loadingPortal ? t("subscription.ctaLoading") : t("subscription.manageLink")}
+            </button>
+          </div>
         </div>
       ) : (
         <>
@@ -89,7 +244,7 @@ const Subscription = () => {
             ))}
           </ul>
 
-          <div className="subscription__plans">
+          <div id="subscription-plans" className="subscription__plans">
             {PLANS.map((plan) => (
               <div
                 key={plan.id}
@@ -103,8 +258,13 @@ const Subscription = () => {
                 </p>
 
                 {isAuthenticated ? (
-                  <button type="button" className="btn btn--primary subscription__cta" onClick={handleSubscribeClick}>
-                    {t("subscription.ctaSubscribe")}
+                  <button
+                    type="button"
+                    className="btn btn--primary subscription__cta"
+                    disabled={loadingPlanId === plan.id}
+                    onClick={() => handleSubscribeClick(plan.id)}
+                  >
+                    {loadingPlanId === plan.id ? t("subscription.ctaLoading") : t("subscription.ctaSubscribe")}
                   </button>
                 ) : (
                   <Link to="/register" className="btn btn--primary subscription__cta">

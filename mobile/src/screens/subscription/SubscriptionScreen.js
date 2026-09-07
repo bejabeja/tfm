@@ -1,9 +1,14 @@
-import { Alert, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { useCallback, useState } from 'react';
+import { Alert, Linking, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
+import { useFocusEffect } from '@react-navigation/native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useTranslation } from 'react-i18next';
-import { selectAuthUser, selectIsAuthenticated, selectMe } from '@tobeatraveller/shared';
+import {
+  createCheckoutSession, createPortalSession, getMySubscription, resumeSubscription,
+  selectAuthUser, selectIsAuthenticated, selectMe, setUserInfo,
+} from '@tobeatraveller/shared';
 import { shadow } from '../../utils/styles';
 
 // The emoji itself is the icon (in the colored badge), so titles here are
@@ -35,17 +40,83 @@ const PLANS = [
 
 const SubscriptionScreen = ({ navigation }) => {
   const { t } = useTranslation();
+  const dispatch = useDispatch();
   const insets = useSafeAreaInsets();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const meDetail = useSelector(selectMe);
   const authUser = useSelector(selectAuthUser);
   const user = meDetail ?? authUser;
   const isPremium = !!user?.isPremium;
+  const [loadingPlanId, setLoadingPlanId] = useState(null);
+  const [loadingPortal, setLoadingPortal] = useState(false);
+  const [subscription, setSubscription] = useState(null);
+  const [resuming, setResuming] = useState(false);
+  // Distinct from a canceled *paid* subscription: this user never got
+  // charged and has nothing to lose by resuming, so it's a retention moment
+  // worth a more persuasive treatment than the plain "already premium" card.
+  const isTrialCanceled = subscription?.cancelAtPeriodEnd && subscription?.status === 'trialing';
+  // A failed renewal charge (Stripe status "past_due"): access isn't revoked
+  // yet (Stripe is still retrying), but the user needs to fix their payment
+  // method or they'll eventually lose Premium when retries run out.
+  const isPaymentFailed = subscription?.status === 'past_due';
 
-  const handleSubscribeClick = () => Alert.alert(t('subscription.comingSoonToast'));
+  // Checkout opens in the system browser (no in-app deep link back, see
+  // mobile/AGENTS.md: no Apple/Google Play accounts to register one), so the
+  // only way to pick up a completed subscription is to re-fetch `me` whenever
+  // this screen regains focus after the user switches back from the browser.
+  // The subscription row is fetched alongside it so the screen can tell a
+  // trial or a pending cancellation apart from a normal active subscription
+  // (`isPremium` alone can't).
+  useFocusEffect(
+    useCallback(() => {
+      if (user?.id) dispatch(setUserInfo(user.id));
+      if (isPremium) getMySubscription().then(setSubscription).catch(() => {});
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [user?.id, isPremium])
+  );
+
+  const handleSubscribeClick = async (planId) => {
+    setLoadingPlanId(planId);
+    try {
+      const { url } = await createCheckoutSession(planId);
+      await Linking.openURL(url);
+    } catch (error) {
+      Alert.alert(error.message || t('subscription.checkoutErrorToast'));
+    } finally {
+      setLoadingPlanId(null);
+    }
+  };
+
+  const handleResumeClick = async () => {
+    setResuming(true);
+    try {
+      const updated = await resumeSubscription();
+      setSubscription(updated);
+    } catch (error) {
+      Alert.alert(error.message || t('subscription.resumeErrorToast'));
+    } finally {
+      setResuming(false);
+    }
+  };
+
+  const handleManageSubscriptionClick = async () => {
+    setLoadingPortal(true);
+    try {
+      const { url } = await createPortalSession();
+      await Linking.openURL(url);
+    } catch (error) {
+      Alert.alert(error.message || t('subscription.portalErrorToast'));
+    } finally {
+      setLoadingPortal(false);
+    }
+  };
+
+  // The annual plan is the recommended/highlighted one (see PLANS below), so
+  // the hero's single "free trial" CTA defaults to it instead of making the
+  // user scroll down and pick before they can even start.
   const handleTrialClick = () => {
     if (isAuthenticated) {
-      handleSubscribeClick();
+      handleSubscribeClick('annual');
     } else {
       navigation.navigate('Register');
     }
@@ -77,11 +148,76 @@ const SubscriptionScreen = ({ navigation }) => {
           )}
         </View>
 
-        {isPremium ? (
+        {isTrialCanceled ? (
+          <View style={styles.winBack}>
+            <Ionicons name="hourglass-outline" size={36} color="#E8743B" style={styles.winBackIcon} />
+            <Text style={styles.winBackTitle}>{t('subscription.trialCanceledTitle')}</Text>
+            <Text style={styles.winBackDesc}>
+              {t('subscription.trialCanceledDesc', { date: new Date(subscription.currentPeriodEnd).toLocaleDateString() })}
+            </Text>
+            <Text style={styles.winBackReminder}>{t('subscription.trialCanceledReminder')}</Text>
+
+            <TouchableOpacity
+              style={styles.winBackCta}
+              disabled={resuming}
+              onPress={handleResumeClick}
+            >
+              <Text style={styles.winBackCtaText}>
+                {resuming ? t('subscription.ctaLoading') : t('subscription.ctaResumeTrial')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : isPaymentFailed ? (
+          <View style={styles.paymentFailed}>
+            <Ionicons name="alert-circle-outline" size={36} color="#dc2626" style={styles.paymentFailedIcon} />
+            <Text style={styles.paymentFailedTitle}>{t('subscription.paymentFailedTitle')}</Text>
+            <Text style={styles.paymentFailedDesc}>{t('subscription.paymentFailedDesc')}</Text>
+
+            <TouchableOpacity
+              style={styles.manageBtn}
+              disabled={loadingPortal}
+              onPress={handleManageSubscriptionClick}
+            >
+              <Text style={styles.manageBtnText}>
+                {loadingPortal ? t('subscription.ctaLoading') : t('subscription.manageLink')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        ) : isPremium ? (
           <View style={styles.alreadyPremium}>
             <Ionicons name="checkmark-circle" size={36} color="#16a34a" style={styles.alreadyPremiumIcon} />
             <Text style={styles.alreadyPremiumTitle}>{t('subscription.alreadyPremiumTitle')}</Text>
-            <Text style={styles.alreadyPremiumDesc}>{t('subscription.alreadyPremiumDesc')}</Text>
+            <Text style={styles.alreadyPremiumDesc}>
+              {subscription?.cancelAtPeriodEnd
+                ? t('subscription.canceledDesc', { date: new Date(subscription.currentPeriodEnd).toLocaleDateString() })
+                : subscription?.status === 'trialing'
+                  ? t('subscription.trialActiveDesc', { date: new Date(subscription.currentPeriodEnd).toLocaleDateString() })
+                  : t('subscription.alreadyPremiumDesc')}
+            </Text>
+
+            <View style={styles.alreadyPremiumActions}>
+              {subscription?.cancelAtPeriodEnd && (
+                <TouchableOpacity
+                  style={styles.resumeBtn}
+                  disabled={resuming}
+                  onPress={handleResumeClick}
+                >
+                  <Text style={styles.resumeBtnText}>
+                    {resuming ? t('subscription.ctaLoading') : t('subscription.ctaResume')}
+                  </Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity
+                style={styles.manageBtn}
+                disabled={loadingPortal}
+                onPress={handleManageSubscriptionClick}
+              >
+                <Text style={styles.manageBtnText}>
+                  {loadingPortal ? t('subscription.ctaLoading') : t('subscription.manageLink')}
+                </Text>
+              </TouchableOpacity>
+            </View>
           </View>
         ) : (
           <>
@@ -118,8 +254,14 @@ const SubscriptionScreen = ({ navigation }) => {
                   </View>
 
                   {isAuthenticated ? (
-                    <TouchableOpacity style={styles.planCta} onPress={handleSubscribeClick}>
-                      <Text style={styles.planCtaText}>{t('subscription.ctaSubscribe')}</Text>
+                    <TouchableOpacity
+                      style={styles.planCta}
+                      disabled={loadingPlanId === plan.id}
+                      onPress={() => handleSubscribeClick(plan.id)}
+                    >
+                      <Text style={styles.planCtaText}>
+                        {loadingPlanId === plan.id ? t('subscription.ctaLoading') : t('subscription.ctaSubscribe')}
+                      </Text>
                     </TouchableOpacity>
                   ) : (
                     <TouchableOpacity style={styles.planCta} onPress={() => navigation.navigate('Register')}>
@@ -181,6 +323,49 @@ const styles = StyleSheet.create({
   alreadyPremiumIcon: { marginBottom: 8 },
   alreadyPremiumTitle: { fontSize: 17, fontWeight: '700', color: '#111827', marginBottom: 6 },
   alreadyPremiumDesc: { fontSize: 13, color: '#6b7280', textAlign: 'center', lineHeight: 19 },
+  alreadyPremiumActions: {
+    flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'center',
+    gap: 10, marginTop: 16,
+  },
+  manageBtn: {
+    borderRadius: 999, borderWidth: 1.5, borderColor: '#d1d5db',
+    paddingVertical: 11, paddingHorizontal: 22,
+  },
+  manageBtnText: { color: '#111827', fontWeight: '700', fontSize: 13.5 },
+  resumeBtn: {
+    backgroundColor: '#E8743B', borderRadius: 999,
+    paddingVertical: 11, paddingHorizontal: 22,
+  },
+  resumeBtnText: { color: '#fff', fontWeight: '700', fontSize: 13.5 },
+
+  // Warmer/on-brand treatment (not the alreadyPremium green above) on
+  // purpose: this is a retention moment, not a confirmation - the trial was
+  // canceled but nothing has been charged yet, so the CTA is the whole point.
+  winBack: {
+    alignItems: 'center', backgroundColor: '#FFF0E8',
+    borderWidth: 1.5, borderColor: '#E8743B',
+    borderRadius: 16, padding: 28, marginTop: 8,
+  },
+  winBackIcon: { marginBottom: 8 },
+  winBackTitle: { fontSize: 18, fontWeight: '800', color: '#111827', marginBottom: 8, textAlign: 'center' },
+  winBackDesc: { fontSize: 13, color: '#6b7280', textAlign: 'center', lineHeight: 19 },
+  winBackReminder: { fontSize: 13, color: '#111827', fontWeight: '600', textAlign: 'center', lineHeight: 19, marginTop: 10 },
+  winBackCta: {
+    backgroundColor: '#E8743B', borderRadius: 999,
+    paddingVertical: 13, paddingHorizontal: 28, marginTop: 20,
+  },
+  winBackCtaText: { color: '#fff', fontWeight: '700', fontSize: 14 },
+
+  // A warning, distinct from the green "you're set" and orange "come back"
+  // treatments above: the user's card actually failed.
+  paymentFailed: {
+    alignItems: 'center', backgroundColor: '#FEF2F2',
+    borderWidth: 1.5, borderColor: '#dc2626',
+    borderRadius: 16, padding: 28, marginTop: 8,
+  },
+  paymentFailedIcon: { marginBottom: 8 },
+  paymentFailedTitle: { fontSize: 17, fontWeight: '700', color: '#111827', marginBottom: 6, textAlign: 'center' },
+  paymentFailedDesc: { fontSize: 13, color: '#6b7280', textAlign: 'center', lineHeight: 19 },
 
   featuresTitle: {
     fontSize: 15, fontWeight: '700', color: '#111827',

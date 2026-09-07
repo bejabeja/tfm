@@ -134,6 +134,27 @@ export class UserRepository {
         return result.rows.length ? User.fromDb(result.rows[0]) : null;
     }
 
+    // Guarded on stripe_customer_id IS NULL so two concurrent first-time
+    // checkout requests for the same user can't each create their own Stripe
+    // customer and have the second write silently orphan the first: only one
+    // of them wins this UPDATE (returns null for the loser), and the caller
+    // is expected to fall back to whichever id actually got persisted.
+    async setStripeCustomerIdIfUnset(id, stripeCustomerId) {
+        const result = await db.query(
+            "UPDATE users SET stripe_customer_id = $1, updated_at = NOW() WHERE id = $2 AND stripe_customer_id IS NULL RETURNING *",
+            [stripeCustomerId, id]
+        );
+        return result.rows.length ? User.fromDb(result.rows[0]) : null;
+    }
+
+    async findByStripeCustomerId(stripeCustomerId) {
+        const result = await db.query(
+            "SELECT * FROM users WHERE stripe_customer_id = $1",
+            [stripeCustomerId]
+        );
+        return result.rows.length ? User.fromDb(result.rows[0]) : null;
+    }
+
     async updatePassword(id, hashedPassword) {
         await db.query(
             "UPDATE users SET password = $1, updated_at = NOW() WHERE id = $2",

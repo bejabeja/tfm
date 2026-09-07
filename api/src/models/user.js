@@ -5,7 +5,8 @@ export class User {
     constructor({
         id, username, email, password, location, avatarUrl, avatarPublicId,
         createdAt, updatedAt, name, followersListIds,
-        followingListIds, itineraries, bio, about, totalItineraries, role, premiumUntil
+        followingListIds, itineraries, bio, about, totalItineraries, role, premiumUntil,
+        stripeCustomerId
     }) {
         this.id = id;
         this.username = username;
@@ -16,6 +17,7 @@ export class User {
         this.avatarPublicId = avatarPublicId || null;
         this.role = role || 'user';
         this.premiumUntil = premiumUntil || null;
+        this.stripeCustomerId = stripeCustomerId || null;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.name = name || null;
@@ -38,6 +40,7 @@ export class User {
             avatarPublicId: row.avatar_public_id,
             role: row.role,
             premiumUntil: row.premium_until,
+            stripeCustomerId: row.stripe_customer_id,
             createdAt: row.created_at,
             updatedAt: row.updated_at,
             name: row.name,

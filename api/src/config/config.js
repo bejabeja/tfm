@@ -24,6 +24,11 @@ const config = {
     appUrl: process.env.APP_URL || 'http://localhost:5173',
 
     cronSecret: process.env.CRON_SECRET,
+
+    stripeSecretKey: process.env.STRIPE_SECRET_KEY,
+    stripeWebhookSecret: process.env.STRIPE_WEBHOOK_SECRET,
+    stripePriceIdMonthly: process.env.STRIPE_PRICE_ID_MONTHLY,
+    stripePriceIdAnnual: process.env.STRIPE_PRICE_ID_ANNUAL,
 };
 
 export default config;

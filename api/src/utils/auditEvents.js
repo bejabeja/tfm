@@ -15,4 +15,6 @@ export const AUDIT_EVENTS = Object.freeze({
     TIER_UPDATED: 'tier_updated',
     AUDIT_LOG_PURGED: 'audit_log_purged',
     AI_ITINERARY_GENERATED: 'ai_itinerary_generated',
+    SUBSCRIPTION_STARTED: 'subscription_started',
+    SUBSCRIPTION_CANCELED: 'subscription_canceled',
 });

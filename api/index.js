@@ -27,6 +27,8 @@ import { createVanLogsRouter } from './src/routes/vanLogsRouter.js';
 import { createSuppliesRouter } from './src/routes/suppliesRouter.js';
 import { createPackingChecklistRouter } from './src/routes/packingChecklistRouter.js';
 import { createLifeDiaryRouter } from './src/routes/lifeDiaryRouter.js';
+import { createSubscriptionRouter } from './src/routes/subscriptionRouter.js';
+import { createSubscriptionWebhookRouter } from './src/routes/subscriptionWebhookRouter.js';
 
 const app = express();
 const premiumOnly = requirePremium(new UserRepository());
@@ -36,6 +38,9 @@ const premiumOnly = requirePremium(new UserRepository());
 app.set('trust proxy', true);
 
 app.use(corsMiddleware());
+// Mounted before express.json(): Stripe's signature verification needs the
+// raw request body (see subscriptionWebhookRouter.js).
+app.use('/subscription/webhook', createSubscriptionWebhookRouter());
 app.use(express.json());
 app.disable('x-powered-by');
 app.use(cookieParser())
@@ -52,6 +57,7 @@ app.use('/van-logs', authenticate, premiumOnly, createVanLogsRouter());
 app.use('/supplies', authenticate, premiumOnly, createSuppliesRouter());
 app.use('/packing-checklist', authenticate, premiumOnly, createPackingChecklistRouter());
 app.use('/life-diary', authenticate, premiumOnly, createLifeDiaryRouter());
+app.use('/subscription', authenticate, createSubscriptionRouter());
 // Auth/role checks live inside the router itself: the scheduled-purge route
 // is triggered by Vercel Cron with a shared secret instead of a user JWT, so
 // it can't sit behind a blanket authenticate() at the mount point.

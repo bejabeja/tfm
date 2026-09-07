@@ -12,6 +12,7 @@ export * from './services/supplies.js';
 export * from './services/packingChecklist.js';
 export * from './services/lifeDiary.js';
 export * from './services/auditLog.js';
+export * from './services/subscription.js';
 
 // Store
 export * from './store/store.js';

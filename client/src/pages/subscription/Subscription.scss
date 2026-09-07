@@ -218,4 +218,92 @@
     font-size: 36px;
     color: var(--success-color);
   }
+
+  &__already-premium-actions {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  // Warmer/on-brand treatment (not the green "you're set" one above) on
+  // purpose: this is a retention moment, not a confirmation - the trial was
+  // canceled but nothing has been charged yet, so the CTA is the whole point.
+  &__win-back {
+    text-align: center;
+    background: var(--primary-light);
+    border: 1.5px solid var(--primary-color);
+    border-radius: 16px;
+    padding: 40px 24px;
+    max-width: 520px;
+    margin: 0 auto;
+
+    h2 {
+      margin: 8px 0 8px;
+      font-size: 22px;
+      color: var(--text-color);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary-color);
+      font-size: 15px;
+      line-height: 1.6;
+
+      &.subscription__win-back-reminder {
+        margin-top: 10px;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+    }
+  }
+
+  &__win-back-icon {
+    width: 1em;
+    height: 1em;
+    font-size: 36px;
+    color: var(--primary-color);
+  }
+
+  &__win-back-cta {
+    margin-top: 24px;
+    padding: 0.95rem 2.2rem;
+  }
+
+  // Distinct from both the green "you're set" and the orange "come back"
+  // treatments above: this is a warning, the user's card actually failed.
+  &__payment-failed {
+    text-align: center;
+    background: color-mix(in srgb, var(--error-color) 10%, transparent);
+    border: 1.5px solid var(--error-color);
+    border-radius: 16px;
+    padding: 40px 24px;
+    max-width: 520px;
+    margin: 0 auto;
+
+    h2 {
+      margin: 8px 0 8px;
+      font-size: 20px;
+      color: var(--text-color);
+    }
+
+    p {
+      margin: 0;
+      color: var(--text-secondary-color);
+      font-size: 15px;
+      line-height: 1.6;
+    }
+  }
+
+  &__payment-failed-icon {
+    width: 1em;
+    height: 1em;
+    font-size: 36px;
+    color: var(--error-color);
+  }
+
+  &__payment-failed-cta {
+    margin-top: 24px;
+  }
 }
