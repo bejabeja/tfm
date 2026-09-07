@@ -334,25 +334,37 @@ const ProfileScreen = ({ route, navigation }) => {
               style={styles.contactBtn}
               onPress={() => navigation.navigate('VanLog')}
             >
-              <Text style={styles.contactText}>🚐 {t('vanLog.title')}</Text>
+              <View style={styles.premiumToolRow}>
+                <Text style={styles.contactText}>🚐 {t('vanLog.title')}</Text>
+                {!user?.isPremium && <Text style={styles.premiumBadge}>{t('admin.premium')}</Text>}
+              </View>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.contactBtn}
               onPress={() => navigation.navigate('Supplies')}
             >
-              <Text style={styles.contactText}>🛒 {t('supplies.title')}</Text>
+              <View style={styles.premiumToolRow}>
+                <Text style={styles.contactText}>🛒 {t('supplies.title')}</Text>
+                {!user?.isPremium && <Text style={styles.premiumBadge}>{t('admin.premium')}</Text>}
+              </View>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.contactBtn}
               onPress={() => navigation.navigate('PackingChecklist')}
             >
-              <Text style={styles.contactText}>🎒 {t('packingChecklist.title')}</Text>
+              <View style={styles.premiumToolRow}>
+                <Text style={styles.contactText}>🎒 {t('packingChecklist.title')}</Text>
+                {!user?.isPremium && <Text style={styles.premiumBadge}>{t('admin.premium')}</Text>}
+              </View>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.contactBtn}
               onPress={() => navigation.navigate('LifeDiary')}
             >
-              <Text style={styles.contactText}>📔 {t('lifeDiary.title')}</Text>
+              <View style={styles.premiumToolRow}>
+                <Text style={styles.contactText}>📔 {t('lifeDiary.title')}</Text>
+                {!user?.isPremium && <Text style={styles.premiumBadge}>{t('admin.premium')}</Text>}
+              </View>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.contactBtn}
@@ -652,6 +664,12 @@ const styles = StyleSheet.create({
     borderRadius: 10, paddingVertical: 10, alignItems: 'center',
   },
   contactText: { color: '#374151', fontSize: 14, fontWeight: '600' },
+  premiumToolRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+  premiumBadge: {
+    color: '#E8743B', backgroundColor: '#FFF0E8',
+    fontSize: 10, fontWeight: '700', textTransform: 'uppercase', letterSpacing: 0.4,
+    paddingVertical: 2, paddingHorizontal: 7, borderRadius: 999,
+  },
   logoutBtn: {
     marginHorizontal: 16, marginTop: 10,
     borderWidth: 1, borderColor: '#fecaca',

@@ -5,6 +5,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Modal, Platform, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useState } from 'react';
 import { useSelector } from 'react-redux';
+import { useTranslation } from 'react-i18next';
 import { selectIsAuthenticated } from '@tobeatraveller/shared';
 import { COLORS } from '../utils/styles';
 
@@ -58,6 +59,7 @@ const CreateButton = ({ onPress }) => (
 );
 
 const TabNavigator = ({ navigation }) => {
+  const { t } = useTranslation();
   const [showSheet, setShowSheet] = useState(false);
 
   return (
@@ -87,8 +89,8 @@ const TabNavigator = ({ navigation }) => {
           ),
         })}
       >
-        <Tab.Screen name="Home"      component={HomeScreen}      options={{ tabBarLabel: 'Home' }} />
-        <Tab.Screen name="Explore"   component={ExploreScreen}   options={{ tabBarLabel: 'Explore' }} />
+        <Tab.Screen name="Home"      component={HomeScreen}      options={{ tabBarLabel: t('nav.home') }} />
+        <Tab.Screen name="Explore"   component={ExploreScreen}   options={{ tabBarLabel: t('nav.explore') }} />
         <Tab.Screen
           name="Create"
           component={CreateItineraryScreen}
@@ -97,8 +99,10 @@ const TabNavigator = ({ navigation }) => {
             tabBarButton: () => <CreateButton onPress={() => setShowSheet(true)} />,
           }}
         />
-        <Tab.Screen name="Community" component={CommunityScreen} options={{ tabBarLabel: 'People' }} />
-        <Tab.Screen name="Profile"   component={ProfileScreen}   options={{ tabBarLabel: 'Profile' }} />
+        {/* "Community" everywhere else in the app (page title, web nav); this
+            used to say "People" here, the only place that named it differently. */}
+        <Tab.Screen name="Community" component={CommunityScreen} options={{ tabBarLabel: t('community.title') }} />
+        <Tab.Screen name="Profile"   component={ProfileScreen}   options={{ tabBarLabel: t('nav.profile') }} />
       </Tab.Navigator>
 
       {/* Create type bottom sheet */}
@@ -106,7 +110,7 @@ const TabNavigator = ({ navigation }) => {
         <TouchableOpacity style={tb.backdrop} onPress={() => setShowSheet(false)} activeOpacity={1}>
           <View style={tb.sheet}>
             <View style={tb.handle} />
-            <Text style={tb.sheetTitle}>What do you want to create?</Text>
+            <Text style={tb.sheetTitle}>{t('nav.createSheetTitle')}</Text>
 
             {/* Option 1: Itinerary */}
             <TouchableOpacity
@@ -118,8 +122,8 @@ const TabNavigator = ({ navigation }) => {
                 <Ionicons name="list-outline" size={28} color={COLORS.accent} />
               </View>
               <View style={tb.optionText}>
-                <Text style={[tb.optionTitle, { color: COLORS.accent }]}>Itinerary</Text>
-                <Text style={tb.optionDesc}>Plan day by day: places, budget, and all the details.</Text>
+                <Text style={[tb.optionTitle, { color: COLORS.accent }]}>{t('nav.createSheetItinerary')}</Text>
+                <Text style={tb.optionDesc}>{t('nav.createSheetItineraryDesc')}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
             </TouchableOpacity>
@@ -134,14 +138,14 @@ const TabNavigator = ({ navigation }) => {
                 <Ionicons name="flash-outline" size={28} color={COLORS.primary} />
               </View>
               <View style={tb.optionText}>
-                <Text style={[tb.optionTitle, { color: COLORS.primary }]}>Experience</Text>
-                <Text style={tb.optionDesc}>Tell AI where you're going, it plans the whole journey.</Text>
+                <Text style={[tb.optionTitle, { color: COLORS.primary }]}>{t('nav.createSheetExperience')}</Text>
+                <Text style={tb.optionDesc}>{t('nav.createSheetExperienceDesc')}</Text>
               </View>
               <Ionicons name="chevron-forward" size={18} color="#D1D5DB" />
             </TouchableOpacity>
 
             <TouchableOpacity style={tb.cancelBtn} onPress={() => setShowSheet(false)}>
-              <Text style={tb.cancelText}>Cancel</Text>
+              <Text style={tb.cancelText}>{t('nav.createSheetCancel')}</Text>
             </TouchableOpacity>
           </View>
         </TouchableOpacity>

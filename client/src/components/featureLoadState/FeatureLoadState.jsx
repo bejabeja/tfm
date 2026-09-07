@@ -1,4 +1,5 @@
 import { useTranslation } from "react-i18next";
+import { Link } from "react-router-dom";
 import { IoAlertCircleOutline, IoLockClosedOutline } from "react-icons/io5";
 import "./FeatureLoadState.scss";
 
@@ -13,6 +14,9 @@ const FeatureLoadState = ({ status, onRetry }) => {
         <IoLockClosedOutline className="feature-load-state__icon" />
         <p className="feature-load-state__title">{t("premium.requiredTitle")}</p>
         <p className="feature-load-state__desc">{t("premium.requiredDesc")}</p>
+        <Link to="/subscription" className="btn btn--primary">
+          {t("premium.requiredCta")}
+        </Link>
       </div>
     );
   }

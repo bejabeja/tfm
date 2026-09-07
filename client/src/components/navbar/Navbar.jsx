@@ -2,18 +2,22 @@ import { useEffect, useState } from "react";
 import { GoHome, GoPerson, GoSignIn, GoSignOut } from "react-icons/go";
 import {
   IoAddOutline,
+  IoBookOutline,
+  IoBriefcaseOutline,
   IoCardOutline,
+  IoCartOutline,
   IoChevronBack,
   IoChevronDownOutline,
   IoChevronForward,
   IoChevronForward as IoChevronForwardOutline,
+  IoCompassOutline,
   IoFlashOutline,
+  IoJournalOutline,
   IoListOutline,
   IoNotificationsOutline,
-  IoSearch,
   IoSearchOutline,
 } from "react-icons/io5";
-import { useDispatch, useSelector } from "react-redux";
+import { useSelector } from "react-redux";
 import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { selectUnreadCount } from "@tobeatraveller/shared";
@@ -31,9 +35,81 @@ const LANGUAGES = [
   { code: "en", flag: "🇬🇧", label: "English" },
 ];
 
-const Navbar = () => {
+// The four tools the subscription page itself sells as the reason to go
+// Premium (see PREMIUM_FEATURES in Subscription.jsx); showing them here too
+// (not just buried inside Mi cuenta) so a free user keeps seeing exactly
+// what they're missing, badge and all, wherever they look for the nav.
+const PREMIUM_TOOLS = [
+  { to: "/van-log", Icon: IoBookOutline, labelKey: "nav.vanLog" },
+  { to: "/supplies", Icon: IoCartOutline, labelKey: "nav.supplies" },
+  { to: "/packing-checklist", Icon: IoBriefcaseOutline, labelKey: "nav.packingChecklist", iconClassName: "nav-icon--briefcase" },
+  { to: "/life-diary", Icon: IoJournalOutline, labelKey: "nav.lifeDiary" },
+];
+
+// Self-contained (not lifted into Navbar's own state) so it can be mounted
+// twice at once without cross-talk: once in the marketing top nav (desktop/
+// tablet) and once in the mobile header (<480px, see .mobile-header__lang),
+// which previously had no way to switch language at all.
+const LanguageSwitcher = () => {
   const { t, i18n } = useTranslation();
-  const dispatch   = useDispatch();
+  const location = useLocation();
+  const [isOpen, setIsOpen] = useState(false);
+  const currentLanguage = LANGUAGES.find((lang) => i18n.language?.startsWith(lang.code)) ?? LANGUAGES[0];
+
+  useEffect(() => setIsOpen(false), [location]);
+
+  return (
+    <div className="lang-switcher">
+      <button
+        type="button"
+        className="lang-switcher__trigger"
+        onClick={() => setIsOpen((v) => !v)}
+        aria-haspopup="listbox"
+        aria-expanded={isOpen}
+        aria-label={t("settings.language")}
+      >
+        <span aria-hidden="true">{currentLanguage.flag}</span>
+        <IoChevronDownOutline className="lang-switcher__chevron" aria-hidden="true" />
+      </button>
+
+      {isOpen && (
+        <>
+          <div className="lang-switcher__backdrop" onClick={() => setIsOpen(false)} />
+          <ul className="lang-switcher__menu" role="listbox">
+            {LANGUAGES.map((lang) => (
+              <li key={lang.code}>
+                <button
+                  type="button"
+                  className={`lang-switcher__option${lang.code === currentLanguage.code ? " lang-switcher__option--active" : ""}`}
+                  role="option"
+                  aria-selected={lang.code === currentLanguage.code}
+                  onClick={() => { i18n.changeLanguage(lang.code); setIsOpen(false); }}
+                >
+                  <span aria-hidden="true">{lang.flag}</span>
+                  <span>{lang.label}</span>
+                </button>
+              </li>
+            ))}
+          </ul>
+        </>
+      )}
+    </div>
+  );
+};
+
+// Below this, the sidebar auto-collapses to its icon-only rail (tablet-width
+// viewports get a persistent-but-compact nav instead of the full 240px one,
+// which felt like a phone-in-landscape/small-tablet got the desktop layout
+// with zero adaptation); at or above it, full width is the default. Reuses
+// the exact same ":root.sidebar-collapsed" CSS the manual toggle already
+// drives (Navbar.scss), no new breakpoint needed there. Only applies until
+// the user makes an explicit choice via the collapse toggle, which is then
+// remembered regardless of width.
+const SIDEBAR_AUTO_COLLAPSE_BELOW_WIDTH = 900;
+const SIDEBAR_COLLAPSED_STORAGE_KEY = "sidebar-collapsed";
+
+const Navbar = () => {
+  const { t } = useTranslation();
   const navigate   = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const userMe     = useSelector(selectMe);
@@ -43,10 +119,10 @@ const Navbar = () => {
   const [meOpen, setMeOpen]             = useState(false);
   const [createOpen, setCreateOpen]     = useState(false);
   const [searchOpen, setSearchOpen]     = useState(false);
-  const [langMenuOpen, setLangMenuOpen] = useState(false);
-  const [isCollapsed, setIsCollapsed]   = useState(
-    () => localStorage.getItem("sidebar-collapsed") === "true"
-  );
+  const [isCollapsed, setIsCollapsed]   = useState(() => {
+    const stored = localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
+    return stored !== null ? stored === "true" : window.innerWidth < SIDEBAR_AUTO_COLLAPSE_BELOW_WIDTH;
+  });
 
   const isAuthRoute = ["/login", "/register"].includes(location.pathname);
   const isHomePage = location.pathname === "/";
@@ -55,7 +131,6 @@ const Navbar = () => {
     setMeOpen(false);
     setCreateOpen(false);
     setSearchOpen(false);
-    setLangMenuOpen(false);
   }, [location]);
 
   // Home's hero photo runs full-bleed behind the marketing nav (see
@@ -70,7 +145,6 @@ const Navbar = () => {
     return () => window.removeEventListener("scroll", handleScroll);
   }, [isHomePage]);
   const isTransparentNav = isHomePage && !isScrolledPastHero;
-  const currentLanguage = LANGUAGES.find((lang) => i18n.language?.startsWith(lang.code)) ?? LANGUAGES[0];
 
   // Anonymous visitors get the horizontal marketing nav (see the ternary
   // below), never the collapsible sidebar, so this class must not linger on
@@ -82,8 +156,28 @@ const Navbar = () => {
       return;
     }
     document.documentElement.classList.toggle("sidebar-collapsed", isCollapsed);
-    localStorage.setItem("sidebar-collapsed", isCollapsed);
   }, [isCollapsed, isAuthenticated]);
+
+  // Keeps the tablet-width auto-collapse live as the window is resized, but
+  // only until the user has clicked the toggle once: from then on
+  // toggleSidebar() below is the only thing allowed to touch isCollapsed, so
+  // an explicit preference is never silently overridden by a resize.
+  useEffect(() => {
+    const handleResize = () => {
+      if (localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY) !== null) return;
+      setIsCollapsed(window.innerWidth < SIDEBAR_AUTO_COLLAPSE_BELOW_WIDTH);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const toggleSidebar = () => {
+    setIsCollapsed((collapsed) => {
+      const next = !collapsed;
+      localStorage.setItem(SIDEBAR_COLLAPSED_STORAGE_KEY, next);
+      return next;
+    });
+  };
 
   const openCreate = () => setCreateOpen(true);
   const handleCreate = (path) => { setCreateOpen(false); navigate(path); };
@@ -96,6 +190,25 @@ const Navbar = () => {
           <Link to="/" className="logo">
             <img src="/logo.svg" alt="ToBeATraveller" className="logo__full" height="28" />
           </Link>
+          {/* Desktop gets notifications as a sidebar nav-item; the mobile
+              bottom-nav has no room for a 6th icon, so it lives here instead,
+              the only other persistent chrome on small screens. */}
+          {isAuthenticated && (
+            <Link to="/notifications" className="mobile-header__notif" aria-label={t("nav.notifications")}>
+              <IoNotificationsOutline className="mobile-header__notif-icon" />
+              {unreadCount > 0 && (
+                <span className="nav-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
+              )}
+            </Link>
+          )}
+          {/* Anonymous visitors have no sidebar/marketing-nav on mobile web
+              (both hidden below 480px), so without this the language switch
+              added to the marketing nav wasn't reachable here at all. */}
+          {!isAuthenticated && (
+            <div className="mobile-header__lang">
+              <LanguageSwitcher />
+            </div>
+          )}
         </div>
       )}
 
@@ -119,7 +232,7 @@ const Navbar = () => {
               <span>{t("nav.home")}</span>
             </NavLink>
             <NavLink to="/explore" className="nav-item" title={t("nav.explore")}>
-              <IoSearch className="nav-icon" />
+              <IoCompassOutline className="nav-icon" />
               <span>{t("nav.explore")}</span>
             </NavLink>
           </div>
@@ -129,6 +242,19 @@ const Navbar = () => {
             <IoAddOutline className="nav-icon" />
             <span>{t("nav.createTrip")}</span>
           </button>
+
+          <div className="nav-section">
+            <h3>{t("nav.yourTools")}</h3>
+            {PREMIUM_TOOLS.map(({ to, Icon, labelKey, iconClassName }) => (
+              <NavLink key={to} to={to} className="nav-item" title={t(labelKey)}>
+                <Icon className={iconClassName ? `nav-icon ${iconClassName}` : "nav-icon"} />
+                <span>{t(labelKey)}</span>
+                {!userMe?.isPremium && (
+                  <span className="nav-item__premium-badge">{t("admin.premium")}</span>
+                )}
+              </NavLink>
+            ))}
+          </div>
 
           <div className="nav-section">
             <h3>{t("nav.yourSpace")}</h3>
@@ -154,7 +280,7 @@ const Navbar = () => {
           <div className="navbar__bottom">
             <button
               className="navbar__toggle"
-              onClick={() => setIsCollapsed((v) => !v)}
+              onClick={toggleSidebar}
               title={isCollapsed ? t("nav.expandSidebar") : t("nav.collapseSidebar")}
             >
               {isCollapsed ? <IoChevronForward className="nav-icon" /> : <IoChevronBack className="nav-icon" />}
@@ -202,41 +328,7 @@ const Navbar = () => {
             </div>
 
             <div className="marketing-navbar__auth">
-              <div className="marketing-navbar__lang">
-                <button
-                  type="button"
-                  className="marketing-navbar__lang-trigger"
-                  onClick={() => setLangMenuOpen((v) => !v)}
-                  aria-haspopup="listbox"
-                  aria-expanded={langMenuOpen}
-                  aria-label={t("settings.language")}
-                >
-                  <span aria-hidden="true">{currentLanguage.flag}</span>
-                  <IoChevronDownOutline className="marketing-navbar__lang-chevron" aria-hidden="true" />
-                </button>
-
-                {langMenuOpen && (
-                  <>
-                    <div className="marketing-navbar__lang-backdrop" onClick={() => setLangMenuOpen(false)} />
-                    <ul className="marketing-navbar__lang-menu" role="listbox">
-                      {LANGUAGES.map((lang) => (
-                        <li key={lang.code}>
-                          <button
-                            type="button"
-                            className={`marketing-navbar__lang-option${lang.code === currentLanguage.code ? " marketing-navbar__lang-option--active" : ""}`}
-                            role="option"
-                            aria-selected={lang.code === currentLanguage.code}
-                            onClick={() => { i18n.changeLanguage(lang.code); setLangMenuOpen(false); }}
-                          >
-                            <span aria-hidden="true">{lang.flag}</span>
-                            <span>{lang.label}</span>
-                          </button>
-                        </li>
-                      ))}
-                    </ul>
-                  </>
-                )}
-              </div>
+              <LanguageSwitcher />
               <Link to="/login" className="marketing-navbar__login">{t("nav.login")}</Link>
               <Link to="/register" className="btn btn--primary marketing-navbar__register">{t("nav.createAccountBtn")}</Link>
             </div>
@@ -253,6 +345,16 @@ const Navbar = () => {
               <GoPerson className="me-panel__icon" />
               <span>{t("nav.myAccount")}</span>
             </NavLink>
+            {PREMIUM_TOOLS.map(({ to, Icon, labelKey, iconClassName }) => (
+              <NavLink key={to} to={to} className="me-panel__item">
+                <Icon className={iconClassName ? `me-panel__icon ${iconClassName}` : "me-panel__icon"} />
+                <span>{t(labelKey)}</span>
+                {!userMe?.isPremium && (
+                  <span className="me-panel__premium-badge">{t("admin.premium")}</span>
+                )}
+              </NavLink>
+            ))}
+            <div className="me-panel__divider" />
             <NavLink to="/subscription" className="me-panel__item">
               <IoCardOutline className="me-panel__icon" />
               <span>{t("nav.subscription")}</span>
@@ -273,7 +375,7 @@ const Navbar = () => {
           <span>{t("nav.home")}</span>
         </NavLink>
         <NavLink to="/explore" className="bottom-nav__item">
-          <IoSearch className="bottom-nav__icon" />
+          <IoCompassOutline className="bottom-nav__icon" />
           <span>{t("nav.explore")}</span>
         </NavLink>
         {isAuthenticated && (
@@ -282,6 +384,16 @@ const Navbar = () => {
               <IoAddOutline className="bottom-nav__icon" />
             </div>
           </button>
+        )}
+        {/* The desktop/tablet marketing nav shows this to anonymous visitors
+            (see marketing-navbar__links); this bar had no equivalent, so an
+            anonymous mobile web visitor had no way to reach the pricing page
+            at all short of the URL. */}
+        {!isAuthenticated && (
+          <NavLink to="/subscription" className="bottom-nav__item">
+            <IoCardOutline className="bottom-nav__icon" />
+            <span>{t("nav.subscription")}</span>
+          </NavLink>
         )}
         <button type="button" className="bottom-nav__item" onClick={() => setSearchOpen(true)}>
           <IoSearchOutline className="bottom-nav__icon" />

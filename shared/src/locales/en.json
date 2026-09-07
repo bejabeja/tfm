@@ -109,6 +109,7 @@
     "notifications": "Notifications",
     "myTrips": "My trips",
     "savedTrips": "Saved trips",
+    "yourTools": "Your tools",
     "vanLog": "Van log",
     "supplies": "Shopping list",
     "packingChecklist": "Packing checklist",
@@ -236,7 +237,8 @@
   },
   "premium": {
     "requiredTitle": "Premium feature",
-    "requiredDesc": "This feature is available to Premium members. Upgrading is coming soon.",
+    "requiredDesc": "This tool is part of Premium. Subscribe to unlock it, along with everything else Premium includes.",
+    "requiredCta": "See Premium plans",
     "loadErrorDesc": "Could not load your data. Please try again."
   },
   "subscription": {

@@ -9,6 +9,13 @@
     width: 100%;
     padding: 3rem 2.5rem 2.5rem;
     display: flex;
+    // Each footer__nav-group has min-width: max-content (its links never
+    // truncate), so on a tablet-portrait viewport (~640-900px) brand + the
+    // 3 nav groups didn't fit on one row and nothing could shrink: they just
+    // overflowed past the edge instead of wrapping. Letting the row wrap
+    // (nav-group by nav-group, see &__nav below) fixes that at any width,
+    // instead of only reflowing at the single, much narrower 640px cliff.
+    flex-wrap: wrap;
     justify-content: space-between;
     align-items: flex-start;
     gap: 2rem;
@@ -69,13 +76,13 @@
 
   &__nav {
     display: flex;
-    gap: 3rem;
+    flex-wrap: wrap;
+    gap: 2rem 3rem;
     flex-shrink: 1;
     width: auto;
 
     @media (max-width: 640px) {
       gap: 2rem;
-      flex-wrap: wrap;
       width: 100%;
     }
   }

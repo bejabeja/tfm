@@ -109,6 +109,7 @@
     "notifications": "Notificaciones",
     "myTrips": "Mis viajes",
     "savedTrips": "Viajes guardados",
+    "yourTools": "Tus herramientas",
     "vanLog": "Gastos",
     "supplies": "Lista de la compra",
     "packingChecklist": "Lista de equipaje",
@@ -236,7 +237,8 @@
   },
   "premium": {
     "requiredTitle": "Función premium",
-    "requiredDesc": "Esta función está disponible para miembros Premium. Muy pronto podrás suscribirte.",
+    "requiredDesc": "Esta herramienta es parte de Premium. Suscríbete para desbloquearla, junto con todo lo demás que incluye Premium.",
+    "requiredCta": "Ver planes Premium",
     "loadErrorDesc": "No se pudieron cargar tus datos. Inténtalo de nuevo."
   },
   "subscription": {
