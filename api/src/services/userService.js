@@ -356,14 +356,14 @@ export class UserService {
     async _ensureUsernameAvailable(username, currentUserId = null) {
         const existingUser = await this.userRepository.findByName(username);
         if (existingUser && existingUser.id !== currentUserId) {
-            throw new ConflictError("Username is not available. Please choose another one.");
+            throw new ConflictError("Username is not available. Please choose another one.", "username");
         }
     }
 
     async _ensureEmailAvailable(email) {
         const existingByEmail = await this.userRepository.findByEmail(email);
         if (existingByEmail) {
-            throw new ConflictError("Email already in use");
+            throw new ConflictError("Email already in use", "email");
         }
     }
 }

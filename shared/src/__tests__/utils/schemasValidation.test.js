@@ -13,6 +13,13 @@ describe('updateUserSchema', () => {
         expect(result.success).toBe(true);
     });
 
+    // The empty-string fix above didn't cover this: a user whose location was
+    // never set has it stored (and returned by the API) as null, not ''.
+    it('accepts a null location', () => {
+        const result = updateUserSchema.safeParse({ ...baseFields, location: null });
+        expect(result.success).toBe(true);
+    });
+
     it('still rejects a location over 50 characters', () => {
         const result = updateUserSchema.safeParse({ ...baseFields, location: 'a'.repeat(51) });
         expect(result.success).toBe(false);

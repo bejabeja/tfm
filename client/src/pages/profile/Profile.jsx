@@ -29,14 +29,6 @@ const TRIP_BADGES = [
   { id: "explorer",     labelKey: "Explorer",     Icon: MdExplore, min: 1 },
 ];
 
-const COMPLETENESS_FIELDS = [
-  { key: "name",      tipKey: "editProfile.namePlaceholder" },
-  { key: "bio",       tipKey: "editProfile.bioPlaceholder" },
-  { key: "about",     tipKey: "editProfile.aboutPlaceholder" },
-  { key: "location",  tipKey: "editProfile.locationPlaceholder" },
-  { key: "avatarUrl", tipKey: "editProfile.namePlaceholder" },
-];
-
 const COMPLETENESS_TIP_KEYS = [
   { key: "name",      tipKey: "profile.completenessTipName" },
   { key: "bio",       tipKey: "profile.completenessTipBio" },
@@ -113,58 +105,58 @@ const Profile = () => {
   return (
     <section className="profile section__container">
       {profileJsonLd && <JsonLd data={profileJsonLd} />}
+      {/* Single centered column (Instagram/X/Polarsteps pattern), not the
+          old fixed-360px-sidebar + main split: a social profile isn't a
+          dashboard, and that split squeezed prose (About) and a whole
+          widget (People to follow) into a narrow rail next to a mostly
+          empty trips column. */}
       <div className="profile__layout">
-        <div className="profile__sidebar">
-          {loadingUser ? (
-            <ProfileCardSkeleton />
-          ) : (
-            <>
-              <HeaderSection
-                user={user}
-                isMyProfile={isMyProfile}
-                isFollowing={isFollowing}
-                followsYou={followsYou}
-                onFollowToggle={handleFollowToggle}
-                onCopyLink={handleCopyLink}
-                isAuthenticated={isAuthenticated}
-                isLoadingFollow={isLoadingFollow}
-                onOpenFollows={setFollowsModal}
-                t={t}
-              />
-              {isMyProfile && <ProfileCompleteness user={user} t={t} />}
-              {aboutContent}
-              {isMyProfile && <SuggestedUsersWidget />}
-            </>
-          )}
-        </div>
-
-        <div className="profile__main">
-          {isMyProfile && (
-            <div className="profile__visibility-toggle">
-              {[
-                { val: 'all',     label: t('myItineraries.all') },
-                { val: 'public',  label: '🌍 ' + t('myItineraries.public') },
-                { val: 'private', label: '🔒 ' + t('myItineraries.private') },
-              ].map(opt => (
-                <button
-                  key={opt.val}
-                  type="button"
-                  className={`profile__vis-btn${visibility === opt.val ? ' profile__vis-btn--active' : ''}`}
-                  onClick={() => setVisibility(opt.val)}
-                >
-                  {opt.label}
-                </button>
-              ))}
-            </div>
-          )}
-          <ItinerariesSection
-            user={user}
-            itineraries={filteredItineraries}
-            title={isMyProfile ? t("profile.myTrips") : t("profile.otherTrips")}
-            isLoading={loadingItineraries}
-            isOwner={isMyProfile}
-          />
-        </div>
+        {loadingUser ? (
+          <ProfileCardSkeleton />
+        ) : (
+          <>
+            <HeaderSection
+              user={user}
+              isMyProfile={isMyProfile}
+              isFollowing={isFollowing}
+              followsYou={followsYou}
+              onFollowToggle={handleFollowToggle}
+              onCopyLink={handleCopyLink}
+              isAuthenticated={isAuthenticated}
+              isLoadingFollow={isLoadingFollow}
+              onOpenFollows={setFollowsModal}
+              t={t}
+            />
+            {isMyProfile && <ProfileCompleteness user={user} t={t} />}
+            {aboutContent}
+            {isMyProfile && (
+              <div className="profile__visibility-toggle">
+                {[
+                  { val: 'all',     label: t('myItineraries.all') },
+                  { val: 'public',  label: '🌍 ' + t('myItineraries.public') },
+                  { val: 'private', label: '🔒 ' + t('myItineraries.private') },
+                ].map(opt => (
+                  <button
+                    key={opt.val}
+                    type="button"
+                    className={`profile__vis-btn${visibility === opt.val ? ' profile__vis-btn--active' : ''}`}
+                    onClick={() => setVisibility(opt.val)}
+                  >
+                    {opt.label}
+                  </button>
+                ))}
+              </div>
+            )}
+            <ItinerariesSection
+              user={user}
+              itineraries={filteredItineraries}
+              title={`${isMyProfile ? t("profile.myTrips") : t("profile.otherTrips")} (${filteredItineraries.length})`}
+              isLoading={loadingItineraries}
+              isOwner={isMyProfile}
+            />
+            {isMyProfile && <SuggestedUsersWidget />}
+          </>
+        )}
       </div>
 
       {followsModal && (
@@ -207,55 +199,103 @@ const HeaderSection = ({
 
   return (
     <div className="profile__card">
-      <div className="profile__banner" />
-      <div className="profile__card-body">
+      {/* No cover banner: it used to be a purely decorative color block
+          with nothing a user could actually customize (no cover-photo
+          upload), just taking up vertical space above the fold. */}
+      <div className="profile__card-top">
         <img
           className="profile__avatar"
           src={optimizedCloudinaryUrl(user?.avatarUrl, { width: 200 })}
           alt={user?.name || user?.username}
           onError={(e) => { e.currentTarget.src = generateAvatar(user?.username); }}
         />
-        <div className="profile__card-actions">
-          <button
-            className="btn profile__copy-btn"
-            onClick={onCopyLink}
-            aria-label={t("profile.copyLink")}
-            title={t("profile.copyLink")}
-          >
-            <IoLinkOutline aria-hidden="true" />
-          </button>
-          {isMyProfile ? (
-            <>
-              <Link
-                to={`/profile/edit/${user?.id}`}
-                className="btn profile__copy-btn"
-                title={t("profile.editProfile")}
-                aria-label={t("profile.editProfile")}
-              >
-                <MdOutlineEdit aria-hidden="true" />
-              </Link>
-              <Link
-                to="/settings"
-                className="btn profile__copy-btn"
-                title={t("nav.settings") || "Settings"}
-                aria-label={t("nav.settings") || "Settings"}
-              >
-                <IoSettingsOutline aria-hidden="true" />
-              </Link>
-            </>
-          ) : (
-            <button
-              ref={followBtnRef}
-              className={`btn profile__btn ${isFollowing ? "btn--secondary" : "btn--primary"}`}
-              onClick={onFollowToggle}
-              disabled={isLoadingFollow}
-            >
-              {isLoadingFollow ? "…" : isFollowing ? t("profile.unfollow") : t("profile.follow")}
+
+        {/* Instagram pattern: stats sit beside the avatar, not further down
+            under the bio, so the numbers that matter most (reach, activity)
+            are visible at a glance without reading through the bio first. */}
+        <div className="profile__stats">
+          {isAuthenticated ? (
+            <button className="profile__stat profile__stat--btn" onClick={() => onOpenFollows("followers")}>
+              <StatNumber value={user?.followers} />
+              <span>{t("profile.followers")}</span>
             </button>
+          ) : (
+            <Link to="/login" className="profile__stat">
+              <StatNumber value={user?.followers} />
+              <span>{t("profile.followers")}</span>
+            </Link>
+          )}
+          {isAuthenticated ? (
+            <button className="profile__stat profile__stat--btn" onClick={() => onOpenFollows("following")}>
+              <StatNumber value={user?.following} />
+              <span>{t("profile.following")}</span>
+            </button>
+          ) : (
+            <Link to="/login" className="profile__stat">
+              <StatNumber value={user?.following} />
+              <span>{t("profile.following")}</span>
+            </Link>
+          )}
+          {isMyProfile ? (
+            <Link to="/my-itineraries" className="profile__stat">
+              <StatNumber value={user?.totalItineraries} />
+              <span>{t("profile.trips")}</span>
+            </Link>
+          ) : (
+            <span className="profile__stat">
+              <StatNumber value={user?.totalItineraries} />
+              <span>{t("profile.trips")}</span>
+            </span>
           )}
         </div>
+      </div>
 
-        <div className="profile__info">
+      {/* Its own row instead of squeezed into &__card-top alongside avatar
+          + stats: with the header capped at a comfortable 640px reading
+          width, all three together only fit on wider screens, and the
+          buttons would otherwise wrap onto a stray line of their own. */}
+      <div className="profile__card-actions">
+        <button
+          className="btn profile__copy-btn"
+          onClick={onCopyLink}
+          aria-label={t("profile.copyLink")}
+          title={t("profile.copyLink")}
+        >
+          <IoLinkOutline aria-hidden="true" />
+        </button>
+        {isMyProfile ? (
+          <>
+            <Link
+              to={`/profile/edit/${user?.id}`}
+              className="btn profile__copy-btn"
+              title={t("profile.editProfile")}
+              aria-label={t("profile.editProfile")}
+            >
+              <MdOutlineEdit aria-hidden="true" />
+            </Link>
+            <Link
+              to="/settings"
+              className="btn profile__copy-btn"
+              title={t("nav.settings") || "Settings"}
+              aria-label={t("nav.settings") || "Settings"}
+            >
+              <IoSettingsOutline aria-hidden="true" />
+            </Link>
+          </>
+        ) : (
+          <button
+            ref={followBtnRef}
+            className={`btn profile__btn ${isFollowing ? "btn--secondary" : "btn--primary"}`}
+            onClick={onFollowToggle}
+            disabled={isLoadingFollow}
+          >
+            {isLoadingFollow ? "…" : isFollowing ? t("profile.unfollow") : t("profile.follow")}
+          </button>
+        )}
+      </div>
+
+      <div className="profile__info">
+        <div className="profile__identity">
           {user?.name
             ? <h1 className="profile__name">{user.name}</h1>
             : isMyProfile && (
@@ -269,80 +309,51 @@ const HeaderSection = ({
             {user?.role === "official" && <OfficialBadge size={18} />}
             {followsYou && <span className="profile__follows-you">{t("profile.followsYou")}</span>}
           </p>
-
-          {user?.activeTrip && (
-            <Link to={`/itinerary/${user.activeTrip.id}`} className="profile__traveling-badge">
-              ✈️ {t("profile.travelingNow", { destination: user.activeTrip.location?.name })}
-            </Link>
-          )}
-
-          {user?.bio ? (
-            <p className="profile__bio">{user.bio}</p>
-          ) : isMyProfile ? (
-            <Link to={`/profile/edit/${user?.id}`} className="profile__empty-bio">
-              {t("profile.addBio")}
-            </Link>
-          ) : null}
-
-          <ProfileBadges user={user} />
-
-          {(user?.location || user?.createdAt || isMyProfile) && (
-            <div className="profile__meta">
-              {user?.location ? (
-                <span className="profile__meta-item">
-                  <IoLocationOutline aria-hidden="true" />
-                  <span className="profile__meta-text">{user.location}</span>
-                </span>
-              ) : isMyProfile && (
-                <Link to={`/profile/edit/${user?.id}`} className="profile__meta-item profile__meta-item--prompt">
-                  <IoLocationOutline aria-hidden="true" />
-                  <span className="profile__meta-text">{t("profile.addLocation")}</span>
-                </Link>
-              )}
-              {user?.createdAt && (
-                <span className="profile__meta-item">
-                  <MdOutlineCalendarMonth aria-hidden="true" />
-                  <span className="profile__meta-text">{t("profile.joinedOn", { date: user.createdAt })}</span>
-                </span>
-              )}
-            </div>
-          )}
-
-          <div className="profile__stats">
-            {isAuthenticated ? (
-              <button className="profile__stat profile__stat--btn" onClick={() => onOpenFollows("followers")}>
-                <StatNumber value={user?.followers} />
-                <span>{t("profile.followers")}</span>
-              </button>
-            ) : (
-              <Link to="/login" className="profile__stat">
-                <StatNumber value={user?.followers} />
-                <span>{t("profile.followers")}</span>
-              </Link>
-            )}
-            {isAuthenticated ? (
-              <button className="profile__stat profile__stat--btn" onClick={() => onOpenFollows("following")}>
-                <StatNumber value={user?.following} />
-                <span>{t("profile.following")}</span>
-              </button>
-            ) : (
-              <Link to="/login" className="profile__stat">
-                <StatNumber value={user?.following} />
-                <span>{t("profile.following")}</span>
-              </Link>
-            )}
-            <span className="profile__stat">
-              <StatNumber value={user?.totalItineraries} />
-              <span>{t("profile.trips")}</span>
-            </span>
-          </div>
         </div>
+
+        {user?.activeTrip && (
+          <Link to={`/itinerary/${user.activeTrip.id}`} className="profile__traveling-badge">
+            ✈️ {t("profile.travelingNow", { destination: user.activeTrip.location?.name })}
+          </Link>
+        )}
+
+        {user?.bio ? (
+          <p className="profile__bio">{user.bio}</p>
+        ) : isMyProfile ? (
+          <Link to={`/profile/edit/${user?.id}`} className="profile__empty-bio">
+            {t("profile.addBio")}
+          </Link>
+        ) : null}
+
+        <ProfileBadges user={user} />
+
+        {(user?.location || user?.createdAt || isMyProfile) && (
+          <div className="profile__meta">
+            {user?.location ? (
+              <span className="profile__meta-item">
+                <IoLocationOutline aria-hidden="true" />
+                <span className="profile__meta-text">{user.location}</span>
+              </span>
+            ) : isMyProfile && (
+              <Link to={`/profile/edit/${user?.id}`} className="profile__meta-item profile__meta-item--prompt">
+                <IoLocationOutline aria-hidden="true" />
+                <span className="profile__meta-text">{t("profile.addLocation")}</span>
+              </Link>
+            )}
+            {user?.createdAt && (
+              <span className="profile__meta-item">
+                <MdOutlineCalendarMonth aria-hidden="true" />
+                <span className="profile__meta-text">{t("profile.joinedOn", { date: user.createdAt })}</span>
+              </span>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-// ─── About ────────────────────────────────────────────────────────────────────
+// ─── About ──────────────────────────────────────────────────────────────────
 const AboutSection = ({ about, t }) => (
   <div className="profile__about">
     <h2 className="profile__about-title">{t("profile.about")}</h2>
@@ -421,37 +432,36 @@ const StatNumber = ({ value }) => {
 // ─── Skeleton
 const ProfileCardSkeleton = () => (
   <div className="profile__card">
-    <div className="profile__banner" />
-    <div className="profile__card-body">
+    <div className="profile__card-top">
       <div className="profile__avatar skeleton" />
       <div className="profile__card-actions">
         <div className="skeleton profile__skeleton-icon-btn" />
         <div className="skeleton profile__skeleton-btn" />
       </div>
-      <div className="profile__info">
-        <div className="skeleton profile__skeleton-name" />
-        <div className="skeleton profile__skeleton-username" />
-        <div className="profile__skeleton-bio-lines">
-          <div className="skeleton profile__skeleton-bio-line" />
-          <div className="skeleton profile__skeleton-bio-line profile__skeleton-bio-line--short" />
+    </div>
+    <div className="profile__info">
+      <div className="skeleton profile__skeleton-name" />
+      <div className="skeleton profile__skeleton-username" />
+      <div className="profile__skeleton-bio-lines">
+        <div className="skeleton profile__skeleton-bio-line" />
+        <div className="skeleton profile__skeleton-bio-line profile__skeleton-bio-line--short" />
+      </div>
+      <div className="profile__skeleton-meta-row">
+        <div className="skeleton profile__skeleton-meta-item" />
+        <div className="skeleton profile__skeleton-meta-item profile__skeleton-meta-item--short" />
+      </div>
+      <div className="profile__stats">
+        <div className="profile__stat">
+          <div className="skeleton profile__skeleton-stat-num" />
+          <div className="skeleton profile__skeleton-stat-lbl" />
         </div>
-        <div className="profile__skeleton-meta-row">
-          <div className="skeleton profile__skeleton-meta-item" />
-          <div className="skeleton profile__skeleton-meta-item profile__skeleton-meta-item--short" />
+        <div className="profile__stat">
+          <div className="skeleton profile__skeleton-stat-num" />
+          <div className="skeleton profile__skeleton-stat-lbl" />
         </div>
-        <div className="profile__stats">
-          <div className="profile__stat">
-            <div className="skeleton profile__skeleton-stat-num" />
-            <div className="skeleton profile__skeleton-stat-lbl" />
-          </div>
-          <div className="profile__stat">
-            <div className="skeleton profile__skeleton-stat-num" />
-            <div className="skeleton profile__skeleton-stat-lbl" />
-          </div>
-          <div className="profile__stat">
-            <div className="skeleton profile__skeleton-stat-num" />
-            <div className="skeleton profile__skeleton-stat-lbl" />
-          </div>
+        <div className="profile__stat">
+          <div className="skeleton profile__skeleton-stat-num" />
+          <div className="skeleton profile__skeleton-stat-lbl" />
         </div>
       </div>
     </div>

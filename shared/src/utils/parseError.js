@@ -1,11 +1,14 @@
 export const parseError = async (response, defaultMsg = "Something went wrong") => {
   let msg = defaultMsg;
+  let field;
   try {
     const data = await response.json();
     msg = data?.error || msg;
+    field = data?.field;
   } catch (_) { }
   const error = new Error(msg);
   error.status = response.status;
+  error.field = field;
   throw error;
 }
 

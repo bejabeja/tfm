@@ -55,6 +55,26 @@ describe('UserRepository email case-insensitivity', () => {
     });
 });
 
+// Regression coverage: usernames used to be compared case-sensitively, so "Sandra" and
+// "sandra" were treated as different usernames and both could be registered, even though
+// they're indistinguishable to other users (e.g. in @mentions or profile URLs).
+describe('UserRepository.findByName username case-insensitivity', () => {
+    const repo = new UserRepository();
+
+    beforeEach(() => {
+        db.query.mockReset();
+    });
+
+    it('compares usernames case-insensitively', async () => {
+        db.query.mockResolvedValue({ rows: [] });
+
+        await repo.findByName('Sandra');
+
+        expect(db.query.mock.calls[0][0]).toMatch(/LOWER\(username\) = LOWER\(\$1\)/);
+        expect(db.query.mock.calls[0][1]).toEqual(['Sandra']);
+    });
+});
+
 // Regression coverage: findSuggested used to return users the caller already follows,
 // so the onboarding "people to follow" screen showed them as not-followed and clicking
 // "Follow" on them failed with a 409 ConflictError from FollowService.

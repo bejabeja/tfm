@@ -10,5 +10,6 @@ export const errorHandler = (err, req, res, next) => {
     Sentry.captureException(err);
     res.status(status).json({
         error: err.message || "Internal server error",
+        ...(err.field && { field: err.field }),
     });
 }

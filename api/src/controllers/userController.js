@@ -39,11 +39,21 @@ export class UserController {
     async updateUserMe(req, res, next) {
         const { id } = req.user;
 
+        let rawBody;
         try {
-            const rawBody = req.body.user ? JSON.parse(req.body.user) : req.body;
-            const { removeAvatar, ...bodyForValidation } = rawBody;
-            const validatedData = updateUserSchema.parse(bodyForValidation);
+            rawBody = req.body.user ? JSON.parse(req.body.user) : req.body;
+        } catch {
+            return next(new ValidationError("Invalid profile data"));
+        }
+        const { removeAvatar, ...bodyForValidation } = rawBody;
+        const validation = updateUserSchema.safeParse(bodyForValidation);
+        if (!validation.success) {
+            const firstError = validation.error.errors[0];
+            return next(new ValidationError(firstError?.message || "Profile validation failed", firstError?.path?.[0]));
+        }
+        const validatedData = validation.data;
 
+        try {
             if (req.file) {
                 if (req.file.size > MAX_AVATAR_SIZE) {
                     return next(new ValidationError("Image must be under 5 MB"));

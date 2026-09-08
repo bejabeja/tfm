@@ -23,7 +23,7 @@ export class UserRepository {
 
     async findByName(username) {
         const result = await db.query(
-            "SELECT * FROM users WHERE username = $1",
+            "SELECT * FROM users WHERE LOWER(username) = LOWER($1)",
             [username]
         );
         if (result.rows.length === 0) return null;

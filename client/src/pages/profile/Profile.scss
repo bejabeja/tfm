@@ -1,10 +1,7 @@
 @use "../../components/SkeletonBase.scss";
 
-$banner-height-mobile: 160px;
-$banner-height-tablet: 210px;
 $avatar-size-mobile: 88px;
 $avatar-size-tablet: 112px;
-$avatar-overlap: 44px;
 
 .profile {
   display: flex;
@@ -12,49 +9,42 @@ $avatar-overlap: 44px;
   gap: 1.25rem;
 
   // ── Header card ──────────────────────────────────────────────
+  // No cover banner (it was a purely decorative color block with nothing
+  // a user could customize) and no absolute-positioned avatar overlap:
+  // avatar + actions just sit in a normal top row.
   &__card {
     background: var(--white-color);
     border-radius: 16px;
     border: 1px solid var(--border-color);
     box-shadow: 0 2px 12px rgba(0, 0, 0, 0.07);
+    padding: 1.25rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
   }
 
-  &__banner {
-    height: $banner-height-mobile;
-    background: linear-gradient(135deg, #0C3540 0%, #1A535C 100%);
-    background-size: 300% 300%;
-    border-radius: 16px 16px 0 0;
-    animation: banner-shift 12s ease infinite;
-  }
-
-  &__card-body {
-    position: relative;
-    padding: 0 1.25rem 1.5rem;
+  &__card-top {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
   }
 
   &__avatar {
-    position: absolute;
-    top: -$avatar-overlap;
-    left: 1.25rem;
     width: $avatar-size-mobile;
     height: $avatar-size-mobile;
     border-radius: 50%;
-    border: 4px solid var(--white-color);
+    border: 3px solid var(--white-color);
     object-fit: cover;
     background: #e2e8f0;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.18);
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+    flex-shrink: 0;
   }
 
-  // row that contains the action button, pushes it to the right
-  // height = avatar-size - overlap so button aligns near avatar bottom
   &__card-actions {
     display: flex;
     justify-content: flex-end;
     gap: 0.5rem;
-    height: calc(#{$avatar-size-mobile} - #{$avatar-overlap});
-    padding-left: calc(#{$avatar-size-mobile} + 1.25rem + 0.75rem);
-    align-items: flex-end;
-    padding-bottom: 0.5rem;
   }
 
   &__copy-btn {
@@ -93,10 +83,19 @@ $avatar-overlap: 44px;
   }
 
   // ── Profile info ─────────────────────────────────────────────
+  // Uniform gap here instead of each child picking its own margin-top:
+  // that left the name/bio/badges/meta blocks at visibly uneven distances
+  // from one another. &__identity keeps name+username tightly paired.
   &__info {
     display: flex;
     flex-direction: column;
-    padding-top: 0.5rem;
+    gap: 0.6rem;
+  }
+
+  &__identity {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
   }
 
   &__name {
@@ -110,7 +109,6 @@ $avatar-overlap: 44px;
   &__username {
     font-size: 0.875rem;
     color: var(--text-secondary-color);
-    margin-top: 0.15rem;
   }
 
   &__follows-you {
@@ -130,7 +128,6 @@ $avatar-overlap: 44px;
     align-items: center;
     gap: 0.3rem;
     width: fit-content;
-    margin-top: 0.5rem;
     font-size: 0.75rem;
     font-weight: 700;
     color: var(--white-color);
@@ -149,7 +146,6 @@ $avatar-overlap: 44px;
   }
 
   &__bio {
-    margin-top: 0.5rem;
     font-size: 0.9375rem;
     color: var(--text-color);
     line-height: 1.55;
@@ -159,7 +155,6 @@ $avatar-overlap: 44px;
     display: flex;
     flex-wrap: wrap;
     gap: 0.75rem;
-    margin-top: 0.625rem;
     font-size: 0.8125rem;
     color: var(--text-secondary-color);
 
@@ -194,60 +189,45 @@ $avatar-overlap: 44px;
     }
   }
 
+  // Plain inline text (Instagram/X pattern: "12 Followers  34 Following"),
+  // not a bordered stat-card grid: the only element on the page that still
+  // read as a "dashboard widget" next to otherwise plain text/typography.
   &__stats {
     display: flex;
-    margin-top: 1.1rem;
-    background: var(--surface-color);
-    border: 1px solid var(--border-color);
-    border-radius: 14px;
-    overflow: hidden;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.04);
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 1.25rem;
+    width: auto;
   }
 
   &__stat {
-    flex: 1;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 1rem 0.5rem;
-    gap: 0.2rem;
+    align-items: baseline;
+    gap: 0.3rem;
+    width: fit-content;
+    padding: 0;
+    background: none;
+    border: none;
     text-decoration: none;
     color: var(--text-color);
-    transition: background-color 0.18s, color 0.18s;
-    min-width: 0;
-
-    &:not(:last-child) {
-      border-right: 1px solid var(--border-color);
-    }
+    font-family: inherit;
 
     &:hover {
-      background-color: rgba(0, 119, 182, 0.06);
-
-      strong {
-        color: var(--primary-color);
-      }
-
-      span {
+      strong, span {
         color: var(--primary-color);
       }
     }
 
     strong {
       font-weight: 800;
-      font-size: 1.2rem;
-      letter-spacing: -0.02em;
-      display: inline-block;
+      font-size: 0.9375rem;
       color: var(--text-color);
       transition: color 0.18s;
     }
 
     span {
-      font-size: 0.62rem;
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.07em;
+      font-size: 0.875rem;
+      font-weight: 400;
       color: var(--text-secondary-color);
       transition: color 0.18s;
     }
@@ -281,7 +261,6 @@ $avatar-overlap: 44px;
   // ── Empty states ─────────────────────────────────────────────
   &__empty-name {
     display: inline-block;
-    margin-top: 0.1rem;
     font-size: 0.8rem;
     color: var(--primary-color);
     text-decoration: none;
@@ -291,7 +270,6 @@ $avatar-overlap: 44px;
 
   &__empty-bio {
     display: inline-block;
-    margin-top: 0.5rem;
     font-size: 0.875rem;
     color: var(--primary-color);
     text-decoration: none;
@@ -325,7 +303,6 @@ $avatar-overlap: 44px;
     display: flex;
     flex-wrap: wrap;
     gap: 0.4rem;
-    margin-top: 0.875rem;
   }
 
   &__badge {
@@ -409,23 +386,29 @@ $avatar-overlap: 44px;
   }
 
   // ── Layout ───────────────────────────────────────────────────
+  // Single column (Instagram/X/Polarsteps), not a fixed sidebar + main
+  // split: a social profile isn't a dashboard. The layout itself spans the
+  // full width other pages use (matches Explore's section__container), but
+  // the identity/text blocks (header card, completeness, about, suggested
+  // people) are capped narrower and centered below, same reasoning
+  // Instagram applies to bio text: comfortable reading width. The trips
+  // grid stays full width since more columns there is a real benefit, the
+  // way it is on Explore, unlike wider bio text which wouldn't be.
   &__layout {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
-  }
-
-  &__sidebar {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-
-  &__main {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
     min-width: 0;
+  }
+
+  &__card,
+  &__completeness,
+  &__about,
+  .suggested-users {
+    width: 100%;
+    max-width: 640px;
+    margin-left: auto;
+    margin-right: auto;
   }
 
   // ── Skeleton ─────────────────────────────────────────────────
@@ -503,32 +486,19 @@ $avatar-overlap: 44px;
   50%       { transform: scale(1.4); }
 }
 
-@keyframes banner-shift {
-  0%   { background-position: 0% 50%; }
-  50%  { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
 // ── Tablet / Desktop ─────────────────────────────────────────────────────────
+// No 2-column breakpoint here anymore: the layout stays a single centered
+// column (max-width set on &__layout above) at every screen size, it just
+// gets a little breathing room via bigger avatar/card padding.
 @media (min-width: 480px) {
   .profile {
-    &__banner {
-      height: $banner-height-tablet;
-    }
-
     &__avatar {
       width: $avatar-size-tablet;
       height: $avatar-size-tablet;
-      left: 1.75rem;
     }
 
-    &__card-actions {
-      height: calc(#{$avatar-size-tablet} - #{$avatar-overlap});
-      padding-left: calc(#{$avatar-size-tablet} + 1.75rem + 0.75rem);
-    }
-
-    &__card-body {
-      padding: 0 1.75rem 1.75rem;
+    &__card {
+      padding: 1.75rem;
     }
 
     &__name {
@@ -537,32 +507,6 @@ $avatar-overlap: 44px;
 
     &__about {
       padding: 1.75rem;
-    }
-  }
-}
-
-// ── 2-column layout ──────────────────────────────────────────────────────────
-@media (min-width: 900px) {
-  .profile {
-    &__layout {
-      flex-direction: row;
-      align-items: flex-start;
-    }
-
-    &__sidebar {
-      width: 360px;
-      flex-shrink: 0;
-      position: sticky;
-      top: 2rem;
-    }
-
-    &__main {
-      flex: 1;
-
-      // Prevent the 1024px rule from forcing 3 narrow columns
-      .itineraries-section__grid {
-        grid-template-columns: repeat(auto-fit, minmax(min(240px, 100%), 1fr));
-      }
     }
   }
 }
@@ -603,11 +547,9 @@ $avatar-overlap: 44px;
 }
 
 // ── Stats button variant ──────────────────────────────────────────────────────
+// .profile__stat already has the plain background/border/hover styling
+// shared with the <Link> variant; a <button> just also needs the pointer
+// cursor browsers don't give it by default.
 .profile__stat--btn {
-  background: none;
-  border: none;
-  font-family: inherit;
   cursor: pointer;
-
-  &:hover strong { color: var(--primary-color); }
 }

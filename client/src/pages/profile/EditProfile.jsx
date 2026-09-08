@@ -35,6 +35,7 @@ const EditProfile = () => {
     control,
     handleSubmit,
     reset,
+    setError,
     formState: { errors, isSubmitting, isDirty },
   } = useForm({
     resolver: zodResolver(updateUserSchema),
@@ -42,8 +43,6 @@ const EditProfile = () => {
   });
 
   const usernameValue = useWatch({ control, name: "username" });
-  const bioValue      = useWatch({ control, name: "bio" });
-  const aboutValue    = useWatch({ control, name: "about" });
 
   useEffect(() => {
     if (authUser && String(authUser.id) !== String(id)) {
@@ -94,9 +93,14 @@ const EditProfile = () => {
       await Promise.all([dispatch(initAuthUser()), dispatch(setUserInfo(id))]);
       navigate(`/profile/${id}`);
     } catch (err) {
-      const isAvatarError = err.message === "Image must be under 5 MB";
-      toast.error(isAvatarError ? err.message : t("errors.updateProfileFailed"));
-      setErrorSubmit(err.message);
+      if (err.field && err.field in updateUserSchema.shape) {
+        setError(err.field, { type: "server", message: err.message });
+        document.getElementById(err.field)?.scrollIntoView({ behavior: "smooth", block: "center" });
+        document.getElementById(err.field)?.focus();
+      } else {
+        toast.error(err.message || t("errors.updateProfileFailed"));
+        setErrorSubmit(err.message);
+      }
     }
   };
 
@@ -143,11 +147,10 @@ const EditProfile = () => {
             <p className="ep__section-label">{t("editProfile.basicInfo").toUpperCase()}</p>
             <div className="ep__fields">
               <InputForm name="name" label="Name" control={control} type="text"
-                placeholder={t("editProfile.namePlaceholder")} error={errors.name} />
-              <div className="ep__username-wrap ep__field-with-count">
+                placeholder={t("editProfile.namePlaceholder")} error={errors.name} maxLength={50} />
+              <div className="ep__username-wrap">
                 <InputForm name="username" label="Username" control={control} type="text"
-                  placeholder={t("editProfile.usernamePlaceholder")} error={errors.username} />
-                <CharCount value={usernameValue} max={50} warnAt={40} />
+                  placeholder={t("editProfile.usernamePlaceholder")} error={errors.username} maxLength={50} />
                 {usernameStatus && (
                   <span className={`ep__username-status ep__username-status--${usernameStatus}`} aria-live="polite">
                     {usernameStatus === "checking"  && t("common.checking")}
@@ -156,11 +159,8 @@ const EditProfile = () => {
                   </span>
                 )}
               </div>
-              <div className="ep__field-with-count">
-                <TextAreaForm name="bio" label="Bio" control={control}
-                  placeholder={t("editProfile.bioPlaceholder")} error={errors.bio} />
-                <CharCount value={bioValue} max={160} warnAt={140} />
-              </div>
+              <TextAreaForm name="bio" label="Bio" control={control}
+                placeholder={t("editProfile.bioPlaceholder")} error={errors.bio} maxLength={160} />
             </div>
           </section>
 
@@ -169,12 +169,9 @@ const EditProfile = () => {
             <p className="ep__section-label">{t("editProfile.locationAbout").toUpperCase()}</p>
             <div className="ep__fields">
               <InputForm name="location" label="Location" control={control} type="text"
-                placeholder={t("editProfile.locationPlaceholder")} error={errors.location} />
-              <div className="ep__field-with-count">
-                <TextAreaForm name="about" label="About" control={control}
-                  placeholder={t("editProfile.aboutPlaceholder")} error={errors.about} />
-                <CharCount value={aboutValue} max={1000} warnAt={900} />
-              </div>
+                placeholder={t("editProfile.locationPlaceholder")} error={errors.location} maxLength={50} />
+              <TextAreaForm name="about" label="About" control={control}
+                placeholder={t("editProfile.aboutPlaceholder")} error={errors.about} maxLength={1000} />
             </div>
           </section>
 
@@ -237,12 +234,6 @@ const AvatarEditor = ({ userMe, avatarPreview, removeAvatar, onAvatarChange, onR
     </div>
   );
 };
-
-const CharCount = ({ value, max, warnAt }) => (
-  <span className={`ep__char-count${(value?.length || 0) > warnAt ? " ep__char-count--warn" : ""}`}>
-    {value?.length || 0}/{max}
-  </span>
-);
 
 const EditProfileSkeleton = () => (
   <div className="ep">

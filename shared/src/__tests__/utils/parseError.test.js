@@ -22,6 +22,18 @@ describe('parseError', () => {
             status: 500,
         });
     });
+
+    // Regression coverage: form-level errors need to know which field to attach the
+    // message to (e.g. a taken username), which requires the backend's "field" to
+    // survive the round trip instead of being dropped alongside the message.
+    it('attaches the field the backend blamed, when present', async () => {
+        const response = { status: 400, json: async () => ({ error: 'No valid location', field: 'location' }) };
+
+        await expect(parseError(response)).rejects.toMatchObject({
+            message: 'No valid location',
+            field: 'location',
+        });
+    });
 });
 
 describe('isPremiumRequiredError', () => {

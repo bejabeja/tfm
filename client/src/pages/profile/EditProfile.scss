@@ -819,20 +819,6 @@
     &--taken     { color: var(--error-color); background: #fef2f2; }
   }
 
-  &__field-with-count {
-    position: relative;
-  }
-
-  &__char-count {
-    position: absolute;
-    bottom: 0.4rem;
-    right: 0.75rem;
-    font-size: 0.7rem;
-    color: var(--text-secondary-color);
-    width: fit-content;
-    &--warn { color: #e69500; }
-  }
-
   // Language
   &__lang-toggle {
     display: flex;
