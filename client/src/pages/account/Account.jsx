@@ -1,10 +1,6 @@
 import {
-  IoBookOutline,
-  IoBriefcaseOutline,
   IoCardOutline,
-  IoCartOutline,
   IoChevronForward,
-  IoJournalOutline,
   IoListOutline,
   IoSaveOutline,
   IoSettingsOutline,
@@ -28,14 +24,15 @@ const Account = () => {
 
   const isPremium = !!userMe.isPremium;
 
+  // vanLog/supplies/packingChecklist/lifeDiary are deliberately left out:
+  // they're already reachable from wherever this page itself is reached
+  // (Navbar.jsx PREMIUM_TOOLS in the desktop sidebar, or the mobile "Me"
+  // panel), so listing them here too would just repeat what the visitor
+  // saw a moment ago.
   const links = [
     { to: `/profile/${userMe.id}`, Icon: GoPerson, label: t("nav.profile") },
     { to: "/my-itineraries", Icon: IoListOutline, label: t("nav.myTrips") },
     { to: "/itineraries/saved", Icon: IoSaveOutline, label: t("nav.savedTrips") },
-    { to: "/van-log", Icon: IoBookOutline, label: t("nav.vanLog"), premium: true },
-    { to: "/supplies", Icon: IoCartOutline, label: t("nav.supplies"), premium: true },
-    { to: "/packing-checklist", Icon: IoBriefcaseOutline, label: t("nav.packingChecklist"), premium: true },
-    { to: "/life-diary", Icon: IoJournalOutline, label: t("nav.lifeDiary"), premium: true },
     { to: "/settings", Icon: IoSettingsOutline, label: t("settings.title") },
   ];
 
@@ -74,14 +71,11 @@ const Account = () => {
       )}
 
       <ul className="account__links">
-        {links.map(({ to, Icon, label, premium }) => (
+        {links.map(({ to, Icon, label }) => (
           <li key={to}>
             <Link to={to} className="account__link">
               <Icon className="account__link-icon" aria-hidden="true" />
               <span className="account__link-label">{label}</span>
-              {premium && !isPremium && (
-                <span className="account__link-badge">{t("admin.premium")}</span>
-              )}
               <IoChevronForward className="account__link-arrow" aria-hidden="true" />
             </Link>
           </li>

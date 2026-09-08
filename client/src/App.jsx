@@ -5,6 +5,7 @@ import "./App.scss";
 import CookieConsentBanner from "./components/cookieConsent/CookieConsentBanner";
 import Footer from "./components/footer/Footer";
 import Navbar from "./components/navbar/Navbar";
+import Topbar from "./components/topbar/Topbar";
 import Spinner from "./components/spinner/Spinner";
 import InternalGuard from "./pages/InternalGuard";
 import PrivateLayout from "./pages/PrivateLayout";
@@ -120,6 +121,7 @@ const App = () => {
         <Navbar />
       </div>
       <div className={`main-content${isAuthRoute ? " main-content--auth" : ""}`}>
+        {isAuthenticated && !isAuthRoute && <Topbar />}
         <main className="content">
           <Suspense fallback={<Spinner />}>
             <Routes>

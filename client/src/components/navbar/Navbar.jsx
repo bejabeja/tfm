@@ -23,8 +23,6 @@ import { useTranslation } from "react-i18next";
 import { selectUnreadCount } from "@tobeatraveller/shared";
 import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
-import { generateAvatar } from "../../utils/constants/constants";
-import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl";
 import GlobalSearch from "./GlobalSearch";
 import "./Navbar.scss";
 
@@ -187,6 +185,16 @@ const Navbar = () => {
       {/* Mobile: fixed top header */}
       {!isAuthRoute && (
         <div className="mobile-header">
+          {/* Was the bottom-nav's "+"; on Van Log/Supplies/Packing checklist/
+              Life diary that row also shows the page's own "+ Add x" button,
+              so the same icon in the same bar opened two unrelated things.
+              Living up here instead of in the bottom-nav's icon row keeps it
+              reachable without sitting next to that page-specific button. */}
+          {isAuthenticated && (
+            <button type="button" className="mobile-header__create" onClick={openCreate} aria-label={t("nav.createTrip")}>
+              <IoAddOutline className="mobile-header__create-icon" />
+            </button>
+          )}
           <Link to="/" className="logo">
             <img src="/logo.svg" alt="ToBeATraveller" className="logo__full" height="28" />
           </Link>
@@ -256,27 +264,6 @@ const Navbar = () => {
             ))}
           </div>
 
-          <div className="nav-section">
-            <h3>{t("nav.yourSpace")}</h3>
-            <NavLink to="/notifications" className="nav-item nav-item--notif" title={t("nav.notifications")}>
-              <span className="nav-item__icon-wrap">
-                <IoNotificationsOutline className="nav-icon" />
-                {unreadCount > 0 && (
-                  <span className="nav-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
-                )}
-              </span>
-              <span>{t("nav.notifications")}</span>
-            </NavLink>
-            <NavLink to="/subscription" className="nav-item" title={t("nav.subscription")}>
-              <IoCardOutline className="nav-icon" />
-              <span>{t("nav.subscription")}</span>
-            </NavLink>
-            <NavLink to="/account" className="nav-item" title={t("nav.myAccount")}>
-              <GoPerson className="nav-icon" />
-              <span>{t("nav.myAccount")}</span>
-            </NavLink>
-          </div>
-
           <div className="navbar__bottom">
             <button
               className="navbar__toggle"
@@ -286,22 +273,6 @@ const Navbar = () => {
               {isCollapsed ? <IoChevronForward className="nav-icon" /> : <IoChevronBack className="nav-icon" />}
               <span>{t("nav.collapse")}</span>
             </button>
-
-            {userMe && (
-              <div className="nav-footer">
-                <Link to={`/profile/${userMe.id}`} className="nav-footer__user" title={`@${userMe.username}`}>
-                  <img
-                    src={optimizedCloudinaryUrl(userMe.avatarUrl, { width: 48 }) || generateAvatar(userMe.username)}
-                    alt={userMe.username}
-                    className="nav-footer__avatar"
-                  />
-                  <span className="nav-footer__username">@{userMe.username}</span>
-                </Link>
-                <NavLink to="/logout" className="nav-footer__logout" title={t("auth.logout")}>
-                  <GoSignOut />
-                </NavLink>
-              </div>
-            )}
           </div>
         </nav>
       ) : (
@@ -378,13 +349,6 @@ const Navbar = () => {
           <IoCompassOutline className="bottom-nav__icon" />
           <span>{t("nav.explore")}</span>
         </NavLink>
-        {isAuthenticated && (
-          <button className="bottom-nav__item bottom-nav__item--create" onClick={openCreate}>
-            <div className="bottom-nav__create-btn">
-              <IoAddOutline className="bottom-nav__icon" />
-            </div>
-          </button>
-        )}
         {/* The desktop/tablet marketing nav shows this to anonymous visitors
             (see marketing-navbar__links); this bar had no equivalent, so an
             anonymous mobile web visitor had no way to reach the pricing page
