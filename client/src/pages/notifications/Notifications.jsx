@@ -2,8 +2,6 @@ import { useEffect } from "react";
 import { IoNotificationsOutline } from "react-icons/io5";
 import { useDispatch, useSelector } from "react-redux";
 import { useTranslation } from "react-i18next";
-import { Link } from "react-router-dom";
-import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl";
 import {
   initNotifications,
   loadMoreNotifications,
@@ -16,6 +14,7 @@ import {
   selectNotificationsTotalPages,
   selectUnreadCount,
 } from "@tobeatraveller/shared";
+import NotificationItem from "../../components/notifications/NotificationItem";
 import "./Notifications.scss";
 
 const Notifications = () => {
@@ -40,15 +39,6 @@ const Notifications = () => {
   useEffect(() => {
     if (unreadCount > 0) dispatch(markAllNotificationsRead());
   }, [unreadCount, dispatch]);
-
-  const others = (n) => n.count > 1 && t("notifications.andOthers", { count: n.count - 1 });
-  const verb = (n, key) => t(`notifications.${n.count > 1 ? `${key}Plural` : key}`);
-
-  const TYPE_LABELS = {
-    follow:  (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{verb(n, "startedFollowing")}</>,
-    like:    (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{verb(n, "liked")}<em>{n.itinerary?.title}</em></>,
-    comment: (n) => <><strong>@{n.actor?.username}</strong>{others(n)}{verb(n, "commented")}<em>{n.itinerary?.title}</em></>,
-  };
 
   return (
     <div className="notifications section__container">
@@ -82,7 +72,7 @@ const Notifications = () => {
         <>
           <div className="notifications__list">
             {notifications.map((n) => (
-              <NotificationItem key={n.id} notification={n} typeLabels={TYPE_LABELS} />
+              <NotificationItem key={n.id} notification={n} />
             ))}
           </div>
           {page < totalPages && (
@@ -97,32 +87,6 @@ const Notifications = () => {
         </>
       )}
     </div>
-  );
-};
-
-const NotificationItem = ({ notification: n, typeLabels }) => {
-  const label = typeLabels[n.type]?.(n);
-  const href = n.type === "follow"
-    ? `/profile/${n.actor?.id}`
-    : n.itinerary?.id
-      ? `/itinerary/${n.itinerary.id}${n.type === "comment" && n.commentId ? `#comment-${n.commentId}` : ""}`
-      : "#";
-
-  return (
-    <Link to={href} className={`notif-item${n.isRead ? "" : " notif-item--unread"}`}>
-      <img
-        src={optimizedCloudinaryUrl(n.actor?.avatarUrl, { width: 48 })}
-        alt={n.actor?.username}
-        loading="lazy"
-        className="notif-item__avatar"
-        onError={(e) => { e.currentTarget.src = `https://ui-avatars.com/api/?name=${n.actor?.username}&background=random&color=fff`; }}
-      />
-      <div className="notif-item__body">
-        <p className="notif-item__text">{label}</p>
-        <span className="notif-item__time">{n.postedAgo}</span>
-      </div>
-      {!n.isRead && <span className="notif-item__dot" aria-hidden="true" />}
-    </Link>
   );
 };
 

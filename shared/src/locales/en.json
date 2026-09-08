@@ -687,7 +687,8 @@
     "commented": " commented on ",
     "commentedPlural": " commented on ",
     "andOthers_one": " and {{count}} other",
-    "andOthers_other": " and {{count}} others"
+    "andOthers_other": " and {{count}} others",
+    "seeAll": "See all notifications"
   },
   "comments": {
     "title": "Comments",

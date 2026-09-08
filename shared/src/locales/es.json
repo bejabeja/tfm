@@ -664,7 +664,8 @@
     "commented": " comentó en ",
     "commentedPlural": " comentaron en ",
     "andOthers_one": " y {{count}} más",
-    "andOthers_other": " y {{count}} más"
+    "andOthers_other": " y {{count}} más",
+    "seeAll": "Ver todas las notificaciones"
   },
   "comments": {
     "title": "Comentarios",

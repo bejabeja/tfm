@@ -71,6 +71,14 @@
   flex-shrink: 0;
 }
 
+// The global reset (index.scss `* { width: 100%; }`) means anything meant to
+// shrink to its content, rather than fill its flex/block parent, has to opt
+// out with an explicit width here (also applies to .topbar__account below).
+.topbar__notif-wrap {
+  position: relative;
+  width: auto;
+}
+
 .topbar__notif {
   position: relative;
   display: flex;
@@ -78,6 +86,9 @@
   justify-content: center;
   width: 36px;
   height: 36px;
+  background: none;
+  border: none;
+  cursor: pointer;
   color: var(--text-color);
 }
 
@@ -85,9 +96,6 @@
   font-size: 1.4rem;
 }
 
-// The global reset (index.scss `* { width: 100%; }`) means anything meant to
-// shrink to its content, rather than fill its flex/block parent, has to opt
-// out with an explicit width here.
 .topbar__account {
   position: relative;
   width: auto;

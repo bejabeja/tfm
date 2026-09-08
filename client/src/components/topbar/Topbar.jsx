@@ -16,6 +16,7 @@ import { selectUnreadCount } from "@tobeatraveller/shared";
 import { selectMe, selectMeLoading } from "../../store/user/userInfoSelectors.js";
 import { generateAvatar } from "../../utils/constants/constants";
 import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl.js";
+import NotificationsPanel from "./NotificationsPanel";
 import "./Topbar.scss";
 
 // Desktop-only (>=480px, see Topbar.scss) counterpart to the mobile "Yo"
@@ -29,6 +30,7 @@ import "./Topbar.scss";
 const Topbar = ({ onOpenSearch }) => {
   const { t } = useTranslation();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [notifOpen, setNotifOpen] = useState(false);
   const userMe = useSelector(selectMe);
   const userMeLoading = useSelector(selectMeLoading);
   const unreadCount = useSelector(selectUnreadCount);
@@ -36,6 +38,7 @@ const Topbar = ({ onOpenSearch }) => {
   useEffect(() => {
     const closeOnOutsideClick = (event) => {
       if (!event.target.closest(".topbar__account")) setMenuOpen(false);
+      if (!event.target.closest(".topbar__notif-wrap")) setNotifOpen(false);
     };
     document.addEventListener("click", closeOnOutsideClick);
     return () => document.removeEventListener("click", closeOnOutsideClick);
@@ -49,12 +52,21 @@ const Topbar = ({ onOpenSearch }) => {
       </button>
 
       <div className="topbar__actions">
-        <Link to="/notifications" className="topbar__notif" aria-label={t("nav.notifications")}>
-          <IoNotificationsOutline className="topbar__notif-icon" />
-          {unreadCount > 0 && (
-            <span className="nav-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
-          )}
-        </Link>
+        <div className="topbar__notif-wrap">
+          <button
+            type="button"
+            className="topbar__notif"
+            aria-label={t("nav.notifications")}
+            aria-expanded={notifOpen}
+            onClick={() => setNotifOpen((open) => !open)}
+          >
+            <IoNotificationsOutline className="topbar__notif-icon" />
+            {unreadCount > 0 && (
+              <span className="nav-badge">{unreadCount > 99 ? "99+" : unreadCount}</span>
+            )}
+          </button>
+          <NotificationsPanel isOpen={notifOpen} onClose={() => setNotifOpen(false)} />
+        </div>
 
         <div className="topbar__account">
           {userMeLoading ? (

@@ -1,0 +1,65 @@
+// Same open/close mechanics as .topbar__menu (Topbar.scss): always in the
+// DOM, toggled via opacity/transform + pointer-events so the click-outside
+// listener doesn't need to special-case "panel not mounted yet".
+.notif-panel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 8px);
+  width: 340px;
+  max-width: calc(100vw - 3rem);
+  background: var(--white-color);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+  padding: 0.75rem;
+  opacity: 0;
+  transform: translateY(-6px);
+  pointer-events: none;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  z-index: 100;
+
+  &--open {
+    opacity: 1;
+    transform: translateY(0);
+    pointer-events: auto;
+  }
+
+  &__title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: var(--text-color);
+    margin: 0.25rem 0.5rem 0.5rem;
+  }
+
+  &__list {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    max-height: 360px;
+    overflow-y: auto;
+  }
+
+  &__message {
+    padding: 1.5rem 0.5rem;
+    text-align: center;
+    font-size: 0.85rem;
+    color: var(--text-secondary-color);
+  }
+
+  &__see-all {
+    display: block;
+    text-align: center;
+    margin-top: 0.5rem;
+    padding: 0.6rem;
+    border-top: 1px solid var(--border-color);
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    text-decoration: none;
+    border-radius: 0 0 8px 8px;
+
+    &:hover {
+      background: var(--surface-color);
+    }
+  }
+}
