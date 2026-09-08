@@ -278,7 +278,9 @@ const ProfileScreen = ({ route, navigation }) => {
               </TouchableOpacity>
             )}
             {user?.createdAt && (
-              <Text style={styles.metaItem}>📅 {t('profile.joinedOn', { date: user.createdAt })}</Text>
+              <Text style={styles.metaItem}>
+                📅 {t('profile.joinedOn', { date: new Date(user.createdAt).toLocaleDateString(undefined, { year: 'numeric', month: 'long' }) })}
+              </Text>
             )}
           </View>
 
@@ -434,11 +436,12 @@ const ProfileScreen = ({ route, navigation }) => {
             {isOwnProfile ? t('profile.noTripsYet') : t('profile.noPublicTrips')}
           </Text>
         ) : (
-          <View style={styles.grid}>
+          <View style={styles.compactGrid}>
             {itineraries.map(it => (
-              <View key={it.id} style={styles.gridItem}>
+              <View key={it.id} style={styles.compactGridItem}>
                 <ItineraryCard
                   itinerary={it}
+                  compact
                   onPress={() => navigation.navigate('Itinerary', { id: it.id })}
                 />
               </View>
@@ -686,6 +689,8 @@ const styles = StyleSheet.create({
 
   grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 12 },
   gridItem: { width: '47.5%' },
+  compactGrid: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  compactGridItem: { width: '31%' },
 
   visibilityToggle: { flexDirection: 'row', gap: 6, marginBottom: 12 },
   visBtn: {

@@ -155,6 +155,16 @@ describe('User model', () => {
             const dto = user.toDTO();
             expect(dto).not.toHaveProperty('password');
         });
+
+        // Regression: createdAt used to be pre-formatted server-side via
+        // formatDate(), which hardcodes the "en-US" locale, so a Spanish-language
+        // viewer would see an English month name ("Se unió August 2026"). Leaving
+        // it raw lets each client format it with the viewer's own locale.
+        it('leaves createdAt as the raw date, not pre-formatted to a locale', () => {
+            const user = User.fromDb(baseRow);
+            const dto = user.toDTO();
+            expect(dto.createdAt).toBe(baseRow.created_at);
+        });
     });
 
     describe('toPublicDTO()', () => {

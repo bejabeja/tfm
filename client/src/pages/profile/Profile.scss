@@ -43,7 +43,7 @@ $avatar-size-tablet: 112px;
 
   &__card-actions {
     display: flex;
-    justify-content: flex-end;
+    flex-shrink: 0;
     gap: 0.5rem;
   }
 
@@ -255,6 +255,29 @@ $avatar-size-tablet: 112px;
       font-size: 0.9375rem;
       color: var(--text-secondary-color);
       line-height: 1.7;
+      white-space: pre-wrap;
+    }
+
+    &-text--clamped {
+      display: -webkit-box;
+      -webkit-box-orient: vertical;
+      -webkit-line-clamp: 4;
+      overflow: hidden;
+    }
+
+    &-toggle {
+      align-self: flex-start;
+      background: none;
+      border: none;
+      padding: 0;
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--primary-color);
+      cursor: pointer;
+
+      &:hover {
+        text-decoration: underline;
+      }
     }
   }
 
@@ -387,28 +410,16 @@ $avatar-size-tablet: 112px;
 
   // ── Layout ───────────────────────────────────────────────────
   // Single column (Instagram/X/Polarsteps), not a fixed sidebar + main
-  // split: a social profile isn't a dashboard. The layout itself spans the
-  // full width other pages use (matches Explore's section__container), but
-  // the identity/text blocks (header card, completeness, about, suggested
-  // people) are capped narrower and centered below, same reasoning
-  // Instagram applies to bio text: comfortable reading width. The trips
-  // grid stays full width since more columns there is a real benefit, the
-  // way it is on Explore, unlike wider bio text which wouldn't be.
+  // split: a social profile isn't a dashboard. Everything spans the full
+  // width other pages use (matches Explore's section__container) instead
+  // of capping the header/about narrower than the trips grid below it,
+  // which just looked like two mismatched column widths stacked on
+  // top of each other.
   &__layout {
     display: flex;
     flex-direction: column;
     gap: 1.25rem;
     min-width: 0;
-  }
-
-  &__card,
-  &__completeness,
-  &__about,
-  .suggested-users {
-    width: 100%;
-    max-width: 640px;
-    margin-left: auto;
-    margin-right: auto;
   }
 
   // ── Skeleton ─────────────────────────────────────────────────
@@ -515,11 +526,14 @@ $avatar-size-tablet: 112px;
 .profile {
   &__visibility-toggle {
     display: flex;
+    flex-wrap: wrap;
     gap: 0.4rem;
-    margin-bottom: 0.75rem;
+    width: fit-content;
   }
 
   &__vis-btn {
+    width: fit-content;
+    flex-shrink: 0;
     background: none;
     border: 1.5px solid var(--border-color);
     border-radius: 999px;

@@ -348,6 +348,8 @@
     "joinedOn": "Joined {{date}}",
     "about": "About",
     "tellCommunity": "+ Tell the community about yourself",
+    "aboutReadMore": "Read more",
+    "aboutReadLess": "Read less",
     "profileStrength": "Profile strength",
     "myTrips": "My trips",
     "otherTrips": "Trips",
@@ -374,7 +376,13 @@
     "completenessTipBio": "Write a bio",
     "completenessTipAbout": "Complete your About section",
     "completenessTipLocation": "Add your location",
-    "completenessTipPhoto": "Set a profile photo"
+    "completenessTipPhoto": "Set a profile photo",
+    "badgeExplorerDesc": "Explorer · Earned by creating your first trip",
+    "badgeAdventurerDesc": "Adventurer · Earned by creating 5+ trips",
+    "badgeGlobetrotterDesc": "Globetrotter · Earned by creating 10+ trips",
+    "badgePopularDesc": "Popular · Earned by reaching 50 followers",
+    "badgeNextTip_one": "{{count}} more trip to unlock {{next}}",
+    "badgeNextTip_other": "{{count}} more trips to unlock {{next}}"
   },
   "editProfile": {
     "title": "Edit profile",

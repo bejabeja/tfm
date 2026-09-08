@@ -7,7 +7,7 @@ import { useTranslation } from 'react-i18next';
 import { checkIsLiked, toggleLike, selectIsAuthenticated } from '@tobeatraveller/shared';
 import { COLORS, shadow } from '../utils/styles';
 
-const ItineraryCard = ({ itinerary, onPress, onRequestLogin }) => {
+const ItineraryCard = ({ itinerary, onPress, onRequestLogin, compact = false }) => {
   const { t } = useTranslation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const [isLiked, setIsLiked]       = useState(false);
@@ -36,7 +36,11 @@ const ItineraryCard = ({ itinerary, onPress, onRequestLogin }) => {
   };
 
   return (
-    <TouchableOpacity style={styles.card} onPress={onPress} activeOpacity={0.88}>
+    <TouchableOpacity
+      style={[styles.card, compact && styles.cardCompact]}
+      onPress={onPress}
+      activeOpacity={0.88}
+    >
       <Image
         source={{ uri: itinerary.photoUrl || 'https://placehold.co/400x200/1A535C/fff?text=✈' }}
         style={StyleSheet.absoluteFillObject}
@@ -51,58 +55,75 @@ const ItineraryCard = ({ itinerary, onPress, onRequestLogin }) => {
 
       {/* Visibility badge: top left */}
       {itinerary.isPublic === false && (
-        <View style={styles.visibilityBadge}>
-          <Ionicons name="lock-closed" size={10} color="#fff" />
-          <Text style={styles.visibilityText}>{t('myItineraries.private')}</Text>
+        <View style={[styles.visibilityBadge, compact && styles.badgeCompact]}>
+          <Ionicons name="lock-closed" size={compact ? 9 : 10} color="#fff" />
+          {!compact && <Text style={styles.visibilityText}>{t('myItineraries.private')}</Text>}
         </View>
       )}
 
       {/* Like button: top right */}
       <TouchableOpacity
-        style={styles.likeBtn}
+        style={[styles.likeBtn, compact && styles.badgeCompact]}
         onPress={handleLike}
         activeOpacity={0.75}
         hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
       >
         <Ionicons
           name={isLiked ? 'heart' : 'heart-outline'}
-          size={15}
+          size={compact ? 12 : 15}
           color={isLiked ? COLORS.primary : '#fff'}
         />
-        <Text style={[styles.likeCount, isLiked && styles.likeCountActive]}>
+        <Text style={[styles.likeCount, compact && styles.likeCountCompact, isLiked && styles.likeCountActive]}>
           {likesCount}
         </Text>
       </TouchableOpacity>
 
       {/* Content overlay: bottom */}
-      <View style={styles.overlay}>
-        <Text style={styles.title} numberOfLines={2}>{itinerary.title}</Text>
+      <View style={[styles.overlay, compact && styles.overlayCompact]}>
+        <Text style={[styles.title, compact && styles.titleCompact]} numberOfLines={compact ? 1 : 2}>
+          {itinerary.title}
+        </Text>
         {itinerary.location?.name && (
           <View style={styles.locationRow}>
-            <Ionicons name="location-outline" size={11} color="rgba(255,255,255,0.85)" />
-            <Text style={styles.locationText} numberOfLines={1}>{itinerary.location.name}</Text>
+            <Ionicons name="location-outline" size={compact ? 10 : 11} color="rgba(255,255,255,0.85)" />
+            <Text
+              style={[styles.locationText, compact && styles.locationTextCompact]}
+              numberOfLines={1}
+            >
+              {itinerary.location.name}
+            </Text>
           </View>
         )}
-        <View style={styles.metaRow}>
-          {itinerary.tripTotalDays > 0 && (
+        {!compact && (
+          <View style={styles.metaRow}>
+            {itinerary.tripTotalDays > 0 && (
+              <View style={styles.metaItem}>
+                <Ionicons name="calendar-outline" size={10} color="rgba(255,255,255,0.7)" />
+                <Text style={styles.metaText}>{itinerary.tripTotalDays}d</Text>
+              </View>
+            )}
+            {parseFloat(itinerary.budget) > 0 && (
+              <View style={styles.metaItem}>
+                <Ionicons name="cash-outline" size={10} color="rgba(255,255,255,0.7)" />
+                <Text style={styles.metaText}>{itinerary.budget} {itinerary.currency}</Text>
+              </View>
+            )}
+            {(itinerary.commentsCount ?? 0) > 0 && (
+              <View style={styles.metaItem}>
+                <Ionicons name="chatbubble-outline" size={10} color="rgba(255,255,255,0.7)" />
+                <Text style={styles.metaText}>{itinerary.commentsCount}</Text>
+              </View>
+            )}
+          </View>
+        )}
+        {compact && itinerary.tripTotalDays > 0 && (
+          <View style={styles.metaRow}>
             <View style={styles.metaItem}>
-              <Ionicons name="calendar-outline" size={10} color="rgba(255,255,255,0.7)" />
-              <Text style={styles.metaText}>{itinerary.tripTotalDays}d</Text>
+              <Ionicons name="calendar-outline" size={9} color="rgba(255,255,255,0.7)" />
+              <Text style={styles.metaTextCompact}>{itinerary.tripTotalDays}d</Text>
             </View>
-          )}
-          {parseFloat(itinerary.budget) > 0 && (
-            <View style={styles.metaItem}>
-              <Ionicons name="cash-outline" size={10} color="rgba(255,255,255,0.7)" />
-              <Text style={styles.metaText}>{itinerary.budget} {itinerary.currency}</Text>
-            </View>
-          )}
-          {(itinerary.commentsCount ?? 0) > 0 && (
-            <View style={styles.metaItem}>
-              <Ionicons name="chatbubble-outline" size={10} color="rgba(255,255,255,0.7)" />
-              <Text style={styles.metaText}>{itinerary.commentsCount}</Text>
-            </View>
-          )}
-        </View>
+          </View>
+        )}
       </View>
     </TouchableOpacity>
   );
@@ -114,6 +135,7 @@ const styles = StyleSheet.create({
     backgroundColor: COLORS.accent,
     ...shadow(4, 0.18, 10, 4),
   },
+  cardCompact: { height: 130, borderRadius: 12 },
   likeBtn: {
     position: 'absolute', top: 10, right: 10,
     flexDirection: 'row', alignItems: 'center', gap: 3,
@@ -126,21 +148,27 @@ const styles = StyleSheet.create({
     backgroundColor: 'rgba(0,0,0,0.38)',
     borderRadius: 999, paddingVertical: 4, paddingHorizontal: 8,
   },
+  badgeCompact: { top: 6, paddingVertical: 3, paddingHorizontal: 6 },
   visibilityText: { fontSize: 11, color: '#fff', fontWeight: '600' },
   likeCount: { fontSize: 11, color: '#fff', fontWeight: '600' },
+  likeCountCompact: { fontSize: 10 },
   likeCountActive: { color: COLORS.primary },
   overlay: {
     position: 'absolute', bottom: 0, left: 0, right: 0,
     padding: 11, gap: 3,
   },
+  overlayCompact: { padding: 8, gap: 1 },
   title: {
     fontSize: 14, fontWeight: '700', color: '#fff', lineHeight: 19,
   },
+  titleCompact: { fontSize: 12, lineHeight: 15 },
   locationRow: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   locationText: { fontSize: 11, color: 'rgba(255,255,255,0.85)', flex: 1 },
+  locationTextCompact: { fontSize: 10 },
   metaRow: { flexDirection: 'row', gap: 8, marginTop: 1, flexWrap: 'wrap' },
   metaItem: { flexDirection: 'row', alignItems: 'center', gap: 3 },
   metaText: { fontSize: 10, color: 'rgba(255,255,255,0.72)' },
+  metaTextCompact: { fontSize: 9, color: 'rgba(255,255,255,0.72)' },
 });
 
 export default ItineraryCard;

@@ -89,7 +89,11 @@ export class User {
             role: this.role,
             premiumUntil: this.premiumUntil,
             isPremium: this.isPremium(),
-            createdAt: formatDate(this.createdAt),
+            // Left raw (not formatDate()'d like updatedAt below): formatDate()
+            // hardcodes en-US, so a Spanish-language viewer would see "Joined
+            // August 2026" mid-sentence. The client formats this with the
+            // viewer's own locale instead.
+            createdAt: this.createdAt,
             updatedAt: formatDate(this.updatedAt),
             name: this.name,
             totalItineraries: this.countItineraries(),

@@ -18,15 +18,16 @@ import { buildProfileJsonLd } from "../../utils/jsonLd";
 import { filterItineraries } from "@tobeatraveller/shared";
 import FollowsModal from "../../components/follows/FollowsModal";
 import OfficialBadge from "../../components/users/OfficialBadge";
-import SuggestedUsersWidget from "../../components/users/suggestedUsers/SuggestedUsersWidget";
 import Error from "../error/Error";
 import "./Profile.scss";
 
 // ─── Badge definitions ────────────────────────────────────────────────────────
+// Sorted highest tier first: ProfileBadges.find() picks the first (highest)
+// tier the user qualifies for, and reads the previous entry as "next tier up".
 const TRIP_BADGES = [
-  { id: "globetrotter", labelKey: "Globetrotter", Icon: IoEarthOutline, min: 10 },
-  { id: "adventurer",   labelKey: "Adventurer",   Icon: IoAirplaneOutline, min: 5 },
-  { id: "explorer",     labelKey: "Explorer",     Icon: MdExplore, min: 1 },
+  { id: "globetrotter", labelKey: "Globetrotter", Icon: IoEarthOutline, min: 10, descKey: "profile.badgeGlobetrotterDesc" },
+  { id: "adventurer",   labelKey: "Adventurer",   Icon: IoAirplaneOutline, min: 5, descKey: "profile.badgeAdventurerDesc" },
+  { id: "explorer",     labelKey: "Explorer",     Icon: MdExplore, min: 1, descKey: "profile.badgeExplorerDesc" },
 ];
 
 const COMPLETENESS_TIP_KEYS = [
@@ -129,32 +130,34 @@ const Profile = () => {
             />
             {isMyProfile && <ProfileCompleteness user={user} t={t} />}
             {aboutContent}
-            {isMyProfile && (
-              <div className="profile__visibility-toggle">
-                {[
-                  { val: 'all',     label: t('myItineraries.all') },
-                  { val: 'public',  label: '🌍 ' + t('myItineraries.public') },
-                  { val: 'private', label: '🔒 ' + t('myItineraries.private') },
-                ].map(opt => (
-                  <button
-                    key={opt.val}
-                    type="button"
-                    className={`profile__vis-btn${visibility === opt.val ? ' profile__vis-btn--active' : ''}`}
-                    onClick={() => setVisibility(opt.val)}
-                  >
-                    {opt.label}
-                  </button>
-                ))}
-              </div>
-            )}
             <ItinerariesSection
               user={user}
               itineraries={filteredItineraries}
               title={`${isMyProfile ? t("profile.myTrips") : t("profile.otherTrips")} (${filteredItineraries.length})`}
+              headerActions={isMyProfile && (
+                <div className="profile__visibility-toggle">
+                  {[
+                    { val: 'all',     label: t('myItineraries.all') },
+                    { val: 'public',  label: '🌍 ' + t('myItineraries.public') },
+                    { val: 'private', label: '🔒 ' + t('myItineraries.private') },
+                  ].map(opt => (
+                    <button
+                      key={opt.val}
+                      type="button"
+                      className={`profile__vis-btn${visibility === opt.val ? ' profile__vis-btn--active' : ''}`}
+                      onClick={() => setVisibility(opt.val)}
+                    >
+                      {opt.label}
+                    </button>
+                  ))}
+                </div>
+              )}
               isLoading={loadingItineraries}
               isOwner={isMyProfile}
             />
-            {isMyProfile && <SuggestedUsersWidget />}
+            {/* SuggestedUsersWidget hidden for now: too few users on the
+                platform yet for "people to follow" to be useful. Re-enable
+                once there's a meaningful pool of suggestions. */}
           </>
         )}
       </div>
@@ -248,50 +251,50 @@ const HeaderSection = ({
             </span>
           )}
         </div>
-      </div>
 
-      {/* Its own row instead of squeezed into &__card-top alongside avatar
-          + stats: with the header capped at a comfortable 640px reading
-          width, all three together only fit on wider screens, and the
-          buttons would otherwise wrap onto a stray line of their own. */}
-      <div className="profile__card-actions">
-        <button
-          className="btn profile__copy-btn"
-          onClick={onCopyLink}
-          aria-label={t("profile.copyLink")}
-          title={t("profile.copyLink")}
-        >
-          <IoLinkOutline aria-hidden="true" />
-        </button>
-        {isMyProfile ? (
-          <>
-            <Link
-              to={`/profile/edit/${user?.id}`}
-              className="btn profile__copy-btn"
-              title={t("profile.editProfile")}
-              aria-label={t("profile.editProfile")}
-            >
-              <MdOutlineEdit aria-hidden="true" />
-            </Link>
-            <Link
-              to="/settings"
-              className="btn profile__copy-btn"
-              title={t("nav.settings") || "Settings"}
-              aria-label={t("nav.settings") || "Settings"}
-            >
-              <IoSettingsOutline aria-hidden="true" />
-            </Link>
-          </>
-        ) : (
+        {/* Grouped with the avatar + stats instead of on its own row below:
+            keeping them in the same cluster (left-aligned, no margin-left:
+            auto) keeps the buttons visually tied to the identity they act
+            on, instead of stranded alone on the far right of a wide card. */}
+        <div className="profile__card-actions">
           <button
-            ref={followBtnRef}
-            className={`btn profile__btn ${isFollowing ? "btn--secondary" : "btn--primary"}`}
-            onClick={onFollowToggle}
-            disabled={isLoadingFollow}
+            className="btn profile__copy-btn"
+            onClick={onCopyLink}
+            aria-label={t("profile.copyLink")}
+            title={t("profile.copyLink")}
           >
-            {isLoadingFollow ? "…" : isFollowing ? t("profile.unfollow") : t("profile.follow")}
+            <IoLinkOutline aria-hidden="true" />
           </button>
-        )}
+          {isMyProfile ? (
+            <>
+              <Link
+                to={`/profile/edit/${user?.id}`}
+                className="btn profile__copy-btn"
+                title={t("profile.editProfile")}
+                aria-label={t("profile.editProfile")}
+              >
+                <MdOutlineEdit aria-hidden="true" />
+              </Link>
+              <Link
+                to="/settings"
+                className="btn profile__copy-btn"
+                title={t("nav.settings") || "Settings"}
+                aria-label={t("nav.settings") || "Settings"}
+              >
+                <IoSettingsOutline aria-hidden="true" />
+              </Link>
+            </>
+          ) : (
+            <button
+              ref={followBtnRef}
+              className={`btn profile__btn ${isFollowing ? "btn--secondary" : "btn--primary"}`}
+              onClick={onFollowToggle}
+              disabled={isLoadingFollow}
+            >
+              {isLoadingFollow ? "…" : isFollowing ? t("profile.unfollow") : t("profile.follow")}
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="profile__info">
@@ -325,7 +328,7 @@ const HeaderSection = ({
           </Link>
         ) : null}
 
-        <ProfileBadges user={user} />
+        <ProfileBadges user={user} t={t} />
 
         {(user?.location || user?.createdAt || isMyProfile) && (
           <div className="profile__meta">
@@ -343,7 +346,9 @@ const HeaderSection = ({
             {user?.createdAt && (
               <span className="profile__meta-item">
                 <MdOutlineCalendarMonth aria-hidden="true" />
-                <span className="profile__meta-text">{t("profile.joinedOn", { date: user.createdAt })}</span>
+                <span className="profile__meta-text">
+                  {t("profile.joinedOn", { date: new Date(user.createdAt).toLocaleDateString(undefined, { year: "numeric", month: "long" }) })}
+                </span>
               </span>
             )}
           </div>
@@ -354,18 +359,53 @@ const HeaderSection = ({
 };
 
 // ─── About ──────────────────────────────────────────────────────────────────
-const AboutSection = ({ about, t }) => (
-  <div className="profile__about">
-    <h2 className="profile__about-title">{t("profile.about")}</h2>
-    <p className="profile__about-text">{about}</p>
-  </div>
-);
+const AboutSection = ({ about, t }) => {
+  const [expanded, setExpanded] = useState(false);
+  const [isClamped, setIsClamped] = useState(false);
+  const textRef = useRef(null);
+
+  useEffect(() => {
+    if (expanded) return;
+    const el = textRef.current;
+    if (!el) return;
+    const checkClamped = () => setIsClamped(el.scrollHeight > el.clientHeight + 1);
+    checkClamped();
+    window.addEventListener("resize", checkClamped);
+    return () => window.removeEventListener("resize", checkClamped);
+  }, [about, expanded]);
+
+  return (
+    <div className="profile__about">
+      <h2 className="profile__about-title">{t("profile.about")}</h2>
+      <p
+        ref={textRef}
+        className={`profile__about-text${expanded ? "" : " profile__about-text--clamped"}`}
+      >
+        {about}
+      </p>
+      {(isClamped || expanded) && (
+        <button
+          type="button"
+          className="profile__about-toggle"
+          onClick={() => setExpanded((prev) => !prev)}
+        >
+          {expanded ? t("profile.aboutReadLess") : t("profile.aboutReadMore")}
+        </button>
+      )}
+    </div>
+  );
+};
 
 // ─── Achievement badges ───────────────────────────────────────────────────────
-const ProfileBadges = ({ user }) => {
-  const tripBadge = TRIP_BADGES.find((b) => (user?.totalItineraries || 0) >= b.min);
+const ProfileBadges = ({ user, t }) => {
+  const totalItineraries = user?.totalItineraries || 0;
+  const tripBadgeIndex = TRIP_BADGES.findIndex((b) => totalItineraries >= b.min);
+  const tripBadge = tripBadgeIndex !== -1 ? TRIP_BADGES[tripBadgeIndex] : null;
+  // TRIP_BADGES is sorted highest tier first, so the previous entry is the next tier up.
+  const nextTripBadge = tripBadgeIndex > 0 ? TRIP_BADGES[tripBadgeIndex - 1] : null;
+
   const popularBadge = (user?.followers || 0) >= 50
-    ? { id: "popular", labelKey: "Popular", Icon: IoStarOutline }
+    ? { id: "popular", labelKey: "Popular", Icon: IoStarOutline, descKey: "profile.badgePopularDesc" }
     : null;
 
   const badges = [tripBadge, popularBadge].filter(Boolean);
@@ -373,12 +413,19 @@ const ProfileBadges = ({ user }) => {
 
   return (
     <div className="profile__badges">
-      {badges.map(({ id, labelKey, Icon }) => (
-        <span key={id} className="profile__badge" title={labelKey}>
-          <Icon aria-hidden="true" />
-          {labelKey}
-        </span>
-      ))}
+      {badges.map(({ id, labelKey, Icon, descKey }) => {
+        const remaining = id === tripBadge?.id && nextTripBadge ? nextTripBadge.min - totalItineraries : 0;
+        const tooltip = remaining > 0
+          ? `${t(descKey)}\n${t("profile.badgeNextTip", { count: remaining, next: nextTripBadge.labelKey })}`
+          : t(descKey);
+
+        return (
+          <span key={id} className="profile__badge" title={tooltip}>
+            <Icon aria-hidden="true" />
+            {labelKey}
+          </span>
+        );
+      })}
     </div>
   );
 };

@@ -9,6 +9,7 @@ const ItinerariesSection = ({
   user,
   itineraries,
   title = "",
+  headerActions,
   isLoading,
   limit,
   isOwner = false,
@@ -26,7 +27,12 @@ const ItinerariesSection = ({
 
   return (
     <div className="itineraries-section">
-      {title && <h2 className="itineraries-section__title">{title}</h2>}
+      {(title || headerActions) && (
+        <div className="itineraries-section__header">
+          {title && <h2 className="itineraries-section__title">{title}</h2>}
+          {headerActions}
+        </div>
+      )}
 
       {isEmpty ? (
         <EmptyState isOwner={isOwner} username={user?.username} t={t} />
