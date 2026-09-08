@@ -1,11 +1,23 @@
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+import { setWorkerUrl } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
+import maplibreWorkerUrl from "maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url";
+import { maplibreGL } from "@maplibre/maplibre-gl-leaflet";
 import { useEffect, useMemo, useState } from "react";
-import { MapContainer, Marker, TileLayer, Tooltip } from "react-leaflet";
+import { MapContainer, Marker, Tooltip, useMap } from "react-leaflet";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
 import { getDestinations } from "../../services/itineraries";
 import "./WorldMap.scss";
+
+setWorkerUrl(maplibreWorkerUrl);
+
+const BASEMAP_STYLE_URL = "https://tiles.openfreemap.org/styles/liberty";
+const BASEMAP_ATTRIBUTION =
+  '<a href="https://openfreemap.org" target="_blank" rel="noopener noreferrer">OpenFreeMap</a> ' +
+  '&copy; <a href="https://www.openmaptiles.org/" target="_blank" rel="noopener noreferrer">OpenMapTiles</a> ' +
+  'Data from <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener noreferrer">OpenStreetMap</a>';
 
 const createDestinationMarker = (count) =>
   L.divIcon({
@@ -14,6 +26,46 @@ const createDestinationMarker = (count) =>
     iconSize: [36, 36],
     iconAnchor: [18, 18],
   });
+
+// The OpenMapTiles vector schema carries the local name in `name` and the
+// English one in `name_en`; the default style prefers the local name, so
+// every label layer using `name` gets forced to `name_en` (falling back to
+// `name` when a feature has no English variant).
+const forceEnglishLabels = (maplibreMap) => {
+  maplibreMap
+    .getStyle()
+    .layers.filter(
+      (layer) =>
+        layer.type === "symbol" &&
+        JSON.stringify(layer.layout?.["text-field"] ?? "").includes("name")
+    )
+    .forEach((layer) => {
+      maplibreMap.setLayoutProperty(layer.id, "text-field", [
+        "coalesce",
+        ["get", "name_en"],
+        ["get", "name"],
+      ]);
+    });
+};
+
+const EnglishBasemap = () => {
+  const map = useMap();
+
+  useEffect(() => {
+    const glLayer = maplibreGL({
+      style: BASEMAP_STYLE_URL,
+      attribution: BASEMAP_ATTRIBUTION,
+    }).addTo(map);
+    const maplibreMap = glLayer.getMaplibreMap();
+
+    if (maplibreMap.isStyleLoaded()) forceEnglishLabels(maplibreMap);
+    else maplibreMap.once("load", () => forceEnglishLabels(maplibreMap));
+
+    return () => map.removeLayer(glLayer);
+  }, [map]);
+
+  return null;
+};
 
 // Destinations close enough to visually overlap at the map's low default
 // zoom get grouped into clusters (transitively: A-close-to-B and B-close-to-C
@@ -85,14 +137,11 @@ const WorldMap = () => {
         className="world-map__container"
         scrollWheelZoom={false}
         minZoom={2}
+        maxZoom={10}
         maxBounds={[[-85, -180], [85, 180]]}
         maxBoundsViscosity={1.0}
       >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          maxZoom={10}
-        />
+        <EnglishBasemap />
         {spreadDestinations.map((dest, i) => (
           <Marker
             key={i}

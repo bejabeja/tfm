@@ -23,7 +23,7 @@ export default defineConfig({
         manualChunks: {
           'vendor-react': ['react', 'react-dom', 'react-router-dom'],
           'vendor-redux': ['redux', 'react-redux', '@reduxjs/toolkit', 'redux-thunk'],
-          'vendor-map': ['leaflet', 'react-leaflet'],
+          'vendor-map': ['leaflet', 'react-leaflet', 'maplibre-gl', '@maplibre/maplibre-gl-leaflet'],
           'vendor-ui': ['react-icons', 'react-hot-toast'],
           'vendor-forms': ['react-hook-form', '@hookform/resolvers', 'zod'],
           'vendor-utils': ['lodash'],
