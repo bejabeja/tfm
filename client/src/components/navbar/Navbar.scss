@@ -76,84 +76,6 @@
   width: auto;
 }
 
-/* ── Mobile: Me panel ── */
-.me-panel {
-  position: fixed;
-  bottom: 60px;
-  left: 0;
-  right: 0;
-  background-color: var(--white-color);
-  border-radius: 16px 16px 0 0;
-  border-top: 1px solid var(--border-color);
-  padding: 0.5rem 0;
-  z-index: 99;
-  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
-
-  @media (min-width: 480px) {
-    display: none;
-  }
-
-  &__backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0, 0, 0, 0.3);
-    z-index: 98;
-
-    @media (min-width: 480px) {
-      display: none;
-    }
-  }
-
-  &__item {
-    display: flex;
-    align-items: center;
-    gap: 0.85rem;
-    padding: 0.9rem 1.5rem;
-    text-decoration: none;
-    color: var(--text-color);
-    font-size: 1rem;
-    font-weight: 500;
-    width: 100%;
-    transition: background-color 0.15s;
-
-    span {
-      width: auto;
-    }
-
-    &:active {
-      background-color: var(--surface-color);
-    }
-
-    &--danger {
-      color: var(--error-color);
-    }
-
-    &--experience {
-      color: #E8743B;
-      font-weight: 600;
-    }
-  }
-
-  &__icon {
-    font-size: 1.2rem;
-    flex-shrink: 0;
-    width: auto;
-  }
-
-  &__premium-badge {
-    margin-left: auto;
-    font-size: 0.65rem;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    color: var(--primary-color);
-    background: var(--primary-light);
-    padding: 2px 7px;
-    border-radius: 999px;
-    flex-shrink: 0;
-  }
-}
-
 .nav-badge {
   position: absolute;
   top: -6px;
@@ -828,6 +750,22 @@
     font-size: 1.35rem;
     flex-shrink: 0;
     width: auto;
+  }
+
+  // Ring lights up the same way the other tabs' icons recolor on .active,
+  // since color doesn't apply to an <img>.
+  &__avatar {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    object-fit: cover;
+    flex-shrink: 0;
+    border: 1.5px solid transparent;
+    transition: border-color 0.2s;
+  }
+
+  &__item.active &__avatar {
+    border-color: var(--primary-color);
   }
 }
 

@@ -111,6 +111,17 @@
   }
 }
 
+// Same chevron as LanguageSwitcher, the app's existing "this opens a
+// dropdown" affordance, so the account trigger doesn't look like a plain
+// link next to it.
+.topbar__trigger-chevron {
+  width: 1em;
+  height: 1em;
+  font-size: 0.75rem;
+  color: var(--text-secondary-color);
+  flex-shrink: 0;
+}
+
 .topbar__avatar {
   width: 36px;
   height: 36px;

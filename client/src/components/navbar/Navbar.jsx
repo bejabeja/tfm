@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GoHome, GoPerson, GoSignIn, GoSignOut } from "react-icons/go";
+import { GoHome, GoSignIn } from "react-icons/go";
 import {
   IoAddOutline,
   IoBookOutline,
@@ -23,6 +23,8 @@ import { useTranslation } from "react-i18next";
 import { selectUnreadCount } from "@tobeatraveller/shared";
 import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
+import { generateAvatar } from "../../utils/constants/constants";
+import { optimizedCloudinaryUrl } from "../../utils/cloudinaryUrl";
 import "./Navbar.scss";
 
 // A dropdown (instead of a fixed ES/EN toggle) so adding a language later is
@@ -113,7 +115,6 @@ const Navbar = ({ onOpenSearch }) => {
   const unreadCount = useSelector(selectUnreadCount);
   const location   = useLocation();
 
-  const [meOpen, setMeOpen]             = useState(false);
   const [createOpen, setCreateOpen]     = useState(false);
   const [isCollapsed, setIsCollapsed]   = useState(() => {
     const stored = localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
@@ -124,7 +125,6 @@ const Navbar = ({ onOpenSearch }) => {
   const isHomePage = location.pathname === "/";
 
   useEffect(() => {
-    setMeOpen(false);
     setCreateOpen(false);
   }, [location]);
 
@@ -301,38 +301,6 @@ const Navbar = ({ onOpenSearch }) => {
         </nav>
       )}
 
-      {/* Mobile: Me panel */}
-      {meOpen && isAuthenticated && (
-        <>
-          <div className="me-panel__backdrop" onClick={() => setMeOpen(false)} />
-          <nav className="me-panel">
-            <NavLink to="/account" className="me-panel__item">
-              <GoPerson className="me-panel__icon" />
-              <span>{t("nav.myAccount")}</span>
-            </NavLink>
-            {PREMIUM_TOOLS.map(({ to, Icon, labelKey, iconClassName }) => (
-              <NavLink key={to} to={to} className="me-panel__item">
-                <Icon className={iconClassName ? `me-panel__icon ${iconClassName}` : "me-panel__icon"} />
-                <span>{t(labelKey)}</span>
-                {!userMe?.isPremium && (
-                  <span className="me-panel__premium-badge">{t("admin.premium")}</span>
-                )}
-              </NavLink>
-            ))}
-            <div className="me-panel__divider" />
-            <NavLink to="/subscription" className="me-panel__item">
-              <IoCardOutline className="me-panel__icon" />
-              <span>{t("nav.subscription")}</span>
-            </NavLink>
-            <div className="me-panel__divider" />
-            <NavLink to="/logout" className="me-panel__item me-panel__item--danger">
-              <GoSignOut className="me-panel__icon" />
-              <span>{t("auth.logout")}</span>
-            </NavLink>
-          </nav>
-        </>
-      )}
-
       {/* Mobile: bottom tab bar */}
       <nav className="bottom-nav">
         <NavLink to="/" className="bottom-nav__item" end>
@@ -358,10 +326,16 @@ const Navbar = ({ onOpenSearch }) => {
           <span>{t("globalSearch.trigger")}</span>
         </button>
         {isAuthenticated ? (
-          <button className={`bottom-nav__item ${meOpen ? "active" : ""}`} onClick={() => setMeOpen(!meOpen)}>
-            <GoPerson className="bottom-nav__icon" />
+          <NavLink to="/account" className="bottom-nav__item">
+            {/* Own avatar instead of a generic icon, like Instagram/TikTok/X's
+                profile tab, so this slot reads as "yours" at a glance. */}
+            <img
+              src={optimizedCloudinaryUrl(userMe?.avatarUrl, { width: 48 }) || generateAvatar(userMe?.username)}
+              alt=""
+              className="bottom-nav__avatar"
+            />
             <span>{t("nav.me")}</span>
-          </button>
+          </NavLink>
         ) : (
           <NavLink to="/login" className="bottom-nav__item">
             <GoSignIn className="bottom-nav__icon" />

@@ -1,6 +1,14 @@
 import { useEffect, useState } from "react";
 import { GoPerson, GoSignOut } from "react-icons/go";
-import { IoCardOutline, IoNotificationsOutline, IoSearchOutline } from "react-icons/io5";
+import {
+  IoCardOutline,
+  IoChevronDownOutline,
+  IoListOutline,
+  IoNotificationsOutline,
+  IoSaveOutline,
+  IoSearchOutline,
+  IoSettingsOutline,
+} from "react-icons/io5";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
@@ -55,20 +63,43 @@ const Topbar = ({ onOpenSearch }) => {
               <div className="skeleton skeleton--text short" />
             </div>
           ) : (
-            <button type="button" className="topbar__trigger" onClick={() => setMenuOpen((open) => !open)}>
+            <button
+              type="button"
+              className="topbar__trigger"
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-expanded={menuOpen}
+            >
               <img
                 src={optimizedCloudinaryUrl(userMe?.avatarUrl, { width: 48 }) || generateAvatar(userMe?.username)}
                 alt={userMe?.username ? `@${userMe.username}` : ""}
                 className="topbar__avatar"
               />
               <span>{userMe?.username}</span>
+              <IoChevronDownOutline className="topbar__trigger-chevron" aria-hidden="true" />
             </button>
           )}
 
+          {/* Every destination direct in the dropdown (GitHub's "Your
+              profile" / "Your repositories" / "Settings" pattern), instead
+              of nesting most of them one level down behind a "Mi cuenta"
+              item: that nested page would repeat "Profile" right after
+              you'd already have clicked past it here. */}
           <div className={`topbar__menu${menuOpen ? " topbar__menu--open" : ""}`}>
-            <Link to="/account" className="topbar__menu-item" onClick={() => setMenuOpen(false)}>
+            <Link to={`/profile/${userMe?.id}`} className="topbar__menu-item" onClick={() => setMenuOpen(false)}>
               <GoPerson className="topbar__menu-icon" />
-              <span>{t("nav.myAccount")}</span>
+              <span>{t("nav.profile")}</span>
+            </Link>
+            <Link to="/my-itineraries" className="topbar__menu-item" onClick={() => setMenuOpen(false)}>
+              <IoListOutline className="topbar__menu-icon" />
+              <span>{t("nav.myTrips")}</span>
+            </Link>
+            <Link to="/itineraries/saved" className="topbar__menu-item" onClick={() => setMenuOpen(false)}>
+              <IoSaveOutline className="topbar__menu-icon" />
+              <span>{t("nav.savedTrips")}</span>
+            </Link>
+            <Link to="/settings" className="topbar__menu-item" onClick={() => setMenuOpen(false)}>
+              <IoSettingsOutline className="topbar__menu-icon" />
+              <span>{t("settings.title")}</span>
             </Link>
             <div className="topbar__menu-divider" />
             <Link to="/subscription" className="topbar__menu-item" onClick={() => setMenuOpen(false)}>
