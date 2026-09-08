@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { IoSearchOutline } from "react-icons/io5";
+import { IoChevronDown, IoChevronUp, IoFilterOutline, IoSearchOutline } from "react-icons/io5";
 import { useTranslation } from "react-i18next";
 import { itineraryCategories } from "../../../utils/constants/constants";
 import "./Filters.scss";
@@ -13,11 +13,11 @@ const categoryEmojis = {
 const TRAVELERS_OPTIONS = ["solo", "couple", "group", "large"];
 
 const initialState = {
-  destination: "", category: "", search: "",
+  query: "", category: "",
   budgetMin: "", budgetMax: "", durationMin: "", durationMax: "", travelersCount: "",
 };
 
-const Filters = ({ onChange, defaultValues = {}, showSearch = false }) => {
+const Filters = ({ onChange, defaultValues = {} }) => {
   const { t } = useTranslation();
   const [filters, setFilters] = useState({ ...initialState, ...defaultValues });
   const [debounced, setDebounced] = useState(filters);
@@ -31,8 +31,7 @@ const Filters = ({ onChange, defaultValues = {}, showSearch = false }) => {
   useEffect(() => { onChange(debounced); }, [debounced, onChange]);
 
   const setField = (key) => (v) => setFilters((p) => ({ ...p, [key]: v }));
-  const setDestination = setField("destination");
-  const setSearch = setField("search");
+  const setQuery = setField("query");
   const toggleCategory = (v) =>
     setFilters((p) => ({ ...p, category: p.category === v ? "" : v }));
   const toggleTravelers = (v) =>
@@ -52,49 +51,35 @@ const Filters = ({ onChange, defaultValues = {}, showSearch = false }) => {
           <IoSearchOutline className="filters__search-icon" />
           <input
             type="text"
-            name="destination"
-            placeholder={t("explore.searchByDestination")}
-            value={filters.destination}
-            onChange={(e) => setDestination(e.target.value)}
+            name="query"
+            placeholder={t("explore.searchPlaceholder")}
+            value={filters.query}
+            onChange={(e) => setQuery(e.target.value)}
           />
-          {filters.destination && (
+          {filters.query && (
             <button
               type="button"
               className="filters__search-clear"
-              onClick={() => setDestination("")}
+              onClick={() => setQuery("")}
               aria-label="Clear"
             >✕</button>
           )}
         </div>
 
-        {showSearch && (
-          <div className="filters__search">
-            <IoSearchOutline className="filters__search-icon" />
-            <input
-              type="text"
-              name="search"
-              placeholder={t("explore.searchByKeyword")}
-              value={filters.search}
-              onChange={(e) => setSearch(e.target.value)}
-            />
-            {filters.search && (
-              <button
-                type="button"
-                className="filters__search-clear"
-                onClick={() => setSearch("")}
-                aria-label="Clear"
-              >✕</button>
-            )}
-          </div>
-        )}
-
         <button
           type="button"
-          className="btn-toggle-filters"
+          className={`btn-toggle-filters${showMore ? " btn-toggle-filters--open" : ""}`}
           onClick={() => setShowMore((s) => !s)}
+          aria-expanded={showMore}
         >
+          <IoFilterOutline className="btn-toggle-filters__icon" />
           {t("explore.filters")}
           {advancedCount > 0 && <span className="filters__badge">{advancedCount}</span>}
+          {showMore ? (
+            <IoChevronUp className="btn-toggle-filters__chevron" />
+          ) : (
+            <IoChevronDown className="btn-toggle-filters__chevron" />
+          )}
         </button>
       </div>
 

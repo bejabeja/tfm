@@ -126,6 +126,7 @@ const ExploreScreen = ({ navigation, route }) => {
             <Text style={styles.count}>{totalItems.toLocaleString()} {t('home.trips')}</Text>
           )}
           <TouchableOpacity onPress={openFilters} style={styles.filterBtn}>
+            <Ionicons name="filter-outline" size={14} color="#374151" />
             <Text style={styles.filterBtnText}>{t('explore.filters')}</Text>
             {advancedCount > 0 && (
               <View style={styles.filterBadge}>

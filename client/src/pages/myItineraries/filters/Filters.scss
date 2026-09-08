@@ -8,12 +8,15 @@
   border: 1px solid #e2e8f0;
   border-radius: 12px;
   box-shadow: 0 2px 12px rgba(0, 0, 0, 0.05);
+  min-width: 0;
 
+  // Row at every width: with a single search box + the "Filters" toggle,
+  // there's no reason to stack them even on narrow screens.
   &__main {
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
+    align-items: center;
     gap: 1rem;
-    align-items: stretch;
   }
 
   &__search {
@@ -57,10 +60,33 @@
     }
   }
 
+  // A single scrollable row (like Airbnb/Pinterest/Booking category strips)
+  // instead of wrapping keeps this bar from growing into a second row no
+  // matter how many categories exist.
   &__categories {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    // Without this, the 13 non-shrinking chips' intrinsic width leaks
+    // through every ancestor flex container up to .main-content (each one
+    // defaults to min-width: auto), stretching the whole page past the
+    // viewport whenever the sidebar is collapsed. overflow-x: auto alone
+    // isn't enough here; min-width: 0 is what actually caps it.
+    min-width: 0;
     gap: 0.5rem;
+    // The cut-off last chip is the scroll affordance; a visible scrollbar
+    // track underneath is redundant noise (Airbnb/Pinterest hide theirs too).
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+
+    &::-webkit-scrollbar {
+      display: none;
+    }
+
+    .filter-chip {
+      flex-shrink: 0;
+    }
   }
 
   &__more {
@@ -169,6 +195,7 @@
 
 .btn-toggle-filters {
   width: auto;
+  flex-shrink: 0;
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
@@ -183,6 +210,26 @@
   white-space: nowrap;
 
   &:hover {
+    color: var(--primary-color-hover);
+  }
+
+  &__icon {
+    font-size: 1rem;
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+  }
+
+  // Flips to point up while the advanced-filters panel is expanded, the
+  // standard accordion/dropdown affordance for "click again to collapse".
+  &__chevron {
+    font-size: 0.85rem;
+    width: 1em;
+    height: 1em;
+    flex-shrink: 0;
+  }
+
+  &--open {
     color: var(--primary-color-hover);
   }
 }
@@ -267,11 +314,6 @@
 }
 
 @media (min-width: 768px) {
-  .filters__main {
-    flex-direction: row;
-    align-items: center;
-  }
-
   .filters__more {
     flex-direction: row;
     flex-wrap: wrap;

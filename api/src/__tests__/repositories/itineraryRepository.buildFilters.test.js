@@ -64,6 +64,28 @@ describe('ItineraryRepository.buildFilters()', () => {
         expect(nextIndex).toBe(4);
     });
 
+    it('adds a location/title/description OR condition when query is present', () => {
+        const { conditions, values } = repo.buildFilters({ query: 'volcano' });
+
+        const queryCondition = conditions.find(
+            c => c.includes('location_name') && c.includes('title') && c.includes('description')
+        );
+        expect(queryCondition).toBeDefined();
+        expect(values).toContain('%volcano%');
+    });
+
+    it('does NOT add a query condition when query is absent or empty', () => {
+        expect(repo.buildFilters({}).conditions.some(c => c.includes('location_name'))).toBe(false);
+        expect(repo.buildFilters({ query: '' }).conditions.some(c => c.includes('location_name'))).toBe(false);
+    });
+
+    it('reuses a single parameter index for the query OR clause', () => {
+        const { conditions, nextIndex } = repo.buildFilters({ query: 'beach' }, 3);
+
+        expect(conditions.some(c => c.includes('$3'))).toBe(true);
+        expect(nextIndex).toBe(4);
+    });
+
     it('adds budgetMin condition', () => {
         const { conditions, values } = repo.buildFilters({ budgetMin: 500 });
 

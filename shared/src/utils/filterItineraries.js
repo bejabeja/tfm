@@ -18,6 +18,17 @@ export const filterItineraries = (itineraries, filters) => {
             !itinerary.location?.name?.toLowerCase().includes(filters.destination.toLowerCase())
         ) return false;
 
+        // A single merged search box (web's Filters.jsx) sends this instead of
+        // destination alone, matching destination/title/description with OR
+        // semantics (unlike `destination` above, which is its own AND'd condition).
+        if (filters.query) {
+            const q = filters.query.toLowerCase();
+            const matchesDestination = itinerary.location?.name?.toLowerCase().includes(q);
+            const matchesTitle = itinerary.title?.toLowerCase().includes(q);
+            const matchesDescription = itinerary.description?.toLowerCase().includes(q);
+            if (!matchesDestination && !matchesTitle && !matchesDescription) return false;
+        }
+
         const duration = parseInt(itinerary.tripTotalDays, 10);
         const durationMin = parseInt(filters.durationMin, 10);
         const durationMax = parseInt(filters.durationMax, 10);

@@ -1,9 +1,10 @@
-import { lazy, Suspense, useEffect } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Navigate, Route, Routes, useLocation } from "react-router-dom";
 import "./App.scss";
 import CookieConsentBanner from "./components/cookieConsent/CookieConsentBanner";
 import Footer from "./components/footer/Footer";
+import GlobalSearch from "./components/navbar/GlobalSearch";
 import Navbar from "./components/navbar/Navbar";
 import Topbar from "./components/topbar/Topbar";
 import Spinner from "./components/spinner/Spinner";
@@ -64,8 +65,14 @@ const App = () => {
   const location = useLocation();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const userAuthenticated = useSelector(selectAuthUser);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   useCanonicalUrl(location.pathname);
+
+  // Shared between Navbar's mobile bottom-nav trigger and Topbar's desktop
+  // trigger, which are siblings (not parent/child), so the modal itself
+  // lives here rather than inside either one.
+  useEffect(() => setSearchOpen(false), [location]);
 
   useEffect(() => {
     initAnalyticsIfConsented();
@@ -118,10 +125,10 @@ const App = () => {
       <CustomToaster />
       <CookieConsentBanner />
       <div className={`side-content${isAuthRoute ? " side-content--hidden" : ""}`}>
-        <Navbar />
+        <Navbar onOpenSearch={() => setSearchOpen(true)} />
       </div>
       <div className={`main-content${isAuthRoute ? " main-content--auth" : ""}`}>
-        {isAuthenticated && !isAuthRoute && <Topbar />}
+        {isAuthenticated && !isAuthRoute && <Topbar onOpenSearch={() => setSearchOpen(true)} />}
         <main className="content">
           <Suspense fallback={<Spinner />}>
             <Routes>
@@ -178,6 +185,8 @@ const App = () => {
 
         {isPublicRoute && <Footer />}
       </div>
+
+      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </div>
   );
 };

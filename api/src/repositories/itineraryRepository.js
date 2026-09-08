@@ -258,6 +258,18 @@ export class ItineraryRepository {
       i++;
     }
 
+    // A single merged search box (client's Filters.jsx) sends this instead of
+    // destination/search separately: those two are AND'd together above, so
+    // reusing them for one query would wrongly require a location match AND
+    // a title/description match at once instead of either one.
+    if (filters.query) {
+      conditions.push(
+        `(LOWER(location_name) LIKE LOWER($${i}) OR LOWER(title) LIKE LOWER($${i}) OR LOWER(description) LIKE LOWER($${i}))`
+      );
+      values.push(`%${filters.query}%`);
+      i++;
+    }
+
     if (filters.budgetMin !== undefined) {
       conditions.push(`budget >= $${i++}`);
       values.push(filters.budgetMin);

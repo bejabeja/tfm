@@ -23,7 +23,6 @@ import { useTranslation } from "react-i18next";
 import { selectUnreadCount } from "@tobeatraveller/shared";
 import { selectIsAuthenticated } from "../../store/auth/authSelectors";
 import { selectMe } from "../../store/user/userInfoSelectors";
-import GlobalSearch from "./GlobalSearch";
 import "./Navbar.scss";
 
 // A dropdown (instead of a fixed ES/EN toggle) so adding a language later is
@@ -106,7 +105,7 @@ const LanguageSwitcher = () => {
 const SIDEBAR_AUTO_COLLAPSE_BELOW_WIDTH = 900;
 const SIDEBAR_COLLAPSED_STORAGE_KEY = "sidebar-collapsed";
 
-const Navbar = () => {
+const Navbar = ({ onOpenSearch }) => {
   const { t } = useTranslation();
   const navigate   = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -116,7 +115,6 @@ const Navbar = () => {
 
   const [meOpen, setMeOpen]             = useState(false);
   const [createOpen, setCreateOpen]     = useState(false);
-  const [searchOpen, setSearchOpen]     = useState(false);
   const [isCollapsed, setIsCollapsed]   = useState(() => {
     const stored = localStorage.getItem(SIDEBAR_COLLAPSED_STORAGE_KEY);
     return stored !== null ? stored === "true" : window.innerWidth < SIDEBAR_AUTO_COLLAPSE_BELOW_WIDTH;
@@ -128,7 +126,6 @@ const Navbar = () => {
   useEffect(() => {
     setMeOpen(false);
     setCreateOpen(false);
-    setSearchOpen(false);
   }, [location]);
 
   // Home's hero photo runs full-bleed behind the marketing nav (see
@@ -228,9 +225,12 @@ const Navbar = () => {
             <img src="/logo.svg" alt="ToBeATraveller" className="logo__full" height="28" />
           </Link>
 
-          <button type="button" className="nav-search-trigger" title={t("globalSearch.trigger")} onClick={() => setSearchOpen(true)}>
-            <IoSearchOutline className="nav-search-trigger__icon" />
-            <span>{t("globalSearch.placeholder")}</span>
+          {/* Single create button: opens sheet. First thing under the logo,
+              like Gmail's Compose or Notion's New page, since creating a
+              trip is this app's central action, not just another nav item. */}
+          <button className="nav-create" onClick={openCreate} title={t("nav.createTrip")}>
+            <IoAddOutline className="nav-icon" />
+            <span>{t("nav.createTrip")}</span>
           </button>
 
           <div className="nav-section">
@@ -244,12 +244,6 @@ const Navbar = () => {
               <span>{t("nav.explore")}</span>
             </NavLink>
           </div>
-
-          {/* Single create button: opens sheet */}
-          <button className="nav-create" onClick={openCreate} title={t("nav.createTrip")}>
-            <IoAddOutline className="nav-icon" />
-            <span>{t("nav.createTrip")}</span>
-          </button>
 
           <div className="nav-section">
             <h3>{t("nav.yourTools")}</h3>
@@ -359,7 +353,7 @@ const Navbar = () => {
             <span>{t("nav.subscription")}</span>
           </NavLink>
         )}
-        <button type="button" className="bottom-nav__item" onClick={() => setSearchOpen(true)}>
+        <button type="button" className="bottom-nav__item" onClick={onOpenSearch}>
           <IoSearchOutline className="bottom-nav__icon" />
           <span>{t("globalSearch.trigger")}</span>
         </button>
@@ -411,8 +405,6 @@ const Navbar = () => {
           </div>
         </div>
       )}
-
-      <GlobalSearch isOpen={searchOpen} onClose={() => setSearchOpen(false)} />
     </>
   );
 };

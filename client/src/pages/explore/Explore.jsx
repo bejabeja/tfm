@@ -53,11 +53,11 @@ const Explore = () => {
   ];
 
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialDestination = searchParams.get("location") ?? "";
+  const initialQuery = searchParams.get("location") ?? "";
 
-  const [defaultDestination, setDefaultDestination] = useState(initialDestination);
+  const [defaultQuery, setDefaultQuery] = useState(initialQuery);
   const [filters, setFilters] = useState(
-    initialDestination ? { destination: initialDestination } : {}
+    initialQuery ? { query: initialQuery } : {}
   );
   const [sortBy, setSortBy] = useState("recent");
   const [filterResetKey, setFilterResetKey] = useState(0);
@@ -87,32 +87,23 @@ const Explore = () => {
   const clearAllFilters = () => {
     setFilters({});
     setSearchParams({});
-    setDefaultDestination("");
+    setDefaultQuery("");
     setFilterResetKey((k) => k + 1);
   };
 
   const hasMore = page < totalPages;
-  const locationLabel = filters.destination;
   const hasActiveFilters =
-    locationLabel || filters.category || filters.search || filters.budgetMin || filters.budgetMax ||
+    filters.query || filters.category || filters.budgetMin || filters.budgetMax ||
     filters.durationMin || filters.durationMax || filters.travelersCount || filters.currency;
 
   return (
     <div className="explore">
-      <div className="explore__hero">
-        <h1 className="explore__hero-title">{t("explore.title")}</h1>
-        <p className="explore__hero-subtitle">
-          {t("explore.subtitle")}
-        </p>
-      </div>
-
       <div className="explore__content section__container">
       <div className="explore__filters-sticky">
         <Filters
           key={filterResetKey}
           onChange={setFilters}
-          defaultValues={defaultDestination ? { destination: defaultDestination } : {}}
-          showSearch
+          defaultValues={defaultQuery ? { query: defaultQuery } : {}}
         />
       </div>
 
@@ -120,7 +111,7 @@ const Explore = () => {
         <div className="explore__results-header">
           <div className="explore__results-header-top">
             <div className="explore__results-title-row">
-              <h2 className="explore__results-title">{t("explore.itineraries")}</h2>
+              <h1 className="explore__results-title">{t("explore.itineraries")}</h1>
               {!loading && totalItems > 0 && (
                 <span className="explore__results-count">{totalItems.toLocaleString()} {t("explore.found")}</span>
               )}
@@ -141,16 +132,13 @@ const Explore = () => {
 
           {(hasActiveFilters) && (
             <div className="explore__active-filters">
-              {locationLabel && (
-                <span className="explore__filter-tag">📍 {locationLabel}</span>
+              {filters.query && (
+                <span className="explore__filter-tag">🔎 {filters.query}</span>
               )}
               {filters.category && (
                 <span className="explore__filter-tag explore__filter-tag--category">
                   {filters.category}
                 </span>
-              )}
-              {filters.search && (
-                <span className="explore__filter-tag">🔎 {filters.search}</span>
               )}
               {(filters.budgetMin || filters.budgetMax) && (
                 <span className="explore__filter-tag">

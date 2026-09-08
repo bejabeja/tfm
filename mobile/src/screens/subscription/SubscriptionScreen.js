@@ -19,6 +19,7 @@ const PREMIUM_FEATURES = [
   { key: 'subscription.featurePackingChecklistTitle', descriptionKey: 'subscription.featurePackingChecklistDesc', emoji: '🎒', color: '#6B4C9A' },
   { key: 'subscription.featureLifeDiaryTitle', descriptionKey: 'subscription.featureLifeDiaryDesc', emoji: '📖', color: '#C2447B' },
   { key: 'subscription.featureAiItineraries', descriptionKey: 'subscription.featureAiItinerariesDesc', emoji: '✨', color: '#1A535C' },
+  { key: 'subscription.featureNoAdsTitle', descriptionKey: 'subscription.featureNoAdsDesc', emoji: '🚫', color: '#546E7A' },
 ];
 
 const PLANS = [

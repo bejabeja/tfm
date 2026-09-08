@@ -73,3 +73,18 @@
     height: 100vh;
   }
 }
+
+// A returning, logged-in user gets a short greeting instead of the full
+// marketing pitch (see Hero.jsx), so the full-viewport photo would just
+// push their actual feed off-screen for one line of text; this shrinks it
+// to a banner instead. The compound selector (rather than relying on
+// source order) is what actually wins over the two rules above.
+.hero.hero--compact {
+  height: auto;
+  min-height: 180px;
+
+  @media (min-width: 480px) {
+    height: auto;
+    min-height: 220px;
+  }
+}
